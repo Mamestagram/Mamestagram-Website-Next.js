@@ -26,8 +26,8 @@
 			"@/*": [
 				"./src/*"
 			],
-			"public/*": [
-				"./public/*"
+			"@s/*": [
+				"./public/styles/*"
 			]
 		}
 	},
