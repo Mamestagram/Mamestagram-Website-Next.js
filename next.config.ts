@@ -6,8 +6,7 @@ const nextConfig: NextConfig = {
 	allowedDevOrigins: [process.env.DEV_IP as string],
 	images: {
 		remotePatterns: [
-			{ protocol: "https", hostname: "a.mamesosu.net" },
-			{ protocol: "https", hostname: "team_avatar.mamesosu.net" }
+			{ protocol: "https", hostname: `a.${process.env.BASE_DOMAIN}`, }
 		]
 	}
 };

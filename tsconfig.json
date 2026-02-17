@@ -28,6 +28,9 @@
 			],
 			"@s/*": [
 				"./public/styles/*"
+			],
+			"@i/*": [
+				"./public/images/*"
 			]
 		}
 	},
