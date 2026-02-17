@@ -1,4 +1,4 @@
-# Mamestagram-WebSite
+# Mamestagram-Website
 
 ## Next.jsに移行中・・・
 
