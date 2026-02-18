@@ -24,15 +24,11 @@ type ContextType = {
 
 const UserContext = createContext<ContextType | null>(null);
 
-export const UserProvider = ({
-	serverInfo,
-	userInfo,
-	children
-}: {
+export const UserProvider = ({ serverInfo, userInfo, children }: Readonly<{
 	serverInfo: ServerInfo,
     userInfo: UserInfo,
     children: React.ReactNode
-}) => {
+}>) => {
     const datetime = new Date().toLocaleString("ja-JP", {
         year: "numeric",
         month: "2-digit",

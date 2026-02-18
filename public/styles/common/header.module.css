@@ -1,29 +1,38 @@
-.animated {
+.header {
+	display: flex;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 100;
+	transition: 300ms;
+}
+
+.header.scrolled {
 	box-shadow: 0 5px 5px black;
 }
 
-header .top {
+.header .top {
 	margin: 10px 0 10px 200px;
 	transition: margin 300ms;
 }
 
-header .top img {
+.header .top img {
 	height: 60px;
 	transition: height 300ms, transform 300ms;
 }
-header .top img:hover {
+.header .top img:hover {
 	transform: scale(1.1, 1.1);
 }
 
-.animated .top {
+.header.scrolled .top {
 	margin: 5px 0 5px 85px;
 }
 
-.animated .top img {
+.header.scrolled .top img {
 	height: 50px;
 }
 
-header h1 {
+.header h1 {
 	display: none;
 	color: #fdfdfd;
 	font-size: 15px;
@@ -31,12 +40,12 @@ header h1 {
 	padding-left: 5px;
 }
 
-header .pc {
+.header .pc {
 	display: flex;
 	width: 100%;
 }
 
-header .pc li {
+.header .pc li {
 	font-size: 16px;
 	color: #919495;
 	margin: 14px 5px;
@@ -44,11 +53,11 @@ header .pc li {
 	font-weight: bold;
 	transition: color 300ms, margin 300ms, text-shadow 300ms, background-color 300ms;
 }
-header .pc li:hover {
+.header .pc li:hover {
 	color: #fdfdfd;
 }
 
-header .pc .old-web {
+.header .pc .old-web {
 	cursor: pointer;
 	position: relative;
 	height: 60px;
@@ -58,20 +67,20 @@ header .pc .old-web {
 	transition: height 300ms, width 300ms, filter 300ms;
 }
 
-header .pc .old-web.lock {
+.header .pc .old-web.lock {
 	width: 60px;
 	transform: scaleX(1);
 }
 
-.animated .pc .old-web.lock {
+.header.scrolled .pc .old-web.lock {
 	filter: none;
 }
-.animated .pc .old-web.lock:hover {
+.header.scrolled .pc .old-web.lock:hover {
 	background-color: unset;
 	filter: drop-shadow(2px 2px 2px black);
 }
 
-header .pc .old-web.lock::before {
+.header .pc .old-web.lock::before {
 	content: "";
 	display: block;
 	position: absolute;
@@ -84,15 +93,15 @@ header .pc .old-web.lock::before {
 	transform: translate(-50%, -90%);
 	transition: background-color 300ms, height 300ms;
 }
-header .pc .old-web.lock:hover::before {
+.header .pc .old-web.lock:hover::before {
 	background-color: #fdfdfd;
 }
 
-.animated .pc .old-web.lock::before {
+.header.scrolled .pc .old-web.lock::before {
 	background-color: #fdfdfd;
 }
 
-header .pc .old-web.lock::after {
+.header .pc .old-web.lock::after {
 	content: "";
 	display: block;
 	position: absolute;
@@ -107,17 +116,17 @@ header .pc .old-web.lock::after {
 	transform-origin: 90% 50%;
 	transition: height 300ms, border 300ms;
 }
-header .pc .old-web.lock:hover::after {
+.header .pc .old-web.lock:hover::after {
 	border: 3px solid #fdfdfd;
 	border-bottom: none;
 }
 
-.animated .pc .old-web.lock::after {
+.header.scrolled .pc .old-web.lock::after {
 	border: 3px solid #fdfdfd;
 	border-bottom: none;
 }
 
-header .pc .old-web.lock.wiggle {
+.header .pc .old-web.lock.wiggle {
 	animation: wiggle 400ms;
 }
 
@@ -142,7 +151,7 @@ header .pc .old-web.lock.wiggle {
 	}
 }
 
-header .pc .old-web.lock.unlock {
+.header .pc .old-web.lock.unlock {
 	animation: fadeOut 2s ease;
 }
 
@@ -161,7 +170,7 @@ header .pc .old-web.lock.unlock {
 	}
 }
 
-header .pc .old-web.lock.unlock::after {
+.header .pc .old-web.lock.unlock::after {
 	animation: unlock 2s ease;
 }
 
@@ -180,37 +189,37 @@ header .pc .old-web.lock.unlock::after {
 	}
 }
 
-header .pc .old-web.web-link {
+.header .pc .old-web.web-link {
 	width: auto;
 	filter: none;
 	transform: scaleX(1);
 	transition: color 300ms, margin 300ms, text-shadow 300ms, background-color 300ms;
 }
 
-header .pc .old-web a {
+.header .pc .old-web a {
 	transform: scaleX(0);
 	transition: transform 700ms;
 }
 
-header .pc .old-web.web-link a {
+.header .pc .old-web.web-link a {
 	transform: scaleX(1);
 }
 
-header .pc .donation {
+.header .pc .donation {
 	font-size: 20px;
 	transition: color 300ms, margin 300ms, text-shadow 300ms, transform 200ms;
 }
-header .pc .donation:hover {
+.header .pc .donation:hover {
 	color: #ea609e;
 	transform: scale(1.1);
 }
 
-.animated .pc .donation:hover {
+.header.scrolled .pc .donation:hover {
 	background-color: unset;
 	text-shadow: 0 0 10px #fdfdfd;
 }
 
-.animated .pc li {
+.header.scrolled .pc li {
 	color: #fdfdfd;
 	font-weight: normal;
 	height: 50px;
@@ -218,27 +227,27 @@ header .pc .donation:hover {
 	text-shadow: none;
 }
 
-header .pc li button {
+.header .pc li button {
 	text-shadow: 2px 2px 2px black;
 }
 
-.animated .pc li button {
+.header.scrolled .pc li button {
 	text-shadow: none;
 }
 
-header .pc li a, header .pc li button {
+.header .pc li a, .header .pc li button {
 	display: block;
 	height: 55px;
 	line-height: 55px;
 	padding: 0 15px;
 }
 
-.animated .pc li a, .animated .pc li button {
+.header.scrolled .pc li a, .header.scrolled .pc li button {
 	height: 50px;
 	line-height: 50px;
 }
 
-header .pc .search {
+.header .pc .search {
 	font-size: 20px;
 	height: 44px;
 	margin: 22px 5px 22px auto;
@@ -246,39 +255,39 @@ header .pc .search {
 	text-align: center;
 }
 
-header .pc .search button {
+.header .pc .search button {
 	height: 44px;
 	line-height: 44px;
 	padding: 0 12px;
 }
 
-.animated .pc .search {
+.header.scrolled .pc .search {
 	margin: 8px 5px 8px auto;
 }
 
-.animated .pc .avatar:hover {
+.header.scrolled .pc .avatar:hover {
 	background-color: unset;
 }
 
-header .pc .avatar button {
+.header .pc .avatar button {
 	position: relative;
 	padding: 0;
 	height: 60px;
 }
 
-header .pc .avatar button .avatar-img {
+.header .pc .avatar button .avatar-img {
 	height: 60px;
 	width: 60px;
 	border-radius: 60px;
 	transition: height 300ms, width 300ms, margin 300ms, outline 100ms;
 	object-fit: cover;
 }
-header .pc .avatar button .avatar-img:hover {
+.header .pc .avatar button .avatar-img:hover {
 	outline: 2px solid #fdfdfd;
 	outline-offset: -2px;
 }
 
-header .pc .avatar button .gacha {
+.header .pc .avatar button .gacha {
 	position: absolute;
 	bottom: 0;
 	right: 0;
@@ -290,36 +299,36 @@ header .pc .avatar button .gacha {
 	transition: bottom 300ms, right 300ms, height 300ms, width 300ms;
 }
 
-.animated .pc .avatar button {
+.header.scrolled .pc .avatar button {
 	height: 50px;
 	width: 50px;
 }
 
-.animated .pc .avatar button .avatar-img {
+.header.scrolled .pc .avatar button .avatar-img {
 	height: 50px;
 	width: 50px;
 }
 
-.animated .pc .avatar button .gacha {
+.header.scrolled .pc .avatar button .gacha {
 	bottom: 0;
 	right: 0;
 	height: 20px;
 	width: 20px;
 }
 
-header .pc .login {
+.header .pc .login {
 	margin-right: 200px;
 }
 
-header .pc .avatar {
+.header .pc .avatar {
 	margin-right: 200px;
 }
 
-.animated .pc .login, .animated .pc .avatar {
+.header.scrolled .pc .login, .header.scrolled .pc .avatar {
 	margin-right: 85px;
 }
 
-header .donation-mobile {
+.header .donation-mobile {
 	visibility: hidden;
 	position: absolute;
 	color: #fdfdfd;
@@ -333,13 +342,13 @@ header .donation-mobile {
 	text-align: center;
 	transition: color 300ms, margin 300ms, text-shadow 300ms, transform 200ms;
 }
-header .donation-mobile:hover {
+.header .donation-mobile:hover {
 	color: #ea609e;
 	transform: scale(1.1);
 	text-shadow: 0 0 10px #fdfdfd;
 }
 
-header .search-mobile {
+.header .search-mobile {
 	display: none;
 	color: #fdfdfd;
 	font-size: 20px;
@@ -353,7 +362,7 @@ header .search-mobile {
 	text-align: center;
 }
 
-header .arrow {
+.header .arrow {
 	display: none;
 	color: #fdfdfd;
 	font-size: 20px;
@@ -516,33 +525,33 @@ header .arrow {
 }
 /* ------------------------------------------------- */
 @media (max-width: 1232px) {
-	header {
+	.header {
 		position: sticky;
 		box-shadow: 0 5px 5px black;
 	}
 	
-	header .top {
+	.header .top {
 		margin: 5px;
 	}
 	
-	header .top img {
+	.header .top img {
 		height: 50px;
 	}
 	
-	header h1 {
+	.header h1 {
 		display: block;
 	}
 	
-	header .pc {
+	.header .pc {
 		display: none;
 	}
 	
-	header .donation-mobile {
+	.header .donation-mobile {
 		visibility: visible;
 	}
 	
-	header .search-mobile,
-	header .arrow {
+	.header .search-mobile,
+	.header .arrow {
 		display: block;
 	}
 	
