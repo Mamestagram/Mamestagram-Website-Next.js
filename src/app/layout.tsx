@@ -8,6 +8,7 @@ import { UserProvider } from "@/components/context";
 import Header from "@/components/header/header";
 import "flag-icons/css/flag-icons.min.css";
 import "@s/global/reset.css";
+import "@s/global/global.css";
 import "@s/global/font.css";
 import "@s/global/mode-icon.css";
 import "@s/global/flag-icon.css";
