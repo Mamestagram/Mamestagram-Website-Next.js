@@ -8,7 +8,7 @@ export default function Header() {
 	return (
 		<header>
 			<Link className="top" href="/public">
-				<Image src={"/image/logo.png"} fill alt="" priority/>
+				<Image src={"/image/logo.webp"} fill alt="" priority/>
 			</Link>
 			<ul className="pc">
 				<li className="leaderboard">

@@ -46,4 +46,7 @@ next-env.d.ts
 .npmrc
 
 # log
-/logs
+/.logs
+
+# images
+/public/images/.before-cnv
