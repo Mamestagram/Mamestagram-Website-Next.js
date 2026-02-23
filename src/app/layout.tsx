@@ -1,6 +1,5 @@
-import "@/lib/env-config";
-
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import Head from "next/head";
 import Image from "next/image";
 import React from "react";
@@ -24,8 +23,10 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+	const cookieStore = await cookies();
 	const serverInfo: ServerInfo = {
-		baseDomain: process.env.BASE_DOMAIN as string
+		baseDomain: process.env.BASE_DOMAIN!,
+		subDomain: cookieStore.get("sub-domain")!.value
 	};
 	const userInfo: UserInfo = {
 		isLoggedIn: false
@@ -41,7 +42,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 			<body>
 				<UserProvider serverInfo={serverInfo} userInfo={userInfo}>
 					<Header/>
-					<Image className="banner" src="/images/banner/home.jpg" fill sizes="(max-width: 768px) 100vw, 50vw" alt="" priority/>
+					<div className="banner">
+						<Image src={`/images/banner/${serverInfo.subDomain}.jpg`} fill sizes="100vw" alt="" priority/>
+					</div>
 					<main>
 						{children}
 					</main>

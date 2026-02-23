@@ -8,10 +8,10 @@ import styles from "@s/common/header.module.css";
 export default function Header() {
 	return (
 		<header>
-			<Link className={styles.top} href="/">
+			<Link className="top" href="/">
 				<Image src="/images/logo.png" alt="" fill sizes="(max-width: 768px) 100vw, 50vw" priority/>
 			</Link>
-			<nav className={styles.navigation}>
+			<nav className="navigation">
 				<ul>
 					<li className="leaderboard">
 						<Link href="/leaderboard/std/performance">Leaderboard</Link>
@@ -26,15 +26,15 @@ export default function Header() {
 							Community
 						</a>
 					</li>
-					<li className={styles.donation}>
+					<li className="donation">
 						<a title="Support us!"
-						   href="https://ko-fi.com/mamestagram/tiers"
+						   href="/support"
 						   target="_blank"
 						   rel="noopener noreferrer">
 							<FontAwesome prefix="fas" name="heart"/>
 						</a>
 					</li>
-					<li className={styles.search}>
+					<li className="search">
 						<FontAwesome prefix="fas" name="magnifying-glass"/>
 					</li>
 					<UserHeader/>

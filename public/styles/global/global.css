@@ -1,12 +1,95 @@
+/* header */
 header {
 	display: flex;
 	position: fixed;
 	top: 0;
 	left: 0;
-	height: 60px;
+	height: 80px;
 	width: 100%;
 	padding: 0 100px;
 	z-index: 100;
+	transition: height 300ms, background-color 300ms;
+}
+header.scrolled {
+	height: 60px;
+}
+header.home.scrolled {
+	background-color: #345c84;
+}
+header.home.scrolled nav ul li:hover {
+	background-color: #6495ed;
+}
+
+header .top {
+	position: relative;
+	height: inherit;
+	aspect-ratio: 1 / 1;
+	transition: transform 300ms;
+}
+
+header .top:hover {
+	transform: scale(1.1);
+}
+
+header .top img {
+	padding: 10px;
+	transition: padding 300ms;
+}
+header.scrolled .top img {
+	padding: 5px;
+}
+
+header .navigation {
+	height: inherit;
+	width: 100%;
+}
+
+header .navigation ul {
+	--gap: 40px;
+	
+	display: flex;
+	height: inherit;
+	font-size: 16px;
+	margin: 0 var(--gap) 0 calc(var(--gap) / 2);
+	align-items: center;
+	gap: var(--gap);
+	text-shadow: 2px 2px 2px black;
+	font-weight: bold;
+}
+
+header .navigation ul li {
+	color: #919495;
+	transition: color 300ms;
+}
+
+header .navigation ul li:hover {
+	color: #fdfdfd;
+}
+
+header .navigation ul li.donation {
+	height: 22px;
+	border-radius: 50%;
+	margin-right: auto;
+	aspect-ratio: 1 / 1;
+	object-fit: cover;
+	filter: drop-shadow(2px 2px 2px black);
+}
+
+header .navigation ul li.donation:hover {
+	color: #ea609e;
+	transform: scale(1.1);
+}
+
+header .navigation ul li.search {
+	height: 20px;
+	border-radius: 50%;
+	aspect-ratio: 1 / 1;
+	object-fit: cover;
+	filter: drop-shadow(2px 2px 2px black);
+}
+/* ------------------------------------------------- */
+main {
+	height: 2000px;
 }
 
 img {
@@ -14,8 +97,9 @@ img {
 }
 
 .banner {
-	position: sticky;
+	position: fixed;
 	top: 0;
+	left: 0;
 	height: 230px;
 	width: 100%;
 	filter: blur(3px);

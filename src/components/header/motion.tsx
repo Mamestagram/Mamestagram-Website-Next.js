@@ -16,14 +16,14 @@ export default function HeaderMotion() {
 		return () => {
 			window.removeEventListener("scroll", scrollHeader);
 		}
-	}, [])
+	}, []);
 	
 	useEffect(() => {
-		console.log(scrollPos);
-		if (scrollPos >= (header.current?.offsetHeight as number))
-			header.current?.classList.add("scrolled");
+		if (scrollPos >= header.current!.offsetHeight)
+			header.current!.classList.add("scrolled");
 		else
-			header.current?.removeAttribute("class");
+			header.current!.classList.remove("scrolled");
 	}, [scrollPos]);
+	
 	return null;
 }

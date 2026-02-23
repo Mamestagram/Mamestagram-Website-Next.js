@@ -1,5 +1,3 @@
-import "./env-config";
-
 import fs from "fs";
 import { NextRequest } from "next/server";
 

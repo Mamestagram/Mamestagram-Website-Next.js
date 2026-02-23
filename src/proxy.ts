@@ -4,8 +4,10 @@ import { writeLog } from "@/lib/log";
 // noinspection JSUnusedGlobalSymbols
 export const proxy = async (req: NextRequest) => {
 	writeLog(req);
-	
-	return NextResponse.next();
+	const res = NextResponse.next();
+	if (!req.nextUrl.pathname.includes("."))
+		res.cookies.set("sub-domain", req.nextUrl.pathname.split("/").at(1) || "home");
+	return res;
 }
 
 // noinspection JSUnusedGlobalSymbols

@@ -1,5 +1,3 @@
-import "@/lib/env-config";
-
 import mysql, { QueryResult } from "mysql2";
 
 export type QueryArgs = (string | number | boolean)[] | null;

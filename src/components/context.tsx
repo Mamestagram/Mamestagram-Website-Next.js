@@ -2,7 +2,8 @@
 import React, { createContext, useContext } from "react";
 
 export type ServerInfo = {
-	baseDomain: string;
+	baseDomain: string,
+	subDomain: string
 };
 
 export type UserInfo = {
