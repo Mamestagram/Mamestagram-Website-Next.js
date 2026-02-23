@@ -11,8 +11,19 @@ export default function UserHeader() {
 	return userInfo.isLoggedIn
 		? (
 			<li className="avatar" title={userInfo.username}>
-				<Image className="avatar-img" src={`https://a.${serverInfo.baseDomain}/${userInfo.id}`} alt="" fill priority/>
-				{userInfo.badge !== 0 && <Image className="gacha-badge" src={`/image/gacha/${userInfo.badge}.${userInfo.badgeExt}`} alt="" fill priority/>}
+				<Image className="avatar-img"
+				       src={`https://a.${serverInfo.baseDomain}/${userInfo.id}`}
+				       alt=""
+				       fill
+				       sizes="(max-width: 768px) 100vw, 50vw"
+				       priority/>
+				{userInfo.badge !== 0 &&
+					<Image className="gacha-badge"
+					       src={`/image/gacha/${userInfo.badge}.${userInfo.badgeExt}`}
+					       alt=""
+					       fill
+					       sizes="(max-width: 768px) 100vw, 50vw"
+					       priority/>}
 			</li>
 		)
 		: (

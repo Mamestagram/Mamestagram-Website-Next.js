@@ -9,7 +9,7 @@ export default function Header() {
 	return (
 		<header>
 			<Link className={styles.top} href="/">
-				<Image src="/images/logo.webp" alt="" fill priority/>
+				<Image src="/images/logo.png" alt="" fill sizes="(max-width: 768px) 100vw, 50vw" priority/>
 			</Link>
 			<nav className={styles.navigation}>
 				<ul>

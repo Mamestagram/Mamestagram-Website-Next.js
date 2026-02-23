@@ -6,46 +6,46 @@ export type ServerInfo = {
 };
 
 export type UserInfo = {
-    id?: number,
+	id?: number,
 	clanId?: number,
 	priv?: number,
-    username?: string,
+	username?: string,
 	country?: number,
 	badge?: number,
 	badgeExt?: "png" | "gif",
-    isLoggedIn: boolean
+	isLoggedIn: boolean
 };
 
 type ContextType = {
-    datetime: string,
+	datetime: string,
 	serverInfo: ServerInfo,
-    userInfo: UserInfo
+	userInfo: UserInfo
 };
 
 const UserContext = createContext<ContextType | null>(null);
 
 export const UserProvider = ({ serverInfo, userInfo, children }: Readonly<{
 	serverInfo: ServerInfo,
-    userInfo: UserInfo,
-    children: React.ReactNode
+	userInfo: UserInfo,
+	children: React.ReactNode
 }>) => {
-    const datetime = new Date().toLocaleString("ja-JP", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-    }).replace(/[\/\s:]/g, "");
-    return (
-        <UserContext.Provider value={{ datetime, serverInfo, userInfo }}>
-            {children}
-        </UserContext.Provider>
-    );
+	const datetime = new Date().toLocaleString("ja-JP", {
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+		hour: "2-digit",
+		minute: "2-digit",
+		second: "2-digit"
+	}).replace(/[\/\s:]/g, "");
+	return (
+		<UserContext.Provider value={{ datetime, serverInfo, userInfo }}>
+			{children}
+		</UserContext.Provider>
+	);
 }
 
 export const useUserContext = () => {
-    const context = useContext(UserContext);
-    if (context === null) throw new Error("UserProvidor is missing");
-    return context;
+	const context = useContext(UserContext);
+	if (context === null) throw new Error("UserProvidor is missing");
+	return context;
 }

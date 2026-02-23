@@ -47,6 +47,3 @@ next-env.d.ts
 
 # log
 /.logs
-
-# images
-/public/images/.before-cnv

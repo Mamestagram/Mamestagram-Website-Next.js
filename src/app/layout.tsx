@@ -2,6 +2,7 @@ import "@/lib/env-config";
 
 import type { Metadata } from "next";
 import Head from "next/head";
+import Image from "next/image";
 import React from "react";
 import type { ServerInfo, UserInfo } from "@/components/context";
 import { UserProvider } from "@/components/context";
@@ -40,6 +41,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 			<body>
 				<UserProvider serverInfo={serverInfo} userInfo={userInfo}>
 					<Header/>
+					<Image className="banner" src="/images/banner/home.jpg" fill sizes="(max-width: 768px) 100vw, 50vw" alt="" priority/>
 					<main>
 						{children}
 					</main>
