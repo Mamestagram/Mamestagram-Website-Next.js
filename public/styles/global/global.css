@@ -1,23 +1,26 @@
 /* header */
 header {
+	--header-height: 80px;
+	
 	display: flex;
 	position: fixed;
 	top: 0;
 	left: 0;
-	height: 80px;
+	height: var(--header-height);
 	width: 100%;
-	padding: 0 100px;
+	padding-left: 7%;
+	padding-right: 8%;
 	z-index: 100;
-	transition: height 300ms, background-color 300ms;
+	transition: background-color 300ms, height 300ms, padding 300ms;
 }
 header.scrolled {
-	height: 60px;
+	--header-height: 60px;
+	
+	height: var(--header-height);
+	padding: 0 5%;
 }
 header.home.scrolled {
 	background-color: #345c84;
-}
-header.home.scrolled nav ul li:hover {
-	background-color: #6495ed;
 }
 
 header .top {
@@ -45,7 +48,7 @@ header .navigation {
 }
 
 header .navigation ul {
-	--gap: 40px;
+	--gap: 30px;
 	
 	display: flex;
 	height: inherit;
@@ -59,11 +62,25 @@ header .navigation ul {
 
 header .navigation ul li {
 	color: #919495;
-	transition: color 300ms;
+	border-radius: calc(var(--header-height) / 2);
+	transition: background-color 300ms, color 300ms;
 }
-
 header .navigation ul li:hover {
 	color: #fdfdfd;
+}
+header.home.scrolled .navigation ul li:not(.donation):hover {
+	background-color: #6495ed;
+}
+
+header .navigation ul li a {
+	display: block;
+	transition: padding 300ms;
+}
+header .navigation ul li:not(.donation) a {
+	padding: 15px 5px;
+}
+header.scrolled .navigation ul li:not(.donation) a {
+	padding: 15px;
 }
 
 header .navigation ul li.donation {
@@ -73,18 +90,26 @@ header .navigation ul li.donation {
 	aspect-ratio: 1 / 1;
 	object-fit: cover;
 	filter: drop-shadow(2px 2px 2px black);
+	transition: color 300ms, transform 300ms;
 }
-
 header .navigation ul li.donation:hover {
 	color: #ea609e;
 	transform: scale(1.1);
 }
 
 header .navigation ul li.search {
-	height: 20px;
+	--inner-height: 20px;
+	--margin-space: 8px;
+	
+	cursor: pointer;
+	height: calc(var(--inner-height) + 2 * var(--margin-space));
+	padding: var(--margin-space);
 	border-radius: 50%;
 	aspect-ratio: 1 / 1;
 	object-fit: cover;
+}
+
+header .navigation ul li.search i {
 	filter: drop-shadow(2px 2px 2px black);
 }
 /* ------------------------------------------------- */

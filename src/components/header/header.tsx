@@ -3,7 +3,6 @@ import Image from "next/image";
 import FontAwesome from "@/components/font-awesome";
 import UserHeader from "./user";
 import HeaderMotion from "./motion";
-import styles from "@s/common/header.module.css";
 
 export default function Header() {
 	return (
