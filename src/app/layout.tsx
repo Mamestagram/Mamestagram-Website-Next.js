@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 		template: "%s | Mamestagram"
 	},
 	description: "Welcome to Mamestagram! This is an osu! private server operated by Mamesosu Dev Team."
+	
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -31,20 +32,18 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 	const userInfo: UserInfo = {
 		isLoggedIn: false
 	};
+	const bannerImages = ["home", "leaderboard", "documents"];
 	
 	return (
 		<html lang="ja">
-			<Head>
-				<meta charSet="utf-8"/>
-				<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-				<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-			</Head>
 			<body>
 				<UserProvider serverInfo={serverInfo} userInfo={userInfo}>
 					<Header/>
-					<div className="banner">
-						<Image src={`/images/banner/${serverInfo.subDomain}.jpg`} fill sizes="100vw" alt="" priority/>
-					</div>
+					{bannerImages.includes(serverInfo.subDomain) &&
+						<div className="banner">
+							<Image src={`/images/banner/${serverInfo.subDomain}.jpg`} fill sizes="100vw" alt="" priority/>
+						</div>
+					}
 					<main>
 						{children}
 					</main>

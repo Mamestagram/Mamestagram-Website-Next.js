@@ -7,9 +7,11 @@ import HeaderMotion from "./motion";
 export default function Header() {
 	return (
 		<header>
-			<Link className="top" href="/">
-				<Image src="/images/logo.png" alt="" fill sizes="(max-width: 768px) 100vw, 50vw" priority/>
-			</Link>
+			<nav className="top-bar">
+				<Link className="top" href="/">
+					<Image src="/images/logo.png" alt="" fill sizes="(max-width: 768px) 100vw, 50vw" priority/>
+				</Link>
+			</nav>
 			<nav className="navigation">
 				<ul>
 					<li className="leaderboard">
