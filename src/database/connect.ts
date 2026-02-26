@@ -14,10 +14,15 @@ export const executeQuery = <T>(query: string, args?: QueryArgs): Promise<T exte
 	return new Promise((resolve, reject) => {
 		const questionSymbol = query.match(/\?/g)?.length ?? 0, argsSize = args?.length ?? 0;
 		if (questionSymbol === argsSize) {
-			pool.query(query, args, (err, result) => {
-				if (err !== null) reject(err);
-				else resolve(result as T extends undefined ? QueryResult : T[]);
-			});
+			try {
+				pool.query(query, args, (err, result) => {
+					if (err !== null) reject(err);
+					else resolve(result as T extends undefined ? QueryResult : T[]);
+				});
+			}
+			catch (err) {
+				reject(err);
+			}
 		} else {
 			reject(`Doesn't match number of arguments (question symbol: ${questionSymbol}, args: ${argsSize})`);
 		}
