@@ -2,8 +2,7 @@
 import React, { createContext, useContext } from "react";
 
 export type ServerInfo = {
-	baseDomain: string,
-	segment: string
+	baseDomain: string
 };
 
 export type UserInfo = {

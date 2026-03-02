@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 // noinspection JSUnusedGlobalSymbols
-export const proxy = async (req: NextRequest) => {
+export const proxy = async () => {
 	return NextResponse.next();
 }
 

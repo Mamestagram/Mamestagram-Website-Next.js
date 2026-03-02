@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
-// import { usePathname } from "next/navigation";
-// import { cookies } from "next/headers";
-import Image from "next/image";
 import React from "react";
 import type { ServerInfo, UserInfo } from "@/components/context";
 import { UserProvider } from "@/components/context";
+import BannerImage from "@/components/banner-image";
 import Header from "@/components/header/header";
 import "flag-icons/css/flag-icons.min.css";
 import "@s/global/reset.css";
@@ -23,25 +21,20 @@ export const metadata: Metadata = {
 	
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	const serverInfo: ServerInfo = {
-		baseDomain: process.env.BASE_DOMAIN!,
-		segment: /*usePathname().split("/").at(1) || */"home",
+		baseDomain: process.env.BASE_DOMAIN!
 	};
 	const userInfo: UserInfo = {
 		isLoggedIn: false
 	};
-	const bannerImages = ["home", "leaderboard", "documents"];
 	
 	return (
 		<html lang="ja">
 			<body>
 				<UserProvider serverInfo={serverInfo} userInfo={userInfo}>
 					<Header/>
-					{bannerImages.includes(serverInfo.segment) &&
-						<div className="banner">
-							<Image src={`/images/banner/${serverInfo.segment}.jpg`} fill sizes="100vw" alt="" priority/>
-						</div>}
+					<BannerImage/>
 					<main>
 						{children}
 					</main>
