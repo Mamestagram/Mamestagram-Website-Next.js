@@ -4,7 +4,7 @@ import { useUserContext } from "@/components/context";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function UserHeader() {
+export default function UserContainer() {
 	const { serverInfo, userInfo } = useUserContext();
 	
 	return userInfo.isLoggedIn

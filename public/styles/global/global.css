@@ -40,8 +40,10 @@ header.leaderboard .navigation ul li.sign-in {
 }
 header.home .navigation ul li.register:hover,
 header.home .navigation ul li.sign-in:hover,
+header.home .navigation ul li.avatar:hover,
 header.leaderboard .navigation ul li.register:hover,
-header.leaderboard .navigation ul li.sign-in:hover {
+header.leaderboard .navigation ul li.sign-in:hover,
+header.leaderboard .navigation ul li.avatar:hover {
 	@media (max-width: 845px) {
 		background-color: #35364d;
 	}
@@ -65,7 +67,7 @@ header {
 	
 	display: grid;
 	grid-template-columns: var(--header-height) 1fr;
-	grid-template-rows: var(--header-height);
+	grid-template-rows: 1fr;
 	grid-gap: 0 15px;
 	position: fixed;
 	top: 0;
@@ -140,6 +142,8 @@ header .navigation {
 }
 
 header .navigation ul {
+	--mobile-height: calc(var(--header-height) - 10px);
+	
 	display: grid;
 	grid-template-rows: var(--header-height);
 	grid-template-columns: repeat(4, max-content) 1fr repeat(2, max-content);
@@ -151,10 +155,15 @@ header .navigation ul {
 	transition: grid-template-rows 300ms, grid-gap 300ms;
 	
 	@media (max-width: 845px) {
-		grid-template-rows: repeat(5, var(--header-height));
+		grid-template-rows: repeat(5, var(--mobile-height));
 		grid-template-columns: 1fr;
 		grid-gap: 0;
 		justify-items: start;
+	}
+}
+header .navigation ul:has(.avatar) {
+	@media (max-width: 845px) {
+		grid-template-rows: repeat(4, 45px);
 	}
 }
 header.scrolled .navigation ul {
@@ -173,8 +182,8 @@ header .navigation ul li {
 	transition: background-color 300ms, color 300ms, text-shadow 300ms;
 	
 	@media (max-width: 845px) {
-		height: var(--header-height);
-		line-height: var(--header-height);
+		height: var(--mobile-height);
+		line-height: var(--mobile-height);
 		width: 100%;
 		border-radius: unset;
 	}
@@ -198,12 +207,15 @@ header .navigation ul li:not(.donation) a {
 	}
 }
 
-header .navigation ul li.donation {
-	height: 21px;
-	border-radius: 50%;
+header .donation {
+	color: #919495;
 	aspect-ratio: 1 / 1;
 	object-fit: cover;
 	filter: drop-shadow(2px 2px 2px black);
+}
+
+header .navigation ul li.donation {
+	height: 21px;
 	transition: color 300ms, transform 300ms;
 	
 	@media (max-width: 845px) {
@@ -234,6 +246,19 @@ header .navigation ul li.search {
 
 header .navigation ul li.search i {
 	filter: drop-shadow(2px 2px 2px black);
+}
+
+header .navigation ul li.register,
+header .navigation ul li.avatar {
+	@media (max-width: 845px) {
+		grid-row: 1 / 2;
+	}
+}
+
+header .navigation ul li.sign-in {
+	@media (max-width: 845px) {
+		grid-row: 2 / 3;
+	}
 }
 /* ------------------------------------------------- */
 main {
