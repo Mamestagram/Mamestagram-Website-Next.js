@@ -3,7 +3,7 @@ import React, { createContext, useContext } from "react";
 
 export type ServerInfo = {
 	baseDomain: string,
-	subDomain: string
+	segment: string
 };
 
 export type UserInfo = {
@@ -44,6 +44,8 @@ export const UserProvider = ({ serverInfo, userInfo, children }: Readonly<{
 		</UserContext.Provider>
 	);
 }
+
+
 
 export const useUserContext = () => {
 	const context = useContext(UserContext);

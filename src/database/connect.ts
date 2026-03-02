@@ -8,7 +8,15 @@ const [host, user, password, database] = [
 	process.env.MYSQL_PASS,
 	process.env.MYSQL_DB
 ];
-const pool = mysql.createPool({ host, user, password, database });
+const pool = mysql.createPool({
+	host,
+	user,
+	password,
+	database,
+	waitForConnections: true,
+	connectionLimit: 10,
+	queueLimit: 50
+});
 
 export const executeQuery = <T>(query: string, args?: QueryArgs): Promise<T extends undefined ? QueryResult : T[]> => {
 	return new Promise((resolve, reject) => {

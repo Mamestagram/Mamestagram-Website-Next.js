@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
-import Head from "next/head";
+// import { usePathname } from "next/navigation";
+// import { cookies } from "next/headers";
 import Image from "next/image";
 import React from "react";
 import type { ServerInfo, UserInfo } from "@/components/context";
@@ -23,11 +23,10 @@ export const metadata: Metadata = {
 	
 };
 
-export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-	const cookieStore = await cookies();
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	const serverInfo: ServerInfo = {
 		baseDomain: process.env.BASE_DOMAIN!,
-		subDomain: cookieStore.get("sub-domain")!.value
+		segment: /*usePathname().split("/").at(1) || */"home",
 	};
 	const userInfo: UserInfo = {
 		isLoggedIn: false
@@ -39,11 +38,10 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 			<body>
 				<UserProvider serverInfo={serverInfo} userInfo={userInfo}>
 					<Header/>
-					{bannerImages.includes(serverInfo.subDomain) &&
+					{bannerImages.includes(serverInfo.segment) &&
 						<div className="banner">
-							<Image src={`/images/banner/${serverInfo.subDomain}.jpg`} fill sizes="100vw" alt="" priority/>
-						</div>
-					}
+							<Image src={`/images/banner/${serverInfo.segment}.jpg`} fill sizes="100vw" alt="" priority/>
+						</div>}
 					<main>
 						{children}
 					</main>
