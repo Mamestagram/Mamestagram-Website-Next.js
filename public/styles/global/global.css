@@ -1,3 +1,10 @@
+:root {
+	--glass-bg: rgba(255, 255, 255, 0.03);
+	--glass-border: rgba(255, 255, 255, 0.08);
+	--glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+	--glass-hover: rgba(255, 255, 255, 0.06);
+}
+
 /* page */
 body.home::-webkit-scrollbar-track {
 	background-color: #fdfdfd;
@@ -6,6 +13,7 @@ body.home::-webkit-scrollbar-thumb {
 	background-color: #2e293d;
 }
 
+/*
 header.home,
 header.leaderboard {
 	@media (max-width: 845px) {
@@ -16,6 +24,7 @@ header.home.scrolled,
 header.leaderboard.scrolled {
 	background-color: #345c84;
 }
+*/
 
 header.leaderboard.scrolled .navigation ul .leaderboard {
 	background-color: #6495ed;
@@ -49,9 +58,9 @@ header.leaderboard .navigation ul li.avatar:hover {
 	}
 }
 
-header.home .navigation ul li:hover,
-header.leaderboard .navigation ul li:hover {
-	background-color: rgb(65, 105, 225, 0.4);
+header.home .navigation ul li:not(.donation):hover,
+header.leaderboard .navigation ul li:not(.donation):hover {
+	background-color: rgba(10, 10, 16, 0.4);
 	
 	@media (max-width: 845px) {
 		background-color: rgb(65, 105, 225, 0.3);
@@ -63,7 +72,7 @@ header.leaderboard.scrolled .navigation ul li:not(.donation):hover {
 }
 /* header */
 header {
-	--header-height: 80px;
+	--header-height: 70px;
 	
 	display: grid;
 	grid-template-columns: var(--header-height) 1fr;
@@ -76,8 +85,15 @@ header {
 	width: 100%;
 	padding-left: 7%;
 	padding-right: 8%;
-	z-index: 100;
-	transition: grid-template 300ms, background-color 300ms, height 300ms, padding 300ms, box-shadow 300ms;
+	border-bottom: 1px solid var(--glass-border);
+	backdrop-filter: blur(5px);
+	z-index: 1000;
+	transition:
+		grid-template 300ms,
+		background-color 300ms,
+		height 300ms,
+		padding 300ms,
+		backdrop-filter 300ms;
 	
 	@media (max-width: 940px) {
 		padding: 0;
@@ -94,9 +110,11 @@ header {
 header.scrolled {
 	--header-height: 60px;
 	
+	background-color: rgba(10, 10, 16, 0.7);
 	height: var(--header-height);
-	padding: 0 5%;
-	box-shadow: 0 5px 5px black;
+	padding-left: 5%;
+	padding-right: 6%;
+	backdrop-filter: blur(20px);
 	
 	@media (max-width: 940px) {
 		padding: 0;
@@ -104,16 +122,32 @@ header.scrolled {
 }
 
 header .top-bar {
+	display: grid;
+	grid-template-rows: 1fr;
+	grid-template-columns: 1fr;
+	grid-gap: 0 5px;
 	height: inherit;
+	width: 100%;
+	justify-items: center;
+	align-items: center;
 	transition: box-shadow 300ms;
 	
 	@media (max-width: 845px) {
+		grid-template-columns: var(--header-height) 1fr repeat(2, max-content);
 		box-shadow: 0 5px 5px black;
 		z-index: 1;
 	}
 }
 
-header .top-bar a {
+header .top-bar > *:not(.top) {
+	display: none;
+	
+	@media (max-width: 845px) {
+		display: unset;
+	}
+}
+
+header .top-bar .top {
 	display: block;
 	position: relative;
 	height: inherit;
@@ -121,20 +155,26 @@ header .top-bar a {
 	transition: transform 300ms;
 }
 
-header .top-bar a:hover {
+header .top-bar .top:hover {
 	transform: scale(1.1);
 }
 
-header .top-bar a img {
-	padding: 10px;
+header .top-bar .top img {
+	padding: 5px;
 	transition: padding 300ms;
+}
+
+header .top-bar .page-title {
+	margin-right: auto;
 	
 	@media (max-width: 845px) {
-		padding: 5px;
+		grid-column: 2;
 	}
 }
-header.scrolled .top-bar a img {
-	padding: 5px;
+
+header .top-bar .donation,
+header .top-bar .search {
+	margin: 0 10px;
 }
 
 header .navigation {
@@ -149,7 +189,6 @@ header .navigation ul {
 	grid-template-columns: repeat(4, max-content) 1fr repeat(2, max-content);
 	grid-gap: 0 10px;
 	font-size: 16px;
-	font-weight: bold;
 	justify-items: center;
 	align-items: center;
 	transition: grid-template-rows 300ms, grid-gap 300ms;
@@ -177,9 +216,14 @@ header.scrolled .navigation ul {
 
 header .navigation ul li {
 	color: #919495;
+	font-weight: bold;
 	border-radius: calc(var(--header-height) / 2);
 	text-shadow: 2px 2px 2px black;
-	transition: background-color 300ms, color 300ms, text-shadow 300ms;
+	transition:
+		background-color 300ms,
+		color 300ms,
+		font-weight 300ms,
+		text-shadow 300ms;
 	
 	@media (max-width: 845px) {
 		height: var(--mobile-height);
@@ -187,6 +231,11 @@ header .navigation ul li {
 		width: 100%;
 		border-radius: unset;
 	}
+}
+header.scrolled .navigation ul li {
+	color: #fdfdfd;
+	font-weight: normal;
+	text-shadow: unset;
 }
 header .navigation ul li:hover {
 	color: #fdfdfd;
@@ -209,43 +258,45 @@ header .navigation ul li:not(.donation) a {
 
 header .donation {
 	color: #919495;
+	height: 21px;
 	aspect-ratio: 1 / 1;
 	object-fit: cover;
 	filter: drop-shadow(2px 2px 2px black);
-}
-
-header .navigation ul li.donation {
-	height: 21px;
 	transition: color 300ms, transform 300ms;
-	
-	@media (max-width: 845px) {
-		display: none;
-	}
 }
-header .navigation ul li.donation:hover {
+header .donation:hover {
 	color: #ea609e;
 	transform: scale(1.1);
 }
 
-header .navigation ul li.search {
+header .navigation ul li.donation {
+	@media (max-width: 845px) {
+		display: none;
+	}
+}
+
+header .search {
 	--inner-height: 20px;
 	--margin-space: 8px;
 	
 	cursor: pointer;
 	height: calc(var(--inner-height) + 2 * var(--margin-space));
 	padding: var(--margin-space);
-	margin-left: auto;
 	border-radius: 50%;
 	aspect-ratio: 1 / 1;
 	object-fit: cover;
+}
+
+header .search i {
+	filter: drop-shadow(2px 2px 2px black);
+}
+
+header .navigation ul li.search {
+	margin-left: auto;
 	
 	@media (max-width: 845px) {
 		display: none;
 	}
-}
-
-header .navigation ul li.search i {
-	filter: drop-shadow(2px 2px 2px black);
 }
 
 header .navigation ul li.register,
