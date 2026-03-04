@@ -1,8 +1,8 @@
-import HomeMotion from "@/components/home/motion";
+import NameBodyHeader from "@/components/name-body-header";
 import { writeLog } from "@/lib/log";
 
 export default function Home() {
 	writeLog("GET", "/").then();
 	
-	return <><HomeMotion/></>;
+	return <><NameBodyHeader className="home"/></>;
 }

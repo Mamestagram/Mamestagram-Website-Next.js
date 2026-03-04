@@ -28,7 +28,7 @@ export default function Header() {
 			<nav className="navigation">
 				<ul>
 					<li className="leaderboard">
-						<Link href="/leaderboard/std/performance">Leaderboard</Link>
+						<Link href="/leaderboard">Leaderboard</Link>
 					</li>
 					<li className="documents">
 						<Link href="/documents">Documents</Link>
