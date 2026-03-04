@@ -19,6 +19,11 @@
 }
 
 @font-face {
+	font-family: "ReggaeOne";
+	src: url("../../fonts/ReggaeOne-Regular.ttf") format("truetype");
+}
+
+@font-face {
 	font-family: "JetBrainsMono";
 	src: url("../../fonts/JetBrainsMono-Regular.ttf") format("truetype");
 }

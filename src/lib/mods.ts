@@ -1,0 +1,26 @@
+// noinspection JSUnusedGlobalSymbols
+export enum Mods {
+	nm = "No Mod",
+	nf = "No Fail",
+	ez = "Eazy",
+	ht = "Half Time",
+	hr = "Hard Rock",
+	sd = "Sudden Death",
+	pf = "Perfect",
+	dt = "Double Time",
+	nc = "Nightcore",
+	fi = "Fade In",
+	hd = "Hidden",
+	fl = "Flashlight",
+	rx = "Relax",
+	ap = "Auto Pilot",
+	so = "Spun Out",
+	k4 = "4 Keys",
+	k5 = "5 Keys",
+	k6 = "6 Keys",
+	k7 = "7 Keys",
+	k8 = "8 Keys",
+	k9 = "9 Keys",
+	mr = "Mirror",
+	v2 = "Score V2"
+}
