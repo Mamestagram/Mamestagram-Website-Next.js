@@ -7,6 +7,12 @@
 		rgba(255, 255, 255, 0.17) 50%,
 		rgba(255, 255, 255, 0.06) 100%
 	);
+	--glass-bg-light-hover: linear-gradient(
+		135deg,
+		rgba(255, 255, 255, 0.28) 0%,
+		rgba(255, 255, 255, 0.20) 50%,
+		rgba(255, 255, 255, 0.08) 100%
+	);
 	--glass-border-light: rgba(255, 255, 255, 0.3);
 	--glass-text-shadow-light:
 		0 0 1px currentColor,
@@ -16,11 +22,14 @@
 	/* dark */
 	--glass-bg-dark: linear-gradient(
 		135deg,
-		rgba(10, 10, 16, 0.7) 0%,
-		rgba(10, 10, 16, 0.6) 60%,
-		rgba(180, 180, 180, 0.08) 100%
+		rgba(8, 8, 14, 0.75) 0%,
+		rgba(10, 10, 16, 0.65) 70%,
+		rgba(20, 30, 50, 0.2) 100%
 	);
 	--glass-border-dark: rgba(255, 255, 255, 0.03);
+	--glass-text-shadow-dark:
+		0 3px 8px rgba(0, 0, 0, 0.6),
+		0 -1px 0 rgba(255, 255, 255, 0.18);
 	/* ----- */
 	--glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 	--glass-hover: rgba(255, 255, 255, 0.06);
@@ -210,6 +219,7 @@ header {
 			}
 			
 			& li {
+				position: relative;
 				font-weight: bold;
 				border-radius: calc(var(--header-height) / 2);
 				text-shadow: var(--glass-text-shadow-light);
@@ -218,12 +228,27 @@ header {
 					color 300ms,
 					font-weight 300ms,
 					text-shadow 300ms,
+					box-shadow 300ms,
 					transform 300ms;
 				
+				&::before {
+					content: "";
+					position: absolute;
+					inset: 0;
+					background: var(--glass-bg-light-hover);
+					border-radius: inherit;
+					opacity: 0;
+					z-index: -1;
+					transition: opacity 300ms;
+				}
+				
 				header.scrolled & {
-					color: #fdfdfd;
+					color: #b0b0c0 !important;
 					font-weight: normal;
-					text-shadow: unset;
+					text-shadow: var(--glass-text-shadow-dark);
+					box-shadow:
+						0 15px 35px rgba(0, 0, 0, 0.5),
+						inset 0 1px 0 rgba(255, 255, 255, 0.06);
 					
 					&:hover {
 						text-shadow: 2px 2px 5px black;
@@ -232,7 +257,13 @@ header {
 				
 				&:not(.donation) {
 					&:hover {
-						color: #fdfdfd;
+						box-shadow:
+							0 15px 35px rgba(0, 0, 0, 0.5),
+							inset 0 1px 0 rgba(255, 255, 255, 0.2);
+						
+						&::before {
+							opacity: 1;
+						}
 					}
 					
 					& a {
@@ -249,8 +280,6 @@ header {
 					color: #23282d;
 					
 					&:not(.donation):hover {
-						background-color: rgba(10, 10, 16, 0.4);
-						
 						@media (max-width: 845px) {
 							background-color: rgb(65, 105, 225, 0.3);
 						}
