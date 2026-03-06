@@ -24,6 +24,7 @@ export default function Header() {
 				<div className="search">
 					<FontAwesome prefix="fas" name="magnifying-glass"/>
 				</div>
+				
 			</nav>
 			<nav className="navigation">
 				<ul>
