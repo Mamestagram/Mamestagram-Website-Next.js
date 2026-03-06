@@ -2,8 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import FontAwesome from "@/components/font-awesome";
 import PageTitle from "./page-title";
+import ArrowChevron from "./arrow";
 import UserContainer from "./user-container";
-import HeaderMotion from "./motion";
+import ScrollMotion from "./scroll-motion";
 
 export default function Header() {
 	return (
@@ -24,14 +25,16 @@ export default function Header() {
 				<div className="search">
 					<FontAwesome prefix="fas" name="magnifying-glass"/>
 				</div>
-				
+				<ArrowChevron/>
 			</nav>
 			<nav className="navigation">
 				<ul>
 					<li className="leaderboard">
+						<span className="pipe"></span>
 						<Link href="/leaderboard">Leaderboard</Link>
 					</li>
 					<li className="documents">
+						<span className="pipe"></span>
 						<Link href="/documents">Documents</Link>
 					</li>
 					<li className="community">
@@ -55,7 +58,7 @@ export default function Header() {
 					<UserContainer/>
 				</ul>
 			</nav>
-			<HeaderMotion/>
+			<ScrollMotion/>
 		</header>
 	);
 }

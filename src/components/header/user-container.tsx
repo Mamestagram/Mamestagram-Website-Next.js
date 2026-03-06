@@ -28,9 +28,11 @@ export default function UserContainer() {
 		: (
 			<>
 				<li className="register">
+					<span className="pipe"></span>
 					<Link href="/register">Register</Link>
 				</li>
 				<li className="sign-in">
+					<span className="pipe"></span>
 					<Link href="/signin">Sign in</Link>
 				</li>
 			</>

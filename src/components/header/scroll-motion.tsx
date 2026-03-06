@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useLayoutEffect, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 
-export default function HeaderMotion() {
+export default function ScrollMotion() {
 	const header = useRef<HTMLElement>(null);
 	const [scrollPos, setScrollPos] = useState(0);
 	
@@ -10,7 +10,7 @@ export default function HeaderMotion() {
 		setScrollPos(window.scrollY);
 	}
 	
-	useLayoutEffect(() => {
+	useEffect(() => {
 		header.current = document.querySelector("header");
 		window.addEventListener("scroll", scrollHeader);
 		return () => {

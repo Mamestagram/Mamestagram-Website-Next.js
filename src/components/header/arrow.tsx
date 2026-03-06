@@ -1,28 +1,47 @@
 "use client";
 
-import { useRef, useState, useLayoutEffect, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import FontAwesome from "@/components/font-awesome";
 
 export default function ArrowChevron() {
 	const arrow = useRef<HTMLDivElement>(null);
+	const navigation = useRef<HTMLElement>(null);
 	const [arrowDirection, setArrowDirection] = useState<"up" | "down">("down");
+	
+	const clickBody = (e: PointerEvent) => {
+		if (!arrow.current!.contains(e.target as HTMLDivElement))
+			setArrowDirection("down");
+	}
 	
 	const clickArrow = () => {
 		setArrowDirection((prevState) => prevState === "down" ? "up" : "down");
 	}
 	
-	useLayoutEffect(() => {
+	useEffect(() => {
 		const arrowElement = arrow.current!;
-		arrowElement.classList.add("down");
-		arrowElement.addEventListener("click", clickArrow);
+		navigation.current = document.querySelector("header .navigation");
+		navigation.current!.classList.remove("mobile-show");
+		document.addEventListener("click", clickBody);
 		return () => {
-			arrowElement.classList.remove("up", "down");
-			arrowElement.removeEventListener("click", clickArrow);
+			document.removeEventListener("click", clickBody);
+			arrowElement.classList.remove("up");
 		}
 	}, []);
 	
+	useEffect(() => {
+		arrow.current!.classList.remove("up", "down");
+		arrow.current!.classList.add(arrowDirection);
+		if (arrowDirection === "up")
+			navigation.current!.classList.add("mobile-show");
+		else
+			navigation.current!.classList.remove("mobile-show");
+		arrow.current!.classList.remove("up", "down");
+		arrow.current!.classList.add(arrowDirection);
+		
+	}, [arrowDirection]);
+	
 	return (
-		<div className="arrow" ref={arrow}>
+		<div className="arrow down" onClick={clickArrow} ref={arrow}>
 			<FontAwesome prefix="fas" name="chevron-down"/>
 		</div>
 	);
