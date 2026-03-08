@@ -210,7 +210,7 @@ header {
 					filter,
 					transform;
 				transition-duration: 300ms;
-				transition-timing-function: cubic-bezier(.4,0,.2,1);
+				transition-timing-function: cubic-bezier(.4, 0, .2, 1);
 				
 				&::before {
 					content: "";

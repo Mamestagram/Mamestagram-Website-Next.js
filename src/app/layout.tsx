@@ -4,6 +4,7 @@ import type { ServerInfo, UserInfo } from "@/components/context";
 import { UserProvider } from "@/components/context";
 import BannerImage from "@/components/banner-image";
 import Header from "@/components/header/header";
+import Footer from "@/components/footer/footer";
 import "flag-icons/css/flag-icons.min.css";
 import "@s/global/reset.css";
 import "@s/global/global.css";
@@ -38,6 +39,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 					<main>
 						{children}
 					</main>
+					<Footer/>
 				</UserProvider>
 			</body>
 		</html>
