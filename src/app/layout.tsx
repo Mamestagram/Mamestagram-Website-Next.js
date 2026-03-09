@@ -31,7 +31,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 	};
 	
 	return (
-		<html lang="ja">
+		<html lang="en">
 			<body>
 				<UserProvider serverInfo={serverInfo} userInfo={userInfo}>
 					<Header/>
