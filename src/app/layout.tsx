@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import React from "react";
+import type { ReactNode } from "react";
 import type { ServerInfo, UserInfo } from "@/components/context";
 import { UserProvider } from "@/components/context";
 import BannerImage from "@/components/banner-image";
@@ -19,10 +19,9 @@ export const metadata: Metadata = {
 		template: "%s | Mamestagram"
 	},
 	description: "Welcome to Mamestagram! This is an osu! private server operated by Mamesosu Dev Team."
-	
 };
 
-export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
 	const serverInfo: ServerInfo = {
 		baseDomain: process.env.BASE_DOMAIN!
 	};

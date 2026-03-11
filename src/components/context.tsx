@@ -1,5 +1,6 @@
 "use client";
-import React, { createContext, useContext } from "react";
+import type { ReactNode } from "react";
+import { createContext, useContext } from "react";
 
 export type ServerInfo = {
 	baseDomain: string
@@ -27,7 +28,7 @@ const UserContext = createContext<ContextType | null>(null);
 export const UserProvider = ({ serverInfo, userInfo, children }: Readonly<{
 	serverInfo: ServerInfo,
 	userInfo: UserInfo,
-	children: React.ReactNode
+	children: ReactNode
 }>) => {
 	const datetime = new Date().toLocaleString("ja-JP", {
 		year: "numeric",

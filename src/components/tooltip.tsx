@@ -9,13 +9,13 @@ export default function Tooltip({
 	bubble = false,
 	description,
 	children
-}: {
+}: Readonly<{
 	className?: string,
 	direction?: "up" | "down",
 	bubble?: boolean,
 	description?: string,
 	children?: React.ReactNode
-}) {
+}>) {
 	return (
 		<span className={classnames("tooltip-element", direction, className)}>
 			{children}

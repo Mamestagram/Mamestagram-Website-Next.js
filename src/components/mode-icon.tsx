@@ -1,7 +1,7 @@
 "use client";
 
-import { Mode } from "@/lib/mode";
+import { VnMode } from "@/lib/mode";
 
-export default function ModeIcon({ mode }: { mode: Mode }) {
-	return <i className={`mode-icon mode-${Mode[mode]}`}></i>;
+export default function ModeIcon({ mode }: { mode: VnMode }) {
+	return <i className={`mode-icon mode-${mode}`}></i>;
 }

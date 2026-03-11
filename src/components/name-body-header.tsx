@@ -2,7 +2,7 @@
 
 import { useLayoutEffect } from "react";
 
-export default function NameBodyHeader({ className }: { className: string }) {
+export default function NameBodyHeader({ className }: Readonly<{ className: string }>) {
 	useLayoutEffect(() => {
 		document.body.classList.add(className);
 		document.querySelector("header")!.classList.add(className);
