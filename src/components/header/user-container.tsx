@@ -7,8 +7,8 @@ import Link from "next/link";
 export default function UserContainer() {
 	const { serverInfo, userInfo } = useUserContext();
 	
-	return userInfo.isLoggedIn
-		? (
+	if (userInfo.isLoggedIn) {
+		return (
 			<li className="avatar" title={userInfo.username}>
 				<Image className="avatar-img"
 				       src={`https://a.${serverInfo.baseDomain}/${userInfo.id}`}
@@ -24,8 +24,10 @@ export default function UserContainer() {
 					       sizes="(max-width: 768px) 100vw, 50vw"
 					       priority/>}
 			</li>
-		)
-		: (
+		);
+	}
+	else {
+		return (
 			<>
 				<li className="register">
 					<span className="pipe"></span>
@@ -37,4 +39,5 @@ export default function UserContainer() {
 				</li>
 			</>
 		);
+	}
 }

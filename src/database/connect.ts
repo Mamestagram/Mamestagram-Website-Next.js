@@ -1,4 +1,5 @@
-import mysql, { QueryResult } from "mysql2";
+import type { QueryResult } from "mysql2";
+import mysql from "mysql2";
 
 export type QueryArgs = (string | number | boolean)[] | null;
 
