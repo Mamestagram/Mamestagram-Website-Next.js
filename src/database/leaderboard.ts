@@ -18,7 +18,11 @@ type RankingList = {
 	aCount: number
 };
 
-class Leaderboard {
+interface Ranking {
+	ranking: RankingList;
+}
+
+export class Leaderboard {
 	private static readonly sortColumnNames: { [key in Exclude<SortBy, "dans">]: string } = Object.freeze({
 		performance: "pp",
 		score: "rscore",
