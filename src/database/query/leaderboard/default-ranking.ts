@@ -1,6 +1,8 @@
-export const sqlQuery = `
-	SELECT u.id AS userId,
-	       RANK() OVER(ORDER BY ? DESC) 'rank',
+import { Priv } from "@/lib/priv";
+
+export const defaultRankingQuery = `
+	SELECT u.id,
+	       RANK() OVER(ORDER BY ? DESC) 'rank', -- ...SortBy[]
 	       country,
 	       tag,
 	       u.name,
@@ -16,10 +18,9 @@ export const sqlQuery = `
 	    ON u.id = s.id
 	LEFT JOIN clans c
 	    ON clan_id = c.id
-	WHERE mode = ?
-	    AND NOT u.id = 1
+	WHERE NOT u.id = 1
+      	AND (priv & ${Priv.unrestricted}) > 0
 	    AND NOT acc = 0
-	    AND (priv & ?) > 0
-	ORDER BY ? DESC
-	LIMIT 50;
+		AND mode = ? -- ModeNum
+	ORDER BY ? DESC -- ...SortBy[]
 `;
