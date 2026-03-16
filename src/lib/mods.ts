@@ -24,3 +24,39 @@ export enum Mods {
 	mr = "Mirror",
 	v2 = "Score V2"
 }
+
+// noinspection JSUnusedGlobalSymbols
+export enum ModNum {
+	nm,
+	nf = 1 << 0,
+	ez = 1 << 1,
+	ts = 1 << 2,
+	hd = 1 << 3,
+	hr = 1 << 4,
+	sd = 1 << 5,
+	dt = 1 << 6,
+	rx = 1 << 7,
+	ht = 1 << 8,
+	nc = 1 << 9,
+	fl = 1 << 10,
+	at = 1 << 11,
+	so = 1 << 12,
+	ap = 1 << 13,
+	pf = 1 << 14,
+	k4 = 1 << 15,
+	k5 = 1 << 16,
+	k6 = 1 << 17,
+	k7 = 1 << 18,
+	k8 = 1 << 19,
+	fi = 1 << 20,
+	rd = 1 << 21,
+	cm = 1 << 22,
+	tr = 1 << 23,
+	k9 = 1 << 24,
+	kc = 1 << 25,
+	k1 = 1 << 26,
+	k3 = 1 << 27,
+	k2 = 1 << 28,
+	v2 = 1 << 29,
+	mr = 1 << 30
+}

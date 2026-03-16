@@ -66,23 +66,33 @@ const getRankingQuery = (mode: ModeNum, sortBy: SortBy, options: RankingOptions)
 				columnName !== sortColumnNames[sortBy as keyof typeof sortColumnNames])
 		]
 		: Object.values(sortColumnNames);
+	const rankningQueryKey = sortBy !== "dans" ? "normal" : sortBy;
 	if (options.country !== undefined && !options.clan) {
 		return {
-			query: defaultRankingQuery,
-			args: [`${sortByOrder}`, mode, `${sortByOrder}`]
+			query: defaultRankingQuery[rankningQueryKey],
+			args: sortBy !== "dans"
+				? [`${sortByOrder}`, mode, `${sortByOrder}`]
+				: [mode]
 		};
 	}
 	else if (options.clan) {
 		return {
-			query: clanRankingQuery,
-			args: [`${sortByOrder.map((sort) => `AVG(${sort})`)}`, mode, `${sortByOrder.map((sort) => `AVG(${sort})`)}`]
+			query: clanRankingQuery[rankningQueryKey],
+			args: sortBy !== "dans"
+				? [`${sortByOrder.map((sort) => `AVG(${sort})`)}`, mode, `${sortByOrder.map((sort) => `AVG(${sort})`)}`]
+				: [mode]
 		};
 	}
-	else /*if (options.country !== undefined)*/ {
+	else if (options.country !== undefined) {
 		return {
-			query: countryRankingQuery,
-			args: [`${sortByOrder}`, mode, options.country!, `${sortByOrder}`]
+			query: countryRankingQuery[rankningQueryKey],
+			args: sortBy !== "dans"
+				? [`${sortByOrder}`, mode, options.country, `${sortByOrder}`]
+				: [mode, options.country]
 		};
+	}
+	else {
+		return { query: "", args: null };
 	}
 }
 
@@ -97,15 +107,15 @@ const getPages = async (sqlQuery: string, sqlArgs: QueryArgs) => {
 	}
 }
 
-const getLeaderboard = async (mode: ModeNum, sortBy: SortBy, options: RankingOptions): Promise<Ranking> => {
+export const getLeaderboard = async (mode: ModeNum, sortBy: SortBy, options: RankingOptions): Promise<Ranking> => {
 	const { query, args } = getRankingQuery(mode, sortBy, options);
 	try {
 		const ranking = await executeQuery<RankingList>(
 			`
-				${query}
-				LIMIT 50
-				${options.page !== undefined ? `OFFSET ${options.page * 50}` : ""}
-				`,
+			${query}
+			LIMIT 50
+			${options.page !== undefined ? `OFFSET ${options.page * 50}` : ""}
+			`,
 			args
 		);
 		const pages = await getPages(query, args);
