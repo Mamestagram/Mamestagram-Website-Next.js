@@ -24,12 +24,6 @@ type RankingList = {
 	aCount: number
 };
 
-type RankingOptions = {
-	page?: number,
-	country?: string,
-	clan: boolean
-};
-
 type RankingQuery = {
 	query: string,
 	args: QueryArgs
@@ -41,12 +35,12 @@ type Ranking = {
 	countries: { country: string }[]
 }
 
-const sortColumnNames: Readonly<{ [key in Exclude<SortBy, "dans">]: string }> = Object.freeze({
-	performance: "pp",
-	score: "rscore",
-	accuracy: "acc",
-	playcount: "plays"
-});
+enum SortColumnName {
+	performance = "pp",
+	score = "rscore",
+	accuracy = "acc",
+	playcount = "plays"
+}
 
 const getCountryList = async () => {
 	try {
@@ -58,16 +52,15 @@ const getCountryList = async () => {
 	}
 }
 
-const getRankingQuery = (mode: ModeNum, sortBy: SortBy, options: RankingOptions): RankingQuery => {
+const getRankingQuery = (mode: ModeNum, sortBy: SortBy, clan: boolean, country?: string): RankingQuery => {
 	const sortByOrder = sortBy !== "dans"
 		? [
-			sortColumnNames[sortBy],
-			...Object.values(sortColumnNames).filter((columnName) =>
-				columnName !== sortColumnNames[sortBy as keyof typeof sortColumnNames])
+			SortColumnName[sortBy],
+			...Object.values(SortColumnName).filter((columnName) => columnName !== SortColumnName[sortBy]),
 		]
-		: Object.values(sortColumnNames);
+		: Object.values(SortColumnName);
 	const rankningQueryKey = sortBy !== "dans" ? "normal" : sortBy;
-	if (options.country !== undefined && !options.clan) {
+	if (!clan && country === undefined) {
 		return {
 			query: defaultRankingQuery[rankningQueryKey],
 			args: sortBy !== "dans"
@@ -75,7 +68,7 @@ const getRankingQuery = (mode: ModeNum, sortBy: SortBy, options: RankingOptions)
 				: [mode]
 		};
 	}
-	else if (options.clan) {
+	else if (clan) {
 		return {
 			query: clanRankingQuery[rankningQueryKey],
 			args: sortBy !== "dans"
@@ -83,12 +76,12 @@ const getRankingQuery = (mode: ModeNum, sortBy: SortBy, options: RankingOptions)
 				: [mode]
 		};
 	}
-	else if (options.country !== undefined) {
+	else if (country !== undefined) {
 		return {
 			query: countryRankingQuery[rankningQueryKey],
 			args: sortBy !== "dans"
-				? [`${sortByOrder}`, mode, options.country, `${sortByOrder}`]
-				: [mode, options.country]
+				? [`${sortByOrder}`, mode, country, `${sortByOrder}`]
+				: [mode, country]
 		};
 	}
 	else {
@@ -107,20 +100,20 @@ const getPages = async (sqlQuery: string, sqlArgs: QueryArgs) => {
 	}
 }
 
-export const getLeaderboard = async (mode: ModeNum, sortBy: SortBy, options: RankingOptions): Promise<Ranking> => {
-	const { query, args } = getRankingQuery(mode, sortBy, options);
+export const getLeaderboard = async (mode: ModeNum, sortBy: SortBy, page: number, clan: boolean, country?: string): Promise<Ranking> => {
+	const { query, args } = getRankingQuery(mode, sortBy, clan, country);
 	try {
+		const countries = await getCountryList();
 		const ranking = await executeQuery<RankingList>(
 			`
 			${query}
 			LIMIT 50
-			${options.page !== undefined ? `OFFSET ${options.page * 50}` : ""}
+			OFFSET ${(page - 1) * 50}
 			`,
 			args
 		);
 		const pages = await getPages(query, args);
-		const countries = await getCountryList();
-		return { ranking, pages, countries };
+		return { countries, ranking, pages };
 	}
 	catch (error) {
 		writeError(error).then();

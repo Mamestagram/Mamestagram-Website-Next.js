@@ -32,7 +32,8 @@ export const executeQuery = <T>(query: string, args?: QueryArgs): Promise<T exte
 			catch (err) {
 				reject(err);
 			}
-		} else {
+		}
+		else {
 			reject(`Doesn't match number of arguments (question symbol: ${questionSymbol}, args: ${argsSize})`);
 		}
 	});
