@@ -34,7 +34,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 			<body>
 				<UserProvider serverInfo={serverInfo} userInfo={userInfo}>
 					<Header/>
-					<BannerImage/>
+					{/*<BannerImage/>*/}
 					<main>
 						{children}
 					</main>

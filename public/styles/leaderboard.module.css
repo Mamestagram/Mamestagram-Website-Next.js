@@ -1,0 +1,26 @@
+:root {
+	--rank-1: #ffd700;
+	--rank-2: #c0c0c0;
+	--rank-3: #cd7f32;
+}
+
+.leaderboard_wrapper {
+	background: var(--glass-bg-dark);
+	padding: 40px;
+	border: 1px solid var(--glass-border-dark);
+	border-radius: 24px;
+	margin: 40px;
+	box-shadow: var(--glass-shadow);
+	backdrop-filter: blur(20px);
+	
+	& table {
+		width: 100%;
+		
+		& tr {
+			& .country_flag span {
+				height: 20px;
+				width: 20px;
+			}
+		}
+	}
+}

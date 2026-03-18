@@ -16,7 +16,7 @@ export type RankingList = {
 	id: number,
 	rank: number,
 	country: string, // unused for clan lb
-	tag: string,
+	tag: string | null,
 	name: string, // unused for clan lb
 	acc: number,
 	plays: number,
@@ -72,13 +72,13 @@ const getRankingQuery = (mode: ModeNum, sortBy: SortBy, isClan: boolean, country
 	}
 	else if (isClan) { // clan
 		return {
-			query: defaultRankingQuery(isDans, sortByOrder.map((sort) => `AVG(${sort}) DESC`)),
+			query: clanRankingQuery(isDans, sortByOrder.map((sort) => `AVG(${sort}) DESC`)),
 			args: [mode]
 		};
 	}
 	else if (country !== undefined) { // specified country
 		return {
-			query: defaultRankingQuery(isDans, sortByOrder.map((sort) => `${sort} DESC`)),
+			query: countryRankingQuery(isDans, sortByOrder.map((sort) => `${sort} DESC`)),
 			args: [mode, country]
 		};
 	}

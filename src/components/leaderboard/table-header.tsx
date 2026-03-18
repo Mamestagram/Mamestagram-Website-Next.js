@@ -1,4 +1,5 @@
 import { SortBy } from "@/database/leaderboard";
+import styles from "@s/leaderboard.module.css";
 
 export default function TableHeader({ sortBy }: { sortBy: SortBy }) {
 	return (
@@ -8,14 +9,14 @@ export default function TableHeader({ sortBy }: { sortBy: SortBy }) {
 			<th>Accuracy</th>
 			<th>Play Count</th>
 			<th>Performance</th>
-			{sortBy !== "dans" && (
+			{sortBy !== "dans" &&
 				<>
 					<th>Total Score</th>
 					<th>SS</th>
 					<th>S</th>
 					<th>A</th>
 				</>
-			)}
+			}
 		</tr>
 	);
 }
