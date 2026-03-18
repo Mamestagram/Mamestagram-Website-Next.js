@@ -2,10 +2,10 @@ import { Priv } from "@/lib/priv";
 import { ModeNum } from "@/lib/mode";
 import { ModNum } from "@/lib/mods";
 
-export const countryRankingQuery: { [key in "normal" | "dans"]: string } = {
-	normal: `
+export const countryRankingQuery = (isDans: boolean, sortByOrder: string[]): Readonly<string> => !isDans
+	? `
 	    SELECT u.id,
-	           RANK() OVER(ORDER BY ? DESC) 'rank', -- ...SortBy[]
+	           RANK() OVER(ORDER BY ${sortByOrder}) 'rank',
 	           country,
 	           tag,
 	           u.name,
@@ -16,7 +16,7 @@ export const countryRankingQuery: { [key in "normal" | "dans"]: string } = {
 	           xh_count + x_count AS ssCount,
 	           sh_count + s_count AS sCount,
 	           a_count AS aCount
-	    FROM stats s
+	    	FROM stats s
 		JOIN users u
 			ON s.id = u.id
 		LEFT JOIN clans c
@@ -26,9 +26,9 @@ export const countryRankingQuery: { [key in "normal" | "dans"]: string } = {
 	        AND NOT acc = 0
 	        AND mode = ? -- Mode
 	        AND country = ? -- string
-	    ORDER BY ? DESC -- ...SortBy[]
-	`,
-	dans: `
+	    ORDER BY ${sortByOrder}
+	`
+	: `
 		WITH dan_acc_plays AS (
             SELECT userid, s.mode, AVG(s.acc) AS acc, COUNT(*) AS plays
             	FROM scores s
@@ -69,5 +69,4 @@ export const countryRankingQuery: { [key in "normal" | "dans"]: string } = {
 			AND u.country = ? -- string
 		GROUP BY d_s.id
 		ORDER BY pp DESC, acc DESC, plays DESC
-	`
-};
+	`;

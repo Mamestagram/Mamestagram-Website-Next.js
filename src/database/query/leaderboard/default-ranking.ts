@@ -2,10 +2,10 @@ import { Priv } from "@/lib/priv";
 import { ModeNum } from "@/lib/mode";
 import { ModNum } from "@/lib/mods";
 
-export const defaultRankingQuery: { [key in "normal" | "dans"]: string } = {
-	normal: `
+export const defaultRankingQuery = (isDans: boolean, sortByOrder: string[]): Readonly<string> => !isDans
+	? `
         SELECT u.id,
-               RANK() OVER(ORDER BY ? DESC) 'rank', -- ...SortBy[]
+               RANK() OVER(ORDER BY ${sortByOrder}) 'rank',
                country,
                tag,
                u.name,
@@ -25,9 +25,9 @@ export const defaultRankingQuery: { [key in "normal" | "dans"]: string } = {
 			AND (priv & ${Priv.unrestricted}) > 0
 			AND NOT acc = 0
 			AND mode = ? -- ModeNum
-        ORDER BY ? DESC -- ...SortBy[]
-	`,
-	dans: `
+        ORDER BY ${sortByOrder}
+	`
+	: `
 		WITH dan_acc_plays AS (
 			SELECT userid, s.mode, AVG(s.acc) AS acc, COUNT(*) AS plays
 			    FROM scores s
@@ -67,5 +67,4 @@ export const defaultRankingQuery: { [key in "normal" | "dans"]: string } = {
 		    AND d_s.mode = ? -- Mode
 		GROUP BY d_s.id
 		ORDER BY pp DESC, acc DESC, plays DESC
-	`
-};
+	`;
