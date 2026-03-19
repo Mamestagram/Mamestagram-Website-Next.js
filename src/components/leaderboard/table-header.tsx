@@ -4,8 +4,8 @@ import styles from "@s/leaderboard.module.css";
 export default function TableHeader({ sortBy }: { sortBy: SortBy }) {
 	return (
 		<tr>
-			<th>Rank</th>
-			<th colSpan={2}>Player</th>
+			<th className={styles.rank}>Rank</th>
+			<th className={styles.player} colSpan={2}>Player</th>
 			<th>Accuracy</th>
 			<th>Play Count</th>
 			<th>Performance</th>

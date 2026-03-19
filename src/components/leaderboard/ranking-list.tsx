@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import Image from "next/image";
 import Link from "next/link";
 import type { RankingList } from "@/database/leaderboard";
@@ -5,6 +6,7 @@ import { SortBy } from "@/database/leaderboard";
 import { Mode } from "@/lib/mode";
 import CountryFlag from "@/components/country-flag";
 import styles from "@s/leaderboard.module.css";
+
 
 export default function RankingList({ list, mode, sortBy, isClan }: {
 	list: RankingList,
@@ -14,12 +16,12 @@ export default function RankingList({ list, mode, sortBy, isClan }: {
 }) {
 	return (
 		<tr>
-			<td className="rank">#{list.rank}</td>
+			<td className={classNames(styles.rank, { [styles[`top_${list.rank}`]]: list.rank <= 3 })}>#{list.rank}</td>
 			{!isClan
-				? <td className={styles.country_flag}><CountryFlag code={list.country}/></td>
-				: <td className="avatar"><Image src={`https://clan-a.${process.env.BASE_DOMAIN}/${list.id}`} alt="" fill sizes="(max-width: 768px) 100vw, 50vw"/></td>
+				? <td className={styles.country}><CountryFlag code={list.country}/></td>
+				: <td className={styles.avatar}><Image src={`https://clan-a.${process.env.BASE_DOMAIN}/${list.id}`} alt="" fill sizes="(max-width: 768px) 100vw, 50vw"/></td>
 			}
-			<td className="name">
+			<td className={styles.name}>
 				{!isClan
 					? <Link href={`/profile/${list.id}/${mode}${sortBy === SortBy.dans ? "?dans" : ""}`}>{list.tag !== null && `[${list.tag}] `}{list.name}</Link>
 					: <Link href={`/profile/${list.id}/${mode}?clan${sortBy === SortBy.dans ? "&dans" : ""}`}>{list.tag}</Link>}

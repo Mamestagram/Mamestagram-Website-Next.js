@@ -688,12 +688,8 @@ footer {
 
 .country-flag {
 	display: block;
-	
-	& i {
-		display: block;
-		height: inherit;
-		width: inherit;
-	}
+	height: 100%;
+	width: 100%;
 }
 
 img {

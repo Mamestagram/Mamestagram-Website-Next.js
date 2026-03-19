@@ -1,7 +1,13 @@
 :root {
+	/* top 1*/
 	--rank-1: #ffd700;
+	--rank-1-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+	/* top 2*/
 	--rank-2: #c0c0c0;
+	--rank-2-shadow: 0 0 10px rgba(192, 192, 192, 0.5);
+	/* top 3*/
 	--rank-3: #cd7f32;
+	--rank-3-shadow: 0 0 10px rgba(205, 127, 50, 0.5);
 }
 
 .leaderboard_wrapper {
@@ -9,17 +15,82 @@
 	padding: 40px;
 	border: 1px solid var(--glass-border-dark);
 	border-radius: 24px;
-	margin: 40px;
+	margin: 40px calc(7% + 8px) 40px 7%;
 	box-shadow: var(--glass-shadow);
 	backdrop-filter: blur(20px);
 	
 	& table {
+		border-collapse: collapse;
 		width: 100%;
 		
-		& tr {
-			& .country_flag span {
-				height: 20px;
-				width: 20px;
+		& thead {
+			border-bottom: 1px solid rgba(255, 255, 255, .1);
+			
+			& th {
+				padding: 0 20px 15px 20px;
+				text-align: center;
+				
+				&.player {
+					text-align: left;
+				}
+			}
+		}
+		
+		& tbody {
+			& tr {
+				background-color: rgba(255, 255, 255, .01);
+				
+				& td {
+					padding: 15px;
+					align-content: center;
+					
+					&:not(.rank, .country, .avatar, .name) {
+						text-align: right;
+					}
+					
+					&:first-of-type {
+						border-radius: 16px 0 0 16px;
+					}
+					
+					&:last-of-type {
+						border-radius: 0 16px 16px 0;
+					}
+					
+					&.rank {
+						font-family: "Inter", sans-serif;
+						font-size: 20px;
+						font-weight: 500;
+						text-align: center;
+						
+						&.top_1 {
+							color: var(--rank-1);
+							font-size: 24px;
+							font-weight: 800;
+							text-shadow: var(--rank-1-shadow);
+						}
+						&.top_2 {
+							color: var(--rank-2);
+							font-size: 22px;
+							font-weight: 800;
+							text-shadow: var(--rank-2-shadow);
+						}
+						&.top_3 {
+							color: var(--rank-3);
+							font-size: 22px;
+							font-weight: 800;
+							text-shadow: var(--rank-3-shadow);
+						}
+					}
+					
+					&.country {
+						padding: 0 0 0 15px;
+						text-align: center;
+						
+						& i {
+							font-size: 24px;
+						}
+					}
+				}
 			}
 		}
 	}

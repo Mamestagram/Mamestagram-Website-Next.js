@@ -38,15 +38,17 @@ export default async function Leaderboard({ params, searchParams }: {
 		return (
 			<div className={styles.leaderboard_wrapper}>
 				<table>
-					<tbody>
 					{ranking.length > 0 &&
 						<>
+							<thead>
 							<TableHeader sortBy={sortBy}/>
+							</thead>
+							<tbody>
 							{ranking.map((list) =>
 								<RankingList key={list.id} list={list} mode={mode} sortBy={sortBy} isClan={isClan}/>)}
+							</tbody>
 						</>
 					}
-					</tbody>
 				</table>
 			</div>
 		);
