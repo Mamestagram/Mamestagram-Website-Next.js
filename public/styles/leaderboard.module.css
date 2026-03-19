@@ -17,10 +17,9 @@
 	border-radius: 24px;
 	margin: 40px calc(7% + 8px) 40px 7%;
 	box-shadow: var(--glass-shadow);
-	backdrop-filter: blur(20px);
 	
 	& table {
-		border-collapse: collapse;
+		border-collapse: separate;
 		width: 100%;
 		
 		& thead {
@@ -46,14 +45,6 @@
 					
 					&:not(.rank, .country, .avatar, .name) {
 						text-align: right;
-					}
-					
-					&:first-of-type {
-						border-radius: 16px 0 0 16px;
-					}
-					
-					&:last-of-type {
-						border-radius: 0 16px 16px 0;
 					}
 					
 					&.rank {
