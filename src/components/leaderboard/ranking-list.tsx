@@ -1,41 +1,28 @@
-import classNames from "classnames";
-import Image from "next/image";
-import Link from "next/link";
 import type { RankingList } from "@/database/leaderboard";
 import { SortBy } from "@/database/leaderboard";
 import { Mode } from "@/lib/mode";
-import CountryFlag from "@/components/country-flag";
-import styles from "@s/leaderboard.module.css";
+import RankingHeader from "@/components/leaderboard/ranking-header";
+import RankingRow from "@/components/leaderboard/ranking-row";
 
-export default function RankingList({ list, mode, sortBy, isClan }: {
-	list: RankingList,
+export default function RankingList({ ranking, mode, sortBy, isClan }: Readonly<{
+	ranking: RankingList[],
 	mode: Mode,
 	sortBy: SortBy,
 	isClan: boolean
-}) {
+}>) {
 	return (
-		<tr>
-			<td className={classNames(styles.rank, { [styles[`top_${list.rank}`]]: list.rank <= 3 })}>#{list.rank}</td>
-			{!isClan
-				? <td className={styles.country}><CountryFlag code={list.country}/></td>
-				: <td className={styles.avatar}><Image src={`https://clan-a.${process.env.BASE_DOMAIN}/${list.id}`} alt="" fill sizes="(max-width: 768px) 100vw, 50vw"/></td>
+		<>
+			{ranking.length > 0 &&
+				<table>
+					<thead>
+					<RankingHeader sortBy={sortBy}/>
+					</thead>
+					<tbody>
+					{ranking.map((list) =>
+						<RankingRow key={list.id} listRow={list} mode={mode} sortBy={sortBy} isClan={isClan}/>)}
+					</tbody>
+				</table>
 			}
-			<td className={styles.name}>
-				{!isClan
-					? <Link href={`/profile/${list.id}/${mode}${sortBy === SortBy.dans ? "?dans" : ""}`}>{list.tag !== null && `[${list.tag}] `}{list.name}</Link>
-					: <Link href={`/profile/${list.id}/${mode}?clan${sortBy === SortBy.dans ? "&dans" : ""}`}>{list.tag}</Link>}
-			</td>
-			<td className="acc">{list.acc.toFixed(2)}%</td>
-			<td className="playcount">{Math.floor(list.plays).toLocaleString()}</td>
-			<td className="pp">{Math.round(list.pp).toLocaleString()}</td>
-			{sortBy !== SortBy.dans &&
-				<>
-					<td className="socre">{Math.round(list.score).toLocaleString()}</td>
-					<td className="ss-count">{Math.floor(list.ssCount).toLocaleString()}</td>
-					<td className="s-count">{Math.floor(list.sCount).toLocaleString()}</td>
-					<td className="a-count">{Math.floor(list.aCount).toLocaleString()}</td>
-				</>
-			}
-		</tr>
+		</>
 	);
 }

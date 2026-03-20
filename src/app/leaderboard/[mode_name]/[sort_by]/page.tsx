@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import { SortBy, getCountryList, getLeaderboard } from "@/database/leaderboard";
 import { Mode, ModeNum } from "@/lib/mode";
-import TableHeader from "@/components/leaderboard/table-header";
-import RankingList from "@/components/leaderboard/ranking-list";
 import { writeLog } from "@/lib/log";
+import RankingList from "@/components/leaderboard/ranking-list";
 import styles from "@s/leaderboard.module.css";
+import { Suspense } from "react";
 
 export default async function Leaderboard({ params, searchParams }: {
 	params: Promise<{
@@ -18,7 +18,7 @@ export default async function Leaderboard({ params, searchParams }: {
 	}>
 }) {
 	const { mode_name, sort_by } = await params;
-	const { page = "1", country, clan } = await searchParams, isClan = clan !== undefined;
+	const { page = "1", country, clan } = await searchParams;
 	const countries = await getCountryList();
 	const conds = [
 		Object.values(Mode).includes(mode_name as Mode),
@@ -32,24 +32,14 @@ export default async function Leaderboard({ params, searchParams }: {
 	writeLog("GET", `/leaderboard/${mode_name}/${sort_by}} ${queries}`).then();
 	
 	if (conds.every((cond) => cond)) {
-		const mode = mode_name as Mode, sortBy = sort_by as SortBy;
+		const mode = mode_name as Mode, sortBy = sort_by as SortBy, isClan = clan !== undefined;
 		const { ranking, pages } = await getLeaderboard(ModeNum[mode], sortBy, Number(page), isClan, country);
 		
 		return (
 			<div className={styles.leaderboard_wrapper}>
-				<table>
-					{ranking.length > 0 &&
-						<>
-							<thead>
-							<TableHeader sortBy={sortBy}/>
-							</thead>
-							<tbody>
-							{ranking.map((list) =>
-								<RankingList key={list.id} list={list} mode={mode} sortBy={sortBy} isClan={isClan}/>)}
-							</tbody>
-						</>
-					}
-				</table>
+				<Suspense fallback={null/*TODO*/}>
+					<RankingList ranking={ranking} mode={mode} sortBy={sortBy} isClan={isClan} />
+				</Suspense>
 			</div>
 		);
 	}

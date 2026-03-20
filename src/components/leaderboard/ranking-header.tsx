@@ -1,7 +1,7 @@
 import { SortBy } from "@/database/leaderboard";
 import styles from "@s/leaderboard.module.css";
 
-export default function TableHeader({ sortBy }: { sortBy: SortBy }) {
+export default function RankingHeader({ sortBy }: Readonly<{ sortBy: SortBy }>) {
 	return (
 		<tr>
 			<th className={styles.rank}>Rank</th>

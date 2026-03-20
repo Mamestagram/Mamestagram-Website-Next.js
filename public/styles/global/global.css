@@ -3,9 +3,9 @@
 	/* bg */
 	--glass-bg-dark: linear-gradient(
 		135deg,
-		rgba(8, 8, 14, .75) 0%,
-		rgba(10, 10, 16, .65) 70%,
-		rgba(20, 30, 50, .2) 100%
+		rgba(8, 8, 14, .85) 0%,
+		rgba(10, 10, 16, .75) 70%,
+		rgba(20, 30, 50, .3) 100%
 	);
 	--glass-bg-light-hover: linear-gradient(
 		135deg,
@@ -111,7 +111,7 @@ header {
 	}
 	/* header.home, header.leaderboard */
 	&:is(.home, .leaderboard) {
-		background-color: rgba(52, 92, 132, .5);
+		background-color: rgba(52, 92, 132, .75);
 	}
 	/* header .top-bar */
 	& .top-bar {
@@ -612,7 +612,6 @@ footer {
 					background-color: #f4fffe;
 					height: 30%;
 					width: 30%;
-					z-index: -1;
 					opacity: 0;
 					transform: translate(-50%, -50%);
 					transition: opacity 300ms;

@@ -19,7 +19,7 @@
 	box-shadow: var(--glass-shadow);
 	
 	& table {
-		border-collapse: separate;
+		border-collapse: collapse;
 		width: 100%;
 		
 		& thead {
@@ -78,7 +78,7 @@
 						text-align: center;
 						
 						& i {
-							font-size: 24px;
+							font-size: 20px;
 						}
 					}
 				}
