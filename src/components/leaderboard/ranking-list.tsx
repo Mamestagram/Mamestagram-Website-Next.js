@@ -7,7 +7,6 @@ import { Mode } from "@/lib/mode";
 import CountryFlag from "@/components/country-flag";
 import styles from "@s/leaderboard.module.css";
 
-
 export default function RankingList({ list, mode, sortBy, isClan }: {
 	list: RankingList,
 	mode: Mode,
