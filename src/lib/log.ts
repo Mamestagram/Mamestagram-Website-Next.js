@@ -32,7 +32,8 @@ const writeFile = (dirPath: string, filePath: string, data: string) => {
 				writeFile(dirPath, filePath, data);
 			}
 			else {
-				writeError(err).then(() => { throw err; });
+				writeError(err).then();
+				throw err;
 			}
 		}
 	});

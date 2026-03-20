@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export function GET(req: NextRequest) {
-	return NextResponse.redirect(new URL("/leaderboard/std/performance", req.url));
+export function GET() {
+	return NextResponse.redirect(new URL("/leaderboard/std/performance", process.env.BASE_URL));
 }
