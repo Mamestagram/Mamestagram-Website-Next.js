@@ -31,7 +31,7 @@ export default function Header() {
 				<ul>
 					<li className="leaderboard">
 						<span className="pipe"></span>
-						<Link href="/leaderboard">Leaderboard</Link>
+						<Link href="/leaderboard/std/performance">Leaderboard</Link>
 					</li>
 					<li className="documents">
 						<span className="pipe"></span>
