@@ -21,9 +21,18 @@
  */
 
 html {
+	font-size: 16px;
 	line-height: 1.15; /* 1 */
 	-webkit-text-size-adjust: 100%; /* 2 */
-	-webkit-tap-highlight-color: transparent; /* 3*/
+	-webkit-tap-highlight-color: transparent; /* 3 */
+	
+	@media (max-width: 768px) {
+		font-size: 14px;
+	}
+	
+	@media (max-width: 480px) {
+		font-size: 12px;
+	}
 }
 
 /* Sections */

@@ -1,5 +1,5 @@
 .country-flag {
-	cursor: default;
+	cursor: default !important;
 	position: relative;
 	font-family: "Noto_Sans", sans-serif;
 	
@@ -13,25 +13,28 @@
 	}
 	
 	& .tooltip {
-		line-height: 10px;
-		width: auto;
+		
+		visibility: hidden;
 		position: absolute;
 		left: 50%;
 		bottom: 60%;
-		transform: translateX(-50%);
-		margin-bottom: 8px;
+		background-color: #17171c;
+		color: #fdfdfd;
+		font-size: 0.7em;
+		line-height: 10px;
+		width: auto;
 		padding: 8px;
 		border-radius: 10px;
-		background-color: #17171c;
-		font-size: 0.7em;
-		color: #fdfdfd;
+		margin-bottom: 8px;
 		text-align: center;
 		opacity: 0;
 		z-index: 1;
-		transition: bottom 300ms, opacity 300ms;
+		transform: translateX(-50%);
+		transition: visibility 300ms, bottom 300ms, opacity 300ms;
 		
 		.country-flag:hover & {
-			bottom: 80%;
+			visibility: visible;
+			bottom: 100%;
 			opacity: 1;
 		}
 	}

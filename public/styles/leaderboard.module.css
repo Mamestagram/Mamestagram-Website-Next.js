@@ -1,88 +1,229 @@
 :root {
-	/* top 1*/
+	/* top 1 */
 	--rank-1: #ffd700;
 	--rank-1-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-	/* top 2*/
+	/* top 2 */
 	--rank-2: #c0c0c0;
 	--rank-2-shadow: 0 0 10px rgba(192, 192, 192, 0.5);
-	/* top 3*/
+	/* top 3 */
 	--rank-3: #cd7f32;
 	--rank-3-shadow: 0 0 10px rgba(205, 127, 50, 0.5);
 }
 
 .leaderboard_wrapper {
 	background: var(--glass-bg-dark);
+	font-family: "Inter", sans-serif;
 	padding: 40px;
 	border: 1px solid var(--glass-border-dark);
 	border-radius: 24px;
 	margin: 40px calc(7% + 8px) 40px 7%;
 	box-shadow: var(--glass-shadow);
+	overflow: auto;
 	
 	& table {
-		border-collapse: collapse;
+		border-collapse: separate;
+		border-spacing: 0 6px;
 		width: 100%;
 		
-		& thead {
-			border-bottom: 1px solid rgba(255, 255, 255, .1);
-			
+		& tr {
 			& th {
-				padding: 0 20px 15px 20px;
+				color: var(--text-sub);
+				font-size: 0.875rem;
+				font-weight: 600;
+				padding: 0 5px 15px 5px;
+				border-bottom: 1px solid rgba(255, 255, 255, .1);
 				text-align: center;
+				letter-spacing: 1px;
 				
 				&.player {
+					padding-left: 15px;
 					text-align: left;
+				}
+				
+				&.sorted {
+					color: var(--text-main);
+					font-weight: 800;
+				}
+			}
+			
+			&.ranking_row {
+				position: relative;
+				background-color: rgba(255, 255, 255, .02);
+				transition: transform 300ms;
+				
+				&::after {
+					content: "";
+					position: absolute;
+					inset: 0;
+					background: var(--glass-bg-light-hover);
+					border: 1px solid var(--glass-border-dark);
+					border-radius: 16px;
+					opacity: 0;
+					z-index: -1;
+					transition: opacity 500ms;
+				}
+				
+				&:hover {
+					transform: scale(1.01);
+					
+					&::after {
+						opacity: 1;
+					}
+				}
+			}
+			
+			& td {
+				padding: 15px;
+				vertical-align: middle;
+				text-align: center;
+				
+				&:first-of-type {
+					border-radius: 16px 0 0 16px;
+				}
+				
+				&:last-of-type {
+					border-radius: 0 16px 16px 0;
+				}
+				
+				&:not(.rank, .country, .name) {
+					color: var(--text-sub);
+				}
+				
+				& span {
+					font-size: 0.75rem;
+					font-weight: 300;
+				}
+				
+				&.rank {
+					font-size: 1.25rem;
+					font-weight: 500;
+					
+					&.top_1 {
+						color: var(--rank-1);
+						font-size: 1.5rem;
+						font-weight: 800;
+						text-shadow: var(--rank-1-shadow);
+					}
+					&.top_2 {
+						color: var(--rank-2);
+						font-size: 1.375rem;
+						font-weight: 800;
+						text-shadow: var(--rank-2-shadow);
+					}
+					&.top_3 {
+						color: var(--rank-3);
+						font-size: 1.375rem;
+						font-weight: 800;
+						text-shadow: var(--rank-3-shadow);
+					}
+				}
+				
+				&.country {
+					padding-right: 5px;
+					
+					& i {
+						font-size: 1.25rem;
+					}
+				}
+				
+				&.sorted {
+					color: #ff66aa;
+					font-size: 1.125rem;
+					font-weight: 800;
+					
+					& span {
+						color: var(--text-main);
+						font-size: 0.75rem;
+						font-weight: 300;
+					}
+				}
+				
+				@media (max-width: 768px) {
+					padding: 12px 15px;
+				}
+				
+				@media (max-width: 480px) {
+					padding: 10px 15px;
 				}
 			}
 		}
 		
-		& tbody {
-			& tr {
-				background-color: rgba(255, 255, 255, .01);
-				
-				& td {
-					padding: 15px;
-					align-content: center;
-					
-					&:not(.rank, .country, .avatar, .name) {
-						text-align: right;
-					}
-					
-					&.rank {
-						font-family: "Inter", sans-serif;
-						font-size: 20px;
-						font-weight: 500;
-						text-align: center;
-						
-						&.top_1 {
-							color: var(--rank-1);
-							font-size: 24px;
-							font-weight: 800;
-							text-shadow: var(--rank-1-shadow);
-						}
-						&.top_2 {
-							color: var(--rank-2);
-							font-size: 22px;
-							font-weight: 800;
-							text-shadow: var(--rank-2-shadow);
-						}
-						&.top_3 {
-							color: var(--rank-3);
-							font-size: 22px;
-							font-weight: 800;
-							text-shadow: var(--rank-3-shadow);
-						}
-					}
-					
-					&.country {
-						padding: 0 0 0 15px;
-						text-align: center;
-						
-						& i {
-							font-size: 20px;
-						}
-					}
-				}
+		& .rank {
+			width: 100px;
+			min-width: 100px;
+			
+			@media (max-width: 768px) {
+				width: 96px;
+				min-width: 96px;
+			}
+			
+			@media (max-width: 480px) {
+				width: 86px;
+				min-width: 86px;
 			}
 		}
+		
+		& .country {
+			width: 47px;
+			min-width: 47px;
+			
+			@media (max-width: 768px) {
+				width: 44px;
+				min-width: 44px;
+			}
+			
+			@media (max-width: 480px) {
+				width: 40px;
+				min-width: 40px;
+			}
+		}
+		
+		& .name {
+			width: max-content;
+			min-width: 120px;
+			text-align: left;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+		
+		& .acc {
+			width: 112px;
+			min-width: 112px;
+			
+			@media (max-width: 768px) {
+				width: 92px;
+				min-width: 92px;
+			}
+			
+			@media (max-width: 480px) {
+				width: 84px;
+				min-width: 84px;
+			}
+		}
+		
+		& :is(.playcount, .pp, .score) {
+			width: 1em;
+			min-width: 112px;
+			max-width: 195px;
+		}
+		
+		& :is(.ss_count, .s_count, .a_count) {
+			width: 1em;
+			min-width: 50px;
+			max-width: 80px;
+		}
+	}
+	
+	@media (max-width: 1236px) {
+		padding: 40px 5px;
+	}
+	
+	@media (max-width: 1155px) {
+		margin: 40px 0;
+	}
+	
+	@media (max-width: 768px) {
+		padding: 30px 5px;
 	}
 }

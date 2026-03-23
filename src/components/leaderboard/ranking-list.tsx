@@ -15,11 +15,11 @@ export default function RankingList({ ranking, mode, sortBy, isClan }: Readonly<
 			{ranking.length > 0 &&
 				<table>
 					<thead>
-					<RankingHeader sortBy={sortBy}/>
+					<RankingHeader sortBy={sortBy} isClan={isClan}/>
 					</thead>
 					<tbody>
-					{ranking.map((list) =>
-						<RankingRow key={list.id} listRow={list} mode={mode} sortBy={sortBy} isClan={isClan}/>)}
+					{ranking.map((row) =>
+						<RankingRow key={row.id} listRow={row} mode={mode} sortBy={sortBy} isClan={isClan}/>)}
 					</tbody>
 				</table>
 			}
