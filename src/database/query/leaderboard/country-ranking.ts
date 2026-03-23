@@ -36,8 +36,8 @@ export const countryRankingQuery = (isDans: boolean, sortByOrder: string[]): Rea
 				ON map_md5 = md5
 				AND s.mode = d.mode
             WHERE NOT grade = 'F'
+              	AND NOT status = 0
 				AND deleted = 0
-				AND status = 2
 				AND IF(NOT d.mods = ${ModNum.nm}, (s.mods & d.mods) > 0, TRUE)
 				AND IF(NOT s.mode = ${ModeNum.ctb}, (s.mods & ${ModNum.nf}) = 0, TRUE)
 				AND (s.mods & (${ModNum.ez} | ${ModNum.ht} | ${ModNum.rd})) = 0
