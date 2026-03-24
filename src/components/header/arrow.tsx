@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import FontAwesome from "@/components/font-awesome";
 
 export default function ArrowChevron() {
-	const arrow = useRef<HTMLDivElement>(null);
+	const arrow = useRef<HTMLButtonElement>(null);
 	const navigation = useRef<HTMLElement>(null);
 	const [arrowDirection, setArrowDirection] = useState<"up" | "down">("down");
 	
@@ -41,8 +41,8 @@ export default function ArrowChevron() {
 	}, [arrowDirection]);
 	
 	return (
-		<div className="arrow down" onClick={clickArrow} ref={arrow}>
+		<button className="arrow down" type="button" onClick={clickArrow} ref={arrow}>
 			<FontAwesome prefix="fas" name="chevron-down"/>
-		</div>
+		</button>
 	);
 }

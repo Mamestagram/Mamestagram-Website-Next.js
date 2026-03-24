@@ -22,9 +22,9 @@ export default function Header() {
 						<FontAwesome prefix="fas" name="heart"/>
 					</a>
 				</div>
-				<div className="search">
+				<button className="search" type="button" aria-label="Search">
 					<FontAwesome prefix="fas" name="magnifying-glass"/>
-				</div>
+				</button>
 				<ArrowChevron/>
 			</nav>
 			<nav className="navigation">
