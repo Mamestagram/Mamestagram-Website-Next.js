@@ -127,13 +127,11 @@ header {
 		align-items: center;
 		transition: box-shadow 300ms;
 		
-		& > * {
-			&:not(.top) {
-				display: none;
-				
-				@media (max-width: 872px) {
-					display: unset;
-				}
+		& > *:not(.top) {
+			display: none;
+			
+			@media (max-width: 872px) {
+				display: unset;
 			}
 		}
 		
@@ -166,6 +164,7 @@ header {
 		
 		& .donation {
 			margin: 0 10px;
+			align-content: center;
 		}
 		
 		& .search {
