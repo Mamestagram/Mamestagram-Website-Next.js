@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
-import { SortBy, getCountryList } from "@/database/leaderboard";
-import { Mode } from "@/lib/mode";
+import { SortBy, getCountryList, getLeaderboard } from "@/database/leaderboard";
+import { OsuMode, ModeNum } from "@/lib/mode";
 import { writeLog } from "@/lib/log";
 import RankingList from "@/components/leaderboard/ranking-list";
 import styles from "@s/leaderboard.module.css";
-import { Suspense } from "react";
+import PageList from "@/components/leaderboard/page-list";
 
 export default async function Leaderboard({ params, searchParams }: {
 	params: Promise<{
@@ -21,7 +21,7 @@ export default async function Leaderboard({ params, searchParams }: {
 	const { page = "1", country, clan } = await searchParams;
 	const countries = await getCountryList();
 	const conds = [
-		Object.values(Mode).includes(mode_name as Mode),
+		Object.values(OsuMode).includes(mode_name as OsuMode),
 		Object.values(SortBy).includes(sort_by as SortBy),
 		!isNaN(Number(page)) && Number(page) > 0,
 		(country === undefined && clan === undefined) || (country === undefined && clan !== undefined) || (country !== undefined && clan === undefined),
@@ -32,15 +32,13 @@ export default async function Leaderboard({ params, searchParams }: {
 	writeLog("GET", `/leaderboard/${mode_name}/${sort_by}} ${queries}`).then();
 	
 	if (conds.every((cond) => cond)) {
-		const mode = mode_name as Mode, sortBy = sort_by as SortBy, isClan = clan !== undefined;
+		const mode = mode_name as OsuMode, sortBy = sort_by as SortBy, isClan = clan !== undefined;
+		const { ranking, pages } = await getLeaderboard(ModeNum[mode], sortBy, Number(page), isClan, country);
 		
 		return (
 			<div className={styles.leaderboard_container}>
-				<div className={styles.table_wrapper}>
-					<Suspense fallback={null/*TODO*/}>
-						<RankingList mode={mode} sortBy={sortBy} page={Number(page)} isClan={isClan} country={country} />
-					</Suspense>
-				</div>
+				<PageList page={{ current: Number(page), total: pages }} mode={mode} sortBy={sortBy} isClan={isClan} country={country}/>
+				<RankingList ranking={ranking} mode={mode} sortBy={sortBy} isClan={isClan}/>
 			</div>
 		);
 	}

@@ -1,5 +1,5 @@
 // noinspection JSUnusedGlobalSymbols
-export enum Mode {
+export enum OsuMode {
 	std = "std",
 	taiko = "taiko",
 	ctb = "ctb",
@@ -22,4 +22,4 @@ export enum ModeNum {
 	apstd = 8
 }
 
-export type VnMode = Extract<Mode, Mode.std | Mode.taiko | Mode.ctb | Mode.mania>;
+export type VnMode = Extract<OsuMode, OsuMode.std | OsuMode.taiko | OsuMode.ctb | OsuMode.mania>;

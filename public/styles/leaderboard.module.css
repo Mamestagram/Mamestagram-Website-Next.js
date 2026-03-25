@@ -12,7 +12,17 @@
 
 .leaderboard_container {
 	
-	
+	/* page list */
+	.page_list {
+		display: flex;
+		justify-content: center;
+		gap: 5px;
+		
+		& li {
+			border-radius: 50%;
+		}
+	}
+	/* table wrapper */
 	.table_wrapper {
 		background: var(--glass-bg-dark);
 		font-family: "Inter", sans-serif;

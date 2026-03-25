@@ -1,20 +1,18 @@
-import { getLeaderboard } from "@/database/leaderboard";
+import type { RankingList } from "@/database/leaderboard";
 import { SortBy } from "@/database/leaderboard";
-import { Mode, ModeNum } from "@/lib/mode";
+import { OsuMode } from "@/lib/mode";
 import RankingHeader from "@/components/leaderboard/ranking-header";
 import RankingRow from "@/components/leaderboard/ranking-row";
+import styles from "@s/leaderboard.module.css";
 
-export default async function RankingList({ mode, sortBy, page, isClan, country }: Readonly<{
-	mode: Mode,
+export default async function RankingList({ ranking, mode, sortBy, isClan }: Readonly<{
+	ranking: RankingList[],
+	mode: OsuMode,
 	sortBy: SortBy,
-	page: number,
 	isClan: boolean,
-	country: string | undefined
 }>) {
-	const { ranking, pages } = await getLeaderboard(ModeNum[mode], sortBy, page, isClan, country);
-	
 	return (
-		<>
+		<div className={styles.table_wrapper}>
 			{ranking.length > 0 &&
 				<table>
 					<thead>
@@ -26,6 +24,6 @@ export default async function RankingList({ mode, sortBy, page, isClan, country 
 					</tbody>
 				</table>
 			}
-		</>
+		</div>
 	);
 }
