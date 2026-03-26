@@ -23,6 +23,11 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 	
 	return (
 		<div className="page-wrapper">
+			{page.current > 1 &&
+				<Link href={`/leaderboard/${mode}/${sortBy}?page=${page.current - 1}${queryStr}`}>
+				
+				</Link>
+			}
 			<ul className={styles.page_list}>
 				{Array.from({ length: page.total }).map((_val, i) =>
 					<li key={i}>
