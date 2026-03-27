@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { OsuMode } from "@/lib/mode";
 import { SortBy } from "@/database/leaderboard";
+import FontAwesome from "@/components/font-awesome";
 import styles from "@s/leaderboard.module.css";
 
 export default function PageList({ page, mode, sortBy, isClan, country }: {
@@ -23,17 +24,26 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 	
 	return (
 		<div className="page-wrapper">
-			{page.current > 1 &&
-				<Link href={`/leaderboard/${mode}/${sortBy}?page=${page.current - 1}${queryStr}`}>
-				
-				</Link>
-			}
 			<ul className={styles.page_list}>
+				{page.current > 1 &&
+					<li>
+						<Link href={`/leaderboard/${mode}/${sortBy}?page=${page.current - 1}${queryStr}`}>
+							<FontAwesome prefix="fas" name="chevron-left"/>
+						</Link>
+					</li>
+				}
 				{Array.from({ length: page.total }).map((_val, i) =>
 					<li key={i}>
 						<Link href={`/leaderboard/${mode}/${sortBy}?page=${i + 1}${queryStr}`}>{i + 1}</Link>
 					</li>
 				)}
+				{page.current < page.total &&
+					<li>
+						<Link href={`/leaderboard/${mode}/${sortBy}?page=${page.current + 1}${queryStr}`}>
+							<FontAwesome prefix="fas" name="chevron-right"/>
+						</Link>
+					</li>
+				}
 			</ul>
 		</div>
 	);

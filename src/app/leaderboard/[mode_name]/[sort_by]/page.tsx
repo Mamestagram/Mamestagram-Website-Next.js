@@ -35,12 +35,17 @@ export default async function Leaderboard({ params, searchParams }: {
 		const mode = mode_name as OsuMode, sortBy = sort_by as SortBy, isClan = clan !== undefined;
 		const { ranking, pages } = await getLeaderboard(ModeNum[mode], sortBy, Number(page), isClan, country);
 		
-		return (
-			<div className={styles.leaderboard_container}>
-				<PageList page={{ current: Number(page), total: pages }} mode={mode} sortBy={sortBy} isClan={isClan} country={country}/>
-				<RankingList ranking={ranking} mode={mode} sortBy={sortBy} isClan={isClan}/>
-			</div>
-		);
+		if (Number(page) <= pages) {
+			return (
+				<div className={styles.leaderboard_container}>
+					<PageList page={{ current: Number(page), total: pages }} mode={mode} sortBy={sortBy} isClan={isClan} country={country}/>
+					<RankingList ranking={ranking} mode={mode} sortBy={sortBy} isClan={isClan}/>
+				</div>
+			);
+		}
+		else {
+			notFound();
+		}
 	}
 	else {
 		notFound();
