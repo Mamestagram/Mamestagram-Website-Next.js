@@ -32,6 +32,10 @@
 	/* text color */
 	--text-main: #fdfdfd;
 	--text-sub: #b0b0c0;
+	
+	/* hue */
+	--user-hue: 0;
+	--leaderboard-hue: 210;
 }
 /* body */
 body {
@@ -61,12 +65,12 @@ body {
 	
 	&:is(.home, .leaderboard) {
 		&::-webkit-scrollbar-thumb {
-			background-color: #2e293d;
+			background-color: hsl(var(--leaderboard-hue), 19%, 20%);
 		}
 		
 		&::before,
 		&::after {
-			background: radial-gradient(circle, rgba(52, 92, 132, .2) 0%, transparent 70%);
+			background: radial-gradient(circle, hsla(var(--leaderboard-hue), 44%, 36%, 20%) 0%, transparent 70%);
 		}
 		
 		background: linear-gradient(135deg, #0a0a10 0%, #1a1a25 100%);
@@ -84,7 +88,6 @@ header {
 	top: 0;
 	left: 0;
 	background: var(--glass-bg-dark);
-	font-family: "Inter", sans-serif;
 	height: var(--header-height);
 	width: 100%;
 	padding-left: 7%;
@@ -113,7 +116,7 @@ header {
 	}
 	/* header.home, header.leaderboard */
 	&:is(.home, .leaderboard) {
-		background-color: rgba(52, 92, 132, .75);
+		background-color: hsla(var(--leaderboard-hue), 44%, 36%, 75%);
 	}
 	/* header .top-bar */
 	& .top-bar {
@@ -242,16 +245,18 @@ header {
 					content: "";
 					position: absolute;
 					inset: 0;
-					background: linear-gradient(
-						135deg,
-						#1b2230,
-						#222c3c 60%,
-						#232b33
-					);
 					border-radius: inherit;
 					opacity: 0;
 					z-index: -1;
 					transition: opacity 500ms;
+				}
+				header:is(.home, .leaderboard) &::before {
+					background: linear-gradient(
+						135deg,
+						hsl(var(--leaderboard-hue), 27%, 15%),
+						hsl(var(--leaderboard-hue), 27%, 18%) 60%,
+						hsl(var(--leaderboard-hue), 18%, 17%)
+					);
 				}
 				
 				&::after {
@@ -353,13 +358,13 @@ header {
 				
 				header:is(.home, .leaderboard) &:is(.register, .sign-in) {
 					@media (max-width: 872px) {
-						color: #6495ed;
+						color: hsl(var(--leaderboard-hue), 79%, 66%);
 					}
 				}
 				
 				header:is(.home, .leaderboard) &:is(.register, .sign-in, .avatar) {
 					@media (max-width: 872px) {
-						background-color: #35364d;
+						background-color: hsl(var(--leaderboard-hue), 19%, 25%);
 					}
 				}
 				
@@ -384,7 +389,7 @@ header {
 					grid-template-rows: var(--mobile-height);
 					grid-template-columns: 7px 1fr;
 					grid-gap: 7px;
-					background-color: #24222a;
+					background-color: hsl(var(--leaderboard-hue), 10%, 15%);
 					height: var(--mobile-height);
 					line-height: var(--mobile-height);
 					width: 100%;
@@ -529,7 +534,6 @@ header {
 /* footer */
 footer {
 	background-color: rgba(10, 10, 16, 0.8);
-	font-family: "Inter", sans-serif;
 	padding: 60px 28px 30px 20px;
 	border-top: 1px solid var(--glass-border-dark);
 	

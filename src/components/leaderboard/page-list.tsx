@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { createRef } from "react";
 import { OsuMode } from "@/lib/mode";
 import { SortBy } from "@/database/leaderboard";
 import FontAwesome from "@/components/font-awesome";
@@ -21,30 +24,29 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 	];
 	conds.forEach(([query, cond]) => { if (cond) queries.push(query); });
 	const queryStr = queries.length > 0 ? `&${queries.join("&")}` : "";
+	const pageRefs = Array.from({ length: 5 }, () => createRef<HTMLLIElement>());
 	
 	return (
-		<div className="page-wrapper">
+		<div className={styles.page_wrapper}>
+			{page.current > 1 &&
+				<Link href={`/leaderboard/${mode}/${sortBy}?page=${page.current - 1}${queryStr}`}>
+					<FontAwesome prefix="fas" name="chevrons-left"/>
+				</Link>
+			}
+			<button><FontAwesome prefix="fas" name="chevron-left"/></button>
 			<ul className={styles.page_list}>
-				{page.current > 1 &&
-					<li>
-						<Link href={`/leaderboard/${mode}/${sortBy}?page=${page.current - 1}${queryStr}`}>
-							<FontAwesome prefix="fas" name="chevron-left"/>
-						</Link>
-					</li>
-				}
 				{Array.from({ length: page.total }).map((_val, i) =>
-					<li key={i}>
+					<li key={i} ref={}>
 						<Link href={`/leaderboard/${mode}/${sortBy}?page=${i + 1}${queryStr}`}>{i + 1}</Link>
 					</li>
 				)}
-				{page.current < page.total &&
-					<li>
-						<Link href={`/leaderboard/${mode}/${sortBy}?page=${page.current + 1}${queryStr}`}>
-							<FontAwesome prefix="fas" name="chevron-right"/>
-						</Link>
-					</li>
-				}
 			</ul>
+			<button><FontAwesome prefix="fas" name="chevron-right"/></button>
+			{page.current < page.total &&
+				<Link href={`/leaderboard/${mode}/${sortBy}?page=${page.current + 1}${queryStr}`}>
+					<FontAwesome prefix="fas" name="chevrons-right"/>
+				</Link>
+			}
 		</div>
 	);
 }
