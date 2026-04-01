@@ -73,7 +73,11 @@ body {
 			background: radial-gradient(circle, hsla(var(--leaderboard-hue), 44%, 36%, 20%) 0%, transparent 70%);
 		}
 		
-		background: linear-gradient(135deg, #0a0a10 0%, #1a1a25 100%);
+		background: linear-gradient(
+			135deg,
+			hsl(var(--leaderboard-hue), 23%, 5%) 0%,
+			hsl(var(--leaderboard-hue), 18%, 12%) 100%
+		);
 	}
 }
 /* header */
