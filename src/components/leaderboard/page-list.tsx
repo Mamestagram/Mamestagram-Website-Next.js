@@ -41,7 +41,7 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 	}
 	
 	useEffect(() => {
-		document.querySelector(`.${styles.page_wrapper} .${styles.page_list} li`)?.classList.remove("show");
+		document.querySelector(`.${styles.page_wrapper} .${styles.page_list} li.show`)?.classList.remove("show");
 		pageRefs.forEach((ref) => { ref.current?.classList.add("show"); });
 	}, [pageRefs]);
 	
