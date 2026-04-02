@@ -2,6 +2,7 @@
 
 import classNames from "classnames";
 import Link from "next/link";
+import { MouseEvent } from "react";
 import { createRef, useEffect } from "react";
 import { OsuMode } from "@/lib/mode";
 import { SortBy } from "@/database/leaderboard";
@@ -27,22 +28,32 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 	const queryStr = queries.length > 0 ? `&${queries.join("&")}` : "";
 	const pageRefs = Array.from({ length: 5 }, () => createRef<HTMLLIElement>());
 	
-	const clickChevron = (e: MouseEvent) => {
-		const element = e.target as HTMLButtonElement;
+	const clickChevron = (e: MouseEvent<HTMLButtonElement>) => {
+		const element = e.currentTarget as HTMLButtonElement;
+		console.log(pageRefs)
 		const prevRefs = [...pageRefs];
-		prevRefs.forEach((ref, i) => {
-			if (element.classList.contains("left") && i > 0) {
-			
-			}
-			else if (element.classList.contains("right") && i > 0) {
-			
-			}
-		});
+		if (element.classList.contains("left")) {
+			console.log(prevRefs)
+			prevRefs.forEach((ref, i) => {
+				console.log(prevRefs)
+				if (i < pageRefs.length - 1) pageRefs[i + 1].current = ref.current;
+			});
+			pageRefs[0].current = pageRefs.at(1)!.current?.previousElementSibling as HTMLLIElement;
+		}
+		else if (element.classList.contains("right")) {
+			prevRefs.forEach((ref, i) => {
+				if (i > 0) pageRefs[i - 1].current = ref.current;
+			});
+			pageRefs[pageRefs.length - 1].current = pageRefs.at(-2)!.current?.nextElementSibling as HTMLLIElement;
+		}
+		
+		document.querySelector(`.${styles.page_wrapper} .${styles.page_list} li.${styles.show}`)?.classList.remove(styles.show);
+		pageRefs.forEach((ref) => { ref.current?.classList.add(styles.show); });
 	}
 	
 	useEffect(() => {
-		document.querySelector(`.${styles.page_wrapper} .${styles.page_list} li.show`)?.classList.remove("show");
-		pageRefs.forEach((ref) => { ref.current?.classList.add("show"); });
+		document.querySelector(`.${styles.page_wrapper} .${styles.page_list} li.${styles.show}`)?.classList.remove(styles.show);
+		pageRefs.forEach((ref) => { ref.current?.classList.add(styles.show); });
 	}, [pageRefs]);
 	
 	return (
@@ -52,7 +63,12 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 					<FontAwesome prefix="fas" name="chevrons-left"/>
 				</Link>
 			}
-			<button className="shift left"><FontAwesome prefix="fas" name="chevron-left"/></button>
+			<button className="shift left"
+			        type="button"
+			        aria-label="shift-left"
+			        onClick={clickChevron}>
+				<FontAwesome prefix="fas" name="chevron-left"/>
+			</button>
 			<ul className={styles.page_list}>
 				{Array.from({ length: page.total }).map((_val, i) =>
 					<li key={i}
@@ -62,7 +78,12 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 					</li>
 				)}
 			</ul>
-			<button className="shift right"><FontAwesome prefix="fas" name="chevron-right"/></button>
+			<button className="shift right"
+			        type="button"
+			        aria-label="shift-right"
+					onClick={clickChevron}>
+				<FontAwesome prefix="fas" name="chevron-right"/>
+			</button>
 			{page.current < page.total &&
 				<Link href={`/leaderboard/${mode}/${sortBy}?page=${page.current + 1}${queryStr}`}>
 					<FontAwesome prefix="fas" name="chevrons-right"/>
