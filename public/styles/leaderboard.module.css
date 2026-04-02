@@ -42,7 +42,7 @@
 				box-shadow: var(--glass-box-shadow-dark);
 				opacity: 1;
 				z-index: -1;
-				transition: opacity 300ms;
+				transition: transform 300ms, opacity 300ms;
 			}
 			
 			&::after {
@@ -54,7 +54,11 @@
 				box-shadow: var(--glass-box-shadow-dark);
 				opacity: 0;
 				z-index: -1;
-				transition: opacity 300ms;
+				transition: transform 300ms, opacity 300ms;
+			}
+			
+			&:hover {
+			
 			}
 		}
 		
