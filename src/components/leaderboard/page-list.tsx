@@ -2,12 +2,13 @@
 
 import classNames from "classnames";
 import Link from "next/link";
-import { MouseEvent } from "react";
-import { createRef, useEffect } from "react";
+import type { MouseEvent } from "react";
+import { createRef, useRef, useState, useEffect } from "react";
 import { OsuMode } from "@/lib/mode";
 import { SortBy } from "@/database/leaderboard";
 import FontAwesome from "@/components/font-awesome";
 import styles from "@s/leaderboard.module.css";
+import { clearInterval, clearTimeout } from "node:timers";
 
 export default function PageList({ page, mode, sortBy, isClan, country }: {
 	page: {
@@ -26,35 +27,56 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 	];
 	conds.forEach(([query, cond]) => { if (cond) queries.push(query); });
 	const queryStr = queries.length > 0 ? `&${queries.join("&")}` : "";
-	const pageRefs = Array.from({ length: 5 }, () => createRef<HTMLLIElement>());
+	const buttonSize = 35, buttonGap = 10, displayAmount = 15;
+	const pageRefs = Array.from({ length: displayAmount }, () => createRef<HTMLLIElement>());
+	const longPressTimeout = useRef<NodeJS.Timeout>(undefined);
+	const longPressInterval = useRef<NodeJS.Timeout>(undefined);
+	const [refOrder, setRefOrder] = useState(Array.from( {length: displayAmount}, (_val, i) => Math.max(-1, i + page.current - 1 - Math.floor(displayAmount / 2)) ));
 	
-	const clickChevron = (e: MouseEvent<HTMLButtonElement>) => {
-		const element = e.currentTarget as HTMLButtonElement;
-		console.log(pageRefs)
-		const prevRefs = [...pageRefs];
-		if (element.classList.contains("left")) {
-			console.log(prevRefs)
-			prevRefs.forEach((ref, i) => {
-				console.log(prevRefs)
-				if (i < pageRefs.length - 1) pageRefs[i + 1].current = ref.current;
+	const clickChevron = (element: HTMLButtonElement) => {
+		if (element.classList.contains("left") && refOrder.at(0)! > 0) {
+			setRefOrder((prevState) => {
+				const nextState = [...prevState];
+				nextState.unshift(nextState.pop()!);
+				nextState[0] = nextState.at(1)! - 1;
+				return nextState;
 			});
-			pageRefs[0].current = pageRefs.at(1)!.current?.previousElementSibling as HTMLLIElement;
 		}
-		else if (element.classList.contains("right")) {
-			prevRefs.forEach((ref, i) => {
-				if (i > 0) pageRefs[i - 1].current = ref.current;
-			});
-			pageRefs[pageRefs.length - 1].current = pageRefs.at(-2)!.current?.nextElementSibling as HTMLLIElement;
+		else if (element.classList.contains("right") && refOrder.at(-1)! < page.total - 1) {
+			setRefOrder((prevState) => {
+				const nextState = [...prevState];
+				nextState.push(nextState.shift()!);
+				nextState[nextState.length - 1] = nextState.at(-2)! + 1;
+				return nextState;
+			})
 		}
-		
-		document.querySelector(`.${styles.page_wrapper} .${styles.page_list} li.${styles.show}`)?.classList.remove(styles.show);
-		pageRefs.forEach((ref) => { ref.current?.classList.add(styles.show); });
+	}
+	
+	const longPressChevron = (e: MouseEvent<HTMLButtonElement>) => {
+		const element = e.currentTarget;
+		clickChevron(element);
+		longPressTimeout.current = setTimeout(() => {
+			longPressInterval.current = setInterval(() => { clickChevron(element); }, 300);
+		}, 500);
+	}
+	
+	const pointerLeaveChevron = () => {
+		clearTimeout(longPressTimeout.current);
+		clearInterval(longPressInterval.current);
 	}
 	
 	useEffect(() => {
-		document.querySelector(`.${styles.page_wrapper} .${styles.page_list} li.${styles.show}`)?.classList.remove(styles.show);
+		const translateX = (buttonSize + buttonGap) * Math.floor(displayAmount / 2) - (buttonSize + buttonGap) * refOrder.at(Math.floor(displayAmount / 2))!;
+		document.querySelectorAll(`.${styles.page_wrapper} .${styles.page_list} li.${styles.show}`)?.forEach((element) => {
+			element.classList.remove(styles.show);
+		});
+		pageRefs.forEach((ref, i) => {
+			const pageListElement = Array.from(document.querySelectorAll(`.${styles.page_wrapper} .${styles.page_list} li`));
+			ref.current = refOrder.at(i)! >= 0 ? pageListElement.at(refOrder.at(i)!)! as HTMLLIElement : null;
+		});
 		pageRefs.forEach((ref) => { ref.current?.classList.add(styles.show); });
-	}, [pageRefs]);
+		(document.querySelector(`.${styles.page_wrapper} .${styles.page_list}`) as HTMLUListElement).style.setProperty("--translate-x", `${translateX}px`);
+	}, [refOrder, pageRefs]);
 	
 	return (
 		<div className={styles.page_wrapper}>
@@ -66,7 +88,7 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 			<button className="shift left"
 			        type="button"
 			        aria-label="shift-left"
-			        onClick={clickChevron}>
+			        onPointerDown={longPressChevron}>
 				<FontAwesome prefix="fas" name="chevron-left"/>
 			</button>
 			<ul className={styles.page_list}>
@@ -81,7 +103,9 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 			<button className="shift right"
 			        type="button"
 			        aria-label="shift-right"
-					onClick={clickChevron}>
+					onPointerDown={longPressChevron}
+			        onPointerUp={() => pointerLeaveChevron}
+					onPointerLeave={() => pointerLeaveChevron}>
 				<FontAwesome prefix="fas" name="chevron-right"/>
 			</button>
 			{page.current < page.total &&
