@@ -8,7 +8,6 @@ import { OsuMode } from "@/lib/mode";
 import { SortBy } from "@/database/leaderboard";
 import FontAwesome from "@/components/font-awesome";
 import styles from "@s/leaderboard.module.css";
-import { clearInterval, clearTimeout } from "node:timers";
 
 export default function PageList({ page, mode, sortBy, isClan, country }: {
 	page: {
@@ -31,44 +30,58 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 	const pageRefs = Array.from({ length: displayAmount }, () => createRef<HTMLLIElement>());
 	const longPressTimeout = useRef<NodeJS.Timeout>(undefined);
 	const longPressInterval = useRef<NodeJS.Timeout>(undefined);
-	const [refOrder, setRefOrder] = useState(Array.from( {length: displayAmount}, (_val, i) => Math.max(-1, i + page.current - 1 - Math.floor(displayAmount / 2)) ));
+	const [refOrder, setRefOrder] = useState(Array.from( {length: displayAmount}, (_val, i) => i));
 	
-	const clickChevron = (element: HTMLButtonElement) => {
-		if (element.classList.contains("left") && refOrder.at(0)! > 0) {
+	const shiftRefOrder = (element: HTMLButtonElement | HTMLLIElement) => {
+		if (element.classList.contains("left")) {
 			setRefOrder((prevState) => {
-				const nextState = [...prevState];
-				nextState.unshift(nextState.pop()!);
-				nextState[0] = nextState.at(1)! - 1;
-				return nextState;
+				if (prevState.at(0)! > 0) {
+					const nextState = [...prevState];
+					nextState.unshift(nextState.pop()!);
+					nextState[0] = nextState.at(1)! - 1;
+					return nextState;
+				}
+				else {
+					return prevState;
+				}
 			});
 		}
 		else if (element.classList.contains("right") && refOrder.at(-1)! < page.total - 1) {
 			setRefOrder((prevState) => {
-				const nextState = [...prevState];
-				nextState.push(nextState.shift()!);
-				nextState[nextState.length - 1] = nextState.at(-2)! + 1;
-				return nextState;
+				if (prevState.at(-1)! < page.total - 1) {
+					const nextState = [...prevState];
+					nextState.push(nextState.shift()!);
+					nextState[nextState.length - 1] = nextState.at(-2)! + 1;
+					return nextState;
+				}
+				else {
+					return prevState;
+				}
 			})
 		}
 	}
 	
-	const longPressChevron = (e: MouseEvent<HTMLButtonElement>) => {
+	const clickChevron = (e: MouseEvent<HTMLButtonElement>) => {
 		const element = e.currentTarget;
-		clickChevron(element);
+		shiftRefOrder(element);
 		longPressTimeout.current = setTimeout(() => {
-			console.log("longPressChevron");
-			longPressInterval.current = setInterval(() => { clickChevron(element); }, 300);
-		}, 500);
+			longPressInterval.current = setInterval(() => shiftRefOrder(element), 200);
+			
+			clearTimeout(longPressTimeout.current);
+			longPressTimeout.current = setTimeout(() => {
+				clearInterval(longPressInterval.current);
+				longPressInterval.current = setInterval(() => shiftRefOrder(element), 100);
+			}, 1200);
+		}, 300);
 	}
 	
-	const pointerLeaveChevron = () => {
-		console.log("pointerLeaveChevron");
+	const pointerUpChevron = () => {
 		clearTimeout(longPressTimeout.current);
 		clearInterval(longPressInterval.current);
 	}
 	
 	useEffect(() => {
-		const translateX = (buttonSize + buttonGap) * Math.floor(displayAmount / 2) - (buttonSize + buttonGap) * refOrder.at(Math.floor(displayAmount / 2))!;
+		const translateX = Math.min(0, (buttonSize + buttonGap) * Math.floor(displayAmount / 2) - (buttonSize + buttonGap) * refOrder.at(Math.floor(displayAmount / 2))!);
 		document.querySelectorAll(`.${styles.page_wrapper} .${styles.page_list} li.${styles.show}`)?.forEach((element) => {
 			element.classList.remove(styles.show);
 		});
@@ -90,10 +103,11 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 			<button className="shift left"
 			        type="button"
 			        aria-label="shift-left"
-			        onPointerDown={longPressChevron}
-			        onPointerUp={() => pointerLeaveChevron}
-			        onPointerLeave={() => pointerLeaveChevron}
-			        onPointerCancel={() => pointerLeaveChevron}>
+			        onPointerDown={clickChevron}
+			        onPointerUp={pointerUpChevron}
+			        onPointerLeave={pointerUpChevron}
+			        onPointerCancel={pointerUpChevron}
+					onContextMenu={(e) => e.preventDefault()}>
 				<FontAwesome prefix="fas" name="chevron-left"/>
 			</button>
 			<ul className={styles.page_list}>
@@ -108,10 +122,11 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 			<button className="shift right"
 			        type="button"
 			        aria-label="shift-right"
-					onPointerDown={longPressChevron}
-			        onPointerUp={() => pointerLeaveChevron}
-					onPointerLeave={() => pointerLeaveChevron}
-					onPointerCancel={() => pointerLeaveChevron}>
+					onPointerDown={clickChevron}
+			        onPointerUp={pointerUpChevron}
+					onPointerLeave={pointerUpChevron}
+					onPointerCancel={pointerUpChevron}
+					onContextMenu={(e) => e.preventDefault()}>
 				<FontAwesome prefix="fas" name="chevron-right"/>
 			</button>
 			{page.current < page.total &&
