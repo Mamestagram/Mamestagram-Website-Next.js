@@ -26,7 +26,7 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 	];
 	conds.forEach(([query, cond]) => { if (cond) queries.push(query); });
 	const queryStr = queries.length > 0 ? `&${queries.join("&")}` : "";
-	const buttonSize = 35, buttonGap = 10, displayAmount = 15;
+	const buttonSize = 35, buttonGap = 10, displayAmount = 7;
 	const pageRefs = Array.from({ length: displayAmount }, () => createRef<HTMLLIElement>());
 	const longPressTimeout = useRef<NodeJS.Timeout>(undefined);
 	const longPressInterval = useRef<NodeJS.Timeout>(undefined);
@@ -58,6 +58,9 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 					return prevState;
 				}
 			})
+		}
+		else {
+		
 		}
 	}
 	

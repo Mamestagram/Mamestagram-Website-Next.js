@@ -16,7 +16,7 @@
 	& .page_wrapper {
 		--button-size: 35px;
 		--button-gap: 10px;
-		--display-amount: 15;
+		--display-amount: 7;
 		
 		display: flex;
 		justify-content: center;

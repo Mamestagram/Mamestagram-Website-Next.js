@@ -2,13 +2,13 @@ import classNames from "classnames";
 import Image from "next/image";
 import Link from "next/link";
 import { RankingList, SortBy } from "@/database/leaderboard";
-import { Mode } from "@/lib/mode";
+import { OsuMode } from "@/lib/mode";
 import CountryFlag from "@/components/country-flag";
 import styles from "@s/leaderboard.module.css";
 
 export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 	listRow: RankingList,
-	mode: Mode,
+	mode: OsuMode,
 	sortBy: SortBy,
 	isClan: boolean
 }>) {
