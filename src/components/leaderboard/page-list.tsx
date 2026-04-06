@@ -56,11 +56,13 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 		const element = e.currentTarget;
 		clickChevron(element);
 		longPressTimeout.current = setTimeout(() => {
+			console.log("longPressChevron");
 			longPressInterval.current = setInterval(() => { clickChevron(element); }, 300);
 		}, 500);
 	}
 	
 	const pointerLeaveChevron = () => {
+		console.log("pointerLeaveChevron");
 		clearTimeout(longPressTimeout.current);
 		clearInterval(longPressInterval.current);
 	}
@@ -88,7 +90,10 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 			<button className="shift left"
 			        type="button"
 			        aria-label="shift-left"
-			        onPointerDown={longPressChevron}>
+			        onPointerDown={longPressChevron}
+			        onPointerUp={() => pointerLeaveChevron}
+			        onPointerLeave={() => pointerLeaveChevron}
+			        onPointerCancel={() => pointerLeaveChevron}>
 				<FontAwesome prefix="fas" name="chevron-left"/>
 			</button>
 			<ul className={styles.page_list}>
@@ -105,7 +110,8 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 			        aria-label="shift-right"
 					onPointerDown={longPressChevron}
 			        onPointerUp={() => pointerLeaveChevron}
-					onPointerLeave={() => pointerLeaveChevron}>
+					onPointerLeave={() => pointerLeaveChevron}
+					onPointerCancel={() => pointerLeaveChevron}>
 				<FontAwesome prefix="fas" name="chevron-right"/>
 			</button>
 			{page.current < page.total &&
