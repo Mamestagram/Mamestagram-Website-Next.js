@@ -1,15 +1,13 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
 export default function ScrollMotion() {
 	const header = useRef<HTMLElement>(null);
+	const [scrollPos, setScrollPos] = useState(0);
 	
 	const scrollHeader = () => {
-		if (window.scrollY >= header.current!.offsetHeight)
-			header.current!.classList.add("scrolled");
-		else
-			header.current!.classList.remove("scrolled");
+		setScrollPos(window.scrollY);
 	}
 	
 	useEffect(() => {
@@ -19,6 +17,13 @@ export default function ScrollMotion() {
 			window.removeEventListener("scroll", scrollHeader);
 		}
 	}, []);
+	
+	useEffect(() => {
+		if (scrollPos >= header.current!.offsetHeight)
+			header.current!.classList.add("scrolled");
+		else
+			header.current!.classList.remove("scrolled");
+	}, [scrollPos]);
 	
 	return null;
 }
