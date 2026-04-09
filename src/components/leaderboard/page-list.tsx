@@ -38,17 +38,9 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 			return 7;
 		}
 	});
-	const [pageOrder, setPageOrder] = useState<number[]>(() => {
-		const initState = Array.from({ length: displayAmount }, (_val, i) => i - Math.floor(displayAmount / 2));
-		while (initState.at(0)! < 0) {
-			initState.push(initState.shift()!);
-		}
-		while (initState.at(-1)! > page.total) {
-			initState.unshift(initState.pop()!);
-			initState[0] = initState.at(1)! - 1;
-		}
-		return initState;
-	});
+	const [pageOrder, setPageOrder] = useState<number[]>(() =>
+		Array.from({ length: displayAmount }, (_val, i) =>
+			Math.max(-1, i + page.current - 1 - Math.floor(displayAmount / 2))));
 	
 	const resizeWindow = useCallback(() => {
 		if (window.innerWidth <= 346) {
@@ -94,7 +86,7 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 				if (prevState.at(0)! > 0) {
 					const nextState = [...prevState];
 					nextState.unshift(nextState.pop()!);
-					nextState[0] = nextState.at(1)! - 1;
+					nextState[0]--;
 					return nextState;
 				}
 				else {
@@ -107,7 +99,7 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 				if (prevState.at(-1)! < page.total - 1) {
 					const nextState = [...prevState];
 					nextState.push(nextState.shift()!);
-					nextState[nextState.length - 1] = nextState.at(-2)! + 1;
+					nextState[nextState.length - 1]++;
 					return nextState;
 				}
 				else {
