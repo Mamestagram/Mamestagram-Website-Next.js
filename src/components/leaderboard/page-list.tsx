@@ -38,28 +38,31 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 			return 7;
 		}
 	});
-	const [pageOrder, setPageOrder] = useState<number[]>(() =>
-		Array.from({ length: displayAmount }, (_val, i) =>
-			Math.max(-1, i + page.current - 1 - Math.floor(displayAmount / 2))));
+	const [pageOrder, setPageOrder] = useState<number[]>(Array.from({ length: displayAmount },
+		(_val, i) => i + page.current - 1 - Math.floor(displayAmount / 2)));
 	
 	const resizeWindow = useCallback(() => {
 		if (window.innerWidth <= 346) {
 			setDisplayAmount(1);
-			setPageOrder((prevState) => prevState.slice(0, displayAmount));
+			setPageOrder((prevState) => prevState.slice(
+				Math.floor(prevState.length / 2) - Math.floor(displayAmount / 2),
+				Math.floor(prevState.length / 2) + Math.floor(displayAmount / 2)
+			));
 		}
 		else if (window.innerWidth <= 525) {
 			setDisplayAmount(3);
 			setPageOrder((prevState) => {
 				const nextState = [...prevState];
 				if (prevState.length > displayAmount) {
-					nextState.splice(displayAmount, prevState.length - displayAmount + 1);
+					for (let i: number = 0; i < (prevState.length - displayAmount) / 2; i++) {
+						nextState.pop();
+						nextState.shift();
+					}
 				}
 				else {
-					for (let i: number = prevState.length; i < displayAmount; i++) {
-						if (nextState.at(-1)! < page.total)
-							nextState.push(nextState.at(-1)! + 1);
-						else
-							nextState.splice(0, 0, nextState.at(0)! - 1);
+					for (let i: number = 0; i < (displayAmount - prevState.length) / 2; i++) {
+						nextState.unshift(nextState.at(0)! - 1);
+						nextState.push(nextState.at(-1)! + 1);
 					}
 				}
 				return nextState;
@@ -69,24 +72,23 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 			setDisplayAmount(7);
 			setPageOrder((prevState) => {
 				const nextState = [...prevState];
-				for (let i: number = prevState.length; i < displayAmount; i++) {
-					if (nextState.at(-1)! < page.total)
-						nextState.push(nextState.at(-1)! + 1);
-					else
-						nextState.splice(0, 0, nextState.at(0)! - 1);
+				for (let i: number = 0; i < (displayAmount - prevState.length) / 2; i++) {
+					nextState.unshift(nextState.at(0)! - 1);
+					nextState.push(nextState.at(-1)! + 1);
 				}
 				return nextState;
 			});
 		}
-	}, [displayAmount, page.total]);
+		console.log(pageOrder);
+	}, [displayAmount, pageOrder]);
 	
 	const shiftRefOrder = (element: HTMLButtonElement | HTMLLIElement) => {
 		if (element.classList.contains("left")) {
 			setPageOrder((prevState) => {
-				if (prevState.at(0)! > 0) {
+				if (prevState.at(Math.floor(prevState.length / 2))! > 0) {
 					const nextState = [...prevState];
-					nextState.unshift(nextState.pop()!);
-					nextState[0]--;
+					nextState.pop();
+					nextState.unshift(nextState.at(0)! - 1);
 					return nextState;
 				}
 				else {
@@ -94,12 +96,12 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 				}
 			});
 		}
-		else if (element.classList.contains("right") && pageOrder.at(-1)! < page.total - 1) {
+		else if (element.classList.contains("right")) {
 			setPageOrder((prevState) => {
-				if (prevState.at(-1)! < page.total - 1) {
+				if (prevState.at(-Math.ceil(prevState.length / 2))! < page.total - 1) {
 					const nextState = [...prevState];
-					nextState.push(nextState.shift()!);
-					nextState[nextState.length - 1]++;
+					nextState.shift();
+					nextState.push(nextState.at(-1)! + 1);
 					return nextState;
 				}
 				else {
@@ -139,7 +141,7 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 	}, [resizeWindow]);
 	
 	useEffect(() => {
-		const translateX = Math.min(0, (buttonSize + buttonGap) * Math.floor(displayAmount / 2) - (buttonSize + buttonGap) * pageOrder.at(Math.floor(displayAmount / 2))!);
+		const translateX = (buttonSize + buttonGap) * Math.floor(displayAmount / 2) - (buttonSize + buttonGap) * pageOrder.at(Math.floor(displayAmount / 2))!;
 		document.querySelectorAll(`.${styles.page_wrapper} .${styles.page_list} li`)?.forEach((element, i) => {
 			element.classList.remove(styles.show);
 			if (pageOrder.includes(i))
