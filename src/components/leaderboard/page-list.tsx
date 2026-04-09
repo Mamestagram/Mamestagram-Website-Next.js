@@ -2,8 +2,7 @@
 
 import classNames from "classnames";
 import Link from "next/link";
-import type { MouseEvent } from "react";
-import { useRef, useState, useCallback, useEffect } from "react";
+import { MouseEvent, useRef, useState, useCallback, useEffect } from "react";
 import { OsuMode } from "@/lib/mode";
 import { SortBy } from "@/database/leaderboard";
 import FontAwesome from "@/components/font-awesome";
@@ -29,8 +28,27 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 	const buttonSize = 35, buttonGap = 10;
 	const longPressTimeout = useRef<NodeJS.Timeout>(undefined);
 	const longPressInterval = useRef<NodeJS.Timeout>(undefined);
-	const [displayAmount, setDisplayAmount] = useState(7);
-	const [pageOrder, setPageOrder] = useState<number[]>(Array.from( { length: displayAmount }, (_val, i) => i));
+	const [displayAmount, setDisplayAmount] = useState(() => {
+		if (typeof window !== "undefined") {
+			if (window.innerWidth <= 346) return 1;
+			else if (window.innerWidth <= 525) return 3;
+			else return 7;
+		}
+		else {
+			return 7;
+		}
+	});
+	const [pageOrder, setPageOrder] = useState<number[]>(() => {
+		const initState = Array.from({ length: displayAmount }, (_val, i) => i - Math.floor(displayAmount / 2));
+		while (initState.at(0)! < 0) {
+			initState.push(initState.shift()!);
+		}
+		while (initState.at(-1)! > page.total) {
+			initState.unshift(initState.pop()!);
+			initState[0] = initState.at(1)! - 1;
+		}
+		return initState;
+	});
 	
 	const resizeWindow = useCallback(() => {
 		if (window.innerWidth <= 346) {
@@ -122,7 +140,6 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 	}
 	
 	useEffect(() => {
-		if (window.innerWidth <= 525) resizeWindow();
 		window.addEventListener("resize", resizeWindow);
 		return () => {
 			window.removeEventListener("resize", resizeWindow);
