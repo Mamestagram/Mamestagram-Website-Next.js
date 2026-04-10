@@ -8,11 +8,9 @@ import { SortBy } from "@/database/leaderboard";
 import FontAwesome from "@/components/font-awesome";
 import styles from "@s/leaderboard.module.css";
 
-export default function PageList({ page, mode, sortBy, isClan, country }: {
-	page: {
-		current: number,
-		total: number
-	},
+export default function PageList({ currentPage, totalPage, mode, sortBy, isClan, country }: {
+	currentPage: number,
+	totalPage: number,
 	mode: OsuMode,
 	sortBy: SortBy,
 	isClan: boolean,
@@ -39,15 +37,12 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 		}
 	});
 	const [pageOrder, setPageOrder] = useState<number[]>(Array.from({ length: displayAmount },
-		(_val, i) => i + page.current - 1 - Math.floor(displayAmount / 2)));
+		(_val, i) => currentPage - 1 + i - Math.floor(displayAmount / 2)));
 	
 	const resizeWindow = useCallback(() => {
 		if (window.innerWidth <= 346) {
 			setDisplayAmount(1);
-			setPageOrder((prevState) => prevState.slice(
-				Math.floor(prevState.length / 2) - Math.floor(displayAmount / 2),
-				Math.floor(prevState.length / 2) + Math.floor(displayAmount / 2)
-			));
+			setPageOrder([currentPage - 1]);
 		}
 		else if (window.innerWidth <= 525) {
 			setDisplayAmount(3);
@@ -79,10 +74,9 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 				return nextState;
 			});
 		}
-		console.log(pageOrder);
-	}, [displayAmount, pageOrder]);
+	}, [currentPage, displayAmount]);
 	
-	const shiftRefOrder = (element: HTMLButtonElement | HTMLLIElement) => {
+	const shiftRefOrder = (element: HTMLButtonElement | HTMLLIElement, index?: number) => {
 		if (element.classList.contains("left")) {
 			setPageOrder((prevState) => {
 				if (prevState.at(Math.floor(prevState.length / 2))! > 0) {
@@ -98,7 +92,7 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 		}
 		else if (element.classList.contains("right")) {
 			setPageOrder((prevState) => {
-				if (prevState.at(-Math.ceil(prevState.length / 2))! < page.total - 1) {
+				if (prevState.at(-Math.ceil(prevState.length / 2))! < totalPage - 1) {
 					const nextState = [...prevState];
 					nextState.shift();
 					nextState.push(nextState.at(-1)! + 1);
@@ -110,7 +104,7 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 			})
 		}
 		else {
-		
+			setPageOrder(Array.from({ length: displayAmount }, (_val, i) => index! + i - Math.floor(displayAmount / 2)));
 		}
 	}
 	
@@ -135,10 +129,12 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 	
 	useEffect(() => {
 		window.addEventListener("resize", resizeWindow);
+		document.querySelector(`.${styles.page_wrapper} .${styles.page_list} li.page-${currentPage}`)?.classList.add(styles.current_page);
 		return () => {
 			window.removeEventListener("resize", resizeWindow);
+			document.querySelector(`.${styles.page_wrapper} .${styles.page_list} li.${styles.current_page}`)?.classList.remove(styles.current_page);
 		}
-	}, [resizeWindow]);
+	}, [currentPage, resizeWindow]);
 	
 	useEffect(() => {
 		const translateX = (buttonSize + buttonGap) * Math.floor(displayAmount / 2) - (buttonSize + buttonGap) * pageOrder.at(Math.floor(displayAmount / 2))!;
@@ -152,8 +148,8 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 	
 	return (
 		<div className={styles.page_wrapper}>
-			{page.current > 1 &&
-				<Link href={`/leaderboard/${mode}/${sortBy}?page=${page.current - 1}${queryStr}`}>
+			{currentPage > 1 &&
+				<Link href={`/leaderboard/${mode}/${sortBy}?page=${currentPage - 1}${queryStr}`}>
 					<FontAwesome prefix="fas" name="chevrons-left"/>
 				</Link>
 			}
@@ -168,8 +164,10 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 				<FontAwesome prefix="fas" name="chevron-left"/>
 			</button>
 			<ul className={styles.page_list}>
-				{Array.from({ length: page.total }).map((_val, i) =>
-					<li key={i} className={classNames(`page-${i + 1}`, { [styles.current_page]: i + 1 === page.current })}>
+				{Array.from({ length: totalPage }).map((_val, i) =>
+					<li key={i}
+					    className={`page-${i + 1}`}
+						onClick={(e) => shiftRefOrder(e.currentTarget, i)}>
 						<Link href={`/leaderboard/${mode}/${sortBy}?page=${i + 1}${queryStr}`}>{i + 1}</Link>
 					</li>
 				)}
@@ -184,8 +182,8 @@ export default function PageList({ page, mode, sortBy, isClan, country }: {
 					onContextMenu={(e) => e.preventDefault()}>
 				<FontAwesome prefix="fas" name="chevron-right"/>
 			</button>
-			{page.current < page.total &&
-				<Link href={`/leaderboard/${mode}/${sortBy}?page=${page.current + 1}${queryStr}`}>
+			{currentPage < totalPage &&
+				<Link href={`/leaderboard/${mode}/${sortBy}?page=${currentPage + 1}${queryStr}`}>
 					<FontAwesome prefix="fas" name="chevrons-right"/>
 				</Link>
 			}

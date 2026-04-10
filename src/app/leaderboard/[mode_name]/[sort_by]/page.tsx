@@ -38,7 +38,7 @@ export default async function Leaderboard({ params, searchParams }: {
 		if (Number(page) <= pages) {
 			return (
 				<div className={styles.container}>
-					<PageList page={{ current: Number(page), total: pages }} mode={mode} sortBy={sortBy} isClan={isClan} country={country}/>
+					<PageList currentPage={Number(page)} totalPage={pages} mode={mode} sortBy={sortBy} isClan={isClan} country={country}/>
 					<RankingList ranking={ranking} mode={mode} sortBy={sortBy} isClan={isClan}/>
 				</div>
 			);
