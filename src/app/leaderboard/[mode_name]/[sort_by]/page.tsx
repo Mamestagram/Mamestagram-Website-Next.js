@@ -4,6 +4,7 @@ import { OsuMode, ModeNum } from "@/lib/mode";
 import { writeLog } from "@/lib/log";
 import RankingList from "@/components/leaderboard/ranking-list";
 import styles from "@s/leaderboard.module.css";
+import ModeSelection from "@/components/leaderboard/mode-selection";
 import PageList from "@/components/leaderboard/page-list";
 
 export default async function Leaderboard({ params, searchParams }: {
@@ -29,7 +30,7 @@ export default async function Leaderboard({ params, searchParams }: {
 		clan === undefined || clan === ""
 	];
 	const queries = `(page: ${page}${country !== undefined ? `, country: ${country}` : ""}, clan: ${clan !== undefined ? "true" : "false"})`
-	writeLog("GET", `/leaderboard/${mode_name}/${sort_by}} ${queries}`).then();
+	writeLog("GET", `/leaderboard/${mode_name}/${sort_by} ${queries}`).then();
 	
 	if (conds.every((cond) => cond)) {
 		const mode = mode_name as OsuMode, sortBy = sort_by as SortBy, isClan = clan !== undefined;
@@ -38,6 +39,7 @@ export default async function Leaderboard({ params, searchParams }: {
 		if (Number(page) <= pages) {
 			return (
 				<div className={styles.container}>
+					<ModeSelection mode={mode} sortBy={sortBy} isClan={isClan} country={country}/>
 					<PageList currentPage={Number(page)} totalPage={pages} mode={mode} sortBy={sortBy} isClan={isClan} country={country}/>
 					<RankingList ranking={ranking} mode={mode} sortBy={sortBy} isClan={isClan}/>
 				</div>
