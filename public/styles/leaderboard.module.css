@@ -205,6 +205,7 @@
 					@media (max-width: 480px) {
 						grid-auto-flow: row;
 						grid-gap: 2px;
+						font-size: 1.2rem;
 					}
 				}
 				
@@ -229,7 +230,7 @@
 			position: unset;
 			width: max-content;
 			height: unset;
-			margin: 0 auto 70px auto;
+			margin: 0 auto 75px auto;
 			transform: unset;
 		}
 	}
@@ -554,6 +555,10 @@
 				width: 1em;
 				min-width: 50px;
 				max-width: 80px;
+				
+				@media (max-width: 988px) {
+					display: none;
+				}
 			}
 		}
 		
