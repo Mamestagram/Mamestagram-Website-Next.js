@@ -81,6 +81,10 @@ body {
 			hsl(var(--leaderboard-hue), 18%, 12%) 100%
 		);
 	}
+	
+	&.leaderboard {
+		padding-top: 80px;
+	}
 }
 /* header */
 header {

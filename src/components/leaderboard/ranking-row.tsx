@@ -30,7 +30,7 @@ export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 			<td className={classNames(styles.playcount, { [styles.sorted]: sortBy === SortBy.playcount })}>
 				{Math.floor(listRow.plays).toLocaleString()}
 			</td>
-			<td className={classNames(styles.pp, { [styles.sorted]: sortBy === SortBy.performance })}>
+			<td className={classNames(styles.pp, { [styles.sorted]: sortBy === SortBy.performance || sortBy === SortBy.dans })}>
 				{Math.round(listRow.pp).toLocaleString()}<span className="pp-label">pp</span>
 			</td>
 			{sortBy !== SortBy.dans &&

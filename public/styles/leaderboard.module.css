@@ -14,9 +14,9 @@
 	
 	/* mode selection */
 	& .selection_wrapper {
-		--selection-org-size: 35px;
+		--selection-org-size: 2.188rem;
 		--selection-width: 150px;
-		--selection-row-height: 85px;
+		--selection-row-height: 90px;
 		
 		position: fixed;
 		top: 50%;
@@ -31,10 +31,12 @@
 		transition: left 300ms, height 300ms, width 300ms, transform 300ms;
 		
 		&:hover {
-			left: 0;
-			height: calc(var(--selection-row-height) * 4 + 30px);
-			width: var(--selection-width);
-			transform: translateY(-50%);
+			@media (min-width: 1156px) {
+				left: 0;
+				height: calc(var(--selection-row-height) * 4 + 30px);
+				width: var(--selection-width);
+				transform: translateY(-50%);
+			}
 		}
 		
 		& .mode_selection {
@@ -87,10 +89,13 @@
 				&:nth-child(4) { --n: 4; }
 				
 				&.selected_mode {
-					visibility: visible;
-					transform: translateY(calc(-1 * var(--selection-row-height) * (var(--n) - 1) - (var(--selection-row-height) - var(--selection-org-size)) / 2));
 					filter: invert(0%);
 					opacity: 1;
+					
+					@media (min-width: 1156px) {
+						visibility: visible;
+						transform: translateY(calc(-1 * var(--selection-row-height) * (var(--n) - 1) - (var(--selection-row-height) - var(--selection-org-size)) / 2));
+					}
 				}
 				
 				&:hover {
@@ -106,6 +111,10 @@
 						visibility: visible;
 						transform: translateX(0);
 						opacity: 1;
+						
+						@media (max-width: 1155px) {
+							transform: translate(calc(-1 * 50% + var(--selection-org-size) / 2), 5px);
+						}
 					}
 				}
 				
@@ -122,6 +131,10 @@
 					transform: translateX(-100%);
 					opacity: 0;
 					transition: visibility 300ms, transform 300ms, opacity 300ms;
+					
+					@media (max-width: 1155px) {
+						display: none;
+					}
 				}
 				
 				& .playstyle_selection {
@@ -135,7 +148,7 @@
 					transition: visibility 300ms, transform 300ms, opacity 300ms;
 					
 					& .playstyle {
-						padding: 5px 0;
+						padding: 2px 0;
 						
 						&.selected_playstyle a {
 							filter: invert(0%);
@@ -171,9 +184,53 @@
 								}
 							}
 						}
+						
+						@media (max-width: 480px) {
+							padding: 0;
+						}
+					}
+					
+					@media (max-width: 1155px) {
+						display: grid;
+						grid-template-columns: max-content;
+						grid-template-rows: max-content;
+						grid-auto-flow: column;
+						grid-gap: 5px;
+						position: absolute;
+						width: max-content;
+						text-align: center;
+						transform: translate(calc(-1 * 50% + var(--selection-org-size) / 2), -10px);
+					}
+					
+					@media (max-width: 480px) {
+						grid-auto-flow: row;
+						grid-gap: 2px;
 					}
 				}
+				
+				@media (max-width: 1155px) {
+					visibility: visible;
+					display: block;
+					transform: unset;
+					opacity: 1;
+				}
 			}
+			
+			@media (max-width: 1155px) {
+				grid-template-columns: repeat(4, var(--selection-org-size));
+				grid-template-rows: max-content;
+				grid-gap: 30px;
+				padding: 5px 20px;
+				justify-content: center;
+			}
+		}
+		
+		@media (max-width: 1155px) {
+			position: unset;
+			width: max-content;
+			height: unset;
+			margin: 0 auto 70px auto;
+			transform: unset;
 		}
 	}
 	
