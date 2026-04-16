@@ -83,7 +83,9 @@ body {
 	}
 	
 	&.leaderboard {
-		padding-top: 80px;
+		@media (max-width: 480px) {
+			padding-top: 80px;
+		}
 	}
 }
 /* header */
