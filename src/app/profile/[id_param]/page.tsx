@@ -2,17 +2,17 @@ import { redirect, notFound } from "next/navigation";
 import { getPreferredMode } from "@/database/profile";
 
 export default async function OnlyId({ params, searchParams }: {
-	params: Promise<{ id: string }>,
+	params: Promise<{ id_param: string }>,
 	searchParams: Promise<{ clan?: string }>
 }) {
-	const { id } = await params;
+	const { id_param } = await params;
 	const { clan } = await searchParams,
 		isClan = clan !== undefined && clan === "";
-	if (!isNaN(Number(id)) && Number(id) >= (!isClan ? 3 : 1)) {
-		const userId = Number(id);
-		const preferredMode = await getPreferredMode(userId, isClan);
+	if (!isNaN(Number(id_param)) && Number(id_param) >= (!isClan ? 3 : 1)) {
+		const id = Number(id_param);
+		const preferredMode = await getPreferredMode(id, isClan);
 		if (preferredMode !== undefined)
-			redirect(`${userId}/${preferredMode}${isClan ? "?clan" : ""}`);
+			redirect(`${id}/${preferredMode}${isClan ? "?clan" : ""}`);
 		else
 			notFound();
 	}
