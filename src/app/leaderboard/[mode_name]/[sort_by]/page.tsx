@@ -29,7 +29,7 @@ export default async function Leaderboard({ params, searchParams }: {
 		country === undefined || countries.find((value) => value.country === country) !== undefined,
 		clan === undefined || clan === ""
 	];
-	const queries = `(page: ${page}${country !== undefined ? `, country: ${country}` : ""}, clan: ${clan !== undefined})`
+	const queries = `(page: ${page}, country: ${country}, clan: ${clan})`;
 	writeLog("GET", `/leaderboard/${mode_name}/${sort_by} ${queries}`).then();
 	
 	if (conds.every((cond) => cond)) {
