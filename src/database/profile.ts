@@ -29,3 +29,7 @@ export const getPreferredMode = async (id: number, isClan: boolean) => {
 			return ModeNum[preferredModeNum] as OsuMode;
 	}
 }
+
+export const getInfo = async (id: number, isClan: boolean, isDans: boolean) => {
+
+}

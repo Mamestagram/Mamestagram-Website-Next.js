@@ -1,13 +1,16 @@
 @import "tailwindcss";
 
 :root {
+	/* hue */
+	--user-hue: 210;
+	
 	/* glass */
 	/* bg */
 	--glass-bg-dark: linear-gradient(
 		135deg,
 		rgba(8, 8, 14, .85) 0%,
 		rgba(10, 10, 16, .75) 70%,
-		rgba(20, 30, 50, .3) 100%
+		hsla(var(--user-hue), 43%, 14%, .3) 100%
 	);
 	--glass-bg-light-hover: linear-gradient(
 		135deg,
@@ -34,10 +37,6 @@
 	/* text color */
 	--text-main: #fdfdfd;
 	--text-sub: #b0b0c0;
-	
-	/* hue */
-	--user-hue: 0;
-	--leaderboard-hue: 210;
 }
 /* body */
 body {
@@ -65,20 +64,20 @@ body {
 		right: -150px;
 	}
 	
-	&:is(.home, .leaderboard) {
+	&:is(.home, .leaderboard, .profile) {
 		&::-webkit-scrollbar-thumb {
-			background-color: hsl(var(--leaderboard-hue), 19%, 20%);
+			background-color: hsl(var(--user-hue), 19%, 20%);
 		}
 		
 		&::before,
 		&::after {
-			background: radial-gradient(circle, hsla(var(--leaderboard-hue), 44%, 36%, 20%) 0%, transparent 70%);
+			background: radial-gradient(circle, hsla(var(--user-hue), 44%, 36%, 20%) 0%, transparent 70%);
 		}
 		
 		background: linear-gradient(
 			135deg,
-			hsl(var(--leaderboard-hue), 23%, 5%) 0%,
-			hsl(var(--leaderboard-hue), 18%, 12%) 100%
+			hsl(var(--user-hue), 23%, 5%) 0%,
+			hsl(var(--user-hue), 18%, 12%) 100%
 		);
 	}
 	
@@ -127,8 +126,8 @@ header {
 		}
 	}
 	/* header.home, header.leaderboard */
-	&:is(.home, .leaderboard) {
-		background-color: hsla(var(--leaderboard-hue), 44%, 36%, 75%);
+	&:is(.home, .leaderboard, .profile) {
+		background-color: hsla(var(--user-hue), 44%, 36%, 75%);
 	}
 	/* header .top-bar */
 	& .top-bar {
@@ -265,9 +264,9 @@ header {
 				header:is(.home, .leaderboard) &::before {
 					background: linear-gradient(
 						135deg,
-						hsl(var(--leaderboard-hue), 27%, 15%),
-						hsl(var(--leaderboard-hue), 27%, 18%) 60%,
-						hsl(var(--leaderboard-hue), 18%, 17%)
+						hsl(var(--user-hue), 27%, 15%),
+						hsl(var(--user-hue), 27%, 18%) 60%,
+						hsl(var(--user-hue), 18%, 17%)
 					);
 				}
 				
@@ -370,13 +369,13 @@ header {
 				
 				header:is(.home, .leaderboard) &:is(.register, .sign-in) {
 					@media (max-width: 872px) {
-						color: hsl(var(--leaderboard-hue), 79%, 66%);
+						color: hsl(var(--user-hue), 79%, 66%);
 					}
 				}
 				
 				header:is(.home, .leaderboard) &:is(.register, .sign-in, .avatar) {
 					@media (max-width: 872px) {
-						background-color: hsl(var(--leaderboard-hue), 19%, 25%);
+						background-color: hsl(var(--user-hue), 19%, 25%);
 					}
 				}
 				
@@ -401,7 +400,7 @@ header {
 					grid-template-rows: var(--mobile-height);
 					grid-template-columns: 7px 1fr;
 					grid-gap: 7px;
-					background-color: hsl(var(--leaderboard-hue), 10%, 15%);
+					background-color: hsl(var(--user-hue), 10%, 15%);
 					height: var(--mobile-height);
 					line-height: var(--mobile-height);
 					width: 100%;

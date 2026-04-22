@@ -29,6 +29,7 @@ export default function ModeSelection({ mode, sortBy, isClan, country }: {
 	return (
 		<aside className={styles.selection_wrapper}>
 			<ul className={styles.mode_selection}>
+				{/* std */}
 				<li className={classNames(styles.mode, "std", { [styles.selected_mode]: modeGroup.std.includes(mode) })}>
 					<ModeIcon mode={OsuMode.std}/>
 					<span className={styles.mode_name}>STD</span>
@@ -55,6 +56,7 @@ export default function ModeSelection({ mode, sortBy, isClan, country }: {
 						</li>
 					</ul>
 				</li>
+				{/* taiko */}
 				<li className={classNames(styles.mode, "taiko", { [styles.selected_mode]: modeGroup.taiko.includes(mode) })}>
 					<ModeIcon mode={OsuMode.taiko}/>
 					<span className={styles.mode_name}>Taiko</span>
@@ -76,6 +78,7 @@ export default function ModeSelection({ mode, sortBy, isClan, country }: {
 						</li>
 					</ul>
 				</li>
+				{/* ctb */}
 				<li className={classNames(styles.mode, "ctb", { [styles.selected_mode]: modeGroup.ctb.includes(mode) })}>
 					<ModeIcon mode={OsuMode.ctb}/>
 					<span className={styles.mode_name}>Catch</span>
@@ -97,6 +100,7 @@ export default function ModeSelection({ mode, sortBy, isClan, country }: {
 						</li>
 					</ul>
 				</li>
+				{/* mania */}
 				<li className={classNames(styles.mode, "mania", { [styles.selected_mode]: modeGroup.mania.includes(mode) })}>
 					<ModeIcon mode={OsuMode.mania}/>
 					<span className={styles.mode_name}>Mania</span>
