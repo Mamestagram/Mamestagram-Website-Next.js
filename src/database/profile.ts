@@ -1,6 +1,8 @@
 import { executeQuery } from "./connect";
 import { ModeNum, OsuMode } from "@/lib/mode";
 
+const existsUserClan = (id: number, )
+
 export const getPreferredMode = async (id: number, isClan: boolean) => {
 	// presonal
 	if (!isClan) {
@@ -31,5 +33,11 @@ export const getPreferredMode = async (id: number, isClan: boolean) => {
 }
 
 export const getInfo = async (id: number, isClan: boolean, isDans: boolean) => {
-
+	if (!isClan) {
+		const mamesosuApi = await fetch(`https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=all`);
+		const userInfo = await mamesosuApi.json();
+	}
+	else {
+	
+	}
 }

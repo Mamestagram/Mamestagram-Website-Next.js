@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import type { ServerInfo, UserInfo } from "@/components/context";
-import { UserProvider } from "@/components/context";
-import BannerImage from "@/components/banner-image";
+import type { ServerInfo, UserInfo } from "@/components/context/user-provider";
+import { UserProvider } from "@/components/context/user-provider";
 import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
 import "flag-icons/css/flag-icons.min.css";

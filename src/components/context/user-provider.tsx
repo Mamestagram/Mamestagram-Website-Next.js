@@ -1,4 +1,5 @@
 "use client";
+
 import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 
@@ -17,13 +18,13 @@ export type UserInfo = {
 	isLoggedIn: boolean
 };
 
-type ContextType = {
+type UserContextType = {
 	datetime: string,
 	serverInfo: ServerInfo,
 	userInfo: UserInfo
 };
 
-const UserContext = createContext<ContextType | null>(null);
+const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ serverInfo, userInfo, children }: Readonly<{
 	serverInfo: ServerInfo,
@@ -44,8 +45,6 @@ export const UserProvider = ({ serverInfo, userInfo, children }: Readonly<{
 		</UserContext.Provider>
 	);
 }
-
-
 
 export const useUserContext = () => {
 	const context = useContext(UserContext);
