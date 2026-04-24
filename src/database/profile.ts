@@ -1,7 +1,46 @@
 import { executeQuery } from "./connect";
 import { ModeNum, OsuMode } from "@/lib/mode";
+import { Priv } from "@/lib/priv";
 
-const existsUserClan = (id: number, )
+type UserInfo = {
+	tag?: string,
+	name: string,
+	pastName: string,
+	showPastName: boolean,
+	country: string,
+	creationTime: Date,
+	latestActivity: Date,
+	priv: Priv[],
+	preferredMode: ModeNum,
+	isPrivate: boolean
+};
+
+export const accountExists = async (id: number, isClan: boolean) => {
+	if (!isClan) {
+		return (await executeQuery<{ user_exists: 0 | 1 }>(
+			`
+			SELECT EXISTS(
+			    SELECT *
+			        FROM users
+			    WHERE id = ?
+		    ) AS user_exists
+			`,
+			[id]
+		)).at(0)!.user_exists === 1;
+	}
+	else {
+		return (await executeQuery<{ clan_exists: 0 | 1 }>(
+			`
+			SELECT EXISTS(
+			    SELECT *
+			        FROM clans
+			    WHERE id = ?
+		    ) AS clan_exists
+			`,
+			[id]
+		)).at(0)!.clan_exists === 1;
+	}
+}
 
 export const getPreferredMode = async (id: number, isClan: boolean) => {
 	// presonal
@@ -13,9 +52,8 @@ export const getPreferredMode = async (id: number, isClan: boolean) => {
 			WHERE id = ?
 			`,
 			[id]
-		)).at(0)?.preferred_mode;
-		if (preferredModeNum !== undefined)
-			return ModeNum[preferredModeNum] as OsuMode;
+		)).at(0)!.preferred_mode;
+		return ModeNum[preferredModeNum] as OsuMode;
 	}
 	// clan
 	else {
@@ -26,16 +64,62 @@ export const getPreferredMode = async (id: number, isClan: boolean) => {
 			WHERE id = ?
 			`,
 			[id]
-		)).at(0)?.preferred_mode;
-		if (preferredModeNum !== undefined)
-			return ModeNum[preferredModeNum] as OsuMode;
+		)).at(0)!.preferred_mode;
+		return ModeNum[preferredModeNum] as OsuMode;
 	}
 }
 
 export const getInfo = async (id: number, isClan: boolean, isDans: boolean) => {
 	if (!isClan) {
-		const mamesosuApi = await fetch(`https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=all`);
-		const userInfo = await mamesosuApi.json();
+		type ApiUserInfo = {
+			player: {
+				info: {
+					name: string,
+					priv: number,
+					country: string,
+					creation_time: number, // unix timestamp
+					latest_activity: number, // unix timestamp
+					clan_id: number,
+					preferred_mode: ModeNum,
+					private: 0 | 1
+				}
+			}
+		};
+		const mamesosuApi = await fetch(`https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=info`);
+		const apiUserInfo = (await mamesosuApi.json() as ApiUserInfo).player.info;
+		const [
+			tag,
+			{ past_name, show_past_name },
+			mutual,
+			following,
+			follower
+		] = [
+			// tag
+			(await executeQuery<{ tag: string }>(
+				`
+				SELECT tag
+					from clans
+				WHERE id = ?
+				`,
+				[apiUserInfo.clan_id]
+			)).at(0)!.tag,
+			// { past_name, show_past_name }
+			(await executeQuery<{ past_name: string, show_past_name: string }>(
+				`
+				SELECT past_name,
+				       show_pName AS show_past_name
+				    from users
+				WHERE id = ?
+				`,
+				[id]
+			)).map(({ past_name, show_past_name }) => ({
+				past_name: past_name.split(", "), show_past_name,
+				show_past_name
+			})).at(0)!,
+			// mutual
+			// following
+			// follower
+		];
 	}
 	else {
 	

@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import { notFound } from "next/navigation";
+import { accountExists } from "@/database/profile";
 import { writeLog } from "@/lib/log";
 import { OsuMode } from "@/lib/mode";
 import UserInfo from "@/components/profile/user-info";
@@ -31,11 +32,11 @@ export default async function Profile({ params, searchParams }: {
 		dans === undefined || dans === ""
 	];
 	const queries = `(clan: ${clan}, dans: ${dans})`;
-	writeLog("GET", `/leaderboard/${id_param}/${mode_name} ${queries}`).then();
+	writeLog("GET", `/profile/${id_param}/${mode_name} ${queries}`).then(); // log
 	
 	if (conds.every((cond) => cond)) {
 		const id = Number(id_param), mode = mode_name as OsuMode, isClan = clan !== undefined, isDans = dans !== undefined;
-		if (id >= (!isClan ? 3 : 1)) {
+		if (id >= (!isClan ? 3 : 1) && await accountExists(id, isClan)) {
 			return (
 				<div className={style.container}>
 					<div className={classNames(style.section_area, style.hero)}>

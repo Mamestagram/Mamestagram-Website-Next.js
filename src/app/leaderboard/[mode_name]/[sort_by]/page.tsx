@@ -30,7 +30,7 @@ export default async function Leaderboard({ params, searchParams }: {
 		clan === undefined || clan === ""
 	];
 	const queries = `(page: ${page}, country: ${country}, clan: ${clan})`;
-	writeLog("GET", `/leaderboard/${mode_name}/${sort_by} ${queries}`).then();
+	writeLog("GET", `/leaderboard/${mode_name}/${sort_by} ${queries}`).then(); // log
 	
 	if (conds.every((cond) => cond)) {
 		const mode = mode_name as OsuMode, sortBy = sort_by as SortBy, isClan = clan !== undefined;
