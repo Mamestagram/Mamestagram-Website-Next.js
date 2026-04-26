@@ -5,12 +5,15 @@ import { Priv } from "@/lib/priv";
 type UserInfo = {
 	tag?: string,
 	name: string,
-	pastName: string,
+	pastName: string[],
 	showPastName: boolean,
 	country: string,
 	creationTime: Date,
 	latestActivity: Date,
 	priv: Priv[],
+	mutual: { user: number }[], // unused for clan pf
+	following: { user: number }[], // unused for clan pf
+	followers: { user: number }[], // unused for clan pf
 	preferredMode: ModeNum,
 	isPrivate: boolean
 };
@@ -69,7 +72,7 @@ export const getPreferredMode = async (id: number, isClan: boolean) => {
 	}
 }
 
-export const getInfo = async (id: number, isClan: boolean, isDans: boolean) => {
+export const getInfo = async (id: number, isClan: boolean): UserInfo => {
 	if (!isClan) {
 		type ApiUserInfo = {
 			player: {
@@ -92,7 +95,7 @@ export const getInfo = async (id: number, isClan: boolean, isDans: boolean) => {
 			{ past_name, show_past_name },
 			mutual,
 			following,
-			follower
+			followers
 		] = [
 			// tag
 			(await executeQuery<{ tag: string }>(
@@ -102,9 +105,9 @@ export const getInfo = async (id: number, isClan: boolean, isDans: boolean) => {
 				WHERE id = ?
 				`,
 				[apiUserInfo.clan_id]
-			)).at(0)!.tag,
+			)).at(0)?.tag,
 			// { past_name, show_past_name }
-			(await executeQuery<{ past_name: string, show_past_name: string }>(
+			(await executeQuery<{ past_name: string, show_past_name: 0 | 1 }>(
 				`
 				SELECT past_name,
 				       show_pName AS show_past_name
@@ -113,13 +116,70 @@ export const getInfo = async (id: number, isClan: boolean, isDans: boolean) => {
 				`,
 				[id]
 			)).map(({ past_name, show_past_name }) => ({
-				past_name: past_name.split(", "), show_past_name,
+				past_name: past_name.split(", "),
 				show_past_name
 			})).at(0)!,
 			// mutual
+			await executeQuery<{ user: number }>(
+				`
+                SELECT following.user2 AS user
+                	FROM relationships following
+				JOIN relationships followers
+					ON followers.type = 'friend'
+					AND following.user2 = followers.user1
+					AND following.user1 = followers.user2
+                WHERE following.type = 'friend'
+					AND following.user1 = ?
+                ORDER BY following.user2
+				`,
+				[id]
+			),
 			// following
+			await executeQuery<{ user: number }>(
+				`
+				SELECT user2 AS user
+				    FROM relationships following
+				WHERE type = 'friend'
+				    AND EXISTS(
+				        SELECT *
+				            FROM relationships followers
+				        WHERE followers.type = 'friend'
+				            AND followers.user1 = following.user2
+				            AND followers.user2 = following.user1
+				    ) = 0
+				    AND user1 = ?
+				ORDER BY user2
+				`,
+				[id]
+			),
 			// follower
+			await executeQuery<{ user: number }>(
+				`
+				SELECT user1 AS user
+				    FROM relationships followers
+				WHERE type = 'friend'
+				    AND EXISTS(
+				        SELECT *
+				            FROM relationships following
+				        WHERE following.type = 'friend'
+				            AND following.user1 = followers.user2
+				            AND following.user2 = followers.user1
+				    ) = 0
+				    AND user2 = ?
+				ORDER BY user1
+				`,
+				[id]
+			)
 		];
+		return {
+			tag,
+			name: apiUserInfo.name,
+			pastName: past_name,
+			showPastName: show_past_name === 1,
+			country: apiUserInfo.country,
+			creationTime: new Date(apiUserInfo.creation_time * 1000),
+			latestActivity: new Date(apiUserInfo.latest_activity * 1000),
+		}
 	}
 	else {
 	
