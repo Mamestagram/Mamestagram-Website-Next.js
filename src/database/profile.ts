@@ -1,6 +1,22 @@
 import { executeQuery } from "./connect";
+import { mutualQuery, followingQuery, followersQuery, otherUserInfoQuery } from "./query/profile/user-info";
 import { ModeNum, OsuMode } from "@/lib/mode";
-import { Priv } from "@/lib/priv";
+import { Priv, getPrivs } from "@/lib/priv";
+
+type ApiUserInfo = {
+	player: {
+		info: {
+			name: string,
+			priv: number,
+			country: string,
+			creation_time: number, // unix timestamp
+			latest_activity: number, // unix timestamp
+			clan_id: number,
+			preferred_mode: ModeNum,
+			private: 0 | 1
+		}
+	}
+};
 
 type UserInfo = {
 	tag?: string,
@@ -72,106 +88,47 @@ export const getPreferredMode = async (id: number, isClan: boolean) => {
 	}
 }
 
-export const getInfo = async (id: number, isClan: boolean): UserInfo => {
+export const getInfo = async (id: number, isClan: boolean) => {
+	let info: UserInfo;
 	if (!isClan) {
-		type ApiUserInfo = {
-			player: {
-				info: {
-					name: string,
-					priv: number,
-					country: string,
-					creation_time: number, // unix timestamp
-					latest_activity: number, // unix timestamp
-					clan_id: number,
-					preferred_mode: ModeNum,
-					private: 0 | 1
-				}
-			}
-		};
 		const mamesosuApi = await fetch(`https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=info`);
 		const apiUserInfo = (await mamesosuApi.json() as ApiUserInfo).player.info;
 		const [
-			tag,
-			{ past_name, show_past_name },
+			{ tag, past_name, show_past_name },
 			mutual,
 			following,
 			followers
 		] = [
-			// tag
-			(await executeQuery<{ tag: string }>(
-				`
-				SELECT tag
-					from clans
-				WHERE id = ?
-				`,
-				[apiUserInfo.clan_id]
-			)).at(0)?.tag,
-			// { past_name, show_past_name }
-			(await executeQuery<{ past_name: string, show_past_name: 0 | 1 }>(
-				`
-				SELECT past_name,
-				       show_pName AS show_past_name
-				    from users
-				WHERE id = ?
-				`,
+			// { tag, past_name, show_past_name }
+			(await executeQuery<{
+				tag: string,
+				past_name: string,
+				show_past_name: 0 | 1
+			}>(
+				otherUserInfoQuery,
 				[id]
-			)).map(({ past_name, show_past_name }) => ({
-				past_name: past_name.split(", "),
-				show_past_name
+			)).map((row) => ({
+				tag: row.tag,
+				past_name: row.past_name.split(", "),
+				show_past_name: row.show_past_name
 			})).at(0)!,
 			// mutual
 			await executeQuery<{ user: number }>(
-				`
-                SELECT following.user2 AS user
-                	FROM relationships following
-				JOIN relationships followers
-					ON followers.type = 'friend'
-					AND following.user2 = followers.user1
-					AND following.user1 = followers.user2
-                WHERE following.type = 'friend'
-					AND following.user1 = ?
-                ORDER BY following.user2
-				`,
+				mutualQuery,
 				[id]
 			),
 			// following
 			await executeQuery<{ user: number }>(
-				`
-				SELECT user2 AS user
-				    FROM relationships following
-				WHERE type = 'friend'
-				    AND EXISTS(
-				        SELECT *
-				            FROM relationships followers
-				        WHERE followers.type = 'friend'
-				            AND followers.user1 = following.user2
-				            AND followers.user2 = following.user1
-				    ) = 0
-				    AND user1 = ?
-				ORDER BY user2
-				`,
+				followingQuery,
 				[id]
 			),
-			// follower
+			// followers
 			await executeQuery<{ user: number }>(
-				`
-				SELECT user1 AS user
-				    FROM relationships followers
-				WHERE type = 'friend'
-				    AND EXISTS(
-				        SELECT *
-				            FROM relationships following
-				        WHERE following.type = 'friend'
-				            AND following.user1 = followers.user2
-				            AND following.user2 = followers.user1
-				    ) = 0
-				    AND user2 = ?
-				ORDER BY user1
-				`,
+				followersQuery,
 				[id]
 			)
 		];
-		return {
+		info = {
 			tag,
 			name: apiUserInfo.name,
 			pastName: past_name,
@@ -179,9 +136,16 @@ export const getInfo = async (id: number, isClan: boolean): UserInfo => {
 			country: apiUserInfo.country,
 			creationTime: new Date(apiUserInfo.creation_time * 1000),
 			latestActivity: new Date(apiUserInfo.latest_activity * 1000),
-		}
+			priv: getPrivs(apiUserInfo.priv),
+			mutual,
+			following,
+			followers,
+			preferredMode: apiUserInfo.preferred_mode,
+			isPrivate: apiUserInfo.private === 1
+		};
 	}
 	else {
 	
 	}
+	return info;
 }

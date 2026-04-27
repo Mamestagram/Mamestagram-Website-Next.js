@@ -14,3 +14,18 @@ export enum Priv {
 	developer = 1 << 14,
 	staff = moderator | administrator | developer
 }
+
+export const getPrivs = (privNum: number) => {
+	const privs: Priv[] = [];
+	Object.keys(Priv).reverse().forEach((key) => {
+		const privKey = key as keyof typeof Priv;
+		const conds = [
+			(Priv[privKey] & (Priv.supporter | Priv.premium | Priv.moderator | Priv.administrator | Priv.developer)) === 0,
+			(Priv[privKey] & (Priv.supporter | Priv.premium)) > 0 && !privs.includes(Priv.donator),
+			(Priv[privKey] & (Priv.moderator | Priv.administrator | Priv.developer)) > 0 && !privs.includes(Priv.staff)
+		]
+		if ((privNum & Priv[privKey]) > 0 && conds.every((cond) => cond))
+			privs.push(Priv[privKey]);
+	});
+	return privs.reverse();
+}

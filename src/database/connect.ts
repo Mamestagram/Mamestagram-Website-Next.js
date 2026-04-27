@@ -35,42 +35,42 @@ const getStatMode = (query: string) => {
 	else return StatMode.select;
 }
 
-export const executeQuery = <T>(query: string, args?: QueryArgs): Promise<T extends undefined ? QueryResult : T[]> => {
-	return new Promise(async (resolve, reject) => {
-		const questionSymbol = query.match(/\?/g)?.length ?? 0, argsSize = args?.length ?? 0;
-		if (questionSymbol === argsSize) {
-			const statMode = getStatMode(query);
-			
-			if (statMode === StatMode.select) {
-				try {
-					const [result] = await pool.query(query, args);
-					resolve(result as T extends undefined ? QueryResult : T[]);
-				}
-				catch (err) {
-					reject(err);
-				}
+export const executeQuery = async <T>(query: string, args?: QueryArgs) => {
+	const questionSymbol = query.match(/\?/g)?.length ?? 0, argsSize = args?.length ?? 0;
+	if (questionSymbol === argsSize) {
+		const statMode = getStatMode(query);
+		
+		if (statMode === StatMode.select) {
+			try {
+				const [result] = await pool.query(query, args);
+				return result as T extends undefined ? QueryResult : T[];
 			}
-			else {
-				const connection = await pool.getConnection();
-				try {
-					await connection.beginTransaction(); // start transaction
-					const [result] = await connection.query(query, args);
-					await connection.commit(); // commit
-					resolve(result as T extends undefined ? QueryResult : T[]);
-				}
-				catch (err) {
-					await connection.rollback(); // rollback
-					reject(err);
-				}
-				finally {
-					pool.releaseConnection(connection);
-				}
+			catch (err) {
+				console.error(err);
+				throw new Error(err instanceof Error ? err.message : "Unexpected error has occurred.");
 			}
 		}
 		else {
-			const errMsg = `Doesn't match number of arguments (question symbol: ${questionSymbol}, args: ${argsSize})`;
-			console.error(`${errMsg}\n${query}\n${args}`);
-			reject(errMsg);
+			const connection = await pool.getConnection();
+			try {
+				await connection.beginTransaction(); // start transaction
+				const [result] = await connection.query(query, args);
+				await connection.commit(); // commit
+				return result as T extends undefined ? QueryResult : T[];
+			}
+			catch (err) {
+				await connection.rollback(); // rollback
+				console.error(err);
+				throw new Error(err instanceof Error ? err.message : "Unexpected error has occurred.");
+			}
+			finally {
+				pool.releaseConnection(connection);
+			}
 		}
-	});
+	}
+	else {
+		const errMsg = `Doesn't match number of arguments (question symbol: ${questionSymbol}, args: ${argsSize})`;
+		console.error(`${errMsg}\n${query}\n${args}`);
+		throw new Error(errMsg);
+	}
 }

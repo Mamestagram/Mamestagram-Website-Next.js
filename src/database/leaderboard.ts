@@ -1,6 +1,6 @@
 import type { QueryArgs } from "./connect";
 import { executeQuery } from "./connect";
-import { countryList } from "./query/leaderboard/country-list";
+import { countryListQuery } from "./query/leaderboard/country-list";
 import { defaultRankingQuery } from "./query/leaderboard/default-ranking";
 import { countryRankingQuery } from "./query/leaderboard/country-ranking";
 import { clanRankingQuery } from "./query/leaderboard/clan-ranking";
@@ -51,7 +51,7 @@ export enum SortByColumnName {
 
 export const getCountryList = async () => {
 	try {
-		return await executeQuery<{ country: string }>(countryList);
+		return await executeQuery<{ country: string }>(countryListQuery);
 	}
 	catch (error) {
 		writeError(error).then();
