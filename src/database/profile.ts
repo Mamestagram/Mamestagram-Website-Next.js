@@ -33,7 +33,7 @@ type ClanInfo = {
 	public: 0 | 1
 };
 
-type UserInfo = {
+type Info = {
 	tag?: string | null, // unused for clan pf
 	name: string,
 	pastName: string[] | null,
@@ -104,7 +104,7 @@ export const getPreferredMode = async (id: number, isClan: boolean) => {
 }
 
 export const getInfo = async (id: number, isClan: boolean) => {
-	let info: UserInfo;
+	let info: Info;
 	if (!isClan) {
 		const mamesosuApi = await fetch(`https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=info`);
 		const apiUserInfo = (await mamesosuApi.json() as ApiUserInfo).player.info;
@@ -144,7 +144,7 @@ export const getInfo = async (id: number, isClan: boolean) => {
 			)
 		];
 		info = {
-			tag,
+			tag: tag !== null ? `[${tag}]` : null,
 			name: apiUserInfo.name,
 			pastName: past_name,
 			showPastName: show_past_name === 1,

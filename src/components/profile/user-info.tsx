@@ -1,14 +1,20 @@
 import classNames from "classnames";
+import { getInfo } from "@/database/profile";
 import style from "@s/profile.module.css";
 
-export default function UserInfo() {
+export default async function UserInfo({ id, isClan }: {
+	id: number,
+	isClan: boolean
+}) {
+	const info = await getInfo(id, isClan);
+	
 	return (
 		<div className={classNames(style.section_box, style.user_info)}>
 			<div>
 				<div className="userinfo-top">
 					<div className="avatar"></div>
 					<div>
-						<div className="name">Mame</div>
+						<div className="name">{info.tag}{info.name}</div>
 						<div className="sub">
 							Rhythm game player / mapper / community builder<br/>
 							Short bio, status message, and a stronger first impression area.
@@ -26,15 +32,15 @@ export default function UserInfo() {
 				<div className="social-strip">
 					<div className="social-box">
 						<div className="social-label">Mutual</div>
-						<div className="social-value">128</div>
+						<div className="social-value">{info.mutual!.length}</div>
 					</div>
 					<div className="social-box">
 						<div className="social-label">Following</div>
-						<div className="social-value">412</div>
+						<div className="social-value">{info.following!.length}</div>
 					</div>
 					<div className="social-box">
 						<div className="social-label">Followers</div>
-						<div className="social-value">587</div>
+						<div className="social-value">{info.followers!.length}</div>
 					</div>
 				</div>
 				
