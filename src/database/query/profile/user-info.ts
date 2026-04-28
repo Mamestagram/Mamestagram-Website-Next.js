@@ -6,6 +6,17 @@ export const otherUserInfoQuery = `
 	WHERE u.id = ?
 `;
 
+export const clanInfoQuery = `
+	SELECT tag,
+       past_tag,
+       show_past_tag,
+       created_at,
+       preferred_mode,
+       public
+	    FROM clans
+	WHERE id = ?
+`;
+
 export const mutualQuery = `
 	SELECT following.user2 AS user
 	    FROM relationships following

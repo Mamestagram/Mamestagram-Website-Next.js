@@ -1,5 +1,11 @@
 import { executeQuery } from "./connect";
-import { mutualQuery, followingQuery, followersQuery, otherUserInfoQuery } from "./query/profile/user-info";
+import {
+	otherUserInfoQuery,
+	clanInfoQuery,
+	mutualQuery,
+	followingQuery,
+	followersQuery
+} from "./query/profile/user-info";
 import { ModeNum, OsuMode } from "@/lib/mode";
 import { Priv, getPrivs } from "@/lib/priv";
 
@@ -18,18 +24,27 @@ type ApiUserInfo = {
 	}
 };
 
+type ClanInfo = {
+	tag: string,
+	past_tag: string | null,
+	show_past_tag: 0 | 1,
+	created_at: number, // unix timestamp
+	preferred_mode: ModeNum,
+	public: 0 | 1
+};
+
 type UserInfo = {
-	tag?: string,
+	tag?: string | null, // unused for clan pf
 	name: string,
-	pastName: string[],
+	pastName: string[] | null,
 	showPastName: boolean,
-	country: string,
+	country?: string, // unused for clan pf
 	creationTime: Date,
-	latestActivity: Date,
-	priv: Priv[],
-	mutual: { user: number }[], // unused for clan pf
-	following: { user: number }[], // unused for clan pf
-	followers: { user: number }[], // unused for clan pf
+	latestActivity?: Date, // unused for clan pf
+	priv?: Priv[], // unused for clan pf
+	mutual?: { user: number }[], // unused for clan pf
+	following?: { user: number }[], // unused for clan pf
+	followers?: { user: number }[], // unused for clan pf
 	preferredMode: ModeNum,
 	isPrivate: boolean
 };
@@ -101,15 +116,15 @@ export const getInfo = async (id: number, isClan: boolean) => {
 		] = [
 			// { tag, past_name, show_past_name }
 			(await executeQuery<{
-				tag: string,
-				past_name: string,
+				tag: string | null,
+				past_name: string | null,
 				show_past_name: 0 | 1
 			}>(
 				otherUserInfoQuery,
 				[id]
 			)).map((row) => ({
 				tag: row.tag,
-				past_name: row.past_name.split(", "),
+				past_name: row.past_name !== null ? row.past_name.split(", ") : null,
 				show_past_name: row.show_past_name
 			})).at(0)!,
 			// mutual
@@ -145,7 +160,18 @@ export const getInfo = async (id: number, isClan: boolean) => {
 		};
 	}
 	else {
-	
+		const clanInfo = (await executeQuery<ClanInfo>(
+			clanInfoQuery,
+			[id]
+		)).at(0)!;
+		info = {
+			name: clanInfo.tag,
+			pastName: clanInfo.past_tag !== null ? clanInfo.past_tag.split(", ") : null,
+			showPastName: clanInfo.show_past_tag === 1,
+			creationTime: new Date(clanInfo.created_at * 1000),
+			preferredMode: clanInfo.preferred_mode,
+			isPrivate: clanInfo.public === 0
+		}
 	}
 	return info;
 }
