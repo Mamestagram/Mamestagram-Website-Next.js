@@ -8,6 +8,7 @@ import {
 } from "./query/profile/user-info";
 import { ModeNum, OsuMode } from "@/lib/mode";
 import { Priv, getPrivs } from "@/lib/priv";
+import { writeError } from "@/lib/log";
 
 type ApiUserInfo = {
 	player: {
@@ -107,70 +108,67 @@ export const getInfo = async (id: number, isClan: boolean) => {
 	let info: Info;
 	if (!isClan) {
 		const mamesosuApi = await fetch(`https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=info`);
-		const apiUserInfo = (await mamesosuApi.json() as ApiUserInfo).player.info;
-		const [
-			{ tag, past_name, show_past_name },
-			mutual,
-			following,
-			followers
-		] = [
-			// { tag, past_name, show_past_name }
-			(await executeQuery<{
-				tag: string | null,
-				past_name: string | null,
-				show_past_name: 0 | 1
-			}>(
-				otherUserInfoQuery,
-				[id]
-			)).map((row) => ({
-				tag: row.tag,
-				past_name: row.past_name !== null ? row.past_name.split(", ") : null,
-				show_past_name: row.show_past_name
-			})).at(0)!,
-			// mutual
-			await executeQuery<{ user: number }>(
-				mutualQuery,
-				[id]
-			),
-			// following
-			await executeQuery<{ user: number }>(
-				followingQuery,
-				[id]
-			),
-			// followers
-			await executeQuery<{ user: number }>(
-				followersQuery,
-				[id]
-			)
-		];
-		info = {
-			tag: tag !== null ? `[${tag}]` : null,
-			name: apiUserInfo.name,
-			pastName: past_name,
-			showPastName: show_past_name === 1,
-			country: apiUserInfo.country,
-			creationTime: new Date(apiUserInfo.creation_time * 1000),
-			latestActivity: new Date(apiUserInfo.latest_activity * 1000),
-			priv: getPrivs(apiUserInfo.priv),
-			mutual,
-			following,
-			followers,
-			preferredMode: apiUserInfo.preferred_mode,
-			isPrivate: apiUserInfo.private === 1
-		};
+		if (mamesosuApi.ok) {
+			const apiUserInfo = (await mamesosuApi.json() as ApiUserInfo).player.info;
+			const [
+				{ tag, past_name, show_past_name },
+				mutual,
+				following,
+				followers
+			] = [
+				// { tag, past_name, show_past_name }
+				(await executeQuery<{
+					tag: string | null,
+					past_name: string | null,
+					show_past_name: 0 | 1
+				}>(otherUserInfoQuery, [id])).map((row) => ({
+					tag: row.tag,
+					past_name: row.past_name !== null ? row.past_name.split(", ") : null,
+					show_past_name: row.show_past_name
+				})).at(0)!,
+				// mutual
+				await executeQuery<{ user: number }>(mutualQuery, [id]),
+				// following
+				await executeQuery<{ user: number }>(followingQuery, [id]),
+				// followers
+				await executeQuery<{ user: number }>(followersQuery, [id])
+			];
+			info = {
+				tag: tag !== null ? `[${tag}]` : null,
+				name: apiUserInfo.name,
+				pastName: past_name,
+				showPastName: show_past_name === 1,
+				country: apiUserInfo.country,
+				creationTime: new Date(apiUserInfo.creation_time * 1000),
+				latestActivity: new Date(apiUserInfo.latest_activity * 1000),
+				priv: getPrivs(apiUserInfo.priv),
+				mutual,
+				following,
+				followers,
+				preferredMode: apiUserInfo.preferred_mode,
+				isPrivate: apiUserInfo.private === 1
+			};
+		}
+		else {
+			writeError(`${mamesosuApi.status}: ${mamesosuApi.statusText}`).then();
+			throw new Error(`Couldn't fetch api data (status: ${mamesosuApi.status})`);
+		}
 	}
 	else {
-		const clanInfo = (await executeQuery<ClanInfo>(
-			clanInfoQuery,
-			[id]
-		)).at(0)!;
-		info = {
-			name: clanInfo.tag,
-			pastName: clanInfo.past_tag !== null ? clanInfo.past_tag.split(", ") : null,
-			showPastName: clanInfo.show_past_tag === 1,
-			creationTime: new Date(clanInfo.created_at * 1000),
-			preferredMode: clanInfo.preferred_mode,
-			isPrivate: clanInfo.public === 0
+		try {
+			const clanInfo = (await executeQuery<ClanInfo>(clanInfoQuery, [id])).at(0)!;
+			info = {
+				name: clanInfo.tag,
+				pastName: clanInfo.past_tag !== null ? clanInfo.past_tag.split(", ") : null,
+				showPastName: clanInfo.show_past_tag === 1,
+				creationTime: new Date(clanInfo.created_at * 1000),
+				preferredMode: clanInfo.preferred_mode,
+				isPrivate: clanInfo.public === 0
+			};
+		}
+		catch (err) {
+			writeError(err).then();
+			throw new Error("Couldn't get clan info");
 		}
 	}
 	return info;

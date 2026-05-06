@@ -53,9 +53,9 @@ export const getCountryList = async () => {
 	try {
 		return await executeQuery<{ country: string }>(countryListQuery);
 	}
-	catch (error) {
-		writeError(error).then();
-		throw error;
+	catch (err) {
+		writeError(err).then();
+		throw new Error("Couldn't get country list");
 	}
 }
 
@@ -84,7 +84,7 @@ const getRankingQuery = (mode: ModeNum, sortBy: SortBy, isClan: boolean, country
 	}
 	else {
 		const errMsg = "Unknown ranking";
-		writeError(errMsg).then();
+		writeError(`${errMsg} (mode: ${mode}, sortBy: ${sortBy}, isClan: ${isClan}, country: ${country})`).then();
 		throw new Error(errMsg);
 	}
 }
@@ -94,9 +94,9 @@ const getPages = async (sqlQuery: string, sqlArgs: QueryArgs) => {
 		const recCount = (await executeQuery(sqlQuery, sqlArgs)).length;
 		return Math.ceil(recCount / 50);
 	}
-	catch (error) {
-		writeError(error).then();
-		throw error;
+	catch (err) {
+		writeError(err).then();
+		throw new Error("Couldn't get ranking pages");
 	}
 }
 
@@ -114,8 +114,8 @@ export const getLeaderboard = async (mode: ModeNum, sortBy: SortBy, page: number
 		const pages = await getPages(query, args);
 		return { ranking, pages };
 	}
-	catch (error) {
-		writeError(error).then();
-		throw error;
+	catch (err) {
+		writeError(err).then();
+		throw new Error("Couldn't get leaderboard");
 	}
 }
