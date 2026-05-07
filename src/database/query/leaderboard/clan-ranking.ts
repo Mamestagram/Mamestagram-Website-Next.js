@@ -22,7 +22,7 @@ export const clanRankingQuery = (isDans: boolean, sortByOrder: string[]) => !isD
 	    WHERE public = 1
 			AND (priv & ${Priv.unrestricted}) > 0
 			AND NOT acc = 0
-			AND mode = ? -- Mode
+			AND mode = ? -- ModeNum
 	    GROUP BY clan_id
 	    ORDER BY ${sortByOrder}
 	`
@@ -65,7 +65,7 @@ export const clanRankingQuery = (isDans: boolean, sortByOrder: string[]) => !isD
 		    AND d_a_p.mode = d_p.mode
 		JOIN clans c
 		    ON clan_id = c.id
-		WHERE d_a_p.mode = ? -- Mode
+		WHERE d_a_p.mode = ? -- ModeNum
 		GROUP BY clan_id
 		ORDER BY pp DESC, acc DESC, plays DESC
 	`;

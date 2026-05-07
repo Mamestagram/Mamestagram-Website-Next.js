@@ -3,18 +3,13 @@ export const otherUserInfoQuery = `
 	    FROM users u
 	LEFT JOIN clans c
 		ON clan_id = c.id
-	WHERE u.id = ?
+	WHERE u.id = ? -- number
 `;
 
 export const clanInfoQuery = `
-	SELECT tag,
-       past_tag,
-       show_past_tag,
-       created_at,
-       preferred_mode,
-       public
+	SELECT tag, past_tag, show_past_tag, created_at, preferred_mode, public
 	    FROM clans
-	WHERE id = ?
+	WHERE id = ? -- number
 `;
 
 export const mutualQuery = `
@@ -25,7 +20,7 @@ export const mutualQuery = `
 		AND following.user2 = followers.user1
 		AND following.user1 = followers.user2
 	WHERE following.type = 'friend'
-		AND following.user1 = ?
+		AND following.user1 = ? -- number
 	ORDER BY following.user2
 `;
 
@@ -40,7 +35,7 @@ export const followingQuery = `
 	            AND followers.user1 = following.user2
 	            AND followers.user2 = following.user1
 	    ) = 0
-	    AND user1 = ?
+	    AND user1 = ? -- number
 	ORDER BY user2
 `;
 
@@ -55,6 +50,6 @@ export const followersQuery = `
 	            AND following.user1 = followers.user2
 	            AND following.user2 = followers.user1
 	    ) = 0
-	    AND user2 = ?
+	    AND user2 = ? -- number
 	ORDER BY user1
 `;

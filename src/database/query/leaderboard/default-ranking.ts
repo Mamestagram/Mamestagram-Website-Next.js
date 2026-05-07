@@ -64,7 +64,7 @@ export const defaultRankingQuery = (isDans: boolean, sortByOrder: string[]): Rea
 		    ON clan_id = c.id
 		WHERE NOT u.id = 1
 		    AND (priv & 1 << ${Priv.unrestricted}) > 0
-		    AND d_s.mode = ? -- Mode
+		    AND d_s.mode = ? -- ModeNum
 		GROUP BY d_s.id
 		ORDER BY pp DESC, acc DESC, plays DESC
 	`;

@@ -24,7 +24,7 @@ export const countryRankingQuery = (isDans: boolean, sortByOrder: string[]): Rea
 	    WHERE NOT u.id = 1
 			AND (priv & ${Priv.unrestricted}) > 0
 	        AND NOT acc = 0
-	        AND mode = ? -- Mode
+	        AND mode = ? -- ModeNum
 	        AND country = ? -- string
 	    ORDER BY ${sortByOrder}
 	`
@@ -65,8 +65,8 @@ export const countryRankingQuery = (isDans: boolean, sortByOrder: string[]): Rea
 		    ON clan_id = c.id
 		WHERE NOT u.id = 1
 		    AND (priv & 1 << ${Priv.unrestricted}) > 0
-		    AND d_s.mode = ? -- Mode
-			AND u.country = ? -- string
+		    AND d_s.mode = ? -- ModeNum
+			AND country = ? -- string
 		GROUP BY d_s.id
 		ORDER BY pp DESC, acc DESC, plays DESC
 	`;

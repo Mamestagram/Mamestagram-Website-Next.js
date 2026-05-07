@@ -34,7 +34,7 @@ type ClanInfo = {
 	public: 0 | 1
 };
 
-type Info = {
+export type Info = {
 	tag?: string | null, // unused for clan pf
 	name: string,
 	pastName: string[] | null,

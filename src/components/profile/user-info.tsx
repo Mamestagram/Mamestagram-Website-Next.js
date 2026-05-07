@@ -1,18 +1,20 @@
+"use client";
+
 import classNames from "classnames";
-import { getInfo } from "@/database/profile";
+import Image from "next/image";
+import { useProfileContext } from "../context/profile-provider";
 import style from "@s/profile.module.css";
 
-export default async function UserInfo({ id, isClan }: {
-	id: number,
-	isClan: boolean
-}) {
-	const info = await getInfo(id, isClan);
+export default function UserInfo() {
+	const { id, info } = useProfileContext();
 	
 	return (
 		<div className={classNames(style.section_box, style.user_info)}>
 			<div>
 				<div className="userinfo-top">
-					<div className="avatar"></div>
+					<div className="avatar">
+						<Image src={`https://a.${process.env.BASE_DOMAIN}/${id}`} fill sizes="(max-width: 768px) 100vw, 50vw" alt="" priority/>
+					</div>
 					<div>
 						<div className="name">{info.tag}{info.name}</div>
 						<div className="sub">
