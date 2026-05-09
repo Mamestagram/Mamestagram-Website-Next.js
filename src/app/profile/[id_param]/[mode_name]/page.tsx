@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { accountExists, getInfo } from "@/database/profile";
 import { writeLog } from "@/lib/log";
 import { ModeNum, OsuMode } from "@/lib/mode";
-import { ProfileProvider } from "@/components/context/profile-provider";
 import UserInfo from "@/components/profile/user-info";
 import CurrentGoal from "@/components/profile/current-goal";
 import AboutMe from "@/components/profile/me";
@@ -42,24 +41,22 @@ export default async function Profile({ params, searchParams }: {
 			const info = await getInfo(id, isClan);
 			
 			return (
-				<ProfileProvider id={id} mode={mode} info={info}>
-					<div className={style.container}>
-						<div className={classNames(style.section_area, style.hero)}>
-							<UserInfo/>
-							<CurrentGoal/>
-						</div>
-						<AboutMe/>
-						<div className={classNames(style.section_area, style.content)}>
-							<div className={style.map_playlist}>
-								<BestPerformance/>
-								<FirstPlace/>
-								<MostPlays/>
-								<RecentPlays/>
-							</div>
-							<Statistics/>
-						</div>
+				<div className={style.container}>
+					<div className={classNames(style.section_area, style.hero)}>
+						<UserInfo id={id} info={info}/>
+						{!isClan && (<CurrentGoal id={id}/>)}
 					</div>
-				</ProfileProvider>
+					<AboutMe bbcode={info.userpageContent}/>
+					<div className={classNames(style.section_area, style.content)}>
+						<div className={style.map_playlist}>
+							<BestPerformance/>
+							<FirstPlace/>
+							<MostPlays/>
+							<RecentPlays/>
+						</div>
+						<Statistics/>
+					</div>
+				</div>
 			);
 		}
 		else {

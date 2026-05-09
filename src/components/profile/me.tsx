@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import style from "@s/profile.module.css";
 
-export default function AboutMe() {
+export default function AboutMe({ bbcode }: { bbcode: string }) {
 	return (
 		<div className={classNames(style.section_box, "about-me-section")}>
 			<div className="about-badge">me!</div>

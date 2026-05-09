@@ -1,13 +1,11 @@
 export const otherUserInfoQuery = `
-	SELECT tag, past_name, show_past_name
-	    FROM users u
-	LEFT JOIN clans c
-		ON clan_id = c.id
-	WHERE u.id = ? -- number
+    SELECT '[' + tag + ']'
+    	FROM clans
+    WHERE id = ? -- number
 `;
 
 export const clanInfoQuery = `
-	SELECT tag, past_tag, show_past_tag, created_at, preferred_mode, public
+	SELECT tag, past_tag, show_past_tag, created_at, preferred_mode, userpage_content, public
 	    FROM clans
 	WHERE id = ? -- number
 `;

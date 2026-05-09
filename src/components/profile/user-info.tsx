@@ -1,13 +1,12 @@
-"use client";
-
 import classNames from "classnames";
 import Image from "next/image";
-import { useProfileContext } from "../context/profile-provider";
+import { Info } from "@/database/profile";
 import style from "@s/profile.module.css";
 
-export default function UserInfo() {
-	const { id, info } = useProfileContext();
-	
+export default function UserInfo({ id, info }: {
+	id: number,
+	info: Info,
+}) {
 	return (
 		<div className={classNames(style.section_box, style.user_info)}>
 			<div>

@@ -6,6 +6,7 @@ import {
 	followingQuery,
 	followersQuery
 } from "./query/profile/user-info";
+import { currentGoalQuery } from "@/database/query/profile/current-goal";
 import { ModeNum, OsuMode } from "@/lib/mode";
 import { Priv, getPrivs } from "@/lib/priv";
 import { writeError } from "@/lib/log";
@@ -17,6 +18,9 @@ type ApiUserInfo = {
 			priv: number,
 			country: string,
 			creation_time: number, // unix timestamp
+			userpage_content: string,
+			show_past_name: 0 | 1,
+			past_name: string,
 			latest_activity: number, // unix timestamp
 			clan_id: number,
 			preferred_mode: ModeNum,
@@ -31,11 +35,12 @@ type ClanInfo = {
 	show_past_tag: 0 | 1,
 	created_at: number, // unix timestamp
 	preferred_mode: ModeNum,
+	userpage_content: string,
 	public: 0 | 1
 };
 
 export type Info = {
-	tag?: string | null, // unused for clan pf
+	tag?: string | undefined, // unused for clan pf
 	name: string,
 	pastName: string[] | null,
 	showPastName: boolean,
@@ -47,8 +52,17 @@ export type Info = {
 	following?: { user: number }[], // unused for clan pf
 	followers?: { user: number }[], // unused for clan pf
 	preferredMode: ModeNum,
+	userpageContent: string,
 	isPrivate: boolean
 };
+
+type GoalInfo = {
+	name: string,
+	category: string,
+	val: number
+};
+
+type CurrentGoal = Record<"pp" | "acc" | "score", GoalInfo | undefined>;
 
 export const accountExists = async (id: number, isClan: boolean) => {
 	if (!isClan) {
@@ -111,21 +125,13 @@ export const getInfo = async (id: number, isClan: boolean) => {
 		if (mamesosuApi.ok) {
 			const apiUserInfo = (await mamesosuApi.json() as ApiUserInfo).player.info;
 			const [
-				{ tag, past_name, show_past_name },
+				tag,
 				mutual,
 				following,
 				followers
 			] = [
-				// { tag, past_name, show_past_name }
-				(await executeQuery<{
-					tag: string | null,
-					past_name: string | null,
-					show_past_name: 0 | 1
-				}>(otherUserInfoQuery, [id])).map((row) => ({
-					tag: row.tag,
-					past_name: row.past_name !== null ? row.past_name.split(", ") : null,
-					show_past_name: row.show_past_name
-				})).at(0)!,
+				// tag
+				(await executeQuery<{ tag: string }>(otherUserInfoQuery, [apiUserInfo.clan_id])).at(0)?.tag,
 				// mutual
 				await executeQuery<{ user: number }>(mutualQuery, [id]),
 				// following
@@ -134,10 +140,10 @@ export const getInfo = async (id: number, isClan: boolean) => {
 				await executeQuery<{ user: number }>(followersQuery, [id])
 			];
 			info = {
-				tag: tag !== null ? `[${tag}]` : null,
+				tag,
 				name: apiUserInfo.name,
-				pastName: past_name,
-				showPastName: show_past_name === 1,
+				pastName: apiUserInfo.past_name.split(", "),
+				showPastName: apiUserInfo.show_past_name === 1,
 				country: apiUserInfo.country,
 				creationTime: new Date(apiUserInfo.creation_time * 1000),
 				latestActivity: new Date(apiUserInfo.latest_activity * 1000),
@@ -146,6 +152,7 @@ export const getInfo = async (id: number, isClan: boolean) => {
 				following,
 				followers,
 				preferredMode: apiUserInfo.preferred_mode,
+				userpageContent: apiUserInfo.userpage_content,
 				isPrivate: apiUserInfo.private === 1
 			};
 		}
@@ -163,6 +170,7 @@ export const getInfo = async (id: number, isClan: boolean) => {
 				showPastName: clanInfo.show_past_tag === 1,
 				creationTime: new Date(clanInfo.created_at * 1000),
 				preferredMode: clanInfo.preferred_mode,
+				userpageContent: clanInfo.userpage_content,
 				isPrivate: clanInfo.public === 0
 			};
 		}
@@ -172,4 +180,18 @@ export const getInfo = async (id: number, isClan: boolean) => {
 		}
 	}
 	return info;
+}
+
+export const getCurrentGoal = async (id: number): Promise<CurrentGoal> => {
+	try {
+		return {
+			pp: (await executeQuery<GoalInfo>(currentGoalQuery("pp"), [id])).at(0),
+			acc: (await executeQuery<GoalInfo>(currentGoalQuery("acc"), [id])).at(0),
+			score: (await executeQuery<GoalInfo>(currentGoalQuery("score"), [id])).at(0)
+		};
+	}
+	catch (err) {
+		writeError(err).then();
+		throw new Error("Couldn't get current goal");
+	}
 }

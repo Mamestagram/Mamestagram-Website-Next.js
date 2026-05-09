@@ -1,7 +1,10 @@
 import classNames from "classnames";
+import { getCurrentGoal } from "@/database/profile";
 import style from "@s/profile.module.css";
 
-export default function CurrentGoal() {
+export default function CurrentGoal({ id }: { id: number }) {
+	const goal = getCurrentGoal(id);
+	
 	return (
 		<div className={classNames(style.section_box, "goal-section")}>
 			<div>
