@@ -74,7 +74,7 @@ export default function Footer() {
 			</nav>
 			<div className="bottom">
 				<p>
-					2023 - 2025 Mamestagram
+					2023 - {(new Date()).getUTCFullYear()} Mamestagram
 					<a className="github"
 					   href="https://github.com/Mamestagram"
 					   target="_blank"
