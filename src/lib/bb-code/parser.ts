@@ -1,11 +1,52 @@
-export class BBCodeParser {
-	private static parseTags: void[];
+type MarkupGenerator = (tagName: string, content: string, attr?: string) => string;
+
+export abstract class BBTags {
+	private markup: MarkupGenerator;
+	private readonly noNesting: boolean;
+	private readonly insertLineBreaks: boolean;
 	
-	public static createSimpleTag(bbTag: string, htmlTag: string) {
-		this.parseTags.push();
+	public NoNesting() {
+		return this.noNesting;
 	}
 	
-	public static createTag(bbTag: string) {
+	public InsertLineBreaks() {
+		return this.insertLineBreaks;
+	}
 	
+	protected constructor(markup: MarkupGenerator, noNesting: boolean, insertLineBreaks: boolean) {
+		this.markup = markup;
+		this.noNesting = noNesting;
+		this.insertLineBreaks = insertLineBreaks;
+	}
+}
+
+export class BBSimpleTag extends BBTags {
+	public constructor(htmlTagName: string, noNesting: boolean = false, insertLineBreaks: boolean = true) {
+		super((_tagName, cotent) => `<${htmlTagName}>${cotent}</${htmlTagName}>`, noNesting, insertLineBreaks);
+	}
+}
+
+export class BBTag extends BBTags {
+	public constructor(markup: MarkupGenerator, noNesting: boolean = false, insertLineBreaks: boolean = true) {
+		super(markup, noNesting, insertLineBreaks);
+	}
+}
+
+export class BBCodeParser {
+	private bbTags: {
+		tagName: string,
+		generator: BBTags
+	}[];
+	
+	public constructor(bbTags: { [bbTagName: string]: BBTags }) {
+		this.bbTags = [];
+		Object.entries(bbTags).forEach(([tagName, generator]) => { this.bbTags.push({ tagName, generator }); });
+	}
+	
+	public parseToHtml(text: string) {
+		// no nesting tags
+		this.bbTags.filter(({ generator }) => generator.NoNesting()).forEach((bbTag) => {
+		
+		});
 	}
 }
