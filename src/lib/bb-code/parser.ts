@@ -1,4 +1,4 @@
-type MarkupGenerator = (tagName: string, content: string, attr?: string) => string;
+type MarkupGenerator = (content: string, attr?: string) => string;
 
 export abstract class BBTags {
 	private markup: MarkupGenerator;
@@ -22,7 +22,7 @@ export abstract class BBTags {
 
 export class BBSimpleTag extends BBTags {
 	public constructor(htmlTagName: string, noNesting: boolean = false, insertLineBreaks: boolean = true) {
-		super((_tagName, cotent) => `<${htmlTagName}>${cotent}</${htmlTagName}>`, noNesting, insertLineBreaks);
+		super((cotent) => `<${htmlTagName}>${cotent}</${htmlTagName}>`, noNesting, insertLineBreaks);
 	}
 }
 
@@ -43,6 +43,7 @@ export class BBCodeParser {
 		Object.entries(bbTags).forEach(([tagName, generator]) => { this.bbTags.push({ tagName, generator }); });
 	}
 	
+	// TODO 後回し
 	public parseToHtml(text: string) {
 		// no nesting tags
 		this.bbTags.filter(({ generator }) => generator.NoNesting()).forEach((bbTag) => {

@@ -1,4 +1,5 @@
 import { BBTags, BBSimpleTag, BBTag } from "./parser";
+import styles from "@s/me.module.css";
 
 const bbTags: { [bbTagName: string]: BBTags } = {};
 // simple tags
@@ -12,23 +13,23 @@ bbTags["code"] = new BBSimpleTag("pre", true); // [code]content[/code] -> <pre>c
 bbTags["center"] = new BBSimpleTag("center"); // [center]content[/center] -> <center>content</center>
 
 // [color=attr]content[/color]
-bbTags["color"] = new BBTag((_tagName, content, attr) => `<span style="color: ${attr};">${content}</span>`);
+bbTags["color"] = new BBTag((content, attr) => `<span style="color: ${attr};">${content}</span>`);
 // [size=attr]content[/size]
-bbTags["size"] = new BBTag((_tagName, content, attr) => `<span style="font-size: ${attr}%">${content}</span>`);
+bbTags["size"] = new BBTag((content, attr) => `<span style="font-size: ${attr}%">${content}</span>`);
 // [spoiler]content[/spoiler]
-bbTags["spoiler"] = new BBTag((tagName, content) => `<span class="${tagName}">${content}</span>`);
+bbTags["spoiler"] = new BBTag((content) => `<span class="${styles.spoiler}">${content}</span>`);
 // [box(=attr)]content[/box]
-bbTags["box"] = new BBTag((_tagName, content, attr) => {
+bbTags["box"] = new BBTag((content, attr) => {
 	const name = attr ?? "SPOILER";
 	let spoilerBox: string = "";
-	spoilerBox += `<div class="spoilerbox">\n`;
+	spoilerBox += `<div class=${styles.spoilerbox}>\n`;
 	spoilerBox += `\t<p><i class="fa-solid fa-caret-right"></i><span>${name}</span></p>`;
 	spoilerBox += `\t<div>${content}</div>\n`;
 	spoilerBox += "</div>";
 	return spoilerBox;
 });
 // [list(=attr)][*]content[/list]
-bbTags["list"] = new BBTag((_tagName, content, attr) => {
+bbTags["list"] = new BBTag((content, attr) => {
 	const listStyleTypes: Record<string, string> = {
 		none: "none",
 		disc: "disc",
@@ -57,7 +58,7 @@ bbTags["list"] = new BBTag((_tagName, content, attr) => {
 	return list;
 });
 // [quote(=attr)]content[/quote]
-bbTags["quote"] = new BBTag((_tagName, content, attr) => {
+bbTags["quote"] = new BBTag((content, attr) => {
 	const name = attr !== undefined ? `${attr} wrote:` : "";
 	let quote: string = "";
 	quote += "<blockquote>\n";
@@ -67,13 +68,13 @@ bbTags["quote"] = new BBTag((_tagName, content, attr) => {
 	return quote;
 });
 // [url(=url)]content[/url]
-bbTags["url"] = new BBTag((_tagName, content, attr) => {
+bbTags["url"] = new BBTag((content, attr) => {
 	const link = attr ?? content;
 	const url = !/^(http:\/\/|https:\/\/)/.test(link) ? `https://${link}` : link;
 	return `<a class="default-link" href="${url}">${content}</a>`;
 });
 // [img(=attr)]content[/img]
-bbTags["img"] = new BBTag((_tagName, content, attr) =>
+bbTags["img"] = new BBTag((content, attr) =>
 	`<img src="${content.replaceAll(/"/, "")}" decoding="async" loading="lazy" alt="${attr ?? ""}" />`);
-// [profile]content[profile]
-bbTags["profile"] = new BBTag((_tagName, content, attr) => `<a class="user-link" href="/profile/${attr}/std">${content}</a>`);
+// [profile]content[profile] // TODO
+bbTags["profile"] = new BBTag((content, attr) => `<a class=${styles.user_link} href="/profile/${attr}/std">${content}</a>`);
