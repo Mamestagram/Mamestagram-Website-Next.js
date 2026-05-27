@@ -5,7 +5,7 @@ import { ModNum } from "@/lib/mods";
 export const defaultRankingQuery = (isDans: boolean, sortByOrder: string[]): Readonly<string> => !isDans
 	? `
         SELECT u.id,
-               RANK() OVER(ORDER BY ${sortByOrder}) 'rank',
+               RANK() OVER (ORDER BY ${sortByOrder}) 'rank',
                country,
                tag,
                u.name,
@@ -47,7 +47,7 @@ export const defaultRankingQuery = (isDans: boolean, sortByOrder: string[]): Rea
 			GROUP BY userid, s.mode
 		)
 		SELECT d_s.id,
-		       RANK() OVER(ORDER BY SUM(reward_pp) DESC, acc DESC, plays DESC) 'rank',
+		       RANK() OVER (ORDER BY SUM(reward_pp) DESC, acc DESC, plays DESC) 'rank',
 		       ANY_VALUE(country) AS country,
 		       ANY_VALUE(tag) AS tag,
 		       ANY_VALUE(u.name) AS name,
@@ -63,7 +63,7 @@ export const defaultRankingQuery = (isDans: boolean, sortByOrder: string[]): Rea
 		LEFT JOIN clans c
 		    ON clan_id = c.id
 		WHERE NOT u.id = 1
-		    AND (priv & 1 << ${Priv.unrestricted}) > 0
+		    AND (priv & ${Priv.unrestricted}) > 0
 		    AND d_s.mode = ? -- ModeNum
 		GROUP BY d_s.id
 		ORDER BY pp DESC, acc DESC, plays DESC

@@ -5,7 +5,7 @@ import { ModNum } from "@/lib/mods";
 export const clanRankingQuery = (isDans: boolean, sortByOrder: string[]) => !isDans
 	? `
 	    SELECT clan_id AS id,
-	           RANK() OVER(ORDER BY ${sortByOrder}) 'rank',
+	           RANK() OVER (ORDER BY ${sortByOrder}) 'rank',
 	           tag,
 	           AVG(acc) AS acc,
 	           AVG(plays) AS plays,
@@ -54,7 +54,7 @@ export const clanRankingQuery = (isDans: boolean, sortByOrder: string[]) => !isD
 		    GROUP BY d_s.id, mode
 		)
 		SELECT c.id,
-		       RANK() OVER(ORDER BY AVG(pp) DESC, AVG(acc) DESC, AVG(plays) DESC) 'rank',
+		       RANK() OVER (ORDER BY AVG(pp) DESC, AVG(acc) DESC, AVG(plays) DESC) 'rank',
 		       ANY_VALUE(tag) AS tag,
 		       AVG(acc) AS acc,
 		       AVG(plays) AS plays,
