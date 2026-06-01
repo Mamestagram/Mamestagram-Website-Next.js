@@ -1,4 +1,4 @@
-export const otherUserInfoQuery = `
+export const userJoinedClanQuery = `
     SELECT '[' + tag + ']'
     	FROM clans
     WHERE id = ? -- number
