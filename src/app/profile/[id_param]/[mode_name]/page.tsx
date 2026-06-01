@@ -1,6 +1,13 @@
 import classNames from "classnames";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { accountExists, getInfo } from "@/database/profile";
+import {
+	accountExists,
+	getName,
+	getInfo,
+	getCurrentGoal,
+	getPlayerScores
+} from "@/database/profile";
 import { writeLog } from "@/lib/log";
 import { ModeNum, OsuMode } from "@/lib/mode";
 import UserInfo from "@/components/profile/user-info";
@@ -13,6 +20,31 @@ import RecentPlays from "@/components/profile/recent-plays";
 import Statistics from "@/components/profile/statistics";
 import style from "@s/profile.module.css";
 
+export async function generateMetadata({ params, searchParams }: {
+	params: Promise<{ id_param: string }>,
+	searchParams: Promise<{ clan?: string }>
+}): Promise<Metadata> {
+	const { id_param } = await params;
+	const { clan } = await searchParams;
+	const conds = [
+		!isNaN(Number(id_param)) && Number(id_param) > 0,
+		clan === undefined || clan === "",
+	];
+	
+	let metadata: Metadata;
+	if (conds.every((cond) => cond)) {
+		const id = Number(id_param), isClan = clan !== undefined;
+		if (await accountExists(id, isClan))
+			metadata = { title: `${await getName(id, isClan)}・Profile` };
+		else
+			metadata = { title: "Unknown user" };
+	}
+	else {
+		metadata = { title: "Unknown user" };
+	}
+	return metadata;
+}
+
 export default async function Profile({ params, searchParams }: {
 	params: Promise<{
 		id_param: string,
@@ -20,7 +52,7 @@ export default async function Profile({ params, searchParams }: {
 	}>,
 	searchParams: Promise<{
 		clan?: string,
-		dans?: string
+		dans?: string,
 	}>
 }) {
 	const { id_param, mode_name } = await params;
@@ -38,7 +70,15 @@ export default async function Profile({ params, searchParams }: {
 		const id = Number(id_param), mode = ModeNum[mode_name as OsuMode],
 			isClan = clan !== undefined, isDans = dans !== undefined;
 		if (id >= (!isClan ? 3 : 1) && await accountExists(id, isClan)) {
-			const info = await getInfo(id, isClan);
+			const [
+				info,
+				currentGoal,
+				playerScores
+			] = await Promise.all([
+				getInfo(id, isClan),
+				getCurrentGoal(id),
+				getPlayerScores(id, mode, isDans)
+			]);
 			
 			return (
 				<div className={style.container}>
@@ -46,7 +86,7 @@ export default async function Profile({ params, searchParams }: {
 						<UserInfo id={id} info={info}/>
 						{!isClan && (<CurrentGoal id={id}/>)}
 					</div>
-					<AboutMe bbcode={info.userpageContent}/>
+					<AboutMe bbCode={info.userpageContent}/>
 					<div className={classNames(style.section_area, style.content)}>
 						<div className={style.map_playlist}>
 							<BestPerformance/>
