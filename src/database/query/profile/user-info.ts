@@ -1,7 +1,13 @@
 export const userJoinedClanQuery = `
-    SELECT '[' + tag + ']'
+    SELECT '[' + tag + ']' AS tag
     	FROM clans
     WHERE id = ? -- number
+`;
+
+export const setBadgeQuery = `
+	SELECT set_badge AS badge_id
+	    FROM gacha_stats
+	WHERE id = ? -- number
 `;
 
 export const clanInfoQuery = `
