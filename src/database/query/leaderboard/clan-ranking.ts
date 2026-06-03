@@ -6,7 +6,7 @@ export const clanRankingQuery = (isDans: boolean, sortByOrder: string[]) => !isD
 	? `
 	    SELECT clan_id AS id,
 	           RANK() OVER (ORDER BY ${sortByOrder}) 'rank',
-	           tag,
+               ANY_VALUE(tag) AS tag,
 	           AVG(acc) AS acc,
 	           AVG(plays) AS plays,
 	           AVG(pp) AS pp,
