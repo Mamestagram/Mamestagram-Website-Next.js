@@ -22,7 +22,7 @@ export type RankingList = {
 	plays: number,
 	pp: number,
 	score: number, // unused for dans lb
-	ssCount: number, // unused for dans lb
+	xCount: number, // unused for dans lb
 	sCount: number, // unused for dans lb
 	aCount: number // unused for dans lb
 };

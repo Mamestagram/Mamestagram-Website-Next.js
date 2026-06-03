@@ -11,7 +11,7 @@ export const clanRankingQuery = (isDans: boolean, sortByOrder: string[]) => !isD
 	           AVG(plays) AS plays,
 	           AVG(pp) AS pp,
 	           AVG(rscore) AS score,
-	           AVG(xh_count + x_count) AS ssCount,
+	           AVG(xh_count + x_count) AS xCount,
 	           AVG(sh_count + s_count) AS sCount,
 	           AVG(a_count) AS aCount
 	    	FROM stats s

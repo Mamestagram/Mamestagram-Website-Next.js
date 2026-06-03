@@ -13,7 +13,7 @@ export const countryRankingQuery = (isDans: boolean, sortByOrder: string[]): Rea
 	           plays,
 	           pp,
 	           rscore AS score,
-	           xh_count + x_count AS ssCount,
+	           xh_count + x_count AS xCount,
 	           sh_count + s_count AS sCount,
 	           a_count AS aCount
 	    	FROM stats s
