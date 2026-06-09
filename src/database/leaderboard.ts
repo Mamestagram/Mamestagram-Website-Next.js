@@ -5,7 +5,7 @@ import { defaultRankingQuery } from "./query/leaderboard/default-ranking";
 import { countryRankingQuery } from "./query/leaderboard/country-ranking";
 import { clanUsersStatsQuery, clanUsersDanStatsQuery } from "./query/leaderboard/clan-ranking";
 import { writeError } from "@/lib/log";
-import { generalizedMean } from "@/lib/functions";
+import { sum, generalizedMean } from "@/lib/functions";
 import { ModeNum } from "@/lib/mode";
 
 type RankingQuery = {
@@ -144,9 +144,9 @@ const getClanRanking = async (mode: ModeNum, sortBy: SortBy, page: number): Prom
 				generalizedMean(clan.map(({ plays }) => plays), p), // plays
 				generalizedMean(clan.map(({ pp }) => pp), p), // pp
 				generalizedMean(clan.map(({ rscore }) => rscore), p), // rscore
-				generalizedMean(clan.map(({ xCount }) => xCount), p), // xCount
-				generalizedMean(clan.map(({ sCount }) => sCount), p), // sCount
-				generalizedMean(clan.map(({ aCount }) => aCount), p) // aCount
+				sum(clan.map(({ xCount }) => xCount)), // xCount
+				sum(clan.map(({ sCount }) => sCount)), // sCount
+				sum(clan.map(({ aCount }) => aCount)) // aCount
 			]
 			statsByClan.push({ clan_id, tag, acc, plays, pp, rscore, xCount, sCount, aCount });
 		});

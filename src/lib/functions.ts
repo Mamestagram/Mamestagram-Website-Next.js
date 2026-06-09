@@ -1,3 +1,7 @@
+export const sum = (x: number[]) => {
+	return x.reduce((steps, value) => steps + value, 0);
+}
+
 export const generalizedMean = (x: number[], p: number) => {
 	if (x.length === 0)
 		throw new Error("x has no numbers");
