@@ -3,8 +3,9 @@ import { executeQuery } from "./connect";
 import { countryListQuery } from "./query/leaderboard/country-list";
 import { defaultRankingQuery } from "./query/leaderboard/default-ranking";
 import { countryRankingQuery } from "./query/leaderboard/country-ranking";
-import { clanRankingQuery } from "./query/leaderboard/clan-ranking";
+import { clanUsersStatsQuery, clanUsersDanStatsQuery } from "./query/leaderboard/clan-ranking";
 import { writeError } from "@/lib/log";
+import { generalizedMean } from "@/lib/functions";
 import { ModeNum } from "@/lib/mode";
 
 type RankingQuery = {
@@ -16,8 +17,8 @@ export type RankingList = {
 	id: number,
 	rank: number,
 	country: string, // unused for clan lb
-	tag: string | null,
-	name: string, // unused for clan lb
+	tag: string | null, // unused for clan lb
+	name: string,
 	acc: number,
 	plays: number,
 	pp: number,
@@ -59,33 +60,28 @@ export const getCountryList = async () => {
 	}
 }
 
-const getRankingQuery = (mode: ModeNum, sortBy: SortBy, isClan: boolean, country?: string): RankingQuery => {
+const getRankingQuery = (mode: ModeNum, sortBy: SortBy, country?: string): RankingQuery => {
 	const isDans = sortBy === SortBy.dans,
 		sortByOrder = !isDans
 			? [SortByColumnName[sortBy], ...Object.values(SortByColumnName).filter((value) => value !== SortByColumnName[sortBy])]
 			: Object.values(SortByColumnName);
-	if (!isClan && country === undefined) { // default
+	if (country === undefined) { // default
 		return {
 			query: defaultRankingQuery(isDans, sortByOrder.map((sort) => `${sort} DESC`)),
 			args: [mode]
 		};
 	}
-	else if (isClan) { // clan
+	/*else if (isClan) { // clan
 		return {
 			query: clanRankingQuery(isDans, sortByOrder.map((sort) => `AVG(${sort}) DESC`)),
 			args: [mode]
 		};
-	}
-	else if (country !== undefined) { // specified country
+	}*/
+	else { // specified country
 		return {
 			query: countryRankingQuery(isDans, sortByOrder.map((sort) => `${sort} DESC`)),
 			args: [mode, country]
 		};
-	}
-	else {
-		const errMsg = "Unknown ranking";
-		writeError(`${errMsg} (mode: ${mode}, sortBy: ${sortBy}, isClan: ${isClan}, country: ${country})`).then();
-		throw new Error(errMsg);
 	}
 }
 
@@ -100,22 +96,139 @@ const getPages = async (sqlQuery: string, sqlArgs: QueryArgs) => {
 	}
 }
 
-export const getLeaderboard = async (mode: ModeNum, sortBy: SortBy, page: number, isClan: boolean, country?: string): Promise<Ranking> => {
-	const { query, args } = getRankingQuery(mode, sortBy, isClan, country);
-	try {
-		const ranking = await executeQuery<RankingList>(
-			`
-			${query}
-			LIMIT 50
-			OFFSET ${(page - 1) * 50}
-			`,
-			args
-		);
-		const pages = await getPages(query, args);
-		return { ranking, pages };
+type UsersStats = {
+	clan_id: number,
+	tag: string,
+	acc: number,
+	plays: number,
+	pp: number,
+	rscore: number,
+	xCount: number,
+	sCount: number,
+	aCount: number
+};
+
+type UsersDanStats = {
+	clan_id: number,
+	tag: string,
+	acc: number,
+	plays: number,
+	pp: number
+};
+
+const getClanRanking = async (mode: ModeNum, sortBy: SortBy, page: number): Promise<Ranking> => {
+	const isDans = sortBy === SortBy.dans,
+		sortByOrder = !isDans
+			? [SortByColumnName[sortBy], ...Object.values(SortByColumnName).filter((value) => value !== SortByColumnName[sortBy])]
+			: Object.values(SortByColumnName);
+	const p = 10;
+	let clanRanking: RankingList[];
+	if (!isDans) {
+		const usersStats = await executeQuery<UsersStats>(clanUsersStatsQuery, [mode]);
+		const statsByClan: UsersStats[] = [];
+		Map.groupBy(usersStats, ({ clan_id }) => clan_id).forEach((clan) => {
+			const [
+				clan_id,
+				tag,
+				acc,
+				plays,
+				pp,
+				rscore,
+				xCount,
+				sCount,
+				aCount
+			] = [
+				clan.at(0)!.clan_id, // clan_id
+				clan.at(0)!.tag, // tag
+				generalizedMean(clan.map(({ acc }) => acc), p), // acc
+				generalizedMean(clan.map(({ plays }) => plays), p), // plays
+				generalizedMean(clan.map(({ pp }) => pp), p), // pp
+				generalizedMean(clan.map(({ rscore }) => rscore), p), // rscore
+				generalizedMean(clan.map(({ xCount }) => xCount), p), // xCount
+				generalizedMean(clan.map(({ sCount }) => sCount), p), // sCount
+				generalizedMean(clan.map(({ aCount }) => aCount), p) // aCount
+			]
+			statsByClan.push({ clan_id, tag, acc, plays, pp, rscore, xCount, sCount, aCount });
+		});
+		statsByClan.sort((a, b) =>
+			sortByOrder.reduce((sortKey, value) => sortKey || b[value] - a[value], 0));
+		clanRanking = statsByClan.map((stats, i) => ({
+			id: stats.clan_id,
+			rank: i + 1,
+			country: "",
+			tag: null,
+			name: stats.tag,
+			acc: stats.acc,
+			plays: stats.plays,
+			pp: stats.pp,
+			score: stats.rscore,
+			xCount: stats.xCount,
+			sCount: stats.sCount,
+			aCount: stats.aCount
+		}));
 	}
-	catch (err) {
-		writeError(err).then();
-		throw new Error("Couldn't get leaderboard");
+	else {
+		const usersStats = await executeQuery<UsersDanStats>(clanUsersDanStatsQuery, [mode, mode, mode]);
+		const statsByClan: UsersDanStats[] = [];
+		Map.groupBy(usersStats, ({ clan_id }) => clan_id).forEach((clan) => {
+			const [
+				clan_id,
+				tag,
+				acc,
+				plays,
+				pp
+			] = [
+				clan.at(0)!.clan_id, // clan_id
+				clan.at(0)!.tag, // tag
+				generalizedMean(clan.map(({ acc }) => acc), p), // acc
+				generalizedMean(clan.map(({ plays }) => plays), p), // plays
+				generalizedMean(clan.map(({ pp }) => pp), p) // pp
+			];
+			statsByClan.push({ clan_id, tag, acc, plays, pp });
+		});
+		statsByClan.sort((a, b) => b.pp - a.pp || b.acc - a.acc || b.plays - a.plays);
+		clanRanking = statsByClan.map((stats, i) => ({
+			id: stats.clan_id,
+			rank: i + 1,
+			country: "",
+			tag: null,
+			name: stats.tag,
+			acc: stats.acc,
+			plays: stats.plays,
+			pp: stats.pp,
+			score: 0,
+			xCount: 0,
+			sCount: 0,
+			aCount: 0
+		}));
+	}
+	return {
+		ranking: clanRanking.slice(50 * (page - 1), 50 * page),
+		pages: Math.ceil(clanRanking.length / 50),
+	};
+}
+
+export const getLeaderboard = async (mode: ModeNum, sortBy: SortBy, page: number, isClan: boolean, country?: string): Promise<Ranking> => {
+	if (!isClan) {
+		const { query, args } = getRankingQuery(mode, sortBy, country);
+		try {
+			const ranking = await executeQuery<RankingList>(
+				`
+				${query}
+				LIMIT 50
+				OFFSET ${(page - 1) * 50}
+				`,
+				args
+			);
+			const pages = await getPages(query, args);
+			return { ranking, pages };
+		}
+		catch (err) {
+			writeError(err).then();
+			throw new Error("Couldn't get leaderboard");
+		}
+	}
+	else {
+		return await getClanRanking(mode, sortBy, page);
 	}
 }

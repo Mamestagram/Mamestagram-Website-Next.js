@@ -426,7 +426,7 @@
 						border-radius: 0 16px 16px 0;
 					}
 					
-					&:not(.rank, .country, .name) {
+					&:not(.rank, .country, .avatar, .name) {
 						color: var(--text-sub);
 					}
 					
@@ -467,6 +467,10 @@
 						& i {
 							font-size: 1.25rem;
 						}
+					}
+					
+					&.avatar {
+						width: 50px;
 					}
 					
 					&.sorted {
