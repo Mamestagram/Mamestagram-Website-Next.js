@@ -1,8 +1,6 @@
 export const generalizedMean = (x: number[], p: number) => {
 	if (x.length === 0)
 		throw new Error("x has no numbers");
-	if (p === 0)
-		throw new Error("p is invalid number");
 	
 	if (p === Infinity) {
 		return Math.max(...x);
@@ -10,8 +8,12 @@ export const generalizedMean = (x: number[], p: number) => {
 	else if (p === -Infinity) {
 		return Math.min(...x);
 	}
+	else if (p === 0) {
+		const pow = x.reduce((steps, value) => steps * value, 1);
+		return pow ** (1 / x.length);
+	}
 	else {
-		const powSum = x.reduce((sum, value) => sum + value ** p / x.length, 0);
-		return powSum ** (1 / p);
+		const sum = x.reduce((steps, value) => steps + value ** p / x.length, 0);
+		return sum ** (1 / p);
 	}
 }
