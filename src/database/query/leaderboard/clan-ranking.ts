@@ -10,7 +10,7 @@ export const clanUsersStatsQuery = `
 	JOIN clans c
 	    ON clan_id = c.id
 	WHERE public = 1
-	    AND (priv & ${Priv.unrestricted}) > 0 -- Priv.unrestricted = 1 << 0
+	    AND (priv & ${Priv.unrestricted}) > 0
 	    AND NOT acc = 0
 	    AND mode = ? -- ModeNum
 	ORDER BY clan_id
@@ -39,20 +39,20 @@ export const clanUsersDanStatsQuery = `
 	        AND s.mode = ? -- ModeNum
 	    GROUP BY userid
 	), dan_pp AS (
-	    SELECT id, SUM(reward_pp) AS pp
-	        FROM dan_stats
-	    WHERE NOT id = 1
+	    SELECT clan_id, d_s.id, SUM(reward_pp) AS pp
+	        FROM dan_stats d_s
+	    JOIN users u
+	        ON d_s.id = u.id
+	    WHERE NOT d_s.id = 1
+	        AND (priv & ${Priv.unrestricted}) > 0
 	        AND mode = ? -- ModeNum
 	    GROUP BY id
 	)
 	SELECT clan_id, tag, acc, plays, pp
 	    FROM dan_pp d_pp
-	JOIN dan_acc_plays d_a_c
-	    ON d_pp.id = d_a_c.userid
-	JOIN users u
-	    ON d_pp.id = u.id
+	JOIN dan_acc_plays d_a_p
+	    ON d_pp.id = d_a_p.userid
 	JOIN clans c
 	    ON clan_id = c.id
-	WHERE (priv & ${Priv.unrestricted}) > 0
 	ORDER BY clan_id
 `;
