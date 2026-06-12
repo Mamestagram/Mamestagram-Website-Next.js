@@ -12,7 +12,6 @@ type RankingQuery = {
 	query: string,
 	args: QueryArgs
 };
-
 export type RankingList = {
 	id: number,
 	rank: number,
@@ -27,7 +26,6 @@ export type RankingList = {
 	sCount: number, // unused for dans lb
 	aCount: number // unused for dans lb
 };
-
 type Ranking = {
 	ranking: RankingList[],
 	pages: number,
@@ -71,12 +69,6 @@ const getRankingQuery = (mode: ModeNum, sortBy: SortBy, country?: string): Ranki
 			args: [mode]
 		};
 	}
-	/*else if (isClan) { // clan
-		return {
-			query: clanRankingQuery(isDans, sortByOrder.map((sort) => `AVG(${sort}) DESC`)),
-			args: [mode]
-		};
-	}*/
 	else { // specified country
 		return {
 			query: countryRankingQuery(isDans, sortByOrder.map((sort) => `${sort} DESC`)),
@@ -96,26 +88,6 @@ const getPages = async (sqlQuery: string, sqlArgs: QueryArgs) => {
 	}
 }
 
-type UsersStats = {
-	clan_id: number,
-	tag: string,
-	acc: number,
-	plays: number,
-	pp: number,
-	rscore: number,
-	xCount: number,
-	sCount: number,
-	aCount: number
-};
-
-type UsersDanStats = {
-	clan_id: number,
-	tag: string,
-	acc: number,
-	plays: number,
-	pp: number
-};
-
 const getClanRanking = async (mode: ModeNum, sortBy: SortBy, page: number): Promise<Ranking> => {
 	const isDans = sortBy === SortBy.dans,
 		sortByOrder = !isDans
@@ -124,6 +96,18 @@ const getClanRanking = async (mode: ModeNum, sortBy: SortBy, page: number): Prom
 	const p = 10;
 	let clanRanking: RankingList[];
 	if (!isDans) {
+		type UsersStats = {
+			clan_id: number,
+			tag: string,
+			acc: number,
+			plays: number,
+			pp: number,
+			rscore: number,
+			xCount: number,
+			sCount: number,
+			aCount: number
+		};
+		
 		const usersStats = await executeQuery<UsersStats>(clanUsersStatsQuery, [mode]);
 		const statsByClan: UsersStats[] = [];
 		Map.groupBy(usersStats, ({ clan_id }) => clan_id).forEach((clan) => {
@@ -168,6 +152,14 @@ const getClanRanking = async (mode: ModeNum, sortBy: SortBy, page: number): Prom
 		}));
 	}
 	else {
+		type UsersDanStats = {
+			clan_id: number,
+			tag: string,
+			acc: number,
+			plays: number,
+			pp: number
+		};
+		
 		const usersStats = await executeQuery<UsersDanStats>(clanUsersDanStatsQuery, [mode, mode, mode]);
 		const statsByClan: UsersDanStats[] = [];
 		Map.groupBy(usersStats, ({ clan_id }) => clan_id).forEach((clan) => {
@@ -204,7 +196,7 @@ const getClanRanking = async (mode: ModeNum, sortBy: SortBy, page: number): Prom
 	}
 	return {
 		ranking: clanRanking.slice(50 * (page - 1), 50 * page),
-		pages: Math.ceil(clanRanking.length / 50),
+		pages: Math.ceil(clanRanking.length / 50)
 	};
 }
 
