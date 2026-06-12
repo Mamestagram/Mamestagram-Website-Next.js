@@ -6,7 +6,8 @@ import {
 	getName,
 	getInfo,
 	getCurrentGoal,
-	getPlayerScores
+	getPlayerScores,
+	getStatistics
 } from "@/database/profile";
 import { writeLog } from "@/lib/log";
 import { ModeNum, OsuMode } from "@/lib/mode";
@@ -61,7 +62,8 @@ export default async function Profile({ params, searchParams }: {
 		!isNaN(Number(id_param)) && Number(id_param) > 0,
 		Object.values(OsuMode).includes(mode_name as OsuMode),
 		clan === undefined || clan === "",
-		dans === undefined || dans === ""
+		dans === undefined || (dans === "" &&
+			[OsuMode.std, OsuMode.taiko, OsuMode.ctb, OsuMode.mania].includes(mode_name as OsuMode))
 	];
 	const queries = `(clan: ${clan}, dans: ${dans})`;
 	writeLog("GET", `/profile/${id_param}/${mode_name} ${queries}`).then(); // log
@@ -73,11 +75,13 @@ export default async function Profile({ params, searchParams }: {
 			const [
 				info,
 				currentGoal,
-				playerScores
+				playerScores,
+				statistics
 			] = await Promise.all([
 				getInfo(id, isClan),
 				getCurrentGoal(id),
-				getPlayerScores(id, mode, isDans)
+				getPlayerScores(id, mode, isDans),
+				getStatistics(id, mode, isClan, isDans)
 			]);
 			
 			return (
