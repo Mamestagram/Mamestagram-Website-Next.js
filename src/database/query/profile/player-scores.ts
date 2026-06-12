@@ -44,6 +44,7 @@ export const dansBestPPQuery = `
 	    ON map_md5 = d.md5
 	JOIN maps m
 	    ON d.md5 = m.md5
+        AND s.mode = d.mode
     WHERE NOT grade = 'F'
 		AND NOT s.status = 0
 		AND deleted = 0
@@ -66,6 +67,7 @@ export const dansFirstPlaceQuery = `
 	    FROM scores s
 	JOIN danmaps d
 	    ON map_md5 = d.md5
+        AND s.mode = d.mode
 	JOIN maps m
 	    ON d.md5 = m.md5
     WHERE NOT grade = 'F'
@@ -86,6 +88,7 @@ export const dansFirstPlaceQuery = `
 	        JOIN users u
 	            ON s_sub.userid = u.id
             WHERE s_sub.map_md5 = s.map_md5
+				AND s_sub.mode = d.mode
 				AND NOT grade = 'F'
 				AND NOT s_sub.status = 0
 				AND deleted = 0
