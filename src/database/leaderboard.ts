@@ -160,7 +160,7 @@ const getClanRanking = async (mode: ModeNum, sortBy: SortBy, page: number): Prom
 			pp: number
 		};
 		
-		const usersStats = await executeQuery<UsersDanStats>(clanUsersDanStatsQuery, [mode, mode, mode]);
+		const usersStats = await executeQuery<UsersDanStats>(clanUsersDanStatsQuery, [mode, mode]);
 		const statsByClan: UsersDanStats[] = [];
 		Map.groupBy(usersStats, ({ clan_id }) => clan_id).forEach((clan) => {
 			const [
