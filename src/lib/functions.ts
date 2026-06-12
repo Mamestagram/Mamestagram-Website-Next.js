@@ -22,8 +22,13 @@ export const generalizedMean = (x: number[], p: number) => {
 		}
 		else {
 			const max = Math.max(...x);
-			const sum = x.reduce((steps, value) => steps + (value / max) ** p / x.length, 0);
-			return sum ** (1 / p) * max;
+			if (max > 0) {
+				const sum = x.reduce((steps, value) => steps + (value / max) ** p / x.length, 0);
+				return sum ** (1 / p) * max;
+			}
+			else {
+				return 0;
+			}
 		}
 	}
 	else {
