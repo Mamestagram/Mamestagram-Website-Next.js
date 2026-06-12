@@ -35,9 +35,9 @@ const getStatMode = (query: string) => {
 	else return StatMode.select;
 }
 
-export const executeQuery = async <T>(query: string, args?: QueryArgs) => {
+export const executeQuery = async <T>(query: string, args?: QueryArgs, ignoreArgsCheck: boolean = false) => {
 	const questionSymbol = query.match(/\?/g)?.length ?? 0, argsSize = args?.length ?? 0;
-	if (questionSymbol === argsSize) {
+	if (ignoreArgsCheck || questionSymbol === argsSize) {
 		const statMode = getStatMode(query);
 		
 		if (statMode === StatMode.select) {
