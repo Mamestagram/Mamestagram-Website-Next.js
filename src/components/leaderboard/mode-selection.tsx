@@ -5,11 +5,11 @@ import { OsuMode } from "@/lib/mode";
 import ModeIcon from "@/components/mode-icon";
 import styles from "@s/leaderboard.module.css";
 
-export default function ModeSelection({ mode, sortBy, isClan, country }: {
+export default function ModeSelection({ mode, sortBy, country, isClan }: {
 	mode: OsuMode,
 	sortBy: SortBy,
-	isClan: boolean,
 	country: string | undefined
+	isClan: boolean
 }) {
 	const queries: string[] = [];
 	const conds: [string, boolean][] = [

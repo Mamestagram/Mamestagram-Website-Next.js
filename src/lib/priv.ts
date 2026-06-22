@@ -24,7 +24,7 @@ export const getPrivs = (privNum: number) => {
 			(Priv[privKey] & (Priv.supporter | Priv.premium)) > 0 && !privs.includes(Priv.donator),
 			(Priv[privKey] & (Priv.moderator | Priv.administrator | Priv.developer)) > 0 && !privs.includes(Priv.staff)
 		]
-		if ((privNum & Priv[privKey]) > 0 && conds.every((cond) => cond))
+		if ((privNum & Priv[privKey]) > 0 && conds.some((cond) => cond))
 			privs.push(Priv[privKey]);
 	});
 	return privs.reverse();

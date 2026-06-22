@@ -1,4 +1,4 @@
-import type { QueryResult } from "mysql2";
+import type { Pool, QueryResult } from "mysql2/promise";
 import mysql from "mysql2/promise";
 
 enum StatMode {
@@ -17,15 +17,25 @@ const [host, user, password, database] = [
 	process.env.MYSQL_PASS,
 	process.env.MYSQL_DB
 ];
-const pool = mysql.createPool({
+
+const globalMysql = globalThis as typeof globalThis & {
+	MamestaServer?: Pool,
+	Etternagram?: Pool
+};
+
+const pool = globalMysql.MamestaServer ?? mysql.createPool({
 	host,
 	user,
 	password,
 	database,
 	waitForConnections: true,
 	connectionLimit: 10,
-	queueLimit: 50
+	queueLimit: 100,
+	enableKeepAlive: true,
+	keepAliveInitialDelay: 0
 });
+
+globalMysql.MamestaServer = pool;
 
 const getStatMode = (query: string) => {
 	if (query.includes(StatMode.insert)) return StatMode.insert;
@@ -64,7 +74,7 @@ export const executeQuery = async <T>(query: string, args?: QueryArgs, ignoreArg
 				throw new Error(err instanceof Error ? err.message : "Unexpected error has occurred.");
 			}
 			finally {
-				pool.releaseConnection(connection);
+				connection.release();
 			}
 		}
 	}

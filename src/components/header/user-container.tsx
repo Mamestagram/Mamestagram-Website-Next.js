@@ -12,15 +12,17 @@ export default function UserContainer() {
 			<li className="avatar" title={userInfo.username}>
 				<Image className="avatar-img"
 				       src={`https://a.${serverInfo.baseDomain}/${userInfo.id}`}
-				       alt=""
+				       alt="user-avatar"
 				       fill
+				       draggable={false}
 				       sizes="(max-width: 768px) 100vw, 50vw"
 				       priority/>
 				{userInfo.badge !== 0 &&
 					<Image className="gacha-badge"
 					       src={`/image/gacha/${userInfo.badge}.${userInfo.badgeExt}`}
-					       alt=""
+					       alt="user-badge"
 					       fill
+					       draggable={false}
 					       sizes="(max-width: 768px) 100vw, 50vw"
 					       priority/>}
 			</li>

@@ -1,7 +1,8 @@
 import classNames from "classnames";
 import Link from "next/link";
 import Image from "next/image";
-import { RankingList, SortBy } from "@/database/leaderboard";
+import type { RankingList } from "@/database/leaderboard";
+import { SortBy } from "@/database/leaderboard";
 import { OsuMode } from "@/lib/mode";
 import CountryFlag from "@/components/country-flag";
 import styles from "@s/leaderboard.module.css";
@@ -22,20 +23,25 @@ export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 			<td className={!isClan ? styles.country : styles.avatar}>
 				{!isClan
 					? <CountryFlag code={listRow.country}/>
-					: /*<Image src={`https://clan-a.${process.env.BASE_DOMAIN}/${listRow.id}`} alt="" fill sizes="(max-width: 768px) 100vw, 50vw"/>*/<></>
+					: <Image src={`https://clan-a.${process.env.BASE_DOMAIN}/${listRow.id}`}
+					         alt="clan-avatar"
+					         fill
+					         draggable={false}
+					         sizes="(max-width: 768px) 100vw, 50vw"
+					         priority/>
 				}
 			</td>
 			<td className={styles.name}>
 				<Link href={`/profile/${listRow.id}/${mode}${queries.length > 0 ? `?${queries.join("&")}` : ""}`}>{listRow.tag}{listRow.name}</Link>
 			</td>
 			<td className={classNames(styles.acc, { [styles.sorted]: sortBy === SortBy.accuracy })}>
-				{listRow.acc.toFixed(2)}<span className="percent-label">%</span>
+				{listRow.acc.toFixed(2)}<span className={styles.percent_label}>%</span>
 			</td>
 			<td className={classNames(styles.playcount, { [styles.sorted]: sortBy === SortBy.playcount })}>
 				{Math.floor(listRow.plays).toLocaleString()}
 			</td>
 			<td className={classNames(styles.pp, { [styles.sorted]: sortBy === SortBy.performance || sortBy === SortBy.dans })}>
-				{Math.round(listRow.pp).toLocaleString()}<span className="pp-label">pp</span>
+				{Math.round(listRow.pp).toLocaleString()}<span className={styles.pp_label}>pp</span>
 			</td>
 			{sortBy !== SortBy.dans &&
 				<>

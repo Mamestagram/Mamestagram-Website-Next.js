@@ -1,11 +1,11 @@
-import type { QueryArgs } from "./connect";
-import { executeQuery } from "./connect";
+import type { QueryArgs } from "./connection";
+import { executeQuery } from "./connection";
 import { countryListQuery } from "./query/leaderboard/country-list";
 import { defaultRankingQuery } from "./query/leaderboard/default-ranking";
 import { countryRankingQuery } from "./query/leaderboard/country-ranking";
 import { clanUsersStatsQuery, clanUsersDanStatsQuery } from "./query/leaderboard/clan-ranking";
 import { writeError } from "@/lib/log";
-import { sum, generalizedMean } from "@/lib/functions";
+import { sum, generalizedMean } from "@/lib/aggregate";
 import { ModeNum } from "@/lib/mode";
 
 type RankingQuery = {
@@ -41,7 +41,7 @@ export enum SortBy {
 }
 
 // noinspection JSUnusedGlobalSymbols
-export enum SortByColumnName {
+enum SortByColumnName {
 	performance = "pp",
 	score = "rscore",
 	accuracy = "acc",

@@ -23,3 +23,16 @@ export enum ModeNum {
 }
 
 export type VnMode = Extract<OsuMode, OsuMode.std | OsuMode.taiko | OsuMode.ctb | OsuMode.mania>;
+
+export const modeAbbreviation = (mode: ModeNum) => {
+	switch (mode) {
+		case ModeNum.std: return "vn!osu";
+		case ModeNum.taiko: return "vn!taiko";
+		case ModeNum.ctb: return "vn!ctb";
+		case ModeNum.mania: return "vn!mania";
+		case ModeNum.rxstd: return "rx!osu";
+		case ModeNum.rxtaiko: return "rx!taiko";
+		case ModeNum.rxctb: return "rx!ctb";
+		case ModeNum.apstd: return "ap!osu";
+	}
+}

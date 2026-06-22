@@ -13,8 +13,6 @@
 	}
 	
 	& .tooltip {
-		
-		visibility: hidden;
 		position: absolute;
 		left: 50%;
 		bottom: 60%;
@@ -30,10 +28,9 @@
 		opacity: 0;
 		z-index: 1;
 		transform: translateX(-50%);
-		transition: visibility 300ms, bottom 300ms, opacity 300ms;
+		transition: bottom 300ms, opacity 300ms;
 		
 		.country-flag:hover & {
-			visibility: visible;
 			bottom: 100%;
 			opacity: 1;
 		}

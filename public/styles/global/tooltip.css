@@ -4,6 +4,7 @@
 	
 	& .tooltip {
 		cursor: default;
+		pointer-events: none;
 		line-height: 10px;
 		width: auto;
 		position: absolute;
@@ -12,7 +13,7 @@
 		padding: 8px;
 		border-radius: 10px;
 		background-color: #17171c;
-		font-size: 0.8em;
+		font-size: .8em;
 		color: #fdfdfd;
 		text-align: center;
 		white-space: nowrap;

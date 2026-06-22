@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
 	images: {
 		remotePatterns: [
 			{ protocol: "https", hostname: `a.${process.env.BASE_DOMAIN}` },
-			{ protocol: "https", hostname: `clan-a.${process.env.BASE_DOMAIN}` }
+			{ protocol: "https", hostname: `clan-a.${process.env.BASE_DOMAIN}` },
+			{ protocol: "https", hostname: "assets.ppy.sh" },
 		]
 	}
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import classnames from "classnames";
+import classNames from "classnames";
 import React from "react";
 
 export default function Tooltip({
@@ -17,9 +17,9 @@ export default function Tooltip({
 	children?: React.ReactNode
 }>) {
 	return (
-		<span className={classnames("tooltip-element", direction, className)}>
+		<span className={classNames("tooltip-element", direction, className)}>
 			{children}
-			<p className={classnames("tooltip", { ["bubble"]: bubble })}>{description}</p>
+			<p className={classNames("tooltip", { ["bubble"]: bubble })}>{description}</p>
 		</span>
 	);
 }

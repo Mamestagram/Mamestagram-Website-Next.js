@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
-import { SortBy, getCountryList, getLeaderboard } from "@/database/leaderboard";
-import { OsuMode, ModeNum } from "@/lib/mode";
+import { Suspense } from "react";
+import { SortBy, getCountryList } from "@/database/leaderboard";
+import { OsuMode } from "@/lib/mode";
 import { writeLog } from "@/lib/log";
+import ModeSelection from "@/components/leaderboard/mode-selection";
 import RankingList from "@/components/leaderboard/ranking-list";
 import styles from "@s/leaderboard.module.css";
-import ModeSelection from "@/components/leaderboard/mode-selection";
-import PageList from "@/components/leaderboard/page-list";
 
 export default async function Leaderboard({ params, searchParams }: {
 	params: Promise<{
@@ -34,20 +34,15 @@ export default async function Leaderboard({ params, searchParams }: {
 	
 	if (conds.every((cond) => cond)) {
 		const mode = mode_name as OsuMode, sortBy = sort_by as SortBy, isClan = clan !== undefined;
-		const { ranking, pages } = await getLeaderboard(ModeNum[mode], sortBy, Number(page), isClan, country);
 		
-		if (Number(page) <= pages) {
-			return (
-				<div className={styles.container}>
-					<ModeSelection mode={mode} sortBy={sortBy} isClan={isClan} country={country}/>
-					<PageList currentPage={Number(page)} totalPage={pages} mode={mode} sortBy={sortBy} isClan={isClan} country={country}/>
-					<RankingList ranking={ranking} mode={mode} sortBy={sortBy} isClan={isClan}/>
-				</div>
-			);
-		}
-		else {
-			notFound();
-		}
+		return (
+			<div className={styles.container}>
+				<ModeSelection mode={mode} sortBy={sortBy} country={country} isClan={isClan}/>
+				<Suspense>
+					<RankingList mode={mode} sortBy={sortBy} page={Number(page)} country={country} isClan={isClan}/>
+				</Suspense>
+			</div>
+		);
 	}
 	else {
 		notFound();
