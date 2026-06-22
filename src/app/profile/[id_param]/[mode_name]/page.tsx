@@ -1,25 +1,22 @@
 import classNames from "classnames";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import {
 	accountExists,
 	getName,
 	getInfo,
-	getCurrentGoal,
-	getPlayerScores,
-	getStatistics
+	getCurrentGoal
 } from "@/database/profile";
 import { writeLog } from "@/lib/log";
 import { ModeNum, OsuMode } from "@/lib/mode";
 import UserInfo from "@/components/profile/user-info";
 import CurrentGoal from "@/components/profile/current-goal";
 import AboutMe from "@/components/profile/me";
-import BestPerformance from "@/components/profile/best-performance";
-import FirstPlace from "@/components/profile/first-place";
-import MostPlays from "@/components/profile/most-plays";
-import RecentPlays from "@/components/profile/recent-plays";
+import PlayerScores from "@/components/profile/player-scores";
+import MostPlayedMaps from "@/components/profile/most-played-maps";
 import Statistics from "@/components/profile/statistics";
-import style from "@s/profile.module.css";
+import styles from "@s/profile.module.css";
 
 export async function generateMetadata({ params, searchParams }: {
 	params: Promise<{ id_param: string }>,
@@ -74,31 +71,37 @@ export default async function Profile({ params, searchParams }: {
 		if (id >= (!isClan ? 3 : 1) && await accountExists(id, isClan)) {
 			const [
 				info,
-				currentGoal,
-				playerScores,
-				statistics
+				currentGoal
 			] = await Promise.all([
 				getInfo(id, isClan),
 				getCurrentGoal(id),
-				getPlayerScores(id, mode, isDans),
-				getStatistics(id, mode, isClan, isDans)
 			]);
 			
 			return (
-				<div className={style.container}>
-					<div className={classNames(style.section_area, style.hero)}>
+				<div className={styles.container}>
+					<span className={classNames(styles.section_area, styles.hero)}>
 						<UserInfo id={id} info={info}/>
 						{!isClan && (<CurrentGoal id={id}/>)}
-					</div>
+					</span>
 					<AboutMe bbCode={info.userpageContent}/>
-					<div className={classNames(style.section_area, style.content)}>
-						<div className={style.map_playlist}>
-							<BestPerformance/>
-							<FirstPlace/>
-							<MostPlays/>
-							<RecentPlays/>
-						</div>
-						<Statistics/>
+					<div className={classNames(styles.section_area, styles.map_scores)}>
+						<span className={styles.player_scores}>
+							<Suspense>
+								<PlayerScores scope="bestPP" id={id} mode={mode} isDans={isDans}/>
+							</Suspense>
+							<Suspense>
+								<PlayerScores scope="firstPlace" id={id} mode={mode} isDans={isDans}/>
+							</Suspense>
+							<Suspense>
+								<MostPlayedMaps id={id} mode={mode} isDans={isDans}/>
+							</Suspense>
+							<Suspense>
+								<PlayerScores scope="recentPlayed" id={id} mode={mode} isDans={isDans}/>
+							</Suspense>
+						</span>
+						<Suspense>
+							<Statistics id={id} mode={mode} isClan={isClan} isDans={isDans}/>
+						</Suspense>
 					</div>
 				</div>
 			);

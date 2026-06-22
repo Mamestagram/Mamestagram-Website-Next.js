@@ -1,4 +1,4 @@
-import { executeQuery } from "./connect";
+import { executeQuery } from "./connection";
 import {
 	userJoinedClanQuery,
 	clanInfoQuery,
@@ -40,7 +40,7 @@ import {
 import { ModeNum, OsuMode } from "@/lib/mode";
 import { getPrivs, Priv } from "@/lib/priv";
 import { writeError } from "@/lib/log";
-import { generalizedMean } from "@/lib/functions";
+import { generalizedMean } from "@/lib/aggregate";
 
 export const accountExists = async (id: number, isClan: boolean) => {
 	try {
@@ -48,12 +48,12 @@ export const accountExists = async (id: number, isClan: boolean) => {
 		if (!isClan) {
 			return (await executeQuery<{ user_exists: 0 | 1 }>(
 				`
-			SELECT EXISTS(
-			    SELECT *
-			        FROM users
-			    WHERE id = ?
-		    ) AS user_exists
-			`,
+				SELECT EXISTS(
+				    SELECT *
+				        FROM users
+				    WHERE id = ?
+			    ) AS user_exists
+				`,
 				[id]
 			)).at(0)!.user_exists === 1;
 		}
@@ -61,12 +61,12 @@ export const accountExists = async (id: number, isClan: boolean) => {
 		else {
 			return (await executeQuery<{ clan_exists: 0 | 1 }>(
 				`
-			SELECT EXISTS(
-			    SELECT *
-			        FROM clans
-			    WHERE id = ?
-		    ) AS clan_exists
-			`,
+				SELECT EXISTS(
+				    SELECT *
+				        FROM clans
+				    WHERE id = ?
+			    ) AS clan_exists
+				`,
 				[id]
 			)).at(0)!.clan_exists === 1;
 		}
@@ -83,10 +83,10 @@ export const getName = async (id: number, isClan: boolean) => {
 		if (!isClan) {
 			return (await executeQuery<{ name: string }>(
 				`
-			SELECT name
-				FROM users
-			WHERE id = ?
-			`,
+				SELECT name
+					FROM users
+				WHERE id = ?
+				`,
 				[id]
 			)).at(0)!.name;
 		}
@@ -94,10 +94,10 @@ export const getName = async (id: number, isClan: boolean) => {
 		else {
 			return (await executeQuery<{ tag: string }>(
 				`
-			SELECT tag
-				FROM clans
-			WHERE id = ?
-			`,
+				SELECT tag
+					FROM clans
+				WHERE id = ?
+				`,
 				[id]
 			)).at(0)!.tag;
 		}
@@ -114,10 +114,10 @@ export const getPreferredMode = async (id: number, isClan: boolean) => {
 		if (!isClan) {
 			const preferredModeNum = (await executeQuery<{ preferred_mode: ModeNum }>(
 				`
-			SELECT preferred_mode
-				FROM users
-			WHERE id = ?
-			`,
+				SELECT preferred_mode
+					FROM users
+				WHERE id = ?
+				`,
 				[id]
 			)).at(0)!.preferred_mode;
 			return ModeNum[preferredModeNum] as OsuMode;
@@ -126,10 +126,10 @@ export const getPreferredMode = async (id: number, isClan: boolean) => {
 		else {
 			const preferredModeNum = (await executeQuery<{ preferred_mode: ModeNum }>(
 				`
-			SELECT preferred_mode
-				FROM clans
-			WHERE id = ?
-			`,
+				SELECT preferred_mode
+					FROM clans
+				WHERE id = ?
+				`,
 				[id]
 			)).at(0)!.preferred_mode;
 			return ModeNum[preferredModeNum] as OsuMode;
@@ -145,7 +145,7 @@ export const getPreferredMode = async (id: number, isClan: boolean) => {
 export type Profile = {
 	tag: string | null, // unused for clan pf
 	name: string,
-	pastName: string[] | null,
+	pastNames: string | null,
 	showPastName: boolean,
 	setBadge: number, // unused for clan pf
 	country: string, // unused for clan pf
@@ -156,7 +156,7 @@ export type Profile = {
 	following: { user: number }[], // unused for clan pf
 	followers: { user: number }[], // unused for clan pf
 	preferredMode: ModeNum,
-	userpageContent: string,
+	userpageContent: string | null,
 	isOnline: boolean, // unused for clan pf
 	isPrivate: boolean
 };
@@ -176,7 +176,7 @@ export const getInfo = async (id: number, isClan: boolean) => {
 					priv: number,
 					country: string,
 					creation_time: number, // unix timestamp
-					userpage_content: string,
+					userpage_content: string | null,
 					show_past_name: 0 | 1,
 					past_name: string,
 					latest_activity: number, // unix timestamp
@@ -188,10 +188,11 @@ export const getInfo = async (id: number, isClan: boolean) => {
 		};
 		
 		// 0: player status, 1: player info
-		const mamesosuApi = await Promise.all([
-			fetch(`https://api.${process.env.BASE_DOMAIN}/v1/get_player_status?id=${id}`), // player status
-			fetch(`https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=info`) // player info
-		]);
+		const apiUrl = [
+			`https://api.${process.env.BASE_DOMAIN}/v1/get_player_status?id=${id}`, // player status
+			`https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=info` // player info
+		];
+		const mamesosuApi = await Promise.all(apiUrl.map((url) => fetch(url)));
 		if (mamesosuApi.every((response) => response.ok)) {
 			const [
 				playerStatusApi,
@@ -219,8 +220,8 @@ export const getInfo = async (id: number, isClan: boolean) => {
 				info = {
 					tag: joinedClan.at(0)?.tag ?? null,
 					name: playerInfo.name,
-					pastName: [], // playerInfo.past_name.split(", "),
-					showPastName: true, // playerInfo.show_past_name === 1,
+					pastNames: playerInfo.past_name,
+					showPastName: playerInfo.show_past_name === 1,
 					setBadge: setBadge.at(0)!.badge_id,
 					country: playerInfo.country,
 					creationTime: new Date(playerInfo.creation_time * 1000),
@@ -248,7 +249,7 @@ export const getInfo = async (id: number, isClan: boolean) => {
 						case 0: errMsg += `Couldn't fetch player status (status: ${response.status})\n`; break;
 						case 1: errMsg += `Couldn't fetch player info (status: ${response.status})\n`; break;
 					}
-					writeError(`${response.status}: ${response.statusText}`).then();
+					writeError(`${response.status}: ${response.statusText} (url: ${apiUrl[i]})`).then();
 				}
 			});
 			throw new Error(errMsg);
@@ -270,7 +271,7 @@ export const getInfo = async (id: number, isClan: boolean) => {
 			info = {
 				tag: null,
 				name: clanInfo.tag,
-				pastName: clanInfo.past_tag?.split(", ") ?? null,
+				pastNames: clanInfo.past_tag,
 				showPastName: clanInfo.show_past_tag === 1,
 				setBadge: 0,
 				country: "",
@@ -330,155 +331,140 @@ export const getCurrentGoal = async (id: number): Promise<CurrentGoal> => {
 }
 
 /* player scores */
-type PlayerMostPlayedMap = {
-	set_id: number,
-	id: number,
-	artist: string,
-	title: string,
-	version: string,
-	creator: string,
-	plays: number
-};
-type PlayerScoreMap = {
-	set_id: number,
-	id: number,
-	grade: string,
-	title: string,
-	artist: string,
-	version: string,
-	creator: string,
-	status: number,
-	mods: number,
-	acc: number,
-	pp: number
-};
-type PlayerScores = {
-	bestPP: PlayerScoreMap[],
-	firstPlace: PlayerScoreMap[],
-	mostPlayed: PlayerMostPlayedMap[],
-	recentPlayed: PlayerScoreMap[]
-};
+export type ScoreScope = "bestPP" | "firstPlace" | "recentPlayed";
 
-export const getPlayerScores = async (id: number, mode: ModeNum, isDans: boolean) => {
-	let playerScores: PlayerScores;
+export const getPlayerScores = async (scope: ScoreScope, id: number, mode: ModeNum, isDans: boolean) => {
+	type PlayerScoreMap = {
+		set_id: number,
+		id: number,
+		grade: string,
+		title: string,
+		artist: string,
+		version: string,
+		creator: string,
+		status: number,
+		mods: number,
+		acc: number,
+		pp: number
+	};
+	
+	let playerScores: PlayerScoreMap[] = [];
 	if (!isDans) {
-		type PlayerScoresApi = {
-			scores: {
-				pp: number,
-				acc: number,
-				mods: number,
-				grade: string,
-				beatmap: {
-					id: number,
-					set_id: number,
-					artist: string,
-					title: string,
-					version: string,
-					creator: string,
-					status: number
-				}
-			}[]
-		};
+		if (scope === "bestPP" || scope === "recentPlayed") {
+			type PlayerScoresApi = {
+				scores: {
+					pp: number,
+					acc: number,
+					mods: number,
+					grade: string,
+					beatmap: {
+						id: number,
+						set_id: number,
+						artist: string,
+						title: string,
+						version: string,
+						creator: string,
+						status: number
+					}
+				}[]
+			};
+			
+			const apiUrl: { [key in Exclude<ScoreScope, "firstPlace">]: string } = {
+				bestPP: `https://api.${process.env.BASE_DOMAIN}/v1/get_player_scores?id=${id}&scope=best&mode=${mode}&limit=100`,
+				recentPlayed: `https://api.${process.env.BASE_DOMAIN}/v1/get_player_scores?id=${id}&scope=recent&mode=${mode}&limit=100`
+			};
+			let url: string;
+			switch (scope) {
+				case "bestPP": url = apiUrl.bestPP; break;
+				case "recentPlayed": url = apiUrl.recentPlayed; break;
+			}
+			const mamesosuApi = await fetch(url);
+			if (mamesosuApi.ok) {
+				const bestPPApi = await mamesosuApi.json() as PlayerScoresApi;
+				playerScores = bestPPApi.scores.map(
+					(score) => ({
+						set_id: score.beatmap.set_id,
+						id: score.beatmap.id,
+						grade: score.grade,
+						title: score.beatmap.title,
+						artist: score.beatmap.artist,
+						version: score.beatmap.version,
+						creator: score.beatmap.creator,
+						status: score.beatmap.status,
+						mods: score.mods,
+						acc: score.acc,
+						pp: score.pp
+					})
+				);
+			}
+			else {
+				writeError(`${mamesosuApi.status}: ${mamesosuApi.statusText} (url: ${url})`).then();
+				throw new Error(`Couldn't fetch ${scope} (status: ${mamesosuApi.status})\n`);
+			}
+		}
+		else {
+			try {
+				playerScores = await executeQuery<PlayerScoreMap>(firstPlaceMapsQuery, [id, mode]);
+			}
+			catch (err) {
+				writeError(err).then();
+				throw new Error("Couldn't get first place maps");
+			}
+		}
+	}
+	else {
+		try {
+			switch (scope) {
+				case "bestPP": playerScores = await executeQuery<PlayerScoreMap>(dansBestPPQuery, [id, mode]); break;
+				case "firstPlace": playerScores = await executeQuery<PlayerScoreMap>(dansFirstPlaceQuery, [id, mode]); break;
+				case "recentPlayed": playerScores = await executeQuery<PlayerScoreMap>(dansRecentPlayedQuery, [id, mode]); break;
+			}
+		}
+		catch (err) {
+			writeError(err).then();
+			throw new Error(`Couldn't get ${scope}`);
+		}
+	}
+	return playerScores;
+}
+
+export const getMostPlayedMaps = async (id: number, mode: ModeNum, isDans: boolean) => {
+	type PlayerMostPlayedMap = {
+		set_id: number,
+		id: number,
+		artist: string,
+		title: string,
+		version: string,
+		creator: string,
+		plays: number
+	};
+	
+	let maps: PlayerMostPlayedMap[] = [];
+	if (!isDans) {
 		type PlayerMostPlayedApi = {
 			maps: PlayerMostPlayedMap[],
 		};
 		
-		// 0: best pp, 1: most played, 2: recent played
-		const mamesosuApi = await Promise.all([
-			fetch(`https://api.${process.env.BASE_DOMAIN}/v1/get_player_scores?id=${id}&scope=best&mode=${mode}&limit=100`), // best pp
-			fetch(`https://api.${process.env.BASE_DOMAIN}/v1/get_player_most_played?id=${id}&mode=${mode}&limit=100`), // most played
-			fetch(`https://api.${process.env.BASE_DOMAIN}/v1/get_player_scores?id=${id}&scope=recent&mode=${mode}&limit=100`) // recent played
-		]);
-		if (mamesosuApi.every((response) => response.ok)) {
-			const [
-				bestPPApi,
-				mostPlayedApi,
-				recentPlayedApi
-			] = await Promise.all<[Promise<PlayerScoresApi>, Promise<PlayerMostPlayedApi>, Promise<PlayerScoresApi>]>([
-				mamesosuApi.at(0)!.json(), // bestPPApi
-				mamesosuApi.at(1)!.json(), // mostPlayedApi
-				mamesosuApi.at(2)!.json() // recentPlayedApi
-			]);
-			const bestPP = bestPPApi.scores.map(
-				(score) => ({
-					set_id: score.beatmap.set_id,
-					id: score.beatmap.id,
-					grade: score.grade,
-					title: score.beatmap.title,
-					artist: score.beatmap.artist,
-					version: score.beatmap.version,
-					creator: score.beatmap.creator,
-					status: score.beatmap.status,
-					mods: score.mods,
-					acc: score.acc,
-					pp: score.pp
-				})
-			);
-			const mostPlayed = mostPlayedApi.maps;
-			const recentPlayed = recentPlayedApi.scores.map(
-				(score) => ({
-					set_id: score.beatmap.set_id,
-					id: score.beatmap.id,
-					grade: score.grade,
-					title: score.beatmap.title,
-					artist: score.beatmap.artist,
-					version: score.beatmap.version,
-					creator: score.beatmap.creator,
-					status: score.beatmap.status,
-					mods: score.mods,
-					acc: score.acc,
-					pp: score.pp
-				})
-			);
-			try {
-				const firstPlace = await executeQuery<PlayerScoreMap>(firstPlaceMapsQuery, [id, mode]);
-				playerScores = {
-					bestPP,
-					firstPlace,
-					mostPlayed,
-					recentPlayed
-				};
-			}
-			catch (err) {
-				writeError(err).then();
-				throw new Error("Couldn't get first place map");
-			}
+		const apiUrl = `https://api.${process.env.BASE_DOMAIN}/v1/get_player_most_played?id=${id}&mode=${mode}&limit=100`;
+		const mamesosuApi = await fetch(apiUrl);
+		if (mamesosuApi.ok) {
+			maps = (await mamesosuApi.json() as PlayerMostPlayedApi).maps;
 		}
 		else {
-			let errMsg: string = "";
-			mamesosuApi.forEach((response, i) => {
-				if (!response.ok) {
-					switch (i) {
-						case 0: errMsg += `Couldn't fetch best performance (status: ${response.status})\n`; break;
-						case 1: errMsg += `Couldn't fetch most played maps (status: ${response.status})\n`; break;
-						case 2: errMsg += `Couldn't fetch recent played maps (status: ${response.status})\n`; break;
-					}
-					writeError(`${response.status}: ${response.statusText}`).then();
-				}
-			});
-			throw new Error(errMsg);
+			writeError(`${mamesosuApi.status}: ${mamesosuApi.statusText} (url: ${apiUrl})`).then();
+			throw new Error(`Couldn't fetch most played maps (status: ${mamesosuApi.status})\n`);
 		}
 	}
 	else {
-		const [
-			bestPP,
-			firstPlace,
-			mostPlayed,
-			recentPlayed
-		] = await Promise.all([
-			executeQuery<PlayerScoreMap>(dansBestPPQuery, [id, mode]),
-			executeQuery<PlayerScoreMap>(dansFirstPlaceQuery, [id, mode]),
-			executeQuery<PlayerMostPlayedMap>(dansMostPlayedQuery, [id, mode]),
-			executeQuery<PlayerScoreMap>(dansRecentPlayedQuery, [id, mode])
-		]);
-		playerScores = {
-			bestPP,
-			firstPlace,
-			mostPlayed,
-			recentPlayed
-		};
+		try {
+			maps = await executeQuery<PlayerMostPlayedMap>(dansMostPlayedQuery, [id, mode]);
+		}
+		catch (err) {
+			writeError(err).then();
+			throw new Error("Couldn't get most played maps");
+		}
 	}
-	return playerScores;
+	return maps;
 }
 
 /* statistics */
@@ -516,7 +502,7 @@ type Achievements = {
 		others: Medal[]
 	}
 };
-type Statistics = {
+type PlayerStatistics = {
 	rank: Rank,
 	achievements: Achievements,
 	playtime: number,
@@ -532,7 +518,7 @@ type Statistics = {
 };
 
 export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, isDans: boolean) => {
-	let statistics: Statistics;
+	let statistics: PlayerStatistics;
 	if (!isClan) {
 		type PlayerStatsApi = {
 			player: {
@@ -565,7 +551,8 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 			}
 		};
 		
-		const mamesosuApi = await fetch(`https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=stats`);
+		const apiUrl = `https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=stats`;
+		const mamesosuApi = await fetch(apiUrl);
 		if (mamesosuApi.ok) {
 			const playerStats = (await mamesosuApi.json() as PlayerStatsApi).player.stats[mode];
 			const playtime = playerStats.playtime,
@@ -713,7 +700,7 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 			};
 		}
 		else {
-			writeError(`${mamesosuApi.status}: ${mamesosuApi.statusText}`).then();
+			writeError(`${mamesosuApi.status}: ${mamesosuApi.statusText} (url: ${apiUrl})`).then();
 			throw new Error(`Couldn't fetch player statistics (status: ${mamesosuApi.status})`);
 		}
 	}
@@ -864,6 +851,5 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 			replaysWatched
 		};
 	}
-	console.log(statistics);
 	return statistics;
 }
