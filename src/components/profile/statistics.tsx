@@ -1,7 +1,16 @@
 import classNames from "classnames";
+import { getStatistics } from "@/database/profile";
+import { ModeNum } from "@/lib/mode";
 import style from "@s/profile.module.css";
 
-export default function Statistics() {
+export default async function Statistics({ id, mode, isClan, isDans }: {
+	id: number,
+	mode: ModeNum,
+	isClan: boolean,
+	isDans: boolean
+}) {
+	const statisticts = await getStatistics(id, mode, isClan, isDans);
+	
 	return (
 		<div className={classNames(style.section_box, style.statistics)}>
 			<div className="section-title">Statistics</div>
