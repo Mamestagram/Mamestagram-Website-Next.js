@@ -1,5 +1,5 @@
 export const userJoinedClanQuery = `
-    SELECT '[' + tag + ']' AS tag
+    SELECT CONCAT('[', tag, ']') AS tag
     	FROM clans
     WHERE id = ? -- number
 `;
