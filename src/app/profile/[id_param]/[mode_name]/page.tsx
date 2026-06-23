@@ -2,16 +2,10 @@ import classNames from "classnames";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import {
-	accountExists,
-	getName,
-	getInfo,
-	getCurrentGoal
-} from "@/database/profile";
+import { accountExists, getName, getInfo } from "@/database/profile";
 import { writeLog } from "@/lib/log";
 import { ModeNum, OsuMode } from "@/lib/mode";
 import UserInfo from "@/components/profile/user-info";
-import CurrentGoal from "@/components/profile/current-goal";
 import AboutMe from "@/components/profile/me";
 import PlayerScores from "@/components/profile/player-scores";
 import MostPlayedMaps from "@/components/profile/most-played-maps";
@@ -69,19 +63,12 @@ export default async function Profile({ params, searchParams }: {
 		const id = Number(id_param), mode = ModeNum[mode_name as OsuMode],
 			isClan = clan !== undefined, isDans = dans !== undefined;
 		if (id >= (!isClan ? 3 : 1) && await accountExists(id, isClan)) {
-			const [
-				info,
-				currentGoal
-			] = await Promise.all([
-				getInfo(id, isClan),
-				getCurrentGoal(id),
-			]);
+			const info = await getInfo(id, isClan);
 			
 			return (
 				<div className={styles.container}>
 					<span className={classNames(styles.section_area, styles.hero)}>
 						<UserInfo id={id} info={info}/>
-						{!isClan && (<CurrentGoal id={id}/>)}
 					</span>
 					<AboutMe bbCode={info.userpageContent}/>
 					<div className={classNames(styles.section_area, styles.map_scores)}>

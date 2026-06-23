@@ -295,41 +295,6 @@ export const getInfo = async (id: number, isClan: boolean) => {
 	return info;
 }
 
-/* current goal */
-type GoalInfo = {
-	name: string,
-	category: string,
-	val: number
-};
-type CurrentGoal = {
-	pp: GoalInfo | undefined,
-	acc: GoalInfo | undefined,
-	score: GoalInfo | undefined
-};
-
-export const getCurrentGoal = async (id: number): Promise<CurrentGoal> => {
-	try {
-		const [
-			pp,
-			acc,
-			score
-		] = await Promise.all([
-			executeQuery<GoalInfo>(currentGoalQuery("pp"), [id]), // pp
-			executeQuery<GoalInfo>(currentGoalQuery("acc"), [id]), // acc
-			executeQuery<GoalInfo>(currentGoalQuery("score"), [id]) // score
-		]);
-		return {
-			pp: pp.at(0),
-			acc: acc.at(0),
-			score: score.at(0)
-		};
-	}
-	catch (err) {
-		writeError(err).then();
-		throw new Error("Couldn't get current goals");
-	}
-}
-
 /* player scores */
 export type ScoreScope = "bestPP" | "firstPlace" | "recentPlayed";
 
