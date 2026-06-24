@@ -7,7 +7,6 @@ import {
 	followingQuery,
 	followersQuery
 } from "./query/profile/user-info";
-import { currentGoalQuery } from "@/database/query/profile/current-goal";
 import {
 	dansBestPPQuery,
 	dansFirstPlaceQuery,
