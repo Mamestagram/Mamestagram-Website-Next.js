@@ -38,11 +38,19 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 							       draggable={false}
 							       sizes="(max-width: 768px) 100vw, 50vw"/>
 						</span>
-						<span>
-							<h2 className="score-title">{map.title} [{map.version}]</h2>
-							<p className="score-meta">mapped by {map.creator}</p>
+						<span className={styles.meta}>
+							<h2>
+								<span className={styles.title}>{map.title}</span>
+								<span className={styles.version}>{map.version}</span>
+							</h2>
+							<p>mapped by {map.creator}</p>
 						</span>
-						<p className="score-pp">{Math.round(map.pp)}pp{scope === "bestPP" && <>({Math.round(map.pp * 0.95 ** i)}pp)</>}</p>
+						<p className={styles.pp}>
+							<span className={styles.recorded}>
+								{Math.round(map.pp)}<span className={styles.pp_label}>pp</span>
+							</span>
+							{scope === "bestPP" && <span className={styles.weighted}>({Math.round(map.pp * 0.95 ** i)}pp)</span>}
+						</p>
 					</div>
 				))}
 			</div>
