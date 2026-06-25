@@ -43,7 +43,7 @@ export const dansAccQuery = `
 	JOIN danmaps d
 	    ON map_md5 = md5
 		AND s.mode = d.mode
-	WHERE NOT grade = 'F'
+	WHERE NOT grade IN ('F', 'N')
 	    AND NOT status = 0
 	    AND deleted = 0
 	    AND (d.mods = ${ModNum.nm} OR (s.mods & d.mods) > 0) -- ModNum.nm = 0
@@ -73,7 +73,7 @@ export const dansMaxComboQuery = `
 	JOIN danmaps d
 	    ON map_md5 = md5
         AND s.mode = d.mode
-	WHERE NOT grade = 'F'
+	WHERE NOT grade IN ('F', 'N')
 	    AND NOT status = 0
 	    AND deleted = 0
 	    AND (d.mods = ${ModNum.nm} OR (s.mods & d.mods) > 0) -- ModNum.nm = 0

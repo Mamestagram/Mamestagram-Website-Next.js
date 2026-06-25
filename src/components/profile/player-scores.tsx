@@ -18,7 +18,7 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 			<h1>
 				{scope === "bestPP" && "Best Performance"}
 				{scope === "firstPlace" && "First Place Ranks"}
-				{scope == "recentPlayed" && "Recent Played Maps"}
+				{scope === "recentPlayed" && "Recent Played Maps"}
 			</h1>
 			<div className={styles.score_list}>
 				{playerScores.length === 0 && <h2 className={styles.no_scores}>No scores available</h2>}
@@ -29,6 +29,8 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 							       src={`https://assets.ppy.sh/beatmaps/${map.set_id}/covers/cover.jpg?`}
 							       alt="map bg"
 							       fill
+							       loading="eager"
+							       unoptimized
 							       draggable={false}
 							       sizes="(max-width: 768px) 100vw, 50vw"/>}
 						<span className={styles.grade}>

@@ -16,13 +16,11 @@
 			/* user info */
 			& .user_info {
 				display: grid;
-				grid-template-columns: 1fr;
 				grid-template-rows: repeat(3, max-content);
 				
 				& .top {
 					display: grid;
 					grid-template-columns: repeat(2, max-content);
-					grid-template-rows: 1fr;
 					grid-gap: 24px;
 					
 					& .avatar {
@@ -180,13 +178,10 @@
 						
 						& .score {
 							display: grid;
-							grid-template-columns:
-								calc(var(--list-row-height) - 10px)
-								.85fr
-								.15fr;
-							grid-template-rows: 1fr;
+							grid-template-columns: repeat(3, max-content);
 							grid-gap: 5px;
 							align-items: center;
+							justify-content: stretch;
 							flex-shrink: 0;
 							position: relative;
 							height: var(--list-row-height);
@@ -222,21 +217,23 @@
 							& .meta {
 								& h2 {
 									display: grid;
-									grid-template-columns: max-content max-content;
-									grid-template-rows: 1fr;
-									font-size: 1.063rem;
-									font-weight: 700;
+									grid-template-columns: 1fr 1fr;
 									
-									& .title {
+									& > * {
 										display: inline-block;
 										white-space: nowrap;
 										overflow: hidden;
 										text-overflow: ellipsis;
 									}
 									
+									& .title {
+										font-size: 1.063rem;
+										font-weight: 700;
+									}
+									
 									& .version {
-										display: inline-block;
 										color: #eca900;
+										font-size: .875rem;
 										font-weight: 500;
 									}
 								}

@@ -7,7 +7,7 @@ export const firstPlaceMapsQuery = `
 		FROM scores s
 	JOIN maps m
 		ON map_md5 = md5
-    WHERE NOT grade = 'F'
+    WHERE NOT grade IN ('F', 'N')
 		AND NOT s.status = 0
 		AND deleted = 0
 		AND set_id > 0
@@ -20,7 +20,7 @@ export const firstPlaceMapsQuery = `
 			JOIN users u
 				ON s_sub.userid = u.id
 			WHERE s_sub.map_md5 = s.map_md5
-				AND NOT s_sub.grade = 'F'
+				AND NOT s_sub.grade IN ('F', 'N')
 				AND NOT s_sub.status = 0
 				AND s_sub.deleted = 0
 				AND (priv & ${Priv.unrestricted}) > 0
@@ -45,7 +45,7 @@ export const dansBestPPQuery = `
 	JOIN maps m
 	    ON d.md5 = m.md5
         AND s.mode = d.mode
-    WHERE NOT grade = 'F'
+    WHERE NOT grade IN ('F', 'N')
 		AND NOT s.status = 0
 		AND deleted = 0
 		AND (d.mods = ${ModNum.nm} OR (s.mods & d.mods) > 0)
@@ -70,7 +70,7 @@ export const dansFirstPlaceQuery = `
         AND s.mode = d.mode
 	JOIN maps m
 	    ON d.md5 = m.md5
-    WHERE NOT grade = 'F'
+    WHERE NOT grade IN ('F', 'N')
 		AND NOT s.status = 0
 		AND deleted = 0
 		AND (d.mods = ${ModNum.nm} OR (s.mods & d.mods) > 0)
@@ -89,7 +89,7 @@ export const dansFirstPlaceQuery = `
 	            ON s_sub.userid = u.id
             WHERE s_sub.map_md5 = s.map_md5
 				AND s_sub.mode = d.mode
-				AND NOT grade = 'F'
+				AND NOT grade IN ('F', 'N')
 				AND NOT s_sub.status = 0
 				AND deleted = 0
 				AND (priv & ${Priv.unrestricted}) > 0

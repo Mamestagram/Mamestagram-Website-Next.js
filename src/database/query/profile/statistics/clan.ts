@@ -64,7 +64,7 @@ export const clanDanMaxComboQuery = `
 	    AND s.mode = d.mode
 	JOIN users u
 	    ON userid = u.id
-	WHERE NOT grade = 'F'
+	WHERE NOT grade IN ('F', 'N')
 	    AND NOT status = 0
 	    AND deleted = 0
 	    AND (priv & ${Priv.unrestricted}) > 0 -- Priv.unrestricted = 1 << 0
@@ -88,7 +88,7 @@ export const clanDanRewardAccPlaysQuery = `
 	    JOIN danmaps d
 	        ON map_md5 = md5
 	        AND s.mode = d.mode
-	    WHERE NOT grade = 'F'
+	    WHERE NOT grade IN ('F', 'N')
 	        AND NOT status = 0
 	        AND deleted = 0
 	        AND (priv & ${Priv.unrestricted}) > 0
@@ -130,7 +130,7 @@ export const clanManiaDanPPQuery = `
 	        JOIN danmaps d
 	            ON map_md5 = d.md5
 	            AND s.mode = d.mode
-	        WHERE NOT grade = 'F'
+	        WHERE NOT grade IN ('F', 'N')
 	            AND NOT status = 0
 	            AND deleted = 0
 	            AND (d.mods = ${ModNum.nm} OR (s.mods & d.mods) > 0) -- ModNum.nm = 0
