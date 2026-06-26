@@ -291,7 +291,7 @@ header {
 					transition: opacity 500ms;
 				}
 				
-				header.scrolled &:not(.donation) {
+				header.scrolled &:not(.donation, .search) {
 					box-shadow:
 						var(--glass-box-shadow-dark),
 						0 2px 12px rgba(230, 200, 120, .12);
@@ -317,18 +317,15 @@ header {
 				&:hover {
 					color: #fdfdfd;
 					border-radius: calc(var(--header-height) / 2);
+					box-shadow: var(--glass-box-shadow-dark) !important;
 					transform: translateY(-2px);
 					
-					&:not(.donation) {
-						box-shadow: var(--glass-box-shadow-dark) !important;
-						
-						&::before {
-							opacity: 0 !important;
-						}
-						
-						&::after {
-							opacity: 1;
-						}
+					&::before {
+						opacity: 0 !important;
+					}
+					
+					&::after {
+						opacity: 1;
 					}
 					
 					@media (max-width: 872px) {
@@ -364,6 +361,8 @@ header {
 				}
 				
 				&.donation {
+					padding: 5px;
+					
 					@media (max-width: 872px) {
 						display: none;
 					}
