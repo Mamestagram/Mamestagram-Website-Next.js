@@ -50,4 +50,4 @@ next-env.d.ts
 /.errors
 
 # local api
-./api/(local)/
+./src/app/api/(local)/
