@@ -20,7 +20,7 @@ const getDate = () => {
 }
 
 const getIpAddress = async () => {
-	const res = await fetch(new URL("/api/get-ip", process.env.BASE_URL));
+	const res = await fetch(new URL("/api/get_client_ip", process.env.BASE_URL));
 	return await res.json() as { ip: string };
 }
 
