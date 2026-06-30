@@ -48,3 +48,6 @@ next-env.d.ts
 # log
 /.logs
 /.errors
+
+# local api
+./api/(local)/
