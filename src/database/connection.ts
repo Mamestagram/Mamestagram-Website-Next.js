@@ -9,7 +9,7 @@ enum StatMode {
 	select = "SELECT"
 }
 
-export type QueryArgs = (string | number | boolean)[] | null;
+export type QueryArgs = (string | number | boolean | readonly (string | number | boolean)[])[] | null;
 
 const [host, user, password, database] = [
 	process.env.MYSQL_HOST,

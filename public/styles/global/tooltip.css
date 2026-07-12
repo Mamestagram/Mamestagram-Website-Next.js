@@ -47,6 +47,7 @@
 			position: absolute;
 			top: 80%;
 			left: 50%;
+			z-index: -1;
 			transform: translateX(-50%);
 		}
 	}

@@ -13,13 +13,7 @@ import {
 	dansMostPlayedQuery,
 	dansRecentPlayedQuery,
 	firstPlaceMapsQuery
-} from "@/database/query/profile/player-scores";
-import {
-	medalCountQuery,
-	medalSkillQuery,
-	medalModQuery,
-	medalOthersQuery
-} from "@/database/query/profile/statistics/achievements";
+} from "./query/profile/player-scores";
 import {
 	dansGradeCountQuery,
 	dansPPQuery,
@@ -27,7 +21,7 @@ import {
 	dansAccQuery,
 	dansPlayCountQuery,
 	dansMaxComboQuery
-} from "@/database/query/profile/statistics/personal-dans";
+} from "./query/profile/statistics/personal-dans";
 import {
 	clanStatsSimpleAggQuery,
 	clanStatsComplexAggQuery,
@@ -35,9 +29,16 @@ import {
 	clanDanMaxComboQuery,
 	clanDanRewardAccPlaysQuery,
 	clanManiaDanPPQuery
-} from "@/database/query/profile/statistics/clan";
+} from "./query/profile/statistics/clan";
+import {
+	collectStatusQuery,
+	medalSkillQuery,
+	medalModQuery,
+	medalOthersQuery
+} from "./query/profile/achievements";
 import { ModeNum, OsuMode } from "@/lib/mode";
 import { getPrivs, Priv } from "@/lib/priv";
+import { BeatmapStatus } from "@/lib/beatmap-status";
 import { writeError } from "@/lib/log";
 import { generalizedMean } from "@/lib/aggregate";
 
@@ -187,9 +188,12 @@ export const getInfo = async (id: number, isClan: boolean) => {
 		};
 		
 		// 0: player status, 1: player info
-		const apiUrl = [
+		const apiUrl = !Boolean(Number(process.env.LOCAL_ONLY)) ? [
 			`https://api.${process.env.BASE_DOMAIN}/v1/get_player_status?id=${id}`, // player status
 			`https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=info` // player info
+		] : [
+			`${process.env.BASE_URL}/api/v1/get_player_status?id=${id}`, // player status
+			`${process.env.BASE_URL}/api/v1/get_player_info?id=${id}&scope=info` // player info
 		];
 		const mamesosuApi = await Promise.all(apiUrl.map((url) => fetch(url)));
 		if (mamesosuApi.every((response) => response.ok)) {
@@ -295,93 +299,110 @@ export const getInfo = async (id: number, isClan: boolean) => {
 }
 
 /* player scores */
-export type ScoreScope = "bestPP" | "firstPlace" | "recentPlayed";
+export enum ScoreScope {
+	bestPP,
+	firstPlace,
+	mostPlayed,
+	recentPlayed
+}
 
-export const getPlayerScores = async (scope: ScoreScope, id: number, mode: ModeNum, isDans: boolean) => {
-	type PlayerScoreMap = {
-		set_id: number,
-		id: number,
-		grade: string,
-		title: string,
-		artist: string,
-		version: string,
-		creator: string,
-		status: number,
-		mods: number,
-		acc: number,
-		pp: number
-	};
-	
+export type PlayerScoreMap = {
+	set_id: number,
+	id: number,
+	grade: string,
+	title: string,
+	artist: string,
+	version: string,
+	creator: string,
+	status: BeatmapStatus,
+	mods: number,
+	acc: number,
+	pp: number
+};
+
+export type PlayerMostPlayedMap = {
+	set_id: number,
+	id: number,
+	artist: string,
+	title: string,
+	version: string,
+	creator: string,
+	plays: number
+};
+
+export const getPlayerScores = async (scope: Exclude<ScoreScope, ScoreScope.mostPlayed>, id: number, mode: ModeNum, isDans: boolean) => {
 	let playerScores: PlayerScoreMap[] = [];
 	if (!isDans) {
-		if (scope === "bestPP" || scope === "recentPlayed") {
-			type PlayerScoresApi = {
-				scores: {
-					pp: number,
-					acc: number,
-					mods: number,
-					grade: string,
-					beatmap: {
-						id: number,
-						set_id: number,
-						artist: string,
-						title: string,
-						version: string,
-						creator: string,
-						status: number
-					}
-				}[]
-			};
-			
-			const apiUrl: { [key in Exclude<ScoreScope, "firstPlace">]: string } = {
-				bestPP: `https://api.${process.env.BASE_DOMAIN}/v1/get_player_scores?id=${id}&scope=best&mode=${mode}&limit=100`,
-				recentPlayed: `https://api.${process.env.BASE_DOMAIN}/v1/get_player_scores?id=${id}&scope=recent&mode=${mode}&limit=100`
-			};
-			let url: string;
-			switch (scope) {
-				case "bestPP": url = apiUrl.bestPP; break;
-				case "recentPlayed": url = apiUrl.recentPlayed; break;
-			}
-			const mamesosuApi = await fetch(url);
-			if (mamesosuApi.ok) {
-				const bestPPApi = await mamesosuApi.json() as PlayerScoresApi;
-				playerScores = bestPPApi.scores.map(
-					(score) => ({
-						set_id: score.beatmap.set_id,
-						id: score.beatmap.id,
-						grade: score.grade,
-						title: score.beatmap.title,
-						artist: score.beatmap.artist,
-						version: score.beatmap.version,
-						creator: score.beatmap.creator,
-						status: score.beatmap.status,
-						mods: score.mods,
-						acc: score.acc,
-						pp: score.pp
-					})
-				);
-			}
-			else {
-				writeError(`${mamesosuApi.status}: ${mamesosuApi.statusText} (url: ${url})`).then();
-				throw new Error(`Couldn't fetch ${scope} (status: ${mamesosuApi.status})\n`);
-			}
-		}
-		else {
-			try {
-				playerScores = await executeQuery<PlayerScoreMap>(firstPlaceMapsQuery, [id, mode]);
-			}
-			catch (err) {
-				writeError(err).then();
-				throw new Error("Couldn't get first place maps");
-			}
+		switch (scope) {
+			case ScoreScope.bestPP:
+			case ScoreScope.recentPlayed:
+				type PlayerScoresApi = {
+					scores: {
+						pp: number,
+						acc: number,
+						mods: number,
+						grade: string,
+						beatmap: {
+							id: number,
+							set_id: number,
+							artist: string,
+							title: string,
+							version: string,
+							creator: string,
+							status: number
+						}
+					}[]
+				};
+				
+				const apiUrl: { [key in ScoreScope.bestPP | ScoreScope.recentPlayed]: string } = !Boolean(Number(process.env.LOCAL_ONLY)) ? {
+					[ScoreScope.bestPP]: `https://api.${process.env.BASE_DOMAIN}/v1/get_player_scores?id=${id}&scope=best&mode=${mode}&limit=100`,
+					[ScoreScope.recentPlayed]: `https://api.${process.env.BASE_DOMAIN}/v1/get_player_scores?id=${id}&scope=recent&mode=${mode}&limit=100`
+				} : {
+					[ScoreScope.bestPP]: `${process.env.BASE_URL}/api/v1/get_player_scores?id=${id}&scope=best&mode=${mode}&limit=100`,
+					[ScoreScope.recentPlayed]: `${process.env.BASE_URL}/api/v1/get_player_scores?id=${id}&scope=recent&mode=${mode}&limit=100`
+				};
+				const url = apiUrl[scope];
+				const mamesosuApi = await fetch(url);
+				if (mamesosuApi.ok) {
+					const bestPPApi = await mamesosuApi.json() as PlayerScoresApi;
+					playerScores = bestPPApi.scores.map(
+						(score) => ({
+							set_id: score.beatmap.set_id,
+							id: score.beatmap.id,
+							grade: score.grade,
+							title: score.beatmap.title,
+							artist: score.beatmap.artist,
+							version: score.beatmap.version,
+							creator: score.beatmap.creator,
+							status: score.beatmap.status,
+							mods: score.mods,
+							acc: score.acc,
+							pp: score.pp
+						})
+					);
+				}
+				else {
+					writeError(`${mamesosuApi.status}: ${mamesosuApi.statusText} (url: ${url})`).then();
+					throw new Error(`Couldn't fetch ${ScoreScope[scope]} (status: ${mamesosuApi.status})\n`);
+				}
+				break;
+			case ScoreScope.firstPlace:
+				try {
+					playerScores = await executeQuery<PlayerScoreMap>(firstPlaceMapsQuery, [id, mode]);
+				}
+				catch (err) {
+					writeError(err).then();
+					throw new Error("Couldn't get first place maps");
+				}
+				break;
 		}
 	}
 	else {
 		try {
 			switch (scope) {
-				case "bestPP": playerScores = await executeQuery<PlayerScoreMap>(dansBestPPQuery, [id, mode]); break;
-				case "firstPlace": playerScores = await executeQuery<PlayerScoreMap>(dansFirstPlaceQuery, [id, mode]); break;
-				case "recentPlayed": playerScores = await executeQuery<PlayerScoreMap>(dansRecentPlayedQuery, [id, mode]); break;
+				case ScoreScope.bestPP: playerScores = await executeQuery<PlayerScoreMap>(dansBestPPQuery, [id, mode]); break;
+				case ScoreScope.firstPlace: playerScores = await executeQuery<PlayerScoreMap>(dansFirstPlaceQuery, [id, mode]); break;
+				case ScoreScope.recentPlayed: playerScores = await executeQuery<PlayerScoreMap>(dansRecentPlayedQuery, [id, mode]); break;
 			}
 		}
 		catch (err) {
@@ -393,23 +414,15 @@ export const getPlayerScores = async (scope: ScoreScope, id: number, mode: ModeN
 }
 
 export const getMostPlayedMaps = async (id: number, mode: ModeNum, isDans: boolean) => {
-	type PlayerMostPlayedMap = {
-		set_id: number,
-		id: number,
-		artist: string,
-		title: string,
-		version: string,
-		creator: string,
-		plays: number
-	};
-	
 	let maps: PlayerMostPlayedMap[] = [];
 	if (!isDans) {
 		type PlayerMostPlayedApi = {
 			maps: PlayerMostPlayedMap[],
 		};
 		
-		const apiUrl = `https://api.${process.env.BASE_DOMAIN}/v1/get_player_most_played?id=${id}&mode=${mode}&limit=100`;
+		const apiUrl = !Boolean(Number(process.env.LOCAL_ONLY))
+			? `https://api.${process.env.BASE_DOMAIN}/v1/get_player_most_played?id=${id}&mode=${mode}&limit=100`
+			: `${process.env.BASE_URL}/api/v1/get_player_most_played?id=${id}&mode=${mode}&limit=100`;
 		const mamesosuApi = await fetch(apiUrl);
 		if (mamesosuApi.ok) {
 			maps = (await mamesosuApi.json() as PlayerMostPlayedApi).maps;
@@ -451,35 +464,35 @@ type PP = {
 	k7: number,
 	k10: number
 };
-type Medal = {
-	userId: number,
-	filename: string,
-	name: string,
-	description: string,
-	condDescription: string
+type PlayTime = {
+	days: number,
+	hours: number,
+	minutes: number
 };
-type Achievements = {
-	count: number,
-	medals: {
-		skill: Medal[],
-		mod: Medal[],
-		others: Medal[]
-	}
-};
+
 type PlayerStatistics = {
 	rank: Rank,
-	achievements: Achievements,
-	playtime: number,
 	gradeCount: GradeCount,
 	pp: PP,
 	acc: number,
 	plays: number,
+	playtime: PlayTime,
 	totalHits: number,
 	rankedScore: number,
 	totalScore: number,
 	maxCombo: number,
 	replaysWatched: number
 };
+
+const getPlayTimeDHS = (playtime: number): PlayTime => {
+	let playtimeSeconds: number = playtime;
+	const days = Math.floor(playtimeSeconds / (24 * 60 * 60));
+	playtimeSeconds -= days * 24 * 60 * 60;
+	const hours = Math.floor(playtimeSeconds / (60 * 60));
+	playtimeSeconds -= hours * 60 * 60;
+	const minutes = Math.floor(playtimeSeconds / 60);
+	return { days, hours, minutes };
+}
 
 export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, isDans: boolean) => {
 	let statistics: PlayerStatistics;
@@ -515,54 +528,31 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 			}
 		};
 		
-		const apiUrl = `https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=stats`;
+		const apiUrl = !Boolean(Number(process.env.LOCAL_ONLY))
+			? `https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=stats`
+			: `${process.env.BASE_URL}/api/v1/get_player_info?id=${id}&scope=stats`;
 		const mamesosuApi = await fetch(apiUrl);
 		if (mamesosuApi.ok) {
 			const playerStats = (await mamesosuApi.json() as PlayerStatsApi).player.stats[mode];
-			const playtime = playerStats.playtime,
+			const playtime = getPlayTimeDHS(playerStats.playtime),
 				totalHits = playerStats.total_hits,
 				rankedScore = playerStats.rscore,
 				totalScore = playerStats.tscore,
 				replaysWatched = playerStats.replay_views;
 			/* achievements */
 			let rank: Rank,
-				achievements: Achievements,
 				gradeCount: GradeCount,
 				pp: PP,
 				acc: number,
 				plays: number,
 				maxCombo: number;
-			try {
-				const [
-					medalCount,
-					skillMedals,
-					modMedals,
-					otherMedals
-				] = await Promise.all([
-					executeQuery<{ value: number }>(medalCountQuery, [id]), // medalCount
-					executeQuery<Medal>(medalSkillQuery(mode), [id], true), // skillMedals
-					executeQuery<Medal>(medalModQuery, [id], true), // modMedals
-					executeQuery<Medal>(medalOthersQuery, [id], true) // otherMedals
-				]);
-				achievements = {
-					count: medalCount.at(0)!.value,
-						medals: {
-						skill: skillMedals,
-						mod: modMedals,
-						others: otherMedals
-					}
-				}
-			}
-			catch (err) {
-				writeError(err).then();
-				throw new Error("Couldn't get medals");
-			}
 			if (!isDans) {
+				const osudailyApiUrl = `${process.env.OSUDAILY_URL}?k=${process.env.OSUDAILY_KEY}&v=${playerStats.pp}&t=pp&m=${mode}`;
 				let osudailyApi: Response | null = null;
 				if (mode <= ModeNum.mania)
-					osudailyApi = await fetch(`https://osudaily.net/api/pp.php?k=${process.env.OSUDAILY_API_KEY}&v=${playerStats.pp}&t=pp&m=${mode}`);
+					osudailyApi = await fetch(osudailyApiUrl);
 				if (osudailyApi === null || osudailyApi.ok) {
-					const banchoRank = (await osudailyApi?.json() as { rank: number }).rank ?? 0;
+					const banchoRank = (await osudailyApi?.json() as { rank: number })?.rank ?? 0;
 					/* rank */
 					rank = {
 						global: playerStats.global_rank_pp,
@@ -593,7 +583,7 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 					maxCombo = playerStats.max_combo;
 				}
 				else {
-					writeError(`${osudailyApi.status}: ${osudailyApi.statusText}`).then();
+					writeError(`${osudailyApi.status}: ${osudailyApi.statusText} (url: ${osudailyApiUrl})`).then();
 					throw new Error(`Couldn't fetch bancho rank (status: ${osudailyApi.status})`);
 				}
 			}
@@ -613,7 +603,10 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 						danPlays,
 						danMaxCombo
 					] = await Promise.all([
-						executeQuery<{ grade: "XH" | "X" | "SH" | "S" | "A", count: number }>(dansGradeCountQuery, [id, mode]), // gradeCounts
+						executeQuery<{
+							grade: "XH" | "X" | "SH" | "S" | "A",
+							count: number
+						}>(dansGradeCountQuery, [id, mode]), // gradeCounts
 						executeQuery<{ pp: number }>(dansPPQuery, [id, mode]), // danReward
 						executeQuery<{ cs: 4 | 6 | 7 | 10, pp: number }>(maniaDansPPQuery, [id]), // maniaDanReward
 						executeQuery<{ avg_acc: number }>(dansAccQuery, [id, mode]), // danAcc
@@ -642,19 +635,17 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 					plays = danPlays.at(0)!.count;
 					/* max combo */
 					maxCombo = danMaxCombo.at(0)!.combo;
-				}
-				catch (err) {
+				} catch (err) {
 					writeError(err).then();
 					throw new Error("Couldn't get stats");
 				}
 			}
 			statistics = {
 				rank,
-				achievements,
-				playtime,
 				gradeCount,
 				pp,
 				acc,
+				playtime,
 				plays,
 				totalHits,
 				rankedScore,
@@ -670,11 +661,10 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 	}
 	else {
 		let // rank: Rank,
-			// achievements: Achievements,
-			playtime: number,
 			gradeCount: GradeCount,
 			pp: PP,
 			acc: number,
+			playtime: PlayTime,
 			plays: number,
 			totalHits: number,
 			rankedScore: number,
@@ -685,14 +675,6 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 			global: 0,
 			country: 0,
 			bancho: 0
-		};
-		const achievements = { // TODO
-			count: 0,
-			medals: {
-				skill: [],
-				mod: [],
-				others: []
-			}
 		};
 		const p = 10;
 		if (!isDans) {
@@ -728,7 +710,7 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 					executeQuery<ComplexAggregate>(clanStatsComplexAggQuery, [id, mode]) // complexAgg
 				]);
 				/* simple aggregate */
-				playtime = simpleAgg.at(0)?.playtime ?? 0;
+				playtime = getPlayTimeDHS(simpleAgg.at(0)?.playtime ?? 0);
 				gradeCount = {
 					xh: simpleAgg.at(0)?.xh_count ?? 0,
 					x: simpleAgg.at(0)?.x_count ?? 0,
@@ -751,14 +733,13 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 				plays = generalizedMean(complexAgg.map(({ plays }) => plays), p);
 				rankedScore = generalizedMean(complexAgg.map(({ rscore }) => rscore), p);
 				totalScore = generalizedMean(complexAgg.map(({ tscore }) => tscore), p);
-			}
-			catch (err) {
+			} catch (err) {
 				writeError(err).then();
 				throw new Error("Couldn't get clan statistics");
 			}
 		}
 		else {
-			playtime = 0;
+			playtime = { days: 0, hours: 0, minutes: 0 };
 			totalHits = 0;
 			rankedScore = 0;
 			totalScore = 0;
@@ -770,9 +751,16 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 					danComplexAgg,
 					maniaDanReward
 				] = await Promise.all([
-					executeQuery<{ grade: "XH" | "X" | "SH" | "S" | "A", count: number }>(clanDanGradeCountQuery, [id, mode]), // danGradeCount
+					executeQuery<{
+						grade: "XH" | "X" | "SH" | "S" | "A",
+						count: number
+					}>(clanDanGradeCountQuery, [id, mode]), // danGradeCount
 					executeQuery<{ combo: number }>(clanDanMaxComboQuery, [id, mode]), // danMaxCombo
-					executeQuery<{ acc: number, plays: number, pp: number }>(clanDanRewardAccPlaysQuery, [id, mode, id, mode]), // danComplexAgg
+					executeQuery<{
+						acc: number,
+						plays: number,
+						pp: number
+					}>(clanDanRewardAccPlaysQuery, [id, mode, id, mode]), // danComplexAgg
 					executeQuery<{ cs: 4 | 6 | 7 | 10, pp: number }>(clanManiaDanPPQuery, [id]), // maniaDanReward
 				]);
 				/* simple aggregate */
@@ -794,15 +782,13 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 				};
 				acc = generalizedMean(danComplexAgg.map(({ acc }) => acc), p);
 				plays = generalizedMean(danComplexAgg.map(({ plays }) => plays), p);
-			}
-			catch (err) {
+			} catch (err) {
 				writeError(err).then();
 				throw new Error("Couldn't get clan dan statistics");
 			}
 		}
 		statistics = {
 			rank,
-			achievements,
 			playtime,
 			gradeCount,
 			pp,
@@ -816,4 +802,55 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 		};
 	}
 	return statistics;
+}
+
+/* achievements */
+export type CollectStatus = {
+	achId: number,
+	isCollected: boolean
+};
+export type Medal = {
+	id: number,
+	filename: string,
+	name: string,
+	description: string,
+	condDescription: string
+};
+type Achievements = {
+	status: CollectStatus[],
+	medals: {
+		skill: Medal[],
+		mod: Medal[],
+		others: Medal[]
+	}
+};
+
+export const getUserAchievements = async (id: number, mode: ModeNum): Promise<Achievements> => {
+	try {
+		const [
+			collectStatus,
+			skillMedals,
+			modMedals,
+			otherMedals
+		] = await Promise.all([
+			executeQuery<{ id: number, isCollected: 0 | 1 }>(collectStatusQuery, [id]), // collectStatus
+			executeQuery<Medal>(medalSkillQuery(mode), [id], true), // skillMedals
+			executeQuery<Medal>(medalModQuery, [id], true), // modMedals
+			executeQuery<Medal>(medalOthersQuery, [id], true) // otherMedals
+		]);
+		return {
+			status: collectStatus.map((medal) => ({
+				achId: medal.id,
+				isCollected: medal.isCollected === 1
+			})),
+			medals: {
+				skill: skillMedals,
+				mod: modMedals,
+				others: otherMedals
+			}
+		}
+	} catch (err) {
+		writeError(err).then();
+		throw new Error("Couldn't get achievements");
+	}
 }

@@ -105,8 +105,8 @@ export const dansFirstPlaceQuery = `
 `;
 
 export const dansMostPlayedQuery = `
-	SELECT ANY_VALUE(set_id) AS set_id,
-	       m.id,
+	SELECT m.id,
+	       ANY_VALUE(set_id) AS set_id,
 	       ANY_VALUE(title) AS title,
 	       ANY_VALUE(artist) AS artist,
 	       ANY_VALUE(version) AS version,

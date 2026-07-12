@@ -1,7 +1,7 @@
 "use client";
 
 import classNames from "classnames";
-import React from "react";
+import React, { JSX } from "react";
 
 export default function Tooltip({
 	className,
@@ -13,7 +13,7 @@ export default function Tooltip({
 	className?: string,
 	direction?: "up" | "down",
 	bubble?: boolean,
-	description?: string,
+	description?: string | JSX.Element,
 	children?: React.ReactNode
 }>) {
 	return (

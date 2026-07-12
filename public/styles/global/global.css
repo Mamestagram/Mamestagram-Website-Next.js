@@ -361,6 +361,8 @@ header {
 				}
 				
 				&.donation {
+					display: inline-flex;
+					align-items: center;
 					padding: 5px;
 					
 					@media (max-width: 872px) {

@@ -2,6 +2,8 @@
 	cursor: default !important;
 	position: relative;
 	font-family: "Noto_Sans", sans-serif;
+	height: fit-content;
+	width: fit-content;
 	
 	& i {
 		border-radius: 15%;
@@ -31,7 +33,7 @@
 		transition: bottom 300ms, opacity 300ms;
 		
 		.country-flag:hover & {
-			bottom: 100%;
+			bottom: 105% !important;
 			opacity: 1;
 		}
 	}
