@@ -2,14 +2,15 @@ import classNames from "classnames";
 import { getUserAchievements } from "@/database/profile";
 import { ModeNum } from "@/lib/mode";
 import FontAwesome from "@/components/font-awesome";
-import AchievementItems from "@/components/profile/achievement-items";
+import AchievementCollection from "./achievement-collection";
+import AchievementItems from "./achievement-items";
 import styles from "@s/profile.module.css";
 
 export default async function Achievements({ id, mode }: {
 	id: number,
 	mode: ModeNum
 }) {
-	const { status, medals } = await getUserAchievements(id, mode);
+	const achievements = await getUserAchievements(id, mode);
 	
 	return (
 		<div className={classNames(styles.section_box, styles.achievements)}>
@@ -18,18 +19,13 @@ export default async function Achievements({ id, mode }: {
 				Achievements
 			</h1>
 			<div className={styles.medal_container}>
+				<AchievementCollection achievements={achievements}/>
 				<h2>Skill</h2>
-				<ul>
-					<AchievementItems medals={medals.skill} collectStatus={status}/>
-				</ul>
+				<AchievementItems userId={id} medals={achievements.skill}/>
 				<h2>Mod</h2>
-				<ul>
-					<AchievementItems medals={medals.mod} collectStatus={status}/>
-				</ul>
+				<AchievementItems userId={id} medals={achievements.mod}/>
 				<h2>Mamestagram</h2>
-				<ul>
-					<AchievementItems medals={medals.others} collectStatus={status}/>
-				</ul>
+				<AchievementItems userId={id} medals={achievements.others}/>
 			</div>
 		</div>
 	);

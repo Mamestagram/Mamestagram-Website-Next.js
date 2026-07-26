@@ -2,10 +2,10 @@
 	--box-gap: 16px;
 	
 	display: grid;
+	grid-template-columns: 80%;
 	grid-template-rows: repeat(3, max-content);
 	grid-gap: var(--box-gap);
-	width: 80%;
-	margin: 0 auto;
+	justify-content: center;
 	
 	& .section_area {
 		&.hero {
@@ -115,7 +115,7 @@
 					justify-content: space-between;
 					align-items: center;
 					gap: 16px;
-					background: rgba(255, 255, 255, 0.05);
+					background-color: rgba(255, 255, 255, 0.05);
 					color: #e2e8f0;
 					padding: 14px 16px;
 					border-radius: 18px;
@@ -179,16 +179,16 @@
 					
 					& li {
 						display: inline-block;
+						background-color: rgba(255, 255, 255, 0.05);
 						padding: 12px;
 						border-radius: 18px;
-						background: rgba(255, 255, 255, 0.05);
 						
 						& h3 {
 							font-size: .75rem;
 							color: #cbd5e1;
-							text-transform: uppercase;
-							letter-spacing: 0.06em;
 							margin-bottom: 4px;
+							text-transform: uppercase;
+							letter-spacing: .06em;
 						}
 						
 						& p {
@@ -235,7 +235,7 @@
 						flex-direction: column;
 						gap: var(--list-gap);
 						min-height: calc((var(--list-row-height) + var(--list-gap)) * 5);
-						max-height: calc((var(--list-row-height) + var(--list-gap)) * 10);
+						max-height: calc((var(--list-row-height) + var(--list-gap)) * 5);
 						
 						&:hover .score:not(:hover) .map_bg {
 							filter: blur(1px);
@@ -376,7 +376,18 @@
 			& .achievements .medal_container {
 				display: flex;
 				flex-direction: column;
-				gap: 5px;
+				gap: 10px;
+				
+				& h2 {
+					background-color: rgba(255, 255, 255, 0.05);
+					font-size: .75rem;
+					color: #cbd5e1;
+					padding: 12px;
+					border-radius: 18px;
+					text-align: center;
+					text-transform: uppercase;
+					letter-spacing: .26em;
+				}
 				
 				& ul {
 					--ach-img-size: 60px;
@@ -387,13 +398,24 @@
 					grid-gap: 8px 5px;
 					align-items: center;
 					
+					&.collection_status {
+						--size-rate: 1.5;
+						
+						grid-template-columns: repeat(auto-fit, minmax(calc(var(--ach-img-size) * var(--size-rate)), 1fr));
+						
+						& li .achv_img {
+							height: calc(var(--ach-img-size) * var(--size-rate));
+							width: calc(var(--ach-img-size) * var(--size-rate));
+							margin-bottom: 2px;
+						}
+					}
+					
 					&:not(:last-child) {
-						margin-bottom: 10px;
+						margin-bottom: 15px;
 					}
 					
 					& li {
-						height: var(--ach-img-size);
-						width: var(--ach-img-size);
+						text-align: center;
 						transition: transform 300ms;
 						
 						&:hover {
@@ -418,8 +440,8 @@
 						& .achv_img {
 							display: block;
 							position: relative;
-							height: inherit;
-							width: inherit;
+							height: var(--ach-img-size);
+							width: var(--ach-img-size);
 							
 							&:hover p {
 								bottom: 108%;
@@ -428,12 +450,24 @@
 							& img {
 								object-fit: scale-down;
 								transition: filter 300ms;
+								
+								&.glay {
+									filter: grayscale(100%);
+								}
+								
+								&.colored {
+									--collected-ratio: 0;
+									
+									mask-image: conic-gradient(#000 0 var(--collected-ratio), transparent var(--collected-ratio) 100%);
+									z-index: 1;
+								}
 							}
 							
 							& p {
 								display: flex;
 								flex-direction: column;
 								width: 250px;
+								padding: 10px;
 								white-space: wrap;
 								
 								&::before {

@@ -31,7 +31,6 @@ import {
 	clanManiaDanPPQuery
 } from "./query/profile/statistics/clan";
 import {
-	collectStatusQuery,
 	medalSkillQuery,
 	medalModQuery,
 	medalOthersQuery
@@ -547,7 +546,7 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 				plays: number,
 				maxCombo: number;
 			if (!isDans) {
-				const osudailyApiUrl = `${process.env.OSUDAILY_URL}?k=${process.env.OSUDAILY_KEY}&v=${playerStats.pp}&t=pp&m=${mode}`;
+				const osudailyApiUrl = `${process.env.OSUDAILY_URL}?k=${process.env.OSUDAILY_API_KEY}&v=${playerStats.pp}&t=pp&m=${mode}`;
 				let osudailyApi: Response | null = null;
 				if (mode <= ModeNum.mania)
 					osudailyApi = await fetch(osudailyApiUrl);
@@ -805,49 +804,41 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 }
 
 /* achievements */
-export type CollectStatus = {
-	achId: number,
-	isCollected: boolean
-};
 export type Medal = {
 	id: number,
 	filename: string,
 	name: string,
 	description: string,
-	condDescription: string
+	condDescription: string,
+	isCollected: boolean
 };
-type Achievements = {
-	status: CollectStatus[],
-	medals: {
-		skill: Medal[],
-		mod: Medal[],
-		others: Medal[]
-	}
+export type Achievements = {
+	userId: number,
+	skill: Medal[],
+	mod: Medal[],
+	others: Medal[]
 };
 
 export const getUserAchievements = async (id: number, mode: ModeNum): Promise<Achievements> => {
 	try {
 		const [
-			collectStatus,
 			skillMedals,
 			modMedals,
 			otherMedals
 		] = await Promise.all([
-			executeQuery<{ id: number, isCollected: 0 | 1 }>(collectStatusQuery, [id]), // collectStatus
-			executeQuery<Medal>(medalSkillQuery(mode), [id], true), // skillMedals
-			executeQuery<Medal>(medalModQuery, [id], true), // modMedals
-			executeQuery<Medal>(medalOthersQuery, [id], true) // otherMedals
+			executeQuery<Omit<Medal, "isCollected"> & { isCollected: 0 | 1 }>(medalSkillQuery(mode), [id], true), // skillMedals
+			executeQuery<Omit<Medal, "isCollected"> & { isCollected: 0 | 1 }>(medalModQuery, [id], true), // modMedals
+			executeQuery<Omit<Medal, "isCollected"> & { isCollected: 0 | 1 }>(medalOthersQuery, [id], true) // otherMedals
 		]);
+		
 		return {
-			status: collectStatus.map((medal) => ({
-				achId: medal.id,
-				isCollected: medal.isCollected === 1
-			})),
-			medals: {
-				skill: skillMedals,
-				mod: modMedals,
-				others: otherMedals
-			}
+			userId: id,
+			skill: skillMedals.map(({ isCollected, ...rest}) =>
+				({ ...rest, isCollected: Boolean(isCollected)})),
+			mod: modMedals.map(({ isCollected, ...rest}) =>
+				({ ...rest, isCollected: Boolean(isCollected)})),
+			others: otherMedals.map(({ isCollected, ...rest}) =>
+				({ ...rest, isCollected: Boolean(isCollected)}))
 		}
 	} catch (err) {
 		writeError(err).then();

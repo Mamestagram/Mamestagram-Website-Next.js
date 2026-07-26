@@ -5,20 +5,21 @@
 	& .tooltip {
 		cursor: default;
 		pointer-events: none;
-		line-height: 10px;
-		width: auto;
 		position: absolute;
 		left: 50%;
-		transform: translateX(-50%);
+		background-color: #17171c;
+		color: #fdfdfd;
+		font-size: .8em;
+		line-height: 10px;
+		width: auto;
 		padding: 8px;
 		border-radius: 10px;
-		background-color: #17171c;
-		font-size: .8em;
-		color: #fdfdfd;
 		text-align: center;
 		white-space: nowrap;
+		box-shadow: var(--glass-box-shadow-dark);
 		opacity: 0;
 		z-index: 1;
+		transform: translateX(-50%);
 		transition: bottom 300ms, opacity 300ms;
 		
 		.tooltip-element.up & {
@@ -40,13 +41,13 @@
 		
 		&.bubble::before {
 			content: "";
-			width: 0;
-			height: 0;
-			border: 10px solid transparent;
-			border-top: 12px solid #17171c;
 			position: absolute;
 			top: 80%;
 			left: 50%;
+			height: 0;
+			width: 0;
+			border: 10px solid transparent;
+			border-top: 12px solid #17171c;
 			z-index: -1;
 			transform: translateX(-50%);
 		}

@@ -1,13 +1,5 @@
 import { ModeNum } from "@/lib/mode";
 
-export const collectStatusQuery = `
-    SELECT id, userid IS NOT NULL AS isCollected
-    	FROM achievements
-	LEFT JOIN user_achievements
-		ON id = achid
-		AND userid = ? -- number
-`;
-
 export const medalSkillQuery = (mode: ModeNum) => {
 	let modeName: "osu" | "taiko" | "fruits" | "mania";
 	switch (mode) {
@@ -33,7 +25,13 @@ export const medalSkillQuery = (mode: ModeNum) => {
 		       file AS filename,
 		       name,
 		       \`desc\` AS description,
-		       cond_desc AS condDescription
+		       cond_desc AS condDescription,
+               EXISTS(
+                   SELECT *
+                	   FROM user_achievements
+                   WHERE userid = ?
+                	   AND achid = id
+               ) AS isCollected
 		    FROM achievements
 		WHERE file LIKE '${modeName}-%' -- modeName = osu, taiko, fruits, mania
 		    OR file LIKE 'skill-%'
@@ -60,7 +58,13 @@ export const medalModQuery = `
            file AS filename,
            name,
            \`desc\` AS description,
-           cond_desc AS condDescription
+           cond_desc AS condDescription,
+           EXISTS(
+               SELECT *
+               	   FROM user_achievements
+               WHERE userid = ?
+                   AND achid = id
+           ) AS isCollected
     	FROM achievements
     WHERE file LIKE 'all-%'
     ORDER BY id
@@ -71,7 +75,13 @@ export const medalOthersQuery = `
            file AS filename,
            name,
            \`desc\` AS description,
-           cond_desc AS condDescription
+           cond_desc AS condDescription,
+           EXISTS(
+               SELECT *
+               	   FROM user_achievements
+               WHERE userid = ?
+            	   AND achid = id
+           ) AS isCollected
     FROM achievements
     WHERE NOT file LIKE 'osu-%'
 		AND NOT file LIKE 'taiko-%'

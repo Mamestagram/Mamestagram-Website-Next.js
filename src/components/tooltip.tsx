@@ -13,13 +13,14 @@ export default function Tooltip({
 	className?: string,
 	direction?: "up" | "down",
 	bubble?: boolean,
-	description?: string | JSX.Element,
+	description?: string | JSX.Element | null,
 	children?: React.ReactNode
 }>) {
 	return (
 		<span className={classNames("tooltip-element", direction, className)}>
 			{children}
-			<p className={classNames("tooltip", { ["bubble"]: bubble })}>{description}</p>
+			{description !== undefined && description !== null &&
+				<p className={classNames("tooltip", { ["bubble"]: bubble })}>{description}</p>}
 		</span>
 	);
 }
