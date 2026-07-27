@@ -224,11 +224,25 @@
 		}
 		
 		@media (max-width: 1155px) {
-			position: unset;
+			position: sticky;
+			top: 72px;
 			width: max-content;
 			height: unset;
-			margin: 0 auto 75px auto;
+			margin: 0 auto 40px auto;
 			transform: unset;
+		}
+
+		@media (max-width: 872px) {
+			top: 68px;
+		}
+
+		@media (max-width: 480px) {
+			position: sticky;
+			top: 63px;
+			left: auto;
+			margin: 0 auto 75px;
+			transform: none;
+			z-index: 90;
 		}
 	}
 	
@@ -239,9 +253,33 @@
 		--display-amount: 7;
 		
 		display: flex;
+		position: sticky;
+		top: 72px;
+		width: max-content;
+		padding: 8px 12px;
+		background: rgba(9, 11, 17, .86);
+		border: 1px solid var(--glass-border-dark);
+		border-radius: 999px;
+		margin-inline: auto;
 		justify-content: center;
 		align-items: center;
 		gap: var(--button-gap);
+		box-shadow: var(--glass-shadow);
+		backdrop-filter: blur(14px);
+		will-change: transform, opacity;
+		z-index: 50;
+
+		@media (max-width: 1155px) {
+			top: 129px;
+		}
+
+		@media (max-width: 872px) {
+			top: 125px;
+		}
+
+		@media (max-width: 480px) {
+			top: 112px;
+		}
 		
 		& > *:not(.page_list),
 		& .page_list li {
@@ -295,6 +333,11 @@
 		& > *:not(.page_list) {
 			z-index: 1;
 		}
+
+		& .page_placeholder {
+			visibility: hidden;
+			pointer-events: none;
+		}
 		
 		& .page_list {
 			--translate-x: 0;
@@ -302,7 +345,7 @@
 			display: flex;
 			align-items: center;
 			gap: inherit;
-			width: calc(var(--button-size) * var(--display-amount) + var(--button-gap) * (var(--display-amount) - 1));
+			width: calc(var(--button-size) * var(--visible-amount) + var(--button-gap) * (var(--visible-amount) - 1));
 			margin: 0 20px;
 			transform: translateX(var(--translate-x));
 			z-index: 0;
@@ -346,6 +389,47 @@
 		
 		@media (max-width: 346px) {
 			--display-amount: 1;
+		}
+
+		@media (min-width: 1156px) {
+			&.over_ranking {
+				position: fixed;
+				top: 50%;
+				right: calc(5% - 22px);
+				width: 53px;
+				padding: 8px;
+				background: rgba(9, 11, 17, .86);
+				border: 1px solid var(--glass-border-dark);
+				border-radius: 999px;
+				margin: 0;
+				flex-direction: column;
+				gap: 8px;
+				box-shadow: var(--glass-shadow);
+				backdrop-filter: blur(14px);
+				transform: translateY(-50%);
+
+				& .page_list {
+					width: var(--button-size);
+					margin: 20px 0;
+					flex-direction: column;
+					gap: 8px;
+					transform: none;
+
+					& li {
+						display: none;
+
+						&.floating_page {
+							display: block;
+							visibility: visible;
+							transform: scale(1);
+						}
+
+						&.current_page {
+							transform: scale(1.08);
+						}
+					}
+				}
+			}
 		}
 	}
 	/* table wrapper */

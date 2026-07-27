@@ -2,11 +2,21 @@
 
 import classNames from "classnames";
 import Link from "next/link";
-import { MouseEvent, useRef, useState, useCallback, useEffect } from "react";
+import type { CSSProperties, MouseEvent } from "react";
+import { useRef, useState, useCallback, useEffect, useLayoutEffect } from "react";
 import { OsuMode } from "@/lib/mode";
 import { SortBy } from "@/database/leaderboard";
 import FontAwesome from "@/components/font-awesome";
 import styles from "@s/leaderboard.module.css";
+
+const makePageOrder = (centerIndex: number, displayAmount: number, totalPage: number) => {
+	const length = Math.min(displayAmount, totalPage);
+	const start = Math.min(
+		Math.max(centerIndex - Math.floor(length / 2), 0),
+		Math.max(totalPage - length, 0)
+	);
+	return Array.from({ length }, (_val, i) => start + i);
+};
 
 export default function PageList({ currentPage, totalPage, mode, sortBy, isClan, country }: {
 	currentPage: number,
@@ -26,6 +36,11 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 	const buttonSize = 35, buttonGap = 10;
 	const longPressTimeout = useRef<NodeJS.Timeout>(undefined);
 	const longPressInterval = useRef<NodeJS.Timeout>(undefined);
+	const pageWrapperRef = useRef<HTMLDivElement>(null);
+	const previousPosition = useRef<DOMRect>(null);
+	const positionAnimation = useRef<Animation>(null);
+	const isOverRankingRef = useRef(false);
+	const [isOverRanking, setIsOverRanking] = useState(false);
 	const [displayAmount, setDisplayAmount] = useState(() => {
 		if (typeof window !== "undefined") {
 			if (window.innerWidth <= 346) return 1;
@@ -36,75 +51,41 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 			return 7;
 		}
 	});
-	const [pageOrder, setPageOrder] = useState<number[]>(Array.from({ length: displayAmount },
-		(_val, i) => currentPage - 1 + i - Math.floor(displayAmount / 2)));
+	const [pageOrder, setPageOrder] = useState<number[]>(() =>
+		makePageOrder(currentPage - 1, displayAmount, totalPage));
+	const pageTranslateX = -1 * (buttonSize + buttonGap) * (pageOrder.at(0) ?? 0);
+	const pageListStyle = {
+		"--translate-x": `${pageTranslateX}px`,
+		"--visible-amount": pageOrder.length
+	} as CSSProperties;
 	
 	const resizeWindow = useCallback(() => {
+		let nextDisplayAmount = 7;
 		if (window.innerWidth <= 346) {
-			setDisplayAmount(1);
-			setPageOrder([currentPage - 1]);
+			nextDisplayAmount = 1;
 		}
 		else if (window.innerWidth <= 525) {
-			setDisplayAmount(3);
-			setPageOrder((prevState) => {
-				const nextState = [...prevState];
-				if (prevState.length > displayAmount) {
-					for (let i: number = 0; i < (prevState.length - displayAmount) / 2; i++) {
-						nextState.pop();
-						nextState.shift();
-					}
-				}
-				else {
-					for (let i: number = 0; i < (displayAmount - prevState.length) / 2; i++) {
-						nextState.unshift(nextState.at(0)! - 1);
-						nextState.push(nextState.at(-1)! + 1);
-					}
-				}
-				return nextState;
-			});
+			nextDisplayAmount = 3;
 		}
-		else {
-			setDisplayAmount(7);
-			setPageOrder((prevState) => {
-				const nextState = [...prevState];
-				for (let i: number = 0; i < (displayAmount - prevState.length) / 2; i++) {
-					nextState.unshift(nextState.at(0)! - 1);
-					nextState.push(nextState.at(-1)! + 1);
-				}
-				return nextState;
-			});
-		}
-	}, [currentPage, displayAmount]);
+		setDisplayAmount(nextDisplayAmount);
+		setPageOrder(makePageOrder(currentPage - 1, nextDisplayAmount, totalPage));
+	}, [currentPage, totalPage]);
 	
 	const shiftRefOrder = (element: HTMLButtonElement | HTMLLIElement, index?: number) => {
 		if (element.classList.contains("left")) {
 			setPageOrder((prevState) => {
-				if (prevState.at(Math.floor(prevState.length / 2))! > 0) {
-					const nextState = [...prevState];
-					nextState.pop();
-					nextState.unshift(nextState.at(0)! - 1);
-					return nextState;
-				}
-				else {
-					return prevState;
-				}
+				if ((prevState.at(0) ?? 0) <= 0) return prevState;
+				return prevState.map((page) => page - 1);
 			});
 		}
 		else if (element.classList.contains("right")) {
 			setPageOrder((prevState) => {
-				if (prevState.at(-Math.ceil(prevState.length / 2))! < totalPage - 1) {
-					const nextState = [...prevState];
-					nextState.shift();
-					nextState.push(nextState.at(-1)! + 1);
-					return nextState;
-				}
-				else {
-					return prevState;
-				}
+				if ((prevState.at(-1) ?? totalPage - 1) >= totalPage - 1) return prevState;
+				return prevState.map((page) => page + 1);
 			})
 		}
 		else {
-			setPageOrder(Array.from({ length: displayAmount }, (_val, i) => index! + i - Math.floor(displayAmount / 2)));
+			setPageOrder(makePageOrder(index!, displayAmount, totalPage));
 		}
 	}
 	
@@ -129,29 +110,75 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 	
 	useEffect(() => {
 		window.addEventListener("resize", resizeWindow);
-		document.querySelector(`.${styles.page_wrapper} .${styles.page_list} li.page-${currentPage}`)?.classList.add(styles.current_page);
 		return () => {
 			window.removeEventListener("resize", resizeWindow);
-			document.querySelector(`.${styles.page_wrapper} .${styles.page_list} li.${styles.current_page}`)?.classList.remove(styles.current_page);
 		}
-	}, [currentPage, resizeWindow]);
-	
+	}, [resizeWindow]);
+
 	useEffect(() => {
-		const translateX = (buttonSize + buttonGap) * Math.floor(displayAmount / 2) - (buttonSize + buttonGap) * pageOrder.at(Math.floor(displayAmount / 2))!;
-		document.querySelectorAll(`.${styles.page_wrapper} .${styles.page_list} li`)?.forEach((element, i) => {
-			element.classList.remove(styles.show);
-			if (pageOrder.includes(i))
-				element.classList.add(styles.show);
+		let frameId = 0;
+		const changeLayout = (nextValue: boolean) => {
+			if (nextValue === isOverRankingRef.current) return;
+			if (pageWrapperRef.current)
+				previousPosition.current = pageWrapperRef.current.getBoundingClientRect();
+			isOverRankingRef.current = nextValue;
+			setIsOverRanking(nextValue);
+		};
+		const updatePosition = () => {
+			frameId = 0;
+			const ranking = document.querySelector<HTMLElement>(`.${styles.table_wrapper}`);
+			if (!ranking || window.innerWidth <= 1155) {
+				changeLayout(false);
+				return;
+			}
+
+			const rect = ranking.getBoundingClientRect();
+			changeLayout(rect.top <= 72 + buttonSize + 16 && rect.bottom >= 72);
+		};
+		const scheduleUpdate = () => {
+			if (frameId === 0) frameId = window.requestAnimationFrame(updatePosition);
+		};
+
+		scheduleUpdate();
+		window.addEventListener("scroll", scheduleUpdate, { passive: true });
+		window.addEventListener("resize", scheduleUpdate);
+		return () => {
+			window.cancelAnimationFrame(frameId);
+			window.removeEventListener("scroll", scheduleUpdate);
+			window.removeEventListener("resize", scheduleUpdate);
+		};
+	}, [buttonSize]);
+
+	useLayoutEffect(() => {
+		const wrapper = pageWrapperRef.current, previous = previousPosition.current;
+		previousPosition.current = null;
+		if (!wrapper || !previous || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+		positionAnimation.current?.cancel();
+		const next = wrapper.getBoundingClientRect();
+		const deltaX = previous.left - next.left, deltaY = previous.top - next.top;
+		const targetTransform = window.getComputedStyle(wrapper).transform;
+		const baseTransform = targetTransform === "none" ? "" : targetTransform;
+		positionAnimation.current = wrapper.animate([
+			{ transform: `translate(${deltaX}px, ${deltaY}px) ${baseTransform}`, opacity: .55 },
+			{ transform: targetTransform, opacity: 1 }
+		], {
+			duration: 420,
+			easing: "cubic-bezier(.22, 1, .36, 1)"
 		});
-		(document.querySelector(`.${styles.page_wrapper} .${styles.page_list}`) as HTMLUListElement).style.setProperty("--translate-x", `${translateX}px`);
-	}, [pageOrder, displayAmount]);
+
+		return () => positionAnimation.current?.cancel();
+	}, [isOverRanking]);
 	
 	return (
-		<div className={styles.page_wrapper}>
-			{currentPage > 1 &&
-				<Link href={`/leaderboard/${mode}/${sortBy}?page=${currentPage - 1}${queryStr}`}>
+		<div ref={pageWrapperRef}
+		     className={classNames(styles.page_wrapper, { [styles.over_ranking]: isOverRanking })}>
+			{currentPage > 1 ?
+				<Link href={`/leaderboard/${mode}/${sortBy}?page=${currentPage - 1}${queryStr}`}
+				      aria-label="previous page">
 					<FontAwesome prefix="fas" name="chevrons-left"/>
-				</Link>
+				</Link> :
+				<span className={styles.page_placeholder} aria-hidden="true"/>
 			}
 			<button className={classNames(styles.shift_arrow, "left")}
 			        type="button"
@@ -163,10 +190,14 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 					onContextMenu={(e) => e.preventDefault()}>
 				<FontAwesome prefix="fas" name="chevron-left"/>
 			</button>
-			<ul className={styles.page_list}>
+			<ul className={styles.page_list} style={pageListStyle}>
 				{Array.from({ length: totalPage }).map((_val, i) =>
 					<li key={i}
-					    className={`page-${i + 1}`}
+					    className={classNames(`page-${i + 1}`, {
+						    [styles.floating_page]: pageOrder.includes(i),
+						    [styles.current_page]: i + 1 === currentPage,
+						    [styles.show]: pageOrder.includes(i)
+					    })}
 						onClick={(e) => shiftRefOrder(e.currentTarget, i)}>
 						<Link href={`/leaderboard/${mode}/${sortBy}?page=${i + 1}${queryStr}`}>{i + 1}</Link>
 					</li>
@@ -182,10 +213,12 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 					onContextMenu={(e) => e.preventDefault()}>
 				<FontAwesome prefix="fas" name="chevron-right"/>
 			</button>
-			{currentPage < totalPage &&
-				<Link href={`/leaderboard/${mode}/${sortBy}?page=${currentPage + 1}${queryStr}`}>
+			{currentPage < totalPage ?
+				<Link href={`/leaderboard/${mode}/${sortBy}?page=${currentPage + 1}${queryStr}`}
+				      aria-label="next page">
 					<FontAwesome prefix="fas" name="chevrons-right"/>
-				</Link>
+				</Link> :
+				<span className={styles.page_placeholder} aria-hidden="true"/>
 			}
 		</div>
 	);

@@ -18,7 +18,13 @@ export default async function RankingList({ mode, sortBy, page, country, isClan 
 	if (page <= pages) {
 		return (
 			<>
-				<PageList currentPage={Number(page)} totalPage={pages} mode={mode} sortBy={sortBy} isClan={isClan} country={country}/>
+				<PageList key={`${mode}:${sortBy}:${page}:${country ?? "all"}:${isClan}`}
+				          currentPage={Number(page)}
+				          totalPage={pages}
+				          mode={mode}
+				          sortBy={sortBy}
+				          isClan={isClan}
+				          country={country}/>
 				<div className={styles.table_wrapper}>
 					{ranking.length > 0 &&
 						<table>
