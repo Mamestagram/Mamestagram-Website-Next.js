@@ -1,4 +1,13 @@
 .container {
+	padding-top: 32px;
+
+	@media (max-width: 872px) {
+		padding-top: 24px;
+	}
+
+	@media (max-width: 480px) {
+		padding-top: 18px;
+	}
 	
 	/* mode selection */
 	& .selection_wrapper {
