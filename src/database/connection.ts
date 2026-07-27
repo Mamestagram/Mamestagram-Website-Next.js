@@ -1,4 +1,4 @@
-import type { Pool, QueryResult } from "mysql2/promise";
+import type { Pool, PoolConnection, QueryResult } from "mysql2/promise";
 import mysql from "mysql2/promise";
 
 enum StatMode {
@@ -36,6 +36,23 @@ const pool = globalMysql.MamestaServer ?? mysql.createPool({
 });
 
 globalMysql.MamestaServer = pool;
+
+export const withTransaction = async <T>(callback: (connection: PoolConnection) => Promise<T>) => {
+	const connection = await pool.getConnection();
+	try {
+		await connection.beginTransaction();
+		const result = await callback(connection);
+		await connection.commit();
+		return result;
+	}
+	catch (err) {
+		await connection.rollback();
+		throw err;
+	}
+	finally {
+		connection.release();
+	}
+}
 
 const getStatMode = (query: string) => {
 	if (query.includes(StatMode.insert)) return StatMode.insert;

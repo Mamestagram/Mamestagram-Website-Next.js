@@ -12,7 +12,7 @@ export type UserInfo = {
 	clanId?: number,
 	priv?: number,
 	username?: string,
-	country?: number,
+	country?: string,
 	badge?: number,
 	badgeExt?: "png" | "gif",
 	isLoggedIn: boolean

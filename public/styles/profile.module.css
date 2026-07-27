@@ -536,6 +536,145 @@
 		
 		& .userpage_content {
 			overflow-wrap: break-word;
+			line-height: 1.55;
+			
+			& h2 {
+				color: hsl(var(--user-hue), 32%, 91%);
+				font-size: 1.25rem;
+				font-weight: 800;
+				margin: 14px 0 6px;
+			}
+			
+			& a {
+				color: hsl(var(--user-hue), 94%, 78%);
+				font-weight: 700;
+				transition: color 150ms, text-decoration-color 150ms;
+				
+				&:hover {
+					color: hsl(var(--user-hue), 97%, 87%);
+					text-decoration: underline;
+				}
+				
+				&.user_link {
+					color: hsl(var(--user-hue), 72%, 68%);
+				}
+			}
+			
+			& img {
+				display: inline-block;
+				max-width: 100%;
+				height: auto;
+				vertical-align: top;
+				border-radius: 8px;
+			}
+			
+			& .image_wrapper {
+				display: inline-block;
+				max-width: 100%;
+			}
+			
+			& .image_error {
+				display: none;
+				align-items: center;
+				min-height: 42px;
+				max-width: 100%;
+				padding: 10px 12px;
+				color: hsl(var(--user-hue), 0%, 86%);
+				background-color: rgba(0, 0, 0, .3);
+				border: 1px solid rgba(255, 255, 255, .22);
+				border-radius: 8px;
+				font-size: .875rem;
+				font-weight: 700;
+			}
+			
+			& .image_message {
+				display: inline-flex;
+				align-items: center;
+				min-height: 42px;
+				max-width: 100%;
+				padding: 10px 12px;
+				color: hsl(var(--user-hue), 0%, 86%);
+				background-color: rgba(0, 0, 0, .3);
+				border: 1px solid rgba(255, 255, 255, .22);
+				border-radius: 8px;
+				font-size: .875rem;
+				font-weight: 700;
+			}
+			
+			& ol {
+				padding-left: 24px;
+				margin: 8px 0;
+			}
+			
+			& li:not(:last-child) {
+				margin-bottom: 4px;
+			}
+			
+			& blockquote {
+				color: hsl(var(--user-hue), 12%, 84%);
+				padding: 8px 0 8px 18px;
+				margin: 10px 0;
+				border-left: 3px solid rgba(255, 255, 255, .35);
+				
+				& h4 {
+					color: hsl(var(--user-hue), 40%, 98%);
+					font-size: inherit;
+					font-weight: 800;
+					margin: 0 0 6px;
+				}
+			}
+			
+			& code,
+			& pre {
+				background-color: rgba(0, 0, 0, .3);
+				font-family: "JetBrainsMono", "Inter", "Noto_Sans", sans-serif;
+				border-radius: 6px;
+			}
+			
+			& code {
+				padding: 1px 5px;
+			}
+			
+			& pre {
+				padding: 12px;
+				margin: 10px 0;
+				white-space: pre-wrap;
+				overflow-x: auto;
+			}
+			
+			& center {
+				display: block;
+				text-align: center;
+			}
+			
+			& .spoiler {
+				background-color: #000;
+				color: #000;
+				border-radius: 3px;
+				padding: 0 2px;
+				
+				&:hover {
+					color: #fff;
+				}
+			}
+			
+			& .spoilerbox {
+				margin: 10px 0;
+				
+				& > p {
+					display: inline-flex;
+					align-items: center;
+					gap: 6px;
+					color: hsl(var(--user-hue), 97%, 87%);
+					font-weight: 800;
+					margin-bottom: 6px;
+				}
+				
+				& > div {
+					padding-left: 18px;
+					border-left: 2px solid rgba(255, 255, 255, .22);
+				}
+			}
 		}
 	}
 }

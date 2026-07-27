@@ -4,6 +4,7 @@ import type { ServerInfo, UserInfo } from "@/components/context/user-provider";
 import { UserProvider } from "@/components/context/user-provider";
 import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
+import { getCurrentUser } from "@/lib/session";
 import "flag-icons/css/flag-icons.min.css";
 import "@s/global/reset.css";
 import "@s/global/global.css";
@@ -24,9 +25,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 	const serverInfo: ServerInfo = {
 		baseDomain: process.env.BASE_DOMAIN!
 	};
-	const userInfo: UserInfo = {
-		isLoggedIn: false
-	};
+	const userInfo: UserInfo = await getCurrentUser();
 	
 	return (
 		<html lang="en">
