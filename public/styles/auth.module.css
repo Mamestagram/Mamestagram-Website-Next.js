@@ -379,6 +379,24 @@
 	margin-top: 8px;
 }
 
+.recaptcha_notice {
+	color: #686e7c;
+	font-size: .62rem;
+	line-height: 1.45;
+	text-align: center;
+	margin-top: 10px;
+}
+
+.recaptcha_notice a {
+	color: #888f9e;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+:global(.grecaptcha-badge) {
+	visibility: hidden !important;
+}
+
 .honeypot {
 	position: absolute;
 	left: -10000px;
