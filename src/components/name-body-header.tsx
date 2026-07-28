@@ -4,8 +4,9 @@ import { useLayoutEffect } from "react";
 
 export default function NameBodyHeader({ className }: Readonly<{ className: string }>) {
 	useLayoutEffect(() => {
-			switch (className) {
-			case "auth":
+		switch (className) {
+			case "register":
+			case "sign-in":
 				document.documentElement.style.setProperty("--user-hue", "18");
 				break;
 			case "home":

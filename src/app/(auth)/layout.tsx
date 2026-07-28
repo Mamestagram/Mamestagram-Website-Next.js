@@ -1,20 +1,32 @@
+import Image from "next/image";
 import type { ReactNode } from "react";
-import NameBodyHeader from "@/components/name-body-header";
 import styles from "@s/auth.module.css";
 
 export default function AuthLayout({ children }: Readonly<{ children: ReactNode }>) {
+	// const authImage = `https://img.${process.env.BASE_DOMAIN}/2`;
+	const authImage = `https://img.mamesosu.net/2`;
+
 	return (
 		<div className={styles.page}>
-			<NameBodyHeader className="auth"/>
+			<div className={styles.page_image} aria-hidden="true">
+				<Image src={authImage}
+				       alt=""
+				       fill
+				       priority
+				       sizes="100vw"
+				       draggable={false}/>
+			</div>
 			<div className={styles.glow} aria-hidden="true"/>
 			<section className={styles.card}>
 				<div className={styles.visual} aria-hidden="true">
-					<div className={styles.disc}>
-						<span className={styles.disc_core}/>
-						<span className={`${styles.hit} ${styles.hit_one}`}/>
-						<span className={`${styles.hit} ${styles.hit_two}`}/>
-						<span className={`${styles.hit} ${styles.hit_three}`}/>
-					</div>
+					<Image className={styles.visual_image}
+					       src={authImage}
+					       alt=""
+					       fill
+					       priority
+						       sizes="(max-width: 760px) 100vw, 35vw"
+						       draggable={false}/>
+					<div className={styles.visual_shade}/>
 					<div className={styles.equalizer}>
 						<span/><span/><span/><span/><span/><span/><span/><span/><span/>
 					</div>

@@ -85,7 +85,7 @@ body {
 		right: -150px;
 	}
 	
-	&:is(.home, .leaderboard, .profile, .auth) {
+	&:is(.home, .leaderboard, .profile, .register, .sign-in) {
 		&::-webkit-scrollbar-thumb {
 			background-color: hsl(var(--user-hue), 19%, 20%);
 		}
@@ -156,7 +156,7 @@ header {
 		}
 	}
 	/* header.home, header.leaderboard */
-	&:is(.home, .leaderboard, .profile, .auth) {
+	&:is(.home, .leaderboard, .profile, .register, .sign-in) {
 		background-color: hsla(var(--user-hue), 44%, 36%, 75%);
 	}
 	/* header .top-bar */
@@ -355,7 +355,9 @@ header {
 				}
 				
 				header.leaderboard &.leaderboard,
-				header.documents &.documents {
+				header.documents &.documents,
+				header.register &.register,
+				header.sign-in &.sign-in {
 					color: #fdfdfd;
 					border-radius: calc(var(--header-height) / 2);
 					text-shadow: var(--glass-text-shadow-dark);
@@ -398,13 +400,13 @@ header {
 					}
 				}
 				
-				header:is(.home, .leaderboard, .auth) &:is(.register, .sign-in) {
+				header:is(.home, .leaderboard, .register, .sign-in) &:is(.register, .sign-in) {
 					@media (max-width: 872px) {
 						color: hsl(var(--user-hue), 79%, 66%);
 					}
 				}
 				
-				header:is(.home, .leaderboard, .auth) &:is(.register, .sign-in, .avatar) {
+				header:is(.home, .leaderboard, .register, .sign-in) &:is(.register, .sign-in, .avatar) {
 					@media (max-width: 872px) {
 						background-color: hsl(var(--user-hue), 19%, 25%);
 					}
@@ -771,6 +773,11 @@ footer {
 	@media (max-width: 480px) {
 		padding-top: 45px;
 	}
+}
+
+body:is(.register, .sign-in) footer {
+	position: relative;
+	z-index: 1;
 }
 /* ------------------------------------------------- */
 .banner {
