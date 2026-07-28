@@ -54,9 +54,10 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 	const [pageOrder, setPageOrder] = useState<number[]>(() =>
 		makePageOrder(currentPage - 1, displayAmount, totalPage));
 	const pageTranslateX = -1 * (buttonSize + buttonGap) * (pageOrder.at(0) ?? 0);
+	const pageListWidth = buttonSize * pageOrder.length + buttonGap * Math.max(pageOrder.length - 1, 0);
 	const pageListStyle = {
 		"--translate-x": `${pageTranslateX}px`,
-		"--visible-amount": pageOrder.length
+		"--page-list-width": `${pageListWidth}px`
 	} as CSSProperties;
 	
 	const resizeWindow = useCallback(() => {
