@@ -24,6 +24,7 @@ function isAllowedImageUrl(url: string) {
 		baseDomain ? `assets.${baseDomain}` : null,
 		"assets.mamesosu.net",
 		"assets.ppy.sh",
+		"i.ppy.sh",
 		"i.imgur.com",
 		"cdn.discordapp.com",
 		"media.discordapp.net",
@@ -79,11 +80,7 @@ function textFromHtml(html: string) {
 function sanitizeColor(color?: string) {
 	if (!color) return null;
 	const trimmed = color.trim();
-	if (/^#[0-9a-f]{3,8}$/i.test(trimmed)) return trimmed;
-	if (/^[0-9a-f]{3}([0-9a-f]{3})?([0-9a-f]{2})?$/i.test(trimmed)) return `#${trimmed}`;
-	if (/^[a-z]+$/i.test(trimmed)) return trimmed;
-	if (/^(rgb|rgba|hsl|hsla)\([\d\s,%.+-]+\)$/i.test(trimmed)) return trimmed;
-	return null;
+	return /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(trimmed) ? trimmed : null;
 }
 
 function sanitizeSize(size?: string) {
@@ -101,7 +98,7 @@ bbTags["u"] = new BBSimpleTag("u"); // [u]content[/u] -> <u>content</u>
 bbTags["s"] = new BBSimpleTag("del"); // [s]content[/s] -> <del>content</del>
 bbTags["c"] = new BBSimpleTag("code", true, false); // [c]content[/c] -> <code>content</code> (no nesting)
 bbTags["code"] = new BBSimpleTag("pre", true, false); // [code]content[/code] -> <pre>content</pre> (no nesting)
-bbTags["center"] = new BBSimpleTag("center"); // [center]content[/center] -> <center>content</center>
+bbTags["center"] = new BBTag((content) => `<div class="${styles.centered}">${content}</div>`);
 
 // [color=attr]content[/color]
 bbTags["color"] = new BBTag((content, attr) => {
@@ -119,13 +116,13 @@ bbTags["size"] = new BBTag((content, attr) => {
 bbTags["spoiler"] = new BBTag((content) => `<span class="${styles.spoiler}">${content}</span>`);
 // [box(=attr)]content[/box]
 bbTags["box"] = new BBTag((content, attr) => {
-	const name = escapeHtml(attr ?? "SPOILER");
-	let spoilerBox: string = "";
-	spoilerBox += `<div class="${styles.spoilerbox}">\n`;
-	spoilerBox += `\t<p><i class="fa-solid fa-caret-right"></i><span>${name}</span></p>`;
-	spoilerBox += `\t<div>${content}</div>\n`;
-	spoilerBox += "</div>";
-	return spoilerBox;
+	const name = escapeHtml(attr?.trim() || "SPOILER");
+	return [
+		`<details class="${styles.spoilerbox}">`,
+		`<summary>${name}</summary>`,
+		`<div>${content}</div>`,
+		"</details>"
+	].join("\n");
 });
 // [list(=attr)][*]content[/list]
 bbTags["list"] = new BBTag((content, attr) => {
@@ -150,24 +147,34 @@ bbTags["list"] = new BBTag((content, attr) => {
 		["alpha-s"]: "lower-alpha",
 		["alpha-l"]: "upper-alpha"
 	};
-	let list: string = "";
-	list += `<ol style="list-style-type: ${listStyleTypes[attr ?? "disc"] ?? "disc"};">\n`;
-	content
+	const type = attr?.trim().toLowerCase() || "disc";
+	const normalizedType = type in listStyleTypes ? type : "disc";
+	const listStyle = listStyleTypes[normalizedType];
+	const items = content
 		.split("[*]")
-		.filter((item) => item.replaceAll(/<br \/>\s*/g, "").trim() !== "")
-		.forEach((item) => { list += `\t<li>${item}</li>\n`; });
-	list += "</ol>";
-	return list;
+		.slice(1)
+		.map((item) => item
+			.replace(/^(?:\s*<br \/>\n?)+|(?:<br \/>\n?\s*)+$/g, "")
+			.trim())
+		.filter(Boolean);
+	if (items.length === 0) return content;
+
+	const tag = ["none", "disc", "circle", "square"].includes(normalizedType) ? "ul" : "ol";
+	return [
+		`<${tag} style="list-style-type: ${listStyle};">`,
+		...items.map((item) => `\t<li>${item}</li>`),
+		`</${tag}>`
+	].join("\n");
 });
 // [quote(=attr)]content[/quote]
 bbTags["quote"] = new BBTag((content, attr) => {
-	const name = attr !== undefined ? `${escapeHtml(attr)} wrote:` : "";
-	let quote: string = "";
-	quote += "<blockquote>\n";
-	quote += `\t<h4>${name}</h4>\n`;
-	quote += `\t${content}\n`;
-	quote += "</blockquote>";
-	return quote;
+	const name = attr?.trim();
+	return [
+		"<blockquote>",
+		...(name ? [`\t<h4>${escapeHtml(name)} wrote:</h4>`] : []),
+		`\t${content}`,
+		"</blockquote>"
+	].join("\n");
 });
 // [url(=url)]content[/url]
 bbTags["url"] = new BBTag((content, attr) => {
@@ -177,13 +184,13 @@ bbTags["url"] = new BBTag((content, attr) => {
 	return `<a class="default-link" href="${escapeAttribute(url)}">${content}</a>`;
 });
 // [img(=attr)]content[/img]
-bbTags["img"] = new BBTag((content, attr) => {
+bbTags["img"] = new BBTag((content) => {
 	const imageUrl = sanitizeUrl(textFromHtml(content));
 	if (!imageUrl) return renderImageMessage("Image URL is invalid");
 	if (!isAllowedImageUrl(imageUrl)) return renderImageMessage("Image domain is not allowed");
-	return renderImage(imageUrl, attr);
+	return renderImage(imageUrl);
 }, true, false);
-// [profile=7]content[/profile] or [profile]7[/profile]
+// [profile=7]content[/profile]
 bbTags["profile"] = new BBTag((content, attr) => {
 	const id = (attr ?? textFromHtml(content)).trim();
 	if (!id || !/^\d+$/.test(id)) return content;

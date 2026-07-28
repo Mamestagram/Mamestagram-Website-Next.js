@@ -22,9 +22,13 @@ export default function PlayerScoreValue({ i, map, scope, isDans }: {
 						{(scoreMap.status !== BeatmapStatus.ranked && scoreMap.status !== BeatmapStatus.approved && "-") ||
 							<>{Math.round(scoreMap.pp).toLocaleString()}<span className={styles.pp_label}>pp</span></>}
 					</span>
-					{!isDans &&
-						(scope === ScoreScope.bestPP && <span className={styles.weighted}>({Math.round(scoreMap.pp * 0.95 ** i).toLocaleString()}pp)</span>) ||
-						(scoreMap.grade === "F" && <span className={styles.failed}>(Failed)</span>)}
+					{!isDans && scope === ScoreScope.bestPP &&
+						<span className={styles.weighted}>
+							<span className={styles.auxiliary_label}>weighted</span>
+							{Math.round(scoreMap.pp * 0.95 ** i).toLocaleString()}<span className={styles.pp_label}>pp</span>
+						</span>}
+					{scope !== ScoreScope.bestPP && scoreMap.grade === "F" &&
+						<span className={styles.failed}>Failed</span>}
 				</>
 			);
 		case ScoreScope.mostPlayed:

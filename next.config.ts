@@ -28,7 +28,8 @@ const nextConfig: NextConfig = {
 			{ protocol: "https", hostname: "media.giphy.com" },
 			{ protocol: "https", hostname: "i.giphy.com" },
 			{ protocol: "https", hostname: "static-cdn.jtvnw.net" },
-			{ protocol: "https", hostname: "images.unsplash.com" }
+			{ protocol: "https", hostname: "images.unsplash.com" },
+			{ protocol: "https", hostname: "i.ppy.sh" }
 		]
 	}
 };

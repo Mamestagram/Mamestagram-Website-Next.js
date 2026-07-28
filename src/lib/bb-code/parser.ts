@@ -1,4 +1,5 @@
 type MarkupGenerator = (content: string, attr?: string) => string;
+const MAX_NESTING_DEPTH = 32;
 
 export function escapeHtml(text: string) {
 	return text
@@ -50,7 +51,7 @@ export class BBTag extends BBTags {
 }
 
 export class BBCodeParser {
-	private bbTags: Map<string, BBTags>;
+	private readonly bbTags: Map<string, BBTags>;
 	
 	public constructor(bbTags: { [bbTagName: string]: BBTags }) {
 		this.bbTags = new Map();
@@ -60,10 +61,12 @@ export class BBCodeParser {
 	}
 	
 	public parseToHtml(text: string) {
-		return this.parseSegment(text);
+		return this.parseSegment(text, 0);
 	}
 	
-	private parseSegment(text: string): string {
+	private parseSegment(text: string, depth: number): string {
+		if (depth >= MAX_NESTING_DEPTH) return this.escapeText(text);
+
 		let html = "";
 		let cursor = 0;
 		
@@ -90,7 +93,7 @@ export class BBCodeParser {
 				continue;
 			}
 			
-			const closeTag = this.findClosingTag(text, openTag.name, openTag.end);
+			const closeTag = this.findClosingTag(text, openTag.name, openTag.end, !generator.NoNesting());
 			if (!closeTag) {
 				html += this.escapeText(text.slice(openStart, openTag.end));
 				cursor = openTag.end;
@@ -98,7 +101,9 @@ export class BBCodeParser {
 			}
 			
 			const innerText = text.slice(openTag.end, closeTag.start);
-			const content = generator.NoNesting() ? escapeHtml(innerText) : this.parseSegment(innerText);
+			const content = generator.NoNesting()
+				? this.escapeText(innerText, generator.InsertLineBreaks())
+				: this.parseSegment(innerText, depth + 1);
 			html += generator.Generate(content, openTag.attr);
 			cursor = closeTag.end;
 		}
@@ -106,30 +111,9 @@ export class BBCodeParser {
 		return html;
 	}
 	
-	private escapeText(text: string) {
-		return this.escapeTextWithAutoLinks(text).replaceAll(/\r\n|\r|\n/g, "<br />\n");
-	}
-	
-	private escapeTextWithAutoLinks(text: string) {
-		const urlPattern = /https?:\/\/[^\s<>"']+/gi;
-		let html = "";
-		let cursor = 0;
-		let match: RegExpExecArray | null;
-		
-		while ((match = urlPattern.exec(text)) !== null) {
-			const url = match[0];
-			html += escapeHtml(text.slice(cursor, match.index));
-			
-			const trailing = url.match(/[),.!?;:。！？、]+$/)?.[0] ?? "";
-			const href = url.slice(0, url.length - trailing.length);
-			html += href
-				? `<a class="default-link" href="${escapeAttribute(href)}">${escapeHtml(href)}</a>${escapeHtml(trailing)}`
-				: escapeHtml(url);
-			cursor = match.index + url.length;
-		}
-		
-		html += escapeHtml(text.slice(cursor));
-		return html;
+	private escapeText(text: string, insertLineBreaks: boolean = true) {
+		const escaped = escapeHtml(text);
+		return insertLineBreaks ? escaped.replaceAll(/\r\n|\r|\n/g, "<br />\n") : escaped;
 	}
 	
 	private readOpeningTag(text: string, start: number) {
@@ -137,24 +121,31 @@ export class BBCodeParser {
 		if (closeBracket === -1) return null;
 		
 		const raw = text.slice(start + 1, closeBracket);
-		const match = raw.match(/^([a-z][a-z0-9_-]*)(?:(?:=|\s+)([\s\S]*))?$/i);
+		const match = raw.match(/^([a-z][a-z0-9_-]*)([\s\S]*)$/i);
 		if (!match) return null;
+		const rest = match[2].trim();
 		
 		return {
 			name: match[1].toLowerCase(),
-			attr: this.readTagAttribute(match[2]),
+			attr: rest ? this.readTagAttribute(rest) : undefined,
 			end: closeBracket + 1
 		};
 	}
 	
-	private readTagAttribute(attr?: string) {
-		if (!attr) return undefined;
-		
-		const trimmed = attr.trim();
-		const valMatch = trimmed.match(/^val\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s]+))$/i);
-		if (valMatch) return valMatch[1] ?? valMatch[2] ?? valMatch[3];
-		
-		return trimmed;
+	private readTagAttribute(raw: string) {
+		let value = raw;
+		if (value.startsWith("=")) value = value.slice(1).trim();
+		else {
+			const namedAttribute = value.match(/^(?:val|link)\s*=\s*([\s\S]*)$/i);
+			if (namedAttribute) value = namedAttribute[1].trim();
+		}
+
+		if (value.length >= 2) {
+			const first = value[0], last = value.at(-1);
+			if ((first === "\"" && last === "\"") || (first === "'" && last === "'"))
+				value = value.slice(1, -1);
+		}
+		return value;
 	}
 	
 	private readClosingTag(text: string, start: number, tagName: string) {
@@ -170,7 +161,7 @@ export class BBCodeParser {
 		};
 	}
 	
-	private findClosingTag(text: string, tagName: string, start: number) {
+	private findClosingTag(text: string, tagName: string, start: number, allowNesting: boolean) {
 		let depth = 1;
 		let cursor = start;
 		
@@ -187,7 +178,7 @@ export class BBCodeParser {
 			}
 			
 			const openingTag = this.readOpeningTag(text, bracket);
-			if (openingTag?.name === tagName) {
+			if (allowNesting && openingTag?.name === tagName) {
 				depth++;
 				cursor = openingTag.end;
 				continue;

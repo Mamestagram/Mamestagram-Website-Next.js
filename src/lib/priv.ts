@@ -16,16 +16,16 @@ export enum Priv {
 }
 
 export const getPrivs = (privNum: number) => {
-	const privs: Priv[] = [];
-	Object.keys(Priv).reverse().forEach((key) => {
-		const privKey = key as keyof typeof Priv;
-		const conds = [
-			(Priv[privKey] & (Priv.supporter | Priv.premium | Priv.moderator | Priv.administrator | Priv.developer)) === 0,
-			(Priv[privKey] & (Priv.supporter | Priv.premium)) > 0 && !privs.includes(Priv.donator),
-			(Priv[privKey] & (Priv.moderator | Priv.administrator | Priv.developer)) > 0 && !privs.includes(Priv.staff)
-		]
-		if ((privNum & Priv[privKey]) > 0 && conds.some((cond) => cond))
-			privs.push(Priv[privKey]);
-	});
-	return privs.reverse();
+	const publicPrivileges = [
+		Priv.verified,
+		Priv.supporter,
+		Priv.premium,
+		Priv.alumni,
+		Priv.tourneyManager,
+		Priv.nominator,
+		Priv.moderator,
+		Priv.administrator,
+		Priv.developer
+	];
+	return publicPrivileges.filter((privilege) => (privNum & privilege) === privilege);
 }

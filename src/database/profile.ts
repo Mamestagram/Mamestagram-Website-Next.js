@@ -140,6 +140,18 @@ export const getPreferredMode = async (id: number, isClan: boolean) => {
 	}
 }
 
+export const updateUserpageContent = async (id: number, content: string) => {
+	await executeQuery(
+		`
+			UPDATE users
+				SET userpage_content = ?
+			WHERE id = ?
+			LIMIT 1
+		`,
+		[content, id]
+	);
+}
+
 /* info */
 export type Profile = {
 	tag: string | null, // unused for clan pf
@@ -151,13 +163,19 @@ export type Profile = {
 	creationTime: Date,
 	latestActivity: Date, // unused for clan pf
 	priv: Priv[], // unused for clan pf
-	mutual: { user: number }[], // unused for clan pf
-	following: { user: number }[], // unused for clan pf
-	followers: { user: number }[], // unused for clan pf
+	mutual: ProfileConnection[], // unused for clan pf
+	following: ProfileConnection[], // unused for clan pf
+	followers: ProfileConnection[], // unused for clan pf
 	preferredMode: ModeNum,
 	userpageContent: string | null,
 	isOnline: boolean, // unused for clan pf
 	isPrivate: boolean
+};
+
+export type ProfileConnection = {
+	user: number,
+	name: string,
+	country: string
 };
 
 export const getInfo = async (id: number, isClan: boolean) => {
@@ -215,9 +233,9 @@ export const getInfo = async (id: number, isClan: boolean) => {
 				] = await Promise.all([
 					executeQuery<{ tag: string }>(userJoinedClanQuery, [playerInfo.clan_id]), // tag
 					executeQuery<{ badge_id: number }>(setBadgeQuery, [id]), // setBadge
-					executeQuery<{ user: number }>(mutualQuery, [id]), // mutual
-					executeQuery<{ user: number }>(followingQuery, [id]), // following
-					executeQuery<{ user: number }>(followersQuery, [id]) // followers
+					executeQuery<ProfileConnection>(mutualQuery, [id]), // mutual
+					executeQuery<ProfileConnection>(followingQuery, [id]), // following
+					executeQuery<ProfileConnection>(followersQuery, [id]) // followers
 				]);
 				info = {
 					tag: joinedClan.at(0)?.tag ?? null,
