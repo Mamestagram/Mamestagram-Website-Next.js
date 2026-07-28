@@ -29,19 +29,29 @@ const privilegeMeta: Partial<Record<Priv, {
 	[Priv.developer]: { label: "Developer", icon: "code", className: styles.priv_developer }
 };
 
-function getPreferredMode(mode: ModeNum): { route: OsuMode, base: VnMode, label: string } {
+type PreferredModeMeta = {
+	route: OsuMode,
+	base: VnMode,
+	label: string,
+	playstyle?: "Relax" | "Autopilot"
+};
+
+function getPreferredMode(mode: ModeNum): PreferredModeMeta {
 	switch (mode) {
 		case ModeNum.taiko:
+			return { route: OsuMode.taiko, base: OsuMode.taiko, label: "Taiko" };
 		case ModeNum.rxtaiko:
-			return { route: ModeNum[mode] as OsuMode, base: OsuMode.taiko, label: "Taiko" };
+			return { route: OsuMode.rxtaiko, base: OsuMode.taiko, label: "Taiko", playstyle: "Relax" };
 		case ModeNum.ctb:
+			return { route: OsuMode.ctb, base: OsuMode.ctb, label: "Catch" };
 		case ModeNum.rxctb:
-			return { route: ModeNum[mode] as OsuMode, base: OsuMode.ctb, label: "Catch" };
+			return { route: OsuMode.rxctb, base: OsuMode.ctb, label: "Catch", playstyle: "Relax" };
 		case ModeNum.mania:
 			return { route: OsuMode.mania, base: OsuMode.mania, label: "Mania" };
 		case ModeNum.rxstd:
+			return { route: OsuMode.rxstd, base: OsuMode.std, label: "osu!", playstyle: "Relax" };
 		case ModeNum.apstd:
-			return { route: ModeNum[mode] as OsuMode, base: OsuMode.std, label: "osu!" };
+			return { route: OsuMode.apstd, base: OsuMode.std, label: "osu!", playstyle: "Autopilot" };
 		default:
 			return { route: OsuMode.std, base: OsuMode.std, label: "osu!" };
 	}
@@ -119,7 +129,14 @@ export default function UserInfo({ id, info, mode, isClan, isDans, rankHistory }
 							<ModeIcon mode={preferredMode.base}/>
 							<span className={styles.meta_copy}>
 								<small>Main mode</small>
-								<strong>{preferredMode.label}</strong>
+								<span className={styles.main_mode_value}>
+									<strong>{preferredMode.label}</strong>
+									{preferredMode.playstyle &&
+										<span className={styles.mode_variant}
+										      data-playstyle={preferredMode.playstyle.toLowerCase()}>
+											{preferredMode.playstyle}
+										</span>}
+								</span>
 							</span>
 							<FontAwesome className={styles.meta_link_icon} prefix="fas" name="arrow-up-right"/>
 						</Link>

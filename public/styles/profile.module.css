@@ -329,6 +329,36 @@
 										text-overflow: ellipsis;
 										white-space: nowrap;
 									}
+
+									& .main_mode_value {
+										display: inline-flex;
+										min-width: 0;
+										align-items: center;
+										gap: 6px;
+									}
+
+									& .mode_variant {
+										display: inline-flex;
+										min-height: 16px;
+										padding: 1px 5px;
+										align-items: center;
+										color: #9ce8c8;
+										background: rgba(48, 181, 126, .13);
+										border: 1px solid rgba(91, 222, 167, .2);
+										border-radius: 999px;
+										font-size: .43rem;
+										font-weight: 900;
+										letter-spacing: .055em;
+										line-height: 1;
+										text-transform: uppercase;
+										white-space: nowrap;
+
+										&[data-playstyle="autopilot"] {
+											color: #9edbff;
+											background: rgba(48, 139, 211, .14);
+											border-color: rgba(104, 185, 239, .22);
+										}
+									}
 								}
 
 								& .meta_link_icon {

@@ -3,6 +3,16 @@ import { getRedisClient } from "@/database/redis";
 import { ModeNum } from "@/lib/mode";
 
 const RANK_HISTORY_DAYS = 90;
+const RANK_HISTORY_MODES = new Set<ModeNum>([
+	ModeNum.std,
+	ModeNum.taiko,
+	ModeNum.ctb,
+	ModeNum.mania,
+	ModeNum.rxstd,
+	ModeNum.rxtaiko,
+	ModeNum.rxctb,
+	ModeNum.apstd
+]);
 
 export type RankHistoryPoint = {
 	date: string,
@@ -24,11 +34,13 @@ const toDisplayDate = (dateKey: string) =>
 	`${dateKey.slice(0, 4)}-${dateKey.slice(4, 6)}-${dateKey.slice(6, 8)}`;
 
 export async function getRankHistory(userId: number, mode: ModeNum): Promise<RankHistory> {
-	if (!Number.isInteger(userId) || userId <= 0) return { points: [], hasData: false };
+	if (!Number.isInteger(userId) || userId <= 0 || !RANK_HISTORY_MODES.has(mode))
+		return { points: [], hasData: false };
 
 	try {
 		const redis = await getRedisClient();
-		const key = `mamesosu:rank_history:${mode % 4}:${userId}`;
+		// Keep each ruleset independent: relax/autopilot mode IDs must not be folded into vanilla.
+		const key = `mamesosu:rank_history:${mode}:${userId}`;
 		const rawHistory = await redis.hGetAll(key);
 		const history = new Map<string, number>();
 
