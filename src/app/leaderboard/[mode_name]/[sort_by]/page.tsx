@@ -5,6 +5,7 @@ import { OsuMode } from "@/lib/mode";
 import { writeLog } from "@/lib/log";
 import ModeSelection from "@/components/leaderboard/mode-selection";
 import RankingList from "@/components/leaderboard/ranking-list";
+import RankingListLoading from "@/components/leaderboard/ranking-list-loading";
 import styles from "@s/leaderboard.module.css";
 
 export default async function Leaderboard({ params, searchParams }: {
@@ -38,7 +39,7 @@ export default async function Leaderboard({ params, searchParams }: {
 		return (
 			<div className={styles.container}>
 				<ModeSelection mode={mode} sortBy={sortBy} country={country} isClan={isClan}/>
-				<Suspense>
+				<Suspense fallback={<RankingListLoading/>}>
 					<RankingList mode={mode} sortBy={sortBy} page={Number(page)} country={country} isClan={isClan}/>
 				</Suspense>
 			</div>
