@@ -48,12 +48,9 @@ export default function Header() {
 						</a>
 					</li>
 					<li className="donation">
-						<a title="Support us!"
-						   href="/support"
-						   target="_blank"
-						   rel="noopener noreferrer">
+						<Link title="Support us!" href="/support">
 							<FontAwesome prefix="fas" name="heart"/>
-						</a>
+						</Link>
 					</li>
 					<li className="search">
 						<FontAwesome prefix="fas" name="magnifying-glass"/>

@@ -85,7 +85,7 @@ body {
 		right: -150px;
 	}
 	
-	&:is(.home, .leaderboard, .profile, .register, .sign-in, .documents, .patcher) {
+	&:is(.home, .leaderboard, .profile, .register, .sign-in, .documents, .patcher, .support) {
 		&::-webkit-scrollbar-thumb {
 			background-color: hsl(var(--user-hue), 19%, 20%);
 		}
@@ -156,7 +156,7 @@ header {
 		}
 	}
 	/* header.home, header.leaderboard */
-	&:is(.home, .leaderboard, .profile, .register, .sign-in, .documents, .patcher) {
+	&:is(.home, .leaderboard, .profile, .register, .sign-in, .documents, .patcher, .support) {
 		background-color: hsla(var(--user-hue), 44%, 36%, 75%);
 	}
 	/* header .top-bar */
@@ -291,7 +291,7 @@ header {
 					z-index: -1;
 					transition: opacity 500ms;
 				}
-				header:is(.home, .leaderboard, .profile, .documents, .patcher, .register, .sign-in) &::before {
+				header:is(.home, .leaderboard, .profile, .documents, .patcher, .support, .register, .sign-in) &::before {
 					background: linear-gradient(
 						135deg,
 						hsl(var(--user-hue), 27%, 15%),
@@ -357,6 +357,7 @@ header {
 				header.leaderboard &.leaderboard,
 				header.documents &.documents,
 				header.patcher &.patcher,
+				header.support &.donation,
 				header.register &.register,
 				header.sign-in &.sign-in {
 					color: #fdfdfd;
@@ -401,13 +402,13 @@ header {
 					}
 				}
 				
-				header:is(.home, .leaderboard, .register, .sign-in) &:is(.register, .sign-in) {
+				header:is(.home, .leaderboard, .support, .register, .sign-in) &:is(.register, .sign-in) {
 					@media (max-width: 872px) {
 						color: hsl(var(--user-hue), 79%, 66%);
 					}
 				}
 				
-				header:is(.home, .leaderboard, .register, .sign-in) &:is(.register, .sign-in, .avatar) {
+				header:is(.home, .leaderboard, .support, .register, .sign-in) &:is(.register, .sign-in, .avatar) {
 					@media (max-width: 872px) {
 						background-color: hsl(var(--user-hue), 19%, 25%);
 					}
@@ -545,6 +546,10 @@ header {
 		}
 	}
 	/* header .donation */
+	&.support .donation {
+		color: #ea609e !important;
+	}
+
 	& .donation {
 		color: #b0b0c0;
 		font-size: 1.313rem;

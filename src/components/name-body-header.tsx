@@ -7,6 +7,7 @@ export default function NameBodyHeader({ className }: Readonly<{ className: stri
 		switch (className) {
 			case "register":
 			case "sign-in":
+			case "support":
 				document.documentElement.style.setProperty("--user-hue", "18");
 				break;
 			case "home":
