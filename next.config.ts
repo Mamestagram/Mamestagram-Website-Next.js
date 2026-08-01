@@ -24,6 +24,7 @@ const nextConfig: NextConfig = {
 			{ protocol: "https", hostname: "images-ext-1.discordapp.net" },
 			{ protocol: "https", hostname: "images-ext-2.discordapp.net" },
 			{ protocol: "https", hostname: "raw.githubusercontent.com" },
+			{ protocol: "https", hostname: "github.com" },
 			{ protocol: "https", hostname: "user-images.githubusercontent.com" },
 			{ protocol: "https", hostname: "avatars.githubusercontent.com" },
 			{ protocol: "https", hostname: "upload.wikimedia.org" },

@@ -37,6 +37,9 @@ export default function Header() {
 						<span className="pipe"></span>
 						<Link href="/documents">Documents</Link>
 					</li>
+					<li className="patcher">
+						<Link href="/patcher">Patcher</Link>
+					</li>
 					<li className="community">
 						<a href="https://discord.com/invite/xqncGVrHSf"
 						   target="_blank"

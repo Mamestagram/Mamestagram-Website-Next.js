@@ -85,7 +85,7 @@ body {
 		right: -150px;
 	}
 	
-	&:is(.home, .leaderboard, .profile, .register, .sign-in, .documents) {
+	&:is(.home, .leaderboard, .profile, .register, .sign-in, .documents, .patcher) {
 		&::-webkit-scrollbar-thumb {
 			background-color: hsl(var(--user-hue), 19%, 20%);
 		}
@@ -156,7 +156,7 @@ header {
 		}
 	}
 	/* header.home, header.leaderboard */
-	&:is(.home, .leaderboard, .profile, .register, .sign-in, .documents) {
+	&:is(.home, .leaderboard, .profile, .register, .sign-in, .documents, .patcher) {
 		background-color: hsla(var(--user-hue), 44%, 36%, 75%);
 	}
 	/* header .top-bar */
@@ -243,7 +243,7 @@ header {
 		& ul {
 			display: grid;
 			grid-template-rows: var(--header-height);
-			grid-template-columns: repeat(4, max-content) 1fr repeat(2, max-content);
+			grid-template-columns: repeat(5, max-content) 1fr repeat(2, max-content);
 			grid-gap: 0 10px;
 			font-size: 1rem;
 			justify-items: center;
@@ -261,7 +261,7 @@ header {
 			
 			&:has(.avatar) {
 				@media (max-width: 872px) {
-					grid-template-rows: repeat(4, 45px);
+					grid-template-rows: repeat(5, 45px);
 				}
 			}
 			
@@ -291,7 +291,7 @@ header {
 					z-index: -1;
 					transition: opacity 500ms;
 				}
-				header:is(.home, .leaderboard, .profile, .documents, .register, .sign-in) &::before {
+				header:is(.home, .leaderboard, .profile, .documents, .patcher, .register, .sign-in) &::before {
 					background: linear-gradient(
 						135deg,
 						hsl(var(--user-hue), 27%, 15%),
@@ -356,6 +356,7 @@ header {
 				
 				header.leaderboard &.leaderboard,
 				header.documents &.documents,
+				header.patcher &.patcher,
 				header.register &.register,
 				header.sign-in &.sign-in {
 					color: #fdfdfd;
@@ -460,14 +461,14 @@ header {
 			}
 			
 			@media (max-width: 872px) {
-				grid-template-rows: repeat(5, var(--mobile-height));
+				grid-template-rows: repeat(6, var(--mobile-height));
 				grid-template-columns: 1fr;
 				grid-gap: 0;
 				justify-items: start;
 			}
 			
 			@media (max-width: 480px) {
-				grid-template-rows: repeat(5, calc(var(--mobile-height) - 5px));
+				grid-template-rows: repeat(6, calc(var(--mobile-height) - 5px));
 			}
 		}
 
