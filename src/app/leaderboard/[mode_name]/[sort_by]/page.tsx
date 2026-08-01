@@ -6,6 +6,7 @@ import { writeLog } from "@/lib/log";
 import ModeSelection from "@/components/leaderboard/mode-selection";
 import RankingList from "@/components/leaderboard/ranking-list";
 import RankingListLoading from "@/components/leaderboard/ranking-list-loading";
+import LeaderboardHero from "@/components/leaderboard/leaderboard-hero";
 import styles from "@s/leaderboard.module.css";
 
 export default async function Leaderboard({ params, searchParams }: {
@@ -37,12 +38,15 @@ export default async function Leaderboard({ params, searchParams }: {
 		const mode = mode_name as OsuMode, sortBy = sort_by as SortBy, isClan = clan !== undefined;
 		
 		return (
-			<div className={styles.container}>
-				<ModeSelection mode={mode} sortBy={sortBy} country={country} isClan={isClan}/>
-				<Suspense fallback={<RankingListLoading/>}>
-					<RankingList mode={mode} sortBy={sortBy} page={Number(page)} country={country} isClan={isClan}/>
-				</Suspense>
-			</div>
+			<>
+				<LeaderboardHero/>
+				<div className={styles.container}>
+					<ModeSelection mode={mode} sortBy={sortBy} country={country} isClan={isClan}/>
+					<Suspense fallback={<RankingListLoading/>}>
+						<RankingList mode={mode} sortBy={sortBy} page={Number(page)} country={country} isClan={isClan}/>
+					</Suspense>
+				</div>
+			</>
 		);
 	}
 	else {

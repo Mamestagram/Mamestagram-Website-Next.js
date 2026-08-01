@@ -291,7 +291,7 @@ header {
 					z-index: -1;
 					transition: opacity 500ms;
 				}
-				header:is(.home, .leaderboard) &::before {
+				header:is(.home, .leaderboard, .profile, .documents, .register, .sign-in) &::before {
 					background: linear-gradient(
 						135deg,
 						hsl(var(--user-hue), 27%, 15%),
