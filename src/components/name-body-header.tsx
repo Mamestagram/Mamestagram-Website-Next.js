@@ -14,6 +14,9 @@ export default function NameBodyHeader({ className }: Readonly<{ className: stri
 			case "profile":
 				document.documentElement.style.setProperty("--user-hue", "210");
 				break;
+			case "documents":
+				document.documentElement.style.setProperty("--user-hue", "43");
+				break;
 		}
 		document.body.classList.add(className);
 		document.querySelector("header")!.classList.add(className);

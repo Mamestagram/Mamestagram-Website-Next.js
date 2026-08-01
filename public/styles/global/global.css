@@ -85,7 +85,7 @@ body {
 		right: -150px;
 	}
 	
-	&:is(.home, .leaderboard, .profile, .register, .sign-in) {
+	&:is(.home, .leaderboard, .profile, .register, .sign-in, .documents) {
 		&::-webkit-scrollbar-thumb {
 			background-color: hsl(var(--user-hue), 19%, 20%);
 		}
@@ -156,7 +156,7 @@ header {
 		}
 	}
 	/* header.home, header.leaderboard */
-	&:is(.home, .leaderboard, .profile, .register, .sign-in) {
+	&:is(.home, .leaderboard, .profile, .register, .sign-in, .documents) {
 		background-color: hsla(var(--user-hue), 44%, 36%, 75%);
 	}
 	/* header .top-bar */

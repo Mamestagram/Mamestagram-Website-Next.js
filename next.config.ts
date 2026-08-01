@@ -3,6 +3,13 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
 	allowedDevOrigins: [process.env.DEV_IP as string],
 	images: {
+		localPatterns: [
+			{ pathname: "/**", search: "" },
+			{
+				pathname: "/images/documents/connection/1.png",
+				search: "?v=20260801-015734"
+			}
+		],
 		remotePatterns: [
 			{ protocol: "https", hostname: `a.${process.env.BASE_DOMAIN}` },
 			{ protocol: "https", hostname: `clan-a.${process.env.BASE_DOMAIN}` },
