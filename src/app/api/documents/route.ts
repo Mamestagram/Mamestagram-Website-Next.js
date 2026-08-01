@@ -437,18 +437,18 @@ const danModes: Array<{
 		mode: OsuMode.taiko,
 		name: "osu! taiko",
 		requirements: [
-			{ course: "osu!Taiko Dan-I Dojo", level: "1 – 6", accuracy: "0.00%+", score: "650,000+", mod: "Score V2", misses: "0-", combo: "0+" },
-			{ course: "osu!Taiko Dan-I Dojo", level: "7 – 9", accuracy: "0.00%+", score: "700,000+", mod: "Score V2", misses: "0-", combo: "0+" },
-			{ course: "osu!Taiko Dan-I Dojo", level: "10 – 12", accuracy: "0.00%+", score: "750,000+", mod: "Score V2", misses: "0-", combo: "0+" },
-			{ course: "osu!Taiko Dan-I Dojo", level: "13 – 18", accuracy: "0.00%+", score: "800,000+", mod: "Score V2", misses: "0-", combo: "0+" },
-			{ course: "Rise's Taiko Dans", level: "1 – 5", accuracy: "0.00%+", score: "700,000+", mod: "Score V2", misses: "0-", combo: "0+" },
-			{ course: "Rise's Taiko Dans", level: "6 – 8", accuracy: "0.00%+", score: "750,000+", mod: "Score V2", misses: "0-", combo: "0+" },
-			{ course: "Rise's Taiko Dans", level: "9 – 10 / ???", accuracy: "0.00%+", score: "800,000+", mod: "Score V2", misses: "0-", combo: "0+" },
-			{ course: "Rise's Taiko Dans II", level: "R-4 – R-3", accuracy: "0.00%+", score: "600,000+", mod: "Score V2", misses: "0-", combo: "0+" },
-			{ course: "Rise's Taiko Dans II", level: "R-2 – R-1", accuracy: "0.00%+", score: "650,000+", mod: "Score V2", misses: "0-", combo: "0+" },
-			{ course: "Rise's Taiko Dans II", level: "R01 – R04", accuracy: "0.00%+", score: "700,000+", mod: "Score V2", misses: "0-", combo: "0+" },
-			{ course: "Rise's Taiko Dans II", level: "R05 – R08", accuracy: "0.00%+", score: "750,000+", mod: "Score V2", misses: "0-", combo: "0+" },
-			{ course: "Rise's Taiko Dans II", level: "R09 – RMG", accuracy: "0.00%+", score: "800,000+", mod: "Score V2", misses: "0-", combo: "0+" }
+			{ course: "osu!Taiko Dan-I Dojo", level: "1 – 6", accuracy: "0.00%+", score: "650,000+", mod: "Score V2", misses: "—", combo: "0+" },
+			{ course: "osu!Taiko Dan-I Dojo", level: "7 – 9", accuracy: "0.00%+", score: "700,000+", mod: "Score V2", misses: "—", combo: "0+" },
+			{ course: "osu!Taiko Dan-I Dojo", level: "10 – 12", accuracy: "0.00%+", score: "750,000+", mod: "Score V2", misses: "—", combo: "0+" },
+			{ course: "osu!Taiko Dan-I Dojo", level: "13 – 18", accuracy: "0.00%+", score: "800,000+", mod: "Score V2", misses: "—", combo: "0+" },
+			{ course: "Rise's Taiko Dans", level: "1 – 5", accuracy: "0.00%+", score: "700,000+", mod: "Score V2", misses: "—", combo: "0+" },
+			{ course: "Rise's Taiko Dans", level: "6 – 8", accuracy: "0.00%+", score: "750,000+", mod: "Score V2", misses: "—", combo: "0+" },
+			{ course: "Rise's Taiko Dans", level: "9 – 10 / ???", accuracy: "0.00%+", score: "800,000+", mod: "Score V2", misses: "—", combo: "0+" },
+			{ course: "Rise's Taiko Dans II", level: "R-4 – R-3", accuracy: "0.00%+", score: "600,000+", mod: "Score V2", misses: "—", combo: "0+" },
+			{ course: "Rise's Taiko Dans II", level: "R-2 – R-1", accuracy: "0.00%+", score: "650,000+", mod: "Score V2", misses: "—", combo: "0+" },
+			{ course: "Rise's Taiko Dans II", level: "R01 – R04", accuracy: "0.00%+", score: "700,000+", mod: "Score V2", misses: "—", combo: "0+" },
+			{ course: "Rise's Taiko Dans II", level: "R05 – R08", accuracy: "0.00%+", score: "750,000+", mod: "Score V2", misses: "—", combo: "0+" },
+			{ course: "Rise's Taiko Dans II", level: "R09 – RMG", accuracy: "0.00%+", score: "800,000+", mod: "Score V2", misses: "—", combo: "0+" }
 		],
 		download: "https://mega.nz/file/lDdgFYwK#_OmVCZfkM3Y_SKBT59W6Mtm3nmxOW8i8a8aySwJbUmU"
 	},
@@ -456,8 +456,8 @@ const danModes: Array<{
 		mode: OsuMode.ctb,
 		name: "osu! catch",
 		requirements: [
-			{ course: "Dan ~CTB~", level: "1 – 10", accuracy: "98.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" },
-			{ course: "Dan ~CTB~", level: "11 – 19", accuracy: "99.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" }
+			{ course: "Dan ~CTB~", level: "1 – 10", accuracy: "98.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" },
+			{ course: "Dan ~CTB~", level: "11 – 19", accuracy: "99.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" }
 		],
 		download: "https://mega.nz/file/BS9CQbzK#pjq5WrFbbpap7G0NA2LYNvNFATyZ1dQDRUseSkTdS-g"
 	},
@@ -465,25 +465,29 @@ const danModes: Array<{
 		mode: OsuMode.mania,
 		name: "osu! mania",
 		requirements: [
-			{ course: "Dan ~REFORM~ v2", keys: "4", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" },
-			{ course: "4K LN Dan Courses v2", keys: "4", accuracy: "97.00%+", score: "0+", mod: "Score V2", misses: "0-", combo: "0+" },
-			{ course: "4K shoegazer dan", keys: "4", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" },
-			{ course: "TR1PLE DAN", keys: "4", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" },
-			{ course: "Chordjack Joker Dan", keys: "4", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" },
-			{ course: "6K Regular Dan Course", keys: "6", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" },
-			{ course: "6K Regular Advanced Dan Course", keys: "6", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" },
-			{ course: "6K LN Dan Course", keys: "6", accuracy: "95.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" },
-			{ course: "Regular Dan Phase", keys: "7", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" },
-			{ course: "LN Dan Phase", keys: "7", accuracy: "95.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" },
-			{ course: "Extra Level (Regular)", keys: "7", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" },
-			{ course: "Extra Level (LN)", keys: "7", accuracy: "95.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" },
-			{ course: "10K BMS Dans Phase", keys: "10", accuracy: "95.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" },
-			{ course: "Malody 4K Dan Regular", keys: "4", accuracy: "95.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" },
-			{ course: "Malody 4K Dan Extra", keys: "4", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "0-", combo: "0+" }
+			{ course: "Dan ~REFORM~ v2", keys: "4", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" },
+			{ course: "4K LN Dan Courses v2", keys: "4", accuracy: "97.00%+", score: "0+", mod: "Score V2", misses: "—", combo: "0+" },
+			{ course: "4K shoegazer dan", keys: "4", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" },
+			{ course: "TR1PLE DAN", keys: "4", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" },
+			{ course: "Chordjack Joker Dan", keys: "4", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" },
+			{ course: "6K Regular Dan Course", keys: "6", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" },
+			{ course: "6K Regular Advanced Dan Course", keys: "6", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" },
+			{ course: "6K LN Dan Course", keys: "6", accuracy: "95.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" },
+			{ course: "Regular Dan Phase", keys: "7", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" },
+			{ course: "LN Dan Phase", keys: "7", accuracy: "95.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" },
+			{ course: "Extra Level (Regular)", keys: "7", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" },
+			{ course: "Extra Level (LN)", keys: "7", accuracy: "95.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" },
+			{ course: "10K BMS Dans Phase", keys: "10", accuracy: "95.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" },
+			{ course: "Malody 4K Dan Regular", keys: "4", accuracy: "95.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" },
+			{ course: "Malody 4K Dan Extra", keys: "4", accuracy: "96.00%+", score: "0+", mod: "NM", misses: "—", combo: "0+" }
 		],
 		download: "https://mega.nz/file/BCMihKRK#oifqLN7kbyf1gw_0_QVN7um_-SJKLw-Vb_-r_pRvJ1I"
 	}
 ];
+
+const formatRequirementValue = (value: string): string => {
+	return value === "0+" || value === "0.00%+" ? "—" : value;
+};
 
 const documentsData = {
 	links: {
@@ -497,7 +501,15 @@ const documentsData = {
 	commandCategories,
 	copy,
 	connectImages,
-	danModes
+	danModes: danModes.map((dan) => ({
+		...dan,
+		requirements: dan.requirements.map((requirement) => ({
+			...requirement,
+			accuracy: formatRequirementValue(requirement.accuracy),
+			score: formatRequirementValue(requirement.score),
+			combo: dan.mode === OsuMode.std ? requirement.combo : formatRequirementValue(requirement.combo)
+		}))
+	}))
 };
 
 export type DocumentsData = typeof documentsData;

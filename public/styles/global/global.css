@@ -61,7 +61,7 @@ body {
 		linear-gradient(var(--grid-major) 1px, transparent 1px),
 		linear-gradient(90deg, var(--grid-major) 1px, transparent 1px);
 	background-size: 26px 26px, 26px 26px, 104px 104px, 104px 104px;
-	background-attachment: fixed;
+	background-attachment: scroll;
 	
 	&::-webkit-scrollbar-track {
 		background-color: #fdfdfd;
