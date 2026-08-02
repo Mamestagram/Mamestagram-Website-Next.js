@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { useHeaderSearch } from "@/components/context/header-search-provider";
 import { useUserContext } from "@/components/context/user-provider";
@@ -27,22 +27,26 @@ type SearchResponse = {
 
 type SearchPhase = "idle" | "loading" | "ready" | "error";
 
-const privilegeLabels: Partial<Record<Priv, string>> = {
-	[Priv.verified]: "Verified",
-	[Priv.supporter]: "Supporter",
-	[Priv.premium]: "Premium",
-	[Priv.alumni]: "Alumni",
-	[Priv.tourneyManager]: "Tournament Manager",
-	[Priv.nominator]: "Nominator",
-	[Priv.moderator]: "Moderator",
-	[Priv.administrator]: "Administrator",
-	[Priv.developer]: "Developer"
+const privilegeMeta: Partial<Record<Priv, { label: string, icon: string }>> = {
+	[Priv.whitelisted]: { label: "Verified", icon: "badge-check" },
+	[Priv.supporter]: { label: "Supporter", icon: "heart" },
+	[Priv.premium]: { label: "Premium", icon: "gem" },
+	[Priv.alumni]: { label: "Alumni", icon: "graduation-cap" },
+	[Priv.tourneyManager]: { label: "Tournament Manager", icon: "trophy" },
+	[Priv.nominator]: { label: "Nominator", icon: "pen-nib" },
+	[Priv.moderator]: { label: "Moderator", icon: "shield-halved" },
+	[Priv.administrator]: { label: "Administrator", icon: "user-shield" },
+	[Priv.developer]: { label: "Developer", icon: "code" }
 };
 
-const getPrivilegeLabels = (privileges: number[]) => privileges.flatMap((privilege) => {
-	const label = privilegeLabels[privilege as Priv];
-	return label ? [label] : [];
+const getPrivilegeMeta = (privileges: number[]) => privileges.flatMap((privilege) => {
+	const meta = privilegeMeta[privilege as Priv];
+	return meta ? [meta] : [];
 });
+
+const subscribeToClient = () => () => undefined;
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
 
 export function HeaderSearchTrigger({ location }: { location: "top" | "navigation" }) {
 	const { openSearch } = useHeaderSearch();
@@ -64,7 +68,7 @@ export default function HeaderSearch() {
 	const router = useRouter();
 	const { serverInfo } = useUserContext();
 	const { isOpen, closeSearch } = useHeaderSearch();
-	const [mounted, setMounted] = useState(false);
+	const isClient = useSyncExternalStore(subscribeToClient, getClientSnapshot, getServerSnapshot);
 	const [query, setQuery] = useState("");
 	const [users, setUsers] = useState<SearchUser[]>([]);
 	const [phase, setPhase] = useState<SearchPhase>("idle");
@@ -72,7 +76,13 @@ export default function HeaderSearch() {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const dialogRef = useRef<HTMLElement>(null);
 
-	useEffect(() => setMounted(true), []);
+	const updateQuery = (nextQuery: string) => {
+		setQuery(nextQuery);
+		if (nextQuery.trim()) return;
+		setUsers([]);
+		setPhase("idle");
+		setMessage("");
+	};
 
 	useEffect(() => {
 		if (!isOpen) return;
@@ -113,12 +123,7 @@ export default function HeaderSearch() {
 
 	useEffect(() => {
 		const trimmed = query.trim();
-		if (!trimmed) {
-			setUsers([]);
-			setPhase("idle");
-			setMessage("");
-			return;
-		}
+		if (!trimmed) return;
 
 		const controller = new AbortController();
 		const timeout = window.setTimeout(async () => {
@@ -129,7 +134,12 @@ export default function HeaderSearch() {
 					signal: controller.signal
 				});
 				const data = await response.json() as SearchResponse;
-				if (!response.ok) throw new Error(data.error);
+				if (!response.ok) {
+					setUsers([]);
+					setPhase("error");
+					setMessage(data.error || "Player search is temporarily unavailable.");
+					return;
+				}
 				setUsers(data.users);
 				setPhase("ready");
 			}
@@ -196,11 +206,11 @@ export default function HeaderSearch() {
 					       autoComplete="off"
 					       placeholder="Search players by name or ID"
 					       aria-label="Search players by name or ID"
-					       onChange={(event) => setQuery(event.target.value)}/>
+				       onChange={(event) => updateQuery(event.target.value)}/>
 					{phase === "loading" && <FontAwesome className={styles.spinner} prefix="fas" name="spinner"/>}
 					{query && phase !== "loading" &&
 						<button type="button" aria-label="Clear search" onClick={() => {
-							setQuery("");
+							updateQuery("");
 							inputRef.current?.focus();
 						}}>
 							<FontAwesome prefix="fas" name="circle-xmark"/>
@@ -218,7 +228,10 @@ export default function HeaderSearch() {
 					                                                              body="Try another username or player ID."/>}
 					{phase === "ready" && users.length > 0 &&
 						<ul className={styles.result_list}>
-							{users.map((user) =>
+							{users.map((user) => {
+								const privileges = getPrivilegeMeta(user.privileges);
+								const primaryPrivilege = privileges.at(-1);
+								return (
 								<li key={user.id}>
 									<Link href={`/profile/${user.id}`} onClick={closeSearch}>
 										<span className={styles.avatar}>
@@ -243,15 +256,18 @@ export default function HeaderSearch() {
 												</small>
 												<small>{modeAbbreviation(user.preferredMode as ModeNum)}</small>
 											</span>
-											<small className={styles.privilege}
-											       title={getPrivilegeLabels(user.privileges).join(", ") || "Player"}>
-												<FontAwesome prefix="fas" name="shield-halved"/>
-												{getPrivilegeLabels(user.privileges).at(-1) ?? "Player"}
-											</small>
+											{primaryPrivilege &&
+												<small className={styles.privilege}
+												       title={privileges.map(({ label }) => label).join(", ")}>
+													<FontAwesome prefix="fas" name={primaryPrivilege.icon}/>
+													{primaryPrivilege.label}
+												</small>}
 										</span>
 										<FontAwesome className={styles.open_icon} prefix="fas" name="chevron-right"/>
 									</Link>
-								</li>)}
+								</li>
+								);
+							})}
 						</ul>}
 				</div>
 
@@ -263,7 +279,7 @@ export default function HeaderSearch() {
 		</div>
 	);
 
-	return mounted ? createPortal(dialog, document.body) : null;
+	return isClient ? createPortal(dialog, document.body) : null;
 }
 
 function SearchMessage({ icon, title, body }: { icon: string, title: string, body: string }) {

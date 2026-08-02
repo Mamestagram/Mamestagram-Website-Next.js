@@ -42,7 +42,13 @@ export const searchUsers = async (query: string): Promise<UserSearchResult[]> =>
 		[exactId, `%${escaped}%`, exactId, normalized, `${escaped}%`]
 	);
 
-	const uniqueRows = [...new Map(rows.map((row) => [row.id, row])).values()];
+	const rowsById = new Map<number, UserSearchRow>();
+	rows.forEach((row) => {
+		const existing = rowsById.get(row.id);
+		if (existing) existing.priv |= row.priv;
+		else rowsById.set(row.id, { ...row });
+	});
+	const uniqueRows = [...rowsById.values()];
 
 	return uniqueRows.map(({ id, name, country, preferred_mode, priv }) => ({
 		id,

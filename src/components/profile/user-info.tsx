@@ -18,7 +18,7 @@ const privilegeMeta: Partial<Record<Priv, {
 	icon: string,
 	className: string
 }>> = {
-	[Priv.verified]: { label: "Verified", icon: "badge-check", className: styles.priv_verified },
+	[Priv.whitelisted]: { label: "Verified", icon: "badge-check", className: styles.priv_verified },
 	[Priv.supporter]: { label: "Supporter", icon: "heart", className: styles.priv_supporter },
 	[Priv.premium]: { label: "Premium", icon: "gem", className: styles.priv_premium },
 	[Priv.alumni]: { label: "Alumni", icon: "graduation-cap", className: styles.priv_alumni },
@@ -57,6 +57,19 @@ function getPreferredMode(mode: ModeNum): PreferredModeMeta {
 	}
 }
 
+function getCountryMeta(country: string) {
+	const code = country.trim().toUpperCase();
+	if (!/^[A-Z]{2}$/.test(code)) return { code: "", name: "Unknown", isValid: false };
+
+	try {
+		const name = new Intl.DisplayNames(["en"], { type: "region" }).of(code);
+		return { code: code.toLowerCase(), name: name ?? code, isValid: true };
+	}
+	catch {
+		return { code: "", name: "Unknown", isValid: false };
+	}
+}
+
 export default function UserInfo({ id, info, mode, isClan, isDans, rankHistory }: {
 	id: number,
 	info: Profile,
@@ -66,7 +79,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, rankHistory }
 	rankHistory: RankHistory | null
 }) {
 	const preferredMode = getPreferredMode(info.preferredMode);
-	const countryName = new Intl.DisplayNames(["en"], { type: "region" }).of(info.country.toUpperCase());
+	const country = getCountryMeta(info.country);
 	const privileges = info.priv.flatMap((privilege) => {
 		const meta = privilegeMeta[privilege];
 		return meta ? [{ privilege, ...meta }] : [];
@@ -114,11 +127,13 @@ export default function UserInfo({ id, info, mode, isClan, isDans, rankHistory }
 					{!isClan &&
 						<li>
 							<Link className={styles.meta_chip}
-							      href={`/leaderboard/${mode}/${countrySort}?country=${encodeURIComponent(info.country)}`}>
-								<CountryFlag className={styles.flag} code={info.country}/>
+							      href={`/leaderboard/${mode}/${countrySort}${country.isValid ? `?country=${encodeURIComponent(country.code)}` : ""}`}>
+								{country.isValid
+									? <CountryFlag className={styles.flag} code={country.code}/>
+									: <FontAwesome className={styles.flag} prefix="fas" name="globe"/>}
 								<span className={styles.meta_copy}>
 									<small>Country</small>
-									<strong>{countryName}</strong>
+									<strong>{country.name}</strong>
 								</span>
 								<FontAwesome className={styles.meta_link_icon} prefix="fas" name="arrow-up-right"/>
 							</Link>

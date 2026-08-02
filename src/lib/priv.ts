@@ -17,7 +17,7 @@ export enum Priv {
 
 export const getPrivs = (privNum: number) => {
 	const publicPrivileges = [
-		Priv.verified,
+		Priv.whitelisted,
 		Priv.supporter,
 		Priv.premium,
 		Priv.alumni,
