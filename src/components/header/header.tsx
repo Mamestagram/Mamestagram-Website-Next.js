@@ -5,11 +5,14 @@ import PageTitle from "./page-title";
 import ArrowChevron from "./arrow";
 import UserContainer from "./user-container";
 import ScrollMotion from "./scroll-motion";
+import { HeaderSearchProvider } from "@/components/context/header-search-provider";
+import HeaderSearch, { HeaderSearchTrigger } from "./search";
 
 export default function Header() {
 	return (
-		<header>
-			<nav className="top-bar">
+		<HeaderSearchProvider>
+			<header>
+				<nav className="top-bar">
 				<Link className="top" href="/">
 					<Image src="/images/logo.png" alt="" fill sizes="(max-width: 768px) 100vw, 50vw" priority/>
 				</Link>
@@ -22,12 +25,10 @@ export default function Header() {
 						<FontAwesome prefix="fas" name="heart"/>
 					</a>
 				</div>
-				<button className="search" type="button" aria-label="Search">
-					<FontAwesome prefix="fas" name="magnifying-glass"/>
-				</button>
+				<HeaderSearchTrigger location="top"/>
 				<ArrowChevron/>
-			</nav>
-			<nav className="navigation">
+				</nav>
+				<nav className="navigation">
 				<ul>
 					<li className="leaderboard">
 						<span className="pipe"></span>
@@ -52,13 +53,13 @@ export default function Header() {
 							<FontAwesome prefix="fas" name="heart"/>
 						</Link>
 					</li>
-					<li className="search">
-						<FontAwesome prefix="fas" name="magnifying-glass"/>
-					</li>
+					<HeaderSearchTrigger location="navigation"/>
 					<UserContainer/>
 				</ul>
-			</nav>
-			<ScrollMotion/>
-		</header>
+				</nav>
+				<ScrollMotion/>
+			</header>
+			<HeaderSearch/>
+		</HeaderSearchProvider>
 	);
 }
