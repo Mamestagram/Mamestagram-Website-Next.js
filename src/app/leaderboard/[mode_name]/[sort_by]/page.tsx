@@ -7,6 +7,7 @@ import ModeSelection from "@/components/leaderboard/mode-selection";
 import RankingList from "@/components/leaderboard/ranking-list";
 import RankingListLoading from "@/components/leaderboard/ranking-list-loading";
 import LeaderboardHero from "@/components/leaderboard/leaderboard-hero";
+import LeaderboardScopeSwitch from "@/components/leaderboard/scope-switch";
 import styles from "@s/leaderboard.module.css";
 
 export default async function Leaderboard({ params, searchParams }: {
@@ -41,6 +42,10 @@ export default async function Leaderboard({ params, searchParams }: {
 			<>
 				<LeaderboardHero/>
 				<div className={styles.container}>
+					<LeaderboardScopeSwitch mode={mode}
+					                        sortBy={sortBy}
+					                        country={country}
+					                        isClan={isClan}/>
 					<ModeSelection mode={mode} sortBy={sortBy} country={country} isClan={isClan}/>
 					<Suspense fallback={<RankingListLoading/>}>
 						<RankingList mode={mode} sortBy={sortBy} page={Number(page)} country={country} isClan={isClan}/>

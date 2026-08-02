@@ -526,6 +526,92 @@
 			}
 		}
 	}
+
+	& .leaderboard_scope_switch {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		position: absolute;
+		top: 0;
+		right: max(3%, 24px);
+		width: 214px;
+		padding: 4px;
+		background: rgba(9, 11, 17, .88);
+		border: 1px solid var(--glass-border-dark);
+		border-radius: 15px;
+		box-shadow: var(--glass-shadow);
+		backdrop-filter: blur(14px);
+		overflow: hidden;
+		isolation: isolate;
+		z-index: 51;
+
+		&::before {
+			content: "";
+			position: absolute;
+			top: 4px;
+			bottom: 4px;
+			left: 4px;
+			width: calc(50% - 4px);
+			background: linear-gradient(145deg, hsla(var(--user-hue), 58%, 58%, .32), hsla(var(--user-hue), 45%, 42%, .18));
+			border: 1px solid hsla(var(--user-hue), 65%, 72%, .28);
+			border-radius: 11px;
+			box-shadow: inset 0 1px rgba(255, 255, 255, .09), 0 6px 16px rgba(0, 0, 0, .2);
+			z-index: -1;
+			transition: transform 260ms cubic-bezier(.22, 1, .36, 1);
+		}
+
+		&[data-scope="clans"]::before {
+			transform: translateX(100%);
+		}
+
+		& a {
+			display: inline-flex;
+			min-height: 42px;
+			align-items: center;
+			justify-content: center;
+			gap: 7px;
+			color: #7f8998;
+			border-radius: 11px;
+			font-size: .72rem;
+			font-weight: 800;
+			letter-spacing: .01em;
+			transition: color 170ms, background-color 170ms;
+
+			& i { font-size: .82rem; }
+
+			&:hover,
+			&:focus-visible,
+			&.selected_scope {
+				color: #f5f8fc;
+			}
+
+			&:hover:not(.selected_scope) {
+				background: rgba(255, 255, 255, .045);
+			}
+
+			&:focus-visible {
+				outline: 2px solid hsl(var(--user-hue), 62%, 68%);
+				outline-offset: -2px;
+			}
+		}
+
+		@media (max-width: 1155px) {
+			position: relative;
+			top: auto;
+			right: auto;
+			width: 214px;
+			margin: 0 auto 12px;
+		}
+
+		@media (max-width: 480px) {
+			width: min(214px, calc(100% - 24px));
+
+			& a { min-height: 38px; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			&::before { transition-duration: 1ms; }
+		}
+	}
 	
 	/* page wrapper */
 	& .page_wrapper {
