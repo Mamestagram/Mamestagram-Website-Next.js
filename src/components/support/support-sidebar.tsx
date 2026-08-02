@@ -83,7 +83,7 @@ export default function SupportSidebar({ locale, languageLabel, nav }: {
 						</button>)}
 				</div>
 			</div>
-			<nav className={styles.support_nav} aria-label="Donation sections">
+			<nav className={styles.support_nav} aria-label="Support sections">
 				{sectionKeys.map((section, index) =>
 					<a key={section}
 					   href={`#${section}`}

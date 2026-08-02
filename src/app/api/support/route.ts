@@ -9,7 +9,7 @@ const supportData = {
 	mediaRoot,
 	copy: {
 		en: {
-			title: "Donation",
+			title: "Support",
 			description: "Support the future of Mamestagram and unlock more ways to play.",
 			language: "Language",
 			nav: { introduction: "Introduction", features: "Features", subscription: "Subscription" },
@@ -34,7 +34,7 @@ const supportData = {
 			backToTop: "Back to top"
 		},
 		ja: {
-			title: "寄付",
+			title: "サポート",
 			description: "Mamestagramのこれからを支援して、より多くの遊び方を楽しみましょう。",
 			language: "言語",
 			nav: { introduction: "はじめに", features: "追加機能", subscription: "サポーター申込" },

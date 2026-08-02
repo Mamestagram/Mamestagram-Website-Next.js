@@ -3,7 +3,7 @@ import NameBodyHeader from "@/components/name-body-header";
 import SupportContent, { type SupportLocale } from "@/components/support/support-content";
 
 export const metadata: Metadata = {
-	title: "Donation",
+	title: "Support",
 	description: "Support Mamestagram and explore the benefits included with Mamestagram Supporter."
 };
 
