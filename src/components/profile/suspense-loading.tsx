@@ -32,13 +32,14 @@ export function StatisticsLoading() {
 	);
 }
 
-export function PlayerScoresLoading({ label, hasGrade = true }: {
+export function PlayerScoresLoading({ label, hasGrade = true, showTitle = true }: {
 	label: string,
-	hasGrade?: boolean
+	hasGrade?: boolean,
+	showTitle?: boolean
 }) {
 	return (
 		<div className={styles.player_scores_loading} role="status" aria-label={`Loading ${label}`}>
-			<LoadingTitle label={label}/>
+			{showTitle && <LoadingTitle label={label}/>}
 			<div className={styles.score_loading_list}>
 				{Array.from({ length: 5 }, (_, index) =>
 					<div key={index} className={styles.score_loading_row}>

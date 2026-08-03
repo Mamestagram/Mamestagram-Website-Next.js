@@ -38,3 +38,36 @@
 		}
 	}
 }
+
+.country-flag-floating-tooltip {
+	position: fixed;
+	z-index: 10000;
+	padding: 8px;
+	pointer-events: none;
+	color: #fdfdfd;
+	background-color: #17171c;
+	border-radius: 10px;
+	box-shadow: var(--glass-box-shadow-dark);
+	font-family: "Noto_Sans", sans-serif;
+	font-size: .7rem;
+	line-height: 10px;
+	white-space: nowrap;
+	opacity: 0;
+	transform: translate(-50%, calc(-100% + 5px));
+	transition: opacity 180ms ease, transform 180ms ease;
+
+	&[data-visible="true"] {
+		opacity: 1;
+		transform: translate(-50%, -100%);
+	}
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: calc(100% - 1px);
+		left: 50%;
+		border: 7px solid transparent;
+		border-top-color: #17171c;
+		transform: translateX(-50%);
+	}
+}

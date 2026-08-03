@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import type { FormEvent } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { previewAboutMe, updateAboutMe } from "@/actions/profile";
 import FontAwesome from "@/components/font-awesome";
@@ -31,21 +32,40 @@ const BBCODE_TOOLS = [
 	{ icon: "user", title: "Profile link", open: "[profile=7]", close: "[/profile]", placeholder: "username" }
 ] as const;
 
-export default function AboutMeEditor({ initialBBCode, initialHtml, mode }: Readonly<{
+export default function AboutMeEditor({ initialBBCode, initialHtml, profileId, isClan, mode }: Readonly<{
 	initialBBCode: string,
 	initialHtml: string,
+	profileId: number,
+	isClan: boolean,
 	mode: string
 }>) {
 	const router = useRouter();
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const cancelNoButtonRef = useRef<HTMLButtonElement>(null);
 	const [isEditing, setIsEditing] = useState(false);
 	const [isPreviewing, setIsPreviewing] = useState(false);
+	const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
 	const [isPending, startTransition] = useTransition();
 	const [content, setContent] = useState(initialBBCode);
 	const [savedContent, setSavedContent] = useState(initialBBCode);
 	const [renderedHtml, setRenderedHtml] = useState(initialHtml);
 	const [previewHtml, setPreviewHtml] = useState("");
 	const [status, setStatus] = useState<{ success: boolean, message: string } | null>(null);
+
+	useEffect(() => {
+		if (!isCancelConfirmOpen) return;
+		const previousOverflow = document.body.style.overflow;
+		const closeOnEscape = (event: KeyboardEvent) => {
+			if (event.key === "Escape") setIsCancelConfirmOpen(false);
+		};
+		document.body.style.overflow = "hidden";
+		document.addEventListener("keydown", closeOnEscape);
+		requestAnimationFrame(() => cancelNoButtonRef.current?.focus());
+		return () => {
+			document.body.style.overflow = previousOverflow;
+			document.removeEventListener("keydown", closeOnEscape);
+		};
+	}, [isCancelConfirmOpen]);
 
 	const insertBBCode = (open: string, close: string, placeholder: string) => {
 		const textarea = textareaRef.current;
@@ -89,13 +109,18 @@ export default function AboutMeEditor({ initialBBCode, initialHtml, mode }: Read
 		});
 	};
 
-	const cancelEditing = () => {
-		if (content !== savedContent && !window.confirm("Unsaved changes will be lost. Are you sure?")) return;
-
+	const discardChanges = () => {
 		setContent(savedContent);
 		setStatus(null);
 		setIsPreviewing(false);
 		setIsEditing(false);
+	};
+	const cancelEditing = () => {
+		if (content !== savedContent) {
+			setIsCancelConfirmOpen(true);
+			return;
+		}
+		discardChanges();
 	};
 
 	const togglePreview = () => {
@@ -143,6 +168,8 @@ export default function AboutMeEditor({ initialBBCode, initialHtml, mode }: Read
 			{isEditing ? (
 				<form className={styles.about_me_editor} onSubmit={submit}>
 					<input type="hidden" name="mode" value={mode}/>
+					<input type="hidden" name="profileId" value={profileId}/>
+					<input type="hidden" name="profileType" value={isClan ? "clan" : "user"}/>
 					{isPreviewing ? (
 						<>
 							<input type="hidden" name="content" value={content}/>
@@ -221,6 +248,40 @@ export default function AboutMeEditor({ initialBBCode, initialHtml, mode }: Read
 				<p className={styles.editor_status} data-success={status.success} role="status">
 					{status.message}
 				</p>
+			)}
+
+			{isCancelConfirmOpen && createPortal(
+				<div className={styles.clan_kick_overlay}
+				     onMouseDown={(event) => {
+					     if (event.target === event.currentTarget) setIsCancelConfirmOpen(false);
+				     }}>
+					<section className={styles.clan_kick_dialog}
+					         role="alertdialog"
+					         aria-modal="true"
+					         aria-labelledby="discard-about-me-title">
+						<span className={styles.clan_kick_icon}>
+							<FontAwesome prefix="fad" name="triangle-exclamation"/>
+						</span>
+						<h2 id="discard-about-me-title">Discard unsaved changes?</h2>
+						<p>Unsaved changes will be lost. Are you sure?</p>
+						<div className={styles.clan_kick_actions}>
+							<button ref={cancelNoButtonRef}
+							        type="button"
+							        onClick={() => setIsCancelConfirmOpen(false)}>
+								No
+							</button>
+							<button type="button"
+							        className={styles.confirm_kick}
+							        onClick={() => {
+								        setIsCancelConfirmOpen(false);
+								        discardChanges();
+							        }}>
+								Yes
+							</button>
+						</div>
+					</section>
+				</div>,
+				document.body
 			)}
 		</>
 	);

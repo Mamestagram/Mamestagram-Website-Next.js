@@ -5,6 +5,7 @@ import type { RankingList } from "@/database/leaderboard";
 import { SortBy } from "@/database/leaderboard";
 import { OsuMode } from "@/lib/mode";
 import CountryFlag from "@/components/country-flag";
+import ClickableRankingRow from "@/components/leaderboard/clickable-ranking-row";
 import styles from "@s/leaderboard.module.css";
 
 export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
@@ -16,9 +17,10 @@ export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 	const queries: string[] = [];
 	if (isClan) queries.push("clan");
 	if (sortBy === SortBy.dans) queries.push("dans");
+	const profileHref = `/profile/${listRow.id}/${mode}${queries.length > 0 ? `?${queries.join("&")}` : ""}`;
 	
 	return (
-		<tr className={styles.ranking_row}>
+		<ClickableRankingRow className={styles.ranking_row} href={profileHref}>
 			<td className={classNames(styles.rank, { [styles[`top_${listRow.rank}`]]: listRow.rank <= 3 })}>#{listRow.rank.toLocaleString()}</td>
 			<td className={!isClan ? styles.country : styles.avatar}>
 				{!isClan
@@ -32,7 +34,9 @@ export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 				}
 			</td>
 			<td className={styles.name}>
-				<Link href={`/profile/${listRow.id}/${mode}${queries.length > 0 ? `?${queries.join("&")}` : ""}`}>{listRow.tag}{listRow.name}</Link>
+				<Link className={styles.row_link} href={profileHref}>
+					<span className={styles.name_text}>{listRow.tag}{listRow.name}</span>
+				</Link>
 			</td>
 			<td className={classNames(styles.acc, { [styles.sorted]: sortBy === SortBy.accuracy })}>
 				{listRow.acc.toFixed(2)}<span className={styles.percent_label}>%</span>
@@ -53,6 +57,6 @@ export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 					<td className={styles.a_count}>{Math.floor(listRow.aCount).toLocaleString()}</td>
 				</>
 			}
-		</tr>
+		</ClickableRankingRow>
 	);
 }

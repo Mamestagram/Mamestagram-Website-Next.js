@@ -9,6 +9,7 @@ import { getCurrentUser } from "@/lib/session";
 import { ModeNum, OsuMode } from "@/lib/mode";
 import UserInfo from "@/components/profile/user-info";
 import AboutMe from "@/components/profile/me";
+import ClanMembers from "@/components/profile/clan-members";
 import PlayerScores from "@/components/profile/player-scores";
 import Statistics from "@/components/profile/statistics";
 import Achievements from "@/components/profile/achievements";
@@ -71,6 +72,7 @@ export default async function Profile({ params, searchParams }: {
 				getCurrentUser(),
 				!isClan ? getRankHistory(id, mode) : null
 			]);
+			const canManageProfile = currentUser.isLoggedIn && currentUser.id === (isClan ? info.ownerId : id);
 			
 			return (
 				<div className={styles.container}>
@@ -80,7 +82,17 @@ export default async function Profile({ params, searchParams }: {
 						          mode={mode_name as OsuMode}
 						          isClan={isClan}
 						          isDans={isDans}
-						          rankHistory={rankHistory}/>
+						          canManageProfile={canManageProfile}
+						          rankHistory={rankHistory}>
+							{isClan && <Suspense fallback={
+								<div className={styles.clan_members_loading}>Loading clan members…</div>
+							}>
+				<ClanMembers clanId={id}
+				             mode={mode_name as OsuMode}
+				             isDans={isDans}
+				             canManage={canManageProfile}/>
+							</Suspense>}
+						</UserInfo>
 						<div className={classNames(styles.section_box, styles.statistics)}>
 							<Suspense fallback={<StatisticsLoading/>}>
 								<Statistics id={id} mode={mode} isClan={isClan} isDans={isDans}/>
@@ -88,10 +100,12 @@ export default async function Profile({ params, searchParams }: {
 						</div>
 					</div>
 					<AboutMe bbCode={info.userpageContent}
-					         canEdit={!isClan && currentUser.isLoggedIn && currentUser.id === id}
+					         canEdit={canManageProfile}
+					         profileId={id}
+					         isClan={isClan}
 					         mode={mode_name}/>
-					<div className={classNames(styles.section_area, styles.map_scores)}>
-						<div className={styles.player_scores}>
+					<div className={classNames(styles.section_area, styles.map_scores, { [styles.clan_map_scores]: isClan })}>
+						{!isClan && <div className={styles.player_scores}>
 							<div className={classNames(styles.section_box, styles.list_container)}>
 								<Suspense fallback={<PlayerScoresLoading label="Best Performance"/>}>
 									<PlayerScores scope={ScoreScope.bestPP} id={id} mode={mode} isDans={isDans}/>
@@ -112,7 +126,7 @@ export default async function Profile({ params, searchParams }: {
 									<PlayerScores scope={ScoreScope.recentPlayed} id={id} mode={mode} isDans={isDans}/>
 								</Suspense>
 							</div>
-						</div>
+						</div>}
 						<Achievements id={id} mode={mode}/>
 					</div>
 				</div>

@@ -6,9 +6,11 @@ import BBCodeImageErrorHandler from "@/components/profile/bbcode-image-error-han
 import { bbCodeParser } from "@/lib/bb-code/bb-tags";
 import styles from "@s/profile.module.css";
 
-export default function AboutMe({ bbCode, canEdit = false, mode }: {
+export default function AboutMe({ bbCode, canEdit = false, profileId, isClan, mode }: {
 	bbCode: string | null,
 	canEdit?: boolean,
+	profileId: number,
+	isClan: boolean,
 	mode: string
 }) {
 	const html = bbCodeParser.parseToHtml(bbCode ?? "");
@@ -17,7 +19,11 @@ export default function AboutMe({ bbCode, canEdit = false, mode }: {
 	return (
 		<div className={classNames(styles.section_box, styles.about_me)}>
 			{canEdit ? (
-				<AboutMeEditor initialBBCode={bbCode ?? ""} initialHtml={html} mode={mode}/>
+				<AboutMeEditor initialBBCode={bbCode ?? ""}
+				               initialHtml={html}
+				               profileId={profileId}
+				               isClan={isClan}
+				               mode={mode}/>
 			) : (
 				<>
 					<h1 className={styles.section_title}>

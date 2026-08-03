@@ -87,9 +87,6 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 							</p>
 						</div>
 						<p className={styles.score_value}>
-							<span className={styles.metric_label}>
-								{scope === ScoreScope.mostPlayed ? "Plays" : "Performance"}
-							</span>
 							<span className={styles.metric_content}>
 								<PlayerScoreValue i={i} map={map} scope={scope} isDans={isDans}/>
 							</span>

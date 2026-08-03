@@ -11,6 +11,7 @@ export default async function Statistics({ id, mode, isClan, isDans }: {
 	isDans: boolean
 }) {
 	const statistics = await getStatistics(id, mode, isClan, isDans);
+	const formatAggregate = (value: number) => (isClan ? Math.floor(value) : value).toLocaleString();
 	
 	return (
 		<>
@@ -54,25 +55,25 @@ export default async function Statistics({ id, mode, isClan, isDans }: {
 					<ul className={styles.pp_area}>
 						<li>
 							<h3>Overall</h3>
-							<p>{statistics.pp.default.toLocaleString()}<span>pp</span></p>
+							<p>{formatAggregate(statistics.pp.default)}<span>pp</span></p>
 						</li>
 						{mode === ModeNum.mania &&
 							<>
 								<li>
 									<h3>4k</h3>
-									<p>{statistics.pp.k4.toLocaleString()}<span>pp</span></p>
+									<p>{formatAggregate(statistics.pp.k4)}<span>pp</span></p>
 								</li>
 								<li>
 									<h3>6k</h3>
-									<p>{statistics.pp.k6.toLocaleString()}<span>pp</span></p>
+									<p>{formatAggregate(statistics.pp.k6)}<span>pp</span></p>
 								</li>
 								<li>
 									<h3>7k</h3>
-									<p>{statistics.pp.k7.toLocaleString()}<span>pp</span></p>
+									<p>{formatAggregate(statistics.pp.k7)}<span>pp</span></p>
 								</li>
 								<li>
 									<h3>10k</h3>
-									<p>{statistics.pp.k10.toLocaleString()}<span>pp</span></p>
+									<p>{formatAggregate(statistics.pp.k10)}<span>pp</span></p>
 								</li>
 							</>}
 					</ul>
@@ -83,11 +84,11 @@ export default async function Statistics({ id, mode, isClan, isDans }: {
 					<ul className={styles.score_area}>
 						<li>
 							<h3>Ranked Score</h3>
-							<p>{statistics.rankedScore.toLocaleString()}</p>
+							<p>{formatAggregate(statistics.rankedScore)}</p>
 						</li>
 						<li>
 							<h3>Total Score</h3>
-							<p>{statistics.totalScore.toLocaleString()}</p>
+							<p>{formatAggregate(statistics.totalScore)}</p>
 						</li>
 					</ul>
 				</section>
@@ -101,7 +102,7 @@ export default async function Statistics({ id, mode, isClan, isDans }: {
 						</li>
 						<li>
 							<h3>Play Count</h3>
-							<p>{statistics.plays.toLocaleString()}</p>
+							<p>{formatAggregate(statistics.plays)}</p>
 						</li>
 						<li>
 							<h3>Total Play Time</h3>
@@ -113,7 +114,7 @@ export default async function Statistics({ id, mode, isClan, isDans }: {
 						</li>
 						<li>
 							<h3>Total Hits</h3>
-							<p>{statistics.totalHits.toLocaleString()}</p>
+							<p>{formatAggregate(statistics.totalHits)}</p>
 						</li>
 						<li>
 							<h3>Max Combo</h3>

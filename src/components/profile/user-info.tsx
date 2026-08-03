@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import Image from "next/image";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import type { Profile } from "@/database/profile";
 import { ModeNum, OsuMode, type VnMode } from "@/lib/mode";
 import { Priv } from "@/lib/priv";
@@ -8,6 +9,7 @@ import CountryFlag from "@/components/country-flag";
 import FontAwesome from "@/components/font-awesome";
 import ModeIcon from "@/components/mode-icon";
 import ProfileModeSelection from "@/components/profile/mode-selection";
+import SetMainModeButton from "@/components/profile/set-main-mode-button";
 import RankHistoryChart from "@/components/profile/rank-history";
 import SocialConnections from "@/components/profile/social-connections";
 import type { RankHistory } from "@/database/rank-history";
@@ -70,15 +72,18 @@ function getCountryMeta(country: string) {
 	}
 }
 
-export default function UserInfo({ id, info, mode, isClan, isDans, rankHistory }: {
+export default function UserInfo({ id, info, mode, isClan, isDans, canManageProfile, rankHistory, children }: {
 	id: number,
 	info: Profile,
 	mode: OsuMode,
 	isClan: boolean,
 	isDans: boolean,
-	rankHistory: RankHistory | null
+	canManageProfile: boolean,
+	rankHistory: RankHistory | null,
+	children?: ReactNode
 }) {
 	const preferredMode = getPreferredMode(info.preferredMode);
+	const selectedMode = ModeNum[mode];
 	const country = getCountryMeta(info.country);
 	const privileges = info.priv.flatMap((privilege) => {
 		const meta = privilegeMeta[privilege];
@@ -112,14 +117,18 @@ export default function UserInfo({ id, info, mode, isClan, isDans, rankHistory }
 					       draggable={false}
 					       priority/>
 				</span>
-				<span className={styles.name_container}>
-					<span className={styles.name_row}>
+				<div className={styles.name_container}>
+					<div className={styles.name_row}>
 						<h1 className={styles.name}>{info.tag}{info.name}</h1>
-						<ProfileModeSelection id={id} mode={mode} isClan={isClan} isDans={isDans}/>
-					</span>
+						<div className={styles.profile_mode_controls}>
+							<ProfileModeSelection id={id} mode={mode} isClan={isClan} isDans={isDans}/>
+							{canManageProfile && !isDans && selectedMode !== info.preferredMode &&
+								<SetMainModeButton profileId={id} mode={mode} isClan={isClan}/>}
+						</div>
+					</div>
 					{info.showPastName && info.pastNames !== null &&
 						<p className={styles.past_names}>aka: {info.pastNames}</p>}
-				</span>
+				</div>
 			</div>
 			
 			<div className={styles.meta}>
@@ -175,15 +184,16 @@ export default function UserInfo({ id, info, mode, isClan, isDans, rankHistory }
 					</div>}
 			</div>
 			
-			<SocialConnections connections={{
-				mutual: info.mutual,
-				following: info.following,
-				followers: info.followers
-			}}
-			mode={mode}
-			avatarBaseUrl={`https://a.${process.env.BASE_DOMAIN}`}/>
+			{!isClan &&
+				<SocialConnections connections={{
+					mutual: info.mutual,
+					following: info.following,
+					followers: info.followers
+				}}
+				mode={mode}
+				avatarBaseUrl={`https://a.${process.env.BASE_DOMAIN}`}/>}
 			
-			<div className={styles.last_online} data-online={info.isOnline}>
+			{!isClan && <div className={styles.last_online} data-online={info.isOnline}>
 				<span className={styles.activity_identity}>
 					<span className={styles.activity_icon}>
 						<FontAwesome prefix="fad" name={info.isOnline ? "signal-stream" : "clock"}/>
@@ -197,7 +207,8 @@ export default function UserInfo({ id, info, mode, isClan, isDans, rankHistory }
 					<strong>{lastOnlineDate}</strong>
 					<small>{lastOnlineTime}</small>
 				</time>
-			</div>
+			</div>}
+			{isClan && children}
 			{rankHistory && <RankHistoryChart history={rankHistory}/>}
 		</div>
 	);

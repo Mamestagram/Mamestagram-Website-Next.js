@@ -11,7 +11,7 @@ export const setBadgeQuery = `
 `;
 
 export const clanInfoQuery = `
-	SELECT tag, past_tag, show_past_tag, created_at, preferred_mode, userpage_content, public
+	SELECT tag, past_tag, show_past_tag, created_at, preferred_mode, userpage_content, public, owner
 	    FROM clans
 	WHERE id = ? -- number
 `;

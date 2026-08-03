@@ -7,6 +7,7 @@ import {
 	followingQuery,
 	followersQuery
 } from "./query/profile/user-info";
+import { clanMembersDansQuery, clanMembersQuery } from "./query/profile/clan-members";
 import {
 	dansBestPPQuery,
 	dansFirstPlaceQuery,
@@ -152,6 +153,103 @@ export const updateUserpageContent = async (id: number, content: string) => {
 	);
 }
 
+export const updateClanUserpageContent = async (clanId: number, ownerId: number, content: string) => {
+	if (!await isClanOwner(clanId, ownerId)) return false;
+
+	await executeQuery(
+		`
+			UPDATE clans
+				SET userpage_content = ?
+			WHERE id = ?
+				AND owner = ?
+			LIMIT 1
+		`,
+		[content, clanId, ownerId]
+	);
+	return true;
+}
+
+export const isClanOwner = async (clanId: number, ownerId: number) => {
+	const ownedClan = await executeQuery<{ id: number }>(
+		`
+			SELECT id
+				FROM clans
+			WHERE id = ?
+				AND owner = ?
+			LIMIT 1
+		`,
+		[clanId, ownerId]
+	);
+	return ownedClan.length > 0;
+}
+
+export const updatePreferredMode = async (profileId: number, mode: ModeNum, isClan: boolean, userId: number) => {
+	if (isClan) {
+		if (!await isClanOwner(profileId, userId)) return false;
+		await executeQuery(
+			`
+				UPDATE clans
+					SET preferred_mode = ?
+				WHERE id = ?
+					AND owner = ?
+				LIMIT 1
+			`,
+			[mode, profileId, userId]
+		);
+	}
+	else {
+		if (profileId !== userId) return false;
+		await executeQuery(
+			`
+				UPDATE users
+					SET preferred_mode = ?
+				WHERE id = ?
+				LIMIT 1
+			`,
+			[mode, userId]
+		);
+	}
+	return true;
+}
+
+export const removeClanMember = async (clanId: number, ownerId: number, memberId: number) => {
+	const members = await executeQuery<{ id: number }>(
+		`
+			SELECT u.id
+				FROM users u
+			JOIN clans c
+				ON c.id = u.clan_id
+			WHERE c.id = ?
+				AND c.owner = ?
+				AND u.id = ?
+				AND u.id <> c.owner
+			LIMIT 1
+		`,
+		[clanId, ownerId, memberId]
+	);
+	if (members.length === 0) return false;
+
+	await executeQuery(
+		`
+			UPDATE users
+				SET clan_id = 0,
+				    clan_priv = 0
+			WHERE id = ?
+				AND clan_id = ?
+				AND id <> ?
+				AND EXISTS(
+					SELECT 1
+						FROM clans
+					WHERE id = ?
+						AND owner = ?
+				)
+			LIMIT 1
+		`,
+		[memberId, clanId, ownerId, clanId, ownerId]
+	);
+	return true;
+}
+
 /* info */
 export type Profile = {
 	tag: string | null, // unused for clan pf
@@ -168,6 +266,7 @@ export type Profile = {
 	followers: ProfileConnection[], // unused for clan pf
 	preferredMode: ModeNum,
 	userpageContent: string | null,
+	ownerId: number | null,
 	isOnline: boolean, // unused for clan pf
 	isPrivate: boolean
 };
@@ -252,6 +351,7 @@ export const getInfo = async (id: number, isClan: boolean) => {
 					followers,
 					preferredMode: playerInfo.preferred_mode,
 					userpageContent: playerInfo.userpage_content,
+					ownerId: null,
 					isOnline: playerStatus.online,
 					isPrivate: playerInfo.private === 1
 				};
@@ -276,14 +376,15 @@ export const getInfo = async (id: number, isClan: boolean) => {
 		}
 	}
 	else {
-		type ClanInfo = {
+			type ClanInfo = {
 			tag: string,
 			past_tag: string | null,
 			show_past_tag: 0 | 1,
 			created_at: number, // unix timestamp
 			preferred_mode: ModeNum,
 			userpage_content: string,
-			public: 0 | 1
+			public: 0 | 1,
+			owner: number
 		};
 		
 		try {
@@ -303,6 +404,7 @@ export const getInfo = async (id: number, isClan: boolean) => {
 				followers: [],
 				preferredMode: clanInfo.preferred_mode,
 				userpageContent: clanInfo.userpage_content,
+				ownerId: clanInfo.owner,
 				isOnline: false,
 				isPrivate: clanInfo.public === 0
 			};
@@ -313,6 +415,32 @@ export const getInfo = async (id: number, isClan: boolean) => {
 		}
 	}
 	return info;
+}
+
+export type ClanMember = {
+	id: number,
+	name: string,
+	country: string,
+	privileges: Priv[],
+	isOwner: 0 | 1,
+	acc: number,
+	plays: number,
+	pp: number,
+	score: number
+};
+
+export const getClanMembers = async (clanId: number, mode: ModeNum, isDans: boolean) => {
+	try {
+		type ClanMemberRow = Omit<ClanMember, "privileges"> & { priv: number };
+		const members = !isDans
+			? await executeQuery<ClanMemberRow>(clanMembersQuery, [mode, clanId])
+			: await executeQuery<ClanMemberRow>(clanMembersDansQuery, [mode, mode, mode, clanId]);
+		return members.map(({ priv, ...member }) => ({ ...member, privileges: getPrivs(priv) }));
+	}
+	catch (err) {
+		writeError(err).then();
+		throw new Error("Couldn't get clan members");
+	}
 }
 
 /* player scores */
