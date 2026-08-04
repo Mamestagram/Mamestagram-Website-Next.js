@@ -42,18 +42,10 @@ export default function Footer() {
 					<h2>Support & Legal</h2>
 					<ul>
 						<li className="faq">
-							<a href="https://discord.com/channels/944248031136587796/1073989576462438420"
-							   target="_blank"
-							   rel="noopener noreferrer">
-								FAQ
-							</a>
+							<Link href="/documents#faq">FAQ</Link>
 						</li>
 						<li className="rules">
-							<a href="https://discord.com/channels/944248031136587796/1253278610735890483"
-							   target="_blank"
-							   rel="noopener noreferrer">
-								Rules
-							</a>
+							<Link href="/documents#rules">Rules</Link>
 						</li>
 						<li className="bug-report">
 							<a href="https://discord.com/channels/944248031136587796/1117062398596108298"
@@ -92,15 +84,11 @@ export default function Footer() {
 					   target="_blank"
 					   rel="noopener noreferrer">
 						<FontAwesome prefix="fab" name="x-twitter"/>
-					</a> and Garushisu
-					<a className="x-twitter"
-					   href="https://x.com/garushisu?s=20"
-					   target="_blank"
-					   rel="noopener noreferrer">
-						<FontAwesome prefix="fab" name="x-twitter"/>
 					</a>
 				</p>
-				<p>Ethereal Glass Theme</p>
+				<p className="built-with">
+					Built with <FontAwesome prefix="fab" name="openai"/>OpenAI Codex
+				</p>
 			</div>
 		</footer>
 	);
