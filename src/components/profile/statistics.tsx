@@ -25,15 +25,27 @@ export default async function Statistics({ id, mode, isClan, isDans }: {
 					<ul className={styles.rank_area}>
 						<li>
 							<h3>Global Rank</h3>
-							<p>#{statistics.rank.global.toLocaleString()}</p>
+							<p>
+								{statistics.rank.global !== 0
+									? `#${statistics.rank.global.toLocaleString()}`
+									: "-"}
+							</p>
 						</li>
 						<li>
 							<h3>Country Rank</h3>
-							<p>#{statistics.rank.country.toLocaleString()}</p>
+							<p>
+								{statistics.rank.country !== 0
+									? `#${statistics.rank.country.toLocaleString()}`
+									: "-"}
+							</p>
 						</li>
 						<li>
 							<h3>Bancho Rank</h3>
-							<p>#{statistics.rank.bancho.toLocaleString()}</p>
+							<p>
+								{statistics.rank.bancho !== 0
+									? `#${statistics.rank.bancho.toLocaleString()}`
+									: "-"}
+							</p>
 						</li>
 					</ul>
 				</section>

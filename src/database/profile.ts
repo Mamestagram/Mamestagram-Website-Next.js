@@ -482,7 +482,7 @@ export const getPlayerScores = async (scope: Exclude<ScoreScope, ScoreScope.most
 			case ScoreScope.bestPP:
 			case ScoreScope.recentPlayed:
 				type PlayerScoresApi = {
-					scores: {
+					scores?: {
 						pp: number,
 						acc: number,
 						mods: number,
@@ -495,7 +495,7 @@ export const getPlayerScores = async (scope: Exclude<ScoreScope, ScoreScope.most
 							version: string,
 							creator: string,
 							status: number
-						}
+						} | null
 					}[]
 				};
 				
@@ -510,21 +510,23 @@ export const getPlayerScores = async (scope: Exclude<ScoreScope, ScoreScope.most
 				const mamesosuApi = await fetch(url);
 				if (mamesosuApi.ok) {
 					const bestPPApi = await mamesosuApi.json() as PlayerScoresApi;
-					playerScores = bestPPApi.scores.map(
-						(score) => ({
-							set_id: score.beatmap.set_id,
-							id: score.beatmap.id,
+					playerScores = (bestPPApi.scores ?? []).flatMap((score) => {
+						const beatmap = score.beatmap;
+						if (!beatmap) return [];
+						return [{
+							set_id: beatmap.set_id,
+							id: beatmap.id,
 							grade: score.grade,
-							title: score.beatmap.title,
-							artist: score.beatmap.artist,
-							version: score.beatmap.version,
-							creator: score.beatmap.creator,
-							status: score.beatmap.status,
+							title: beatmap.title,
+							artist: beatmap.artist,
+							version: beatmap.version,
+							creator: beatmap.creator,
+							status: beatmap.status,
 							mods: score.mods,
 							acc: score.acc,
 							pp: score.pp
-						})
-					);
+						}];
+					});
 				}
 				else {
 					writeError(`${mamesosuApi.status}: ${mamesosuApi.statusText} (url: ${url})`).then();
@@ -692,7 +694,7 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 				plays: number,
 				maxCombo: number;
 			if (!isDans) {
-				const osudailyApiUrl = `${process.env.OSUDAILY_URL}?k=${process.env.OSUDAILY_API_KEY}&v=${playerStats.pp}&t=pp&m=${mode}`;
+				const osudailyApiUrl = `https://osudaily.net/api/pp.php?k=${process.env.OSUDAILY_API_KEY}&v=${playerStats.pp}&t=pp&m=${mode}`;
 				let osudailyApi: Response | null = null;
 				if (mode <= ModeNum.mania)
 					osudailyApi = await fetch(osudailyApiUrl);

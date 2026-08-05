@@ -85,7 +85,7 @@ body {
 		right: -150px;
 	}
 	
-	&:is(.home, .leaderboard, .profile, .register, .sign-in, .documents, .patcher, .support) {
+	&[class] {
 		&::-webkit-scrollbar-thumb {
 			background-color: hsl(var(--user-hue), 19%, 20%);
 		}
@@ -155,8 +155,8 @@ header {
 			padding: 0;
 		}
 	}
-	/* header.home, header.leaderboard */
-	&:is(.home, .leaderboard, .profile, .register, .sign-in, .documents, .patcher, .support) {
+	
+	&[class] {
 		background-color: hsla(var(--user-hue), 44%, 36%, 75%);
 	}
 	/* header .top-bar */
@@ -286,18 +286,16 @@ header {
 					content: "";
 					position: absolute;
 					inset: 0;
-					border-radius: inherit;
-					opacity: 0;
-					z-index: -1;
-					transition: opacity 500ms;
-				}
-				header:is(.home, .leaderboard, .profile, .documents, .patcher, .support, .register, .sign-in) &::before {
 					background: linear-gradient(
 						135deg,
 						hsl(var(--user-hue), 27%, 15%),
 						hsl(var(--user-hue), 27%, 18%) 60%,
 						hsl(var(--user-hue), 18%, 17%)
 					);
+					border-radius: inherit;
+					opacity: 0;
+					z-index: -1;
+					transition: opacity 500ms;
 				}
 				
 				&::after {
@@ -355,6 +353,7 @@ header {
 				}
 				
 				header.leaderboard &.leaderboard,
+				header.beatmaps &.beatmaps,
 				header.documents &.documents,
 				header.patcher &.patcher,
 				header.support &.donation,
@@ -402,13 +401,13 @@ header {
 					}
 				}
 				
-				header:is(.home, .leaderboard, .support, .register, .sign-in) &:is(.register, .sign-in) {
+				header[class] &:is(.register, .sign-in) {
 					@media (max-width: 872px) {
 						color: hsl(var(--user-hue), 79%, 66%);
 					}
 				}
 				
-				header:is(.home, .leaderboard, .support, .register, .sign-in) &:is(.register, .sign-in, .avatar) {
+				header[class] &:is(.register, .sign-in, .avatar) {
 					@media (max-width: 872px) {
 						background-color: hsl(var(--user-hue), 19%, 25%);
 					}
@@ -726,8 +725,18 @@ footer {
 		
 		& p {
 			margin-bottom: 5px;
+
+			&.built-with {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
 			
-			a {
+			& i {
+				margin-left: 2px;
+			}
+			
+			& a {
 				position: relative;
 				font-size: 1rem;
 				transition: color 300ms;

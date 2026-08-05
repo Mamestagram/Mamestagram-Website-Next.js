@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import Image from "next/image";
+import Link from "next/link";
 import type { PlayerMostPlayedMap, PlayerScoreMap } from "@/database/profile";
 import { ScoreScope, getMostPlayedMaps, getPlayerScores } from "@/database/profile";
 import { ModeNum } from "@/lib/mode";
@@ -50,12 +51,13 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 							<small>Nothing has been recorded in this category yet.</small>
 						</span>
 					</div>}
-				{playerScores.map((map, i) =>
-					<div key={i}
-					     className={classNames(
-							 styles.score,
-						     { [styles.best_pp]: scope === ScoreScope.bestPP },
-						     { [styles.most_played]: scope === ScoreScope.mostPlayed })}>
+				{playerScores.map((map, i) => {
+					const className = classNames(
+						styles.score,
+						{ [styles.best_pp]: scope === ScoreScope.bestPP },
+						{ [styles.most_played]: scope === ScoreScope.mostPlayed }
+					);
+					const content = <>
 						{map.set_id > 0 &&
 							<Image className={styles.map_bg}
 							       src={`https://assets.ppy.sh/beatmaps/${map.set_id}/covers/cover.jpg?`}
@@ -69,7 +71,7 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 							<span className={styles.score_identity}>
 								<span className={styles.grade}
 								      data-grade={(map as PlayerScoreMap).grade.toLowerCase()}>
-									{(map as PlayerScoreMap).grade}
+									{(map as PlayerScoreMap).grade.replace(/H$/, "")}
 								</span>
 							</span>}
 						<div className={styles.map_meta}>
@@ -91,8 +93,15 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 								<PlayerScoreValue i={i} map={map} scope={scope} isDans={isDans}/>
 							</span>
 						</p>
-					</div>
-				)}
+					</>;
+					return map.set_id > 0 && map.id > 0
+						? <Link key={`${map.set_id}-${map.id}-${i}`}
+						        className={className}
+						        href={`/beatmaps/${map.set_id}/${map.id}`}>
+							{content}
+						</Link>
+						: <div key={`${map.set_id}-${map.id}-${i}`} className={className}>{content}</div>;
+				})}
 			</ScoreList>
 		</details>
 	);

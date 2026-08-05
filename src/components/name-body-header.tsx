@@ -15,6 +15,9 @@ export default function NameBodyHeader({ className }: Readonly<{ className: stri
 			case "profile":
 				document.documentElement.style.setProperty("--user-hue", "210");
 				break;
+			case "beatmaps":
+				document.documentElement.style.setProperty("--user-hue", "200");
+				break;
 			case "documents":
 			case "patcher":
 				document.documentElement.style.setProperty("--user-hue", "43");
