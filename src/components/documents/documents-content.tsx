@@ -45,13 +45,24 @@ export default async function DocumentsContent({ locale }: { locale: Locale }) {
 							<p>{text.introLead}</p>
 							<p>{text.introBody}</p>
 							<p>{text.introDan}</p>
-							<div className={styles.ruleset_chips} aria-label="Supported rulesets">
-								<span>Vanilla</span><span>Relax</span><span>Autopilot</span><span>Dans</span>
+							<div className={styles.ruleset_chips} aria-label={text.featuresTitle}>
+								<span>Stable &amp; Lazer</span><span>Vanilla</span><span>Relax</span><span>Autopilot</span><span>Dans</span>
 							</div>
 						</div>
 						<h3 className={styles.subheading}>{text.featuresTitle}</h3>
+						<div className={styles.overview_grid}>
+							{text.features.map((feature) =>
+								<article key={feature.title} className={styles.overview_card}>
+									<i><FontAwesome prefix="fad" name={feature.icon}/></i>
+									<span>
+										<strong>{feature.title}</strong>
+										<p>{feature.body}</p>
+									</span>
+								</article>)}
+						</div>
+						<h3 className={styles.subheading}>{text.communityTitle}</h3>
 						<div className={styles.feature_grid}>
-							{text.features.map((feature, index) =>
+							{text.communityFeatures.map((feature, index) =>
 								<a key={feature.title}
 								   className={styles.feature_card}
 								   href={links.featureLinks[index]}
@@ -84,7 +95,7 @@ export default async function DocumentsContent({ locale }: { locale: Locale }) {
 							<FontAwesome prefix="fad" name="people-roof"/>
 							<span><strong>{text.clanRulesTitle}</strong><p>{text.clanRulesBody}</p></span>
 						</div>
-						<SupportNotice icon="ticket" title={text.reportTitle} body={text.reportBody} href={links.ticket}/>
+						<SupportNotice icon="ticket" title={text.reportTitle} body={text.reportBody} emphasis={text.reportWarning} href={links.ticket}/>
 						<SupportNotice icon="envelope-open-text" title={text.appealTitle} body={text.appealBody} href={links.ticket}/>
 					</section>
 
@@ -97,10 +108,18 @@ export default async function DocumentsContent({ locale }: { locale: Locale }) {
 					<section id="commands" className={styles.document_section}>
 						<SectionHeading icon="terminal" title={text.nav.commands}/>
 						<p className={styles.section_lead}>{text.commandsLead}</p>
+						<div className={styles.command_tips}>
+							{text.commandTips.map((tip) =>
+								<article key={tip.title}>
+									<i><FontAwesome prefix="fad" name={tip.icon}/></i>
+									<span><strong>{tip.title}</strong><p>{tip.body}</p></span>
+								</article>)}
+						</div>
 						<div className={styles.command_categories}>
 							{commandCategories.map((category) =>
 								<section key={category.title.en} className={styles.command_category}>
 									<h3><i><FontAwesome prefix="fad" name={category.icon}/></i>{category.title[locale]}</h3>
+									<p>{category.description[locale]}</p>
 									<div className={styles.command_grid}>
 										{category.items.map((item) =>
 											<article key={item.command} className={styles.command_item}>

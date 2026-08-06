@@ -16,136 +16,144 @@ const launchOption = "-devserver mamesosu.net";
 
 const commandCategories = [
 	{
-		icon: "link",
-		title: { en: "Account Linking", ja: "アカウント連携" },
+		icon: "terminal",
+		title: { en: "Basics and account settings", ja: "基本・アカウント設定" },
+		description: {
+			en: "General commands for help, language, profile visibility, and server notifications.",
+			ja: "ヘルプ、言語、プロフィール公開範囲、サーバー通知に関する基本コマンドです。"
+		},
 		items: [
-			{
-				command: "!link <bancho/twitch> <bancho_name/twitch_id>",
-				description: {
-					en: "Link your Bancho or Twitch account. This enables Bancho-name login and Twitch beatmap requests.",
-					ja: "Bancho/Twitchのアカウントを連携させ、Banchoのユーザー名でのログインや、Twitchからのビートマップリクエスト機能を利用できるようにします。"
-				}
-			}
+			{ command: "!help", description: { en: "Show the commands available to your account. You can also run it as !h or !.", ja: "現在のアカウントで利用できるコマンドを表示します。 !h や ! でも実行できます。" } },
+			{ command: "!autotranslate <on/off>", description: { en: "Switch server notices to the language associated with your account country. Enabling it reconnects you to the server automatically.", ja: "サーバー通知をアカウントの国に対応する言語へ切り替えます。onへ変更すると自動的にサーバーへ再接続されます。" } },
+			{ command: "!changecountry <code>", description: { en: "Change your account country using a two-letter ISO country code such as jp or us. You can also run it as !cc.", ja: "jpやusなど、2文字のISO国名コードでアカウントの国を変更します。 !cc でも実行できます。" } },
+			{ command: "!private", description: { en: "Toggle whether other players can view your profile.", ja: "プロフィールを他のプレイヤーへ公開するかどうかを切り替えます。" } },
+			{ command: "!notice <all/score/points/welcome> <on/off>", description: { en: "Enable or disable all notices, score notices, M Point notices, or login welcome notices.", ja: "全通知、スコア関連、M Point関連、ログイン時の通知を種類ごとに切り替えます。" } }
 		]
-	},
-	{
-		icon: "globe",
-		title: { en: "Country / Language", ja: "国/言語" },
-		items: [{
-			command: "!changecountry <code>",
-			description: { en: "Change the country and corresponding language assigned to your account.", ja: "アカウントの国と、それに対応する言語を変更します。" }
-		}]
 	},
 	{
 		icon: "ranking-star",
-		title: { en: "Ranking", ja: "段位" },
+		title: { en: "Scores and rankings", ja: "M Point・スコア・ランキング" },
+		description: {
+			en: "Control your play style, profile rank, map leaderboards, practice settings, and score notifications.",
+			ja: "プレイスタイル、プロフィール順位、マップリーダーボード、練習設定、スコア通知を管理します。"
+		},
 		items: [
-			{ command: "!ranking <global/country>", description: { en: "Switch between global and country rankings.", ja: "表示される順位の種類を、世界ランキングと国別ランキングで切り替えます。" } },
-			{ command: "!setdan <edit/list> <ID1, ID2>", description: { en: "Change the rank title shown on the leaderboard.", ja: "リーダーボードに表示する段位の称号を変更できます。" } },
-			{ command: "!nopp <on/off>", description: { en: "Toggle a mode that grants no PP. Available only for vn!taiko, vn!ctb, and vn!mania.", ja: "PPを一切付与しないモードへ変更します。vn!taiko・vn!ctb・vn!maniaのみ利用可能です。" } }
+			{ command: "!balance", description: { en: "Show your current M Point balance. You can also run it as !points or !mpoints.", ja: "現在のM Point残高を表示します。 !points や !mpoints でも実行できます。" } },
+			{ command: "!gamestyle <pp/score/rate>", description: { en: "Change the play style used for your profile and overall ranking. rate is mainly for 4K mania. You will reconnect to the server automatically after changing it.", ja: "プロフィールと総合ランキングで使用するプレイスタイルを変更します。rateは主に4K mania向けです。変更後は自動的にサーバーへ再接続されます。" } },
+			{ command: "!ranking <global/country>", description: { en: "Switch the overall rank shown on your profile between global and country ranking. You will reconnect to the server automatically after changing it.", ja: "プロフィール等に表示する総合順位を世界順位または国別順位へ切り替えます。変更後は自動的にサーバーへ再接続されます。" } },
+			{ command: "!forceranked <on/off>", description: { en: "Display every difficulty as Ranked in the client. This does not change score submission or PP eligibility.", ja: "すべてのdifficultyをクライアント上でRanked表示にします。提出可否やPP付与条件は変わりません。" } },
+			{ command: "!leaderboard sort <default/pp/score>", description: { en: "Choose map leaderboard sorting. default uses score for Vanilla and PP for Relax or Autopilot; Dan maps always use score.", ja: "マップリーダーボードの並び順を変更します。デフォルトはVanillaがスコア、Relax・AutopilotがPPです。段位はこの設定に関わらず、常にスコア順です。" } },
+			{ command: "!leaderboard dan <on/off>", description: { en: "Toggle Dan titles beside player names on map leaderboards.", ja: "リーダーボード上のプレイヤー名に付く段位の称号の表示/非表示を切り替えます。" } },
+			{ command: "!leaderboard bancho <on/off>", description: { en: "Include official osu! scores on supported Vanilla leaderboards. You will reconnect to the server automatically after changing it.", ja: "対応するVanillaリーダーボードに公式osu!のスコアを含めます。変更後は自動的にサーバーへ再接続されます。" } },
+			{ command: "!leaderboard size <100-500>", description: { en: "Set the number of leaderboard entries from 100 to 500. Supporter only.", ja: "リーダーボードの表示件数を100～500件へ変更します。サポーター専用です。" } },
+			{ command: "!leaderboard friend <bancho/clan/friend>", description: { en: "Switch the source shown on the friend leaderboard between official osu! (Bancho), clan, and friend. Supporter only.", ja: "フレンドリーダボードに表示する対象を公式osu!（Bancho）/clan/friendに切り替えます。サポーター専用です。" } },
+			{ command: "!nopp <on/off>", description: { en: "Toggle 0 PP practice mode, mainly for Vanilla taiko, catch, and mania.", ja: "主にtaiko・catch・mania（ともにVanilla）向けの0PP練習モードを切り替えます。" } },
+			{ command: "!snipe <on/off>", description: { en: "Toggle notices when another player takes one of your #1 scores.", ja: "自分が保持する1位スコアを抜かれたときの通知を切り替えます。" } },
+			{ command: "!rival <add/remove/msg> <value>", description: { en: "Add or remove a rival, or change the message shown when scores are sniped.", ja: "ライバルの追加・削除、またはスナイプ時に使用するメッセージを変更します。" } },
+			{ command: "!speedrun set <pp>", description: { en: "Set the target PP for a speedrun.", ja: "スピードランで目標にするPPを設定します。" } },
+			{ command: "!speedrun start", description: { en: "Start the speedrun. You will reconnect to the server automatically when it starts.", ja: "スピードランを開始します。開始時は自動的にサーバーへ再接続されます。" } },
+			{ command: "!speedrun stop", description: { en: "End the speedrun.", ja: "スピードランを終了します。" } }
 		]
 	},
 	{
-		icon: "slot-machine",
-		title: { en: "Gacha", ja: "ガチャ" },
+		icon: "medal",
+		title: { en: "Dan title display", ja: "段位の称号表示" },
+		description: {
+			en: "Choose which completed mania Dan series appears on your profile and leaderboards.",
+			ja: "達成済みのmania段位から、プロフィールやリーダーボードへ優先表示する称号を選びます。"
+		},
 		items: [
-			{ command: "!gacha play <amount>", description: { en: "Roll the gacha the specified number of times.", ja: "指定された回数分ガチャを回します。" } },
-			{ command: "!gacha info", description: { en: "Display the number of badges you own.", ja: "現在所持しているバッジ数を表示します。" } },
-			{ command: "!gacha point", description: { en: "Display your current point balance.", ja: "現在所持しているポイント数を表示します。" } }
+			{ command: "!setdan <id> [id] [id]", description: { en: "Select up to three titles from completed mania Dans. IDs: 0: REFORM v2, 1: 4K LN v2, 2: TR1PLE, 3: shoegazer, 4: Chordjack Joker, 5: Malody 4K v3.", ja: "達成済みmania段位の称号を最大3件選択できます。IDは0: REFORM v2、1: 4K LN v2、2: TR1PLE、3: shoegazer、4: Chordjack Joker、5: Malody 4K v3です。" } },
+			{ command: "!setdan reset", description: { en: "Reset the displayed mania Dan titles to the default IDs 0 and 1.", ja: "表示するmania段位の称号を既定のID: 0/1へ戻します。" } }
 		]
 	},
 	{
-		icon: "gamepad-modern",
-		title: { en: "Gamemode", ja: "ゲームモード" },
-		items: [{
-			command: "!gamemode <pp/score>",
-			description: { en: "Choose whether to play based on score or PP. Supporters only.", ja: "スコア基準でプレイするか、pp基準でプレイするかを選択できます。Supporterのみ利用可能です。" }
-		}]
-	},
-	{
-		icon: "bolt",
-		title: { en: "Leaderboard", ja: "リーダーボード" },
+		icon: "link",
+		title: { en: "Account linking and utilities", ja: "アカウント連携・ユーティリティ" },
+		description: {
+			en: "Link external accounts or use lightweight chat utilities.",
+			ja: "外部アカウントの連携や、チャット上の簡単なユーティリティを利用します。"
+		},
 		items: [
-			{ command: "!leaderboard dan <on/off>", description: { en: "Toggle rank-title display on the leaderboard.", ja: "リーダーボードに段位の称号を表示するか設定します。" } },
-			{ command: "!leaderboard sort <score/pp/default>", description: { en: "Change the leaderboard sorting order.", ja: "リーダーボードの並び順を変更します。" } },
-			{ command: "!leaderboard bancho <on/off>", description: { en: "Switch to Bancho leaderboard and ranking display.", ja: "Banchoのリーダーボード・ランキング表示へ切り替えます。" } },
-			{ command: "!leaderboard friend <bancho/clan/fail/friend>", description: { en: "Change the ranking shown in the friend leaderboard. Supporters only.", ja: "フレンドリーダーボードに表示するリーダーボードの種類を変更します。Supporterのみ利用可能です。" } },
-			{ command: "!leaderboard size <100-500>", description: { en: "Change how many players appear on the leaderboard. Supporters only.", ja: "リーダーボードに表示するプレイヤー数を変更します。Supporterのみ利用可能です。" } }
-		]
-	},
-	{
-		icon: "rabbit-running",
-		title: { en: "Speedrun", ja: "スピードラン" },
-		items: [
-			{ command: "!speedrun pp <value>", description: { en: "Measure the time required to reach the specified PP. Account data is temporarily reset.", ja: "指定されたppを達成するまでの時間を計測します。アカウントのデータは一時的に0へリセットされます。" } },
-			{ command: "!speedrun reset", description: { en: "Reset your current speedrun progress.", ja: "進捗をリセットします。" } },
-			{ command: "!speedrun end", description: { en: "End the current speedrun measurement.", ja: "計測を終了します。" } }
-		]
-	},
-	{
-		icon: "chart-simple",
-		title: { en: "Score Submission", ja: "スコア送信" },
-		items: [
-			{ command: "!submit <on/off>", description: { en: "Completely enable or disable score submission to the server.", ja: "サーバーへのスコア送信を完全に無効化します。" } },
-			{ command: "!wipe <top/all>", description: { en: "Delete your scores from the leaderboard. Supporters only.", ja: "リーダーボード上のあなたのスコアを削除します。Supporterのみ利用可能です。" } }
-		]
-	},
-	{
-		icon: "people-group",
-		title: { en: "Rival", ja: "ライバル" },
-		items: [
-			{ command: "!rival <add/remove> <userid or player name>", description: { en: "Add or remove a rival. You are notified when a rival surpasses your score.", ja: "ライバルを追加・削除します。ライバルにスコアを抜かされると通知が送信されます。" } },
-			{ command: "!rival <msg> <message>", description: { en: "Change the message shown to your rival.", ja: "ライバルへのメッセージを変更します。" } }
-		]
-	},
-	{
-		icon: "bell",
-		title: { en: "Notifications", ja: "通知" },
-		items: [
-			{ command: "!notice <score/gacha/welcome> <on/off>", description: { en: "Toggle score, gacha, or login notifications.", ja: "スコア通知、ガチャ通知、ログイン通知のオン・オフを切り替えます。" } },
-			{ command: "!snipe <on/off>", description: { en: "Toggle notifications when another player surpasses your #1 score.", ja: "誰かに1位を抜かされたときに送信される通知のオン・オフを切り替えます。" } }
-		]
-	},
-	{
-		icon: "music-note",
-		title: { en: "Beatmap", ja: "ビートマップ" },
-		items: [
-			{ command: "!upload <rank/unrank/update>", description: { en: "Change a beatmap not uploaded to Bancho to Loved status.", ja: "Banchoに投稿されていない譜面をLovedステータスに変更します。" } },
-			{ command: "!update", description: { en: "Repair the status of a beatmap unavailable on the leaderboard due to infinite loading or similar issues.", ja: "無限ロードなど、リーダーボードを利用できない譜面のステータスを修正します。" } }
+			{ command: "!link <twitch/bancho> <account>", description: { en: "Issue a browser URL for linking a Twitch or official osu! account, then complete authentication on that service.", ja: "Twitchまたは公式osu!アカウントを連携するURLを発行します。返されたURLをブラウザーで開いて認証してください。" } },
+			{ command: "!roll [max]", description: { en: "Pick a random integer from zero up to, but not including, max. The default range is 0–99, max is 32767, and cooldown is five seconds.", ja: "0以上max未満の整数をランダムに選びます。省略時は0～99、最大値は32767、クールダウンは5秒です。" } }
 		]
 	},
 	{
 		icon: "calculator",
-		title: { en: "PP Calculation", ja: "PP計算" },
-		items: [{
-			command: "!with +<mod (optional)> <acc (optional)>",
-			description: { en: "Calculate PP using the specified mods and accuracy.", ja: "指定された条件でppを計算します。" }
-		}]
-	},
-	{
-		icon: "people-roof",
-		title: { en: "Clan", ja: "クラン" },
+		title: { en: "Now Playing and PP calculation", ja: "Now Playing・PP計算" },
+		description: {
+			en: "Share a beatmap with the bot (Momiji), then calculate PP and star rating for the specified play conditions.",
+			ja: "Bot（Momiji）へ譜面を共有し、指定したプレイ条件でPPとスターレートを計算します。"
+		},
 		items: [
-			{ command: "!clan help", description: { en: "Display clan-command help.", ja: "クランのヘルプを表示します。" } },
-			{ command: "!clan create <tag> <name>", description: { en: "Create a new clan.", ja: "新しいクランを作成します。" } },
-			{ command: "!clan edit <tag / name>", description: { en: "Change your clan tag or name.", ja: "タグやクランの名前を変更します。" } },
-			{ command: "!clan disband", description: { en: "Disband your clan.", ja: "クランを解散します。" } },
-			{ command: "!clan info", description: { en: "Display clan information.", ja: "クランの情報を表示します。" } },
-			{ command: "!clan leave", description: { en: "Leave your current clan.", ja: "クランを離脱します。" } },
-			{ command: "!clan public <on/off>", description: { en: "Change clan visibility. A private clan does not appear on the leaderboard.", ja: "クランの公開設定を変更します。オフにするとリーダーボードにも表示されません。" } },
-			{ command: "!clan pending", description: { en: "List players requesting to join your private clan.", ja: "あなたの非公開クランへの参加を希望しているプレイヤー一覧を表示します。" } },
-			{ command: "!clan accept <user ID>", description: { en: "Accept a player into your private clan.", ja: "プレイヤーの非公開クランへの参加を許可します。" } },
-			{ command: "!clan kick <user ID>", description: { en: "Remove the specified player from your clan.", ja: "特定のユーザーIDのプレイヤーをクランからキックします。" } },
-			{ command: "!clan transfer <user ID>", description: { en: "Transfer clan ownership to the specified player.", ja: "特定のユーザーIDのプレイヤーにクランのオーナー権限を譲渡します。" } }
+			{ command: "/np", description: { en: "Share the selected beatmap with the bot (Momiji). It is stored for five minutes, and estimated PP values for common accuracy levels are also returned.", ja: "選択中のbeatmapをBot（Momiji）へ共有します。対象は5分間保存され、一般的なaccuracyごとのPP概算も返ります。" } },
+			{ command: "!with <accuracy/misses/combo/mods ...>", description: { en: "Calculate PP and star rating for the beatmap most recently shared with /np. Run it in a DM with the bot (Momiji). You can specify up to four arguments or run it as !w.", ja: "直前に/npした譜面のPPとスターレートを計算します。Bot（Momiji）のDMで実行してください。引数は4個まで指定でき、 !w でも実行できます。" } }
 		]
 	},
 	{
-		icon: "heart",
-		title: { en: "Multiplayer — original commands", ja: "マルチプレイ（オリジナルコマンドのみ）" },
+		icon: "music-note",
+		title: { en: "Beatmap updates", ja: "ビートマップの更新" },
+		description: {
+			en: "Retrieve the official information for the currently selected beatmap.",
+			ja: "現在選択しているビートマップの公式情報を再取得します。"
+		},
+		items: [{
+			command: "!update",
+			description: { en: "On the song selection screen, select and update a beatmap whose leaderboard is missing or whose information is outdated.", ja: "リーダーボードが表示されない、または情報が古いビートマップを曲選択画面で選んで更新します。" }
+		}]
+	},
+	{
+		icon: "gamepad-modern",
+		title: { en: "Multiplayer", ja: "マルチプレイ" },
+		description: {
+			en: "Except for help, these commands can be run only by the host or a referee. Run them in the target match chat.",
+			ja: "help以外はホストまたはレフリーのみ実行できます。対象マッチのチャットで実行してください。"
+		},
 		items: [
-			{ command: "!mp random <on/off>", description: { en: "Randomly choose a host when a match ends.", ja: "マッチ終了時にランダムでホストを選択します。" } },
-			{ command: "!mp rotation <on/off>", description: { en: "Automatically rotate the host from top to bottom when a match ends.", ja: "マッチ終了時に上から下へ自動でホストをローテーションします。" } },
-			{ command: "!mp invite <message>", description: { en: "Send a multiplayer invitation notification to Discord.", ja: "Discordへマルチプレイの招待通知を送信します。" } }
+			{ command: "!mp help", description: { en: "Show the available multiplayer commands. Alias: !mp h.", ja: "マルチプレイで利用可能なコマンドを表示します。 !mp h でも実行できます。" } },
+			{ command: "!mp start [force/<seconds>/cancel]", description: { en: "Start the match normally, force-start it, schedule it to start in 1–300 seconds, or cancel a scheduled start. You can also run it as !mp st.", ja: "通常開始、強制開始、1～300秒後の予約開始、または予約取消を行います。 !mp st でも実行できます。" } },
+			{ command: "!mp random <on/off>", description: { en: "Randomly choose the host after each round.", ja: "各ラウンド終了後のホストをランダムに選ぶ設定を切り替えます。" } },
+			{ command: "!mp rotation <on/off>", description: { en: "Rotate the host in slot order after each round.", ja: "各ラウンド終了後にスロット順でホストを交代する設定を切り替えます。" } },
+			{ command: "!mp abort", description: { en: "Abort the match in progress. Only the actual host can use this. Alias: !mp a.", ja: "進行中のマッチを中断します。ホストのみ利用できます。 !mp a でも実行できます。" } },
+			{ command: "!mp map <beatmap_id>", description: { en: "Change the match beatmap using its beatmap ID.", ja: "ビートマップIDを指定してマッチの選択マップを変更します。" } },
+			{ command: "!mp host <username>", description: { en: "Specify a username without spaces to transfer host to that player in the match.", ja: "空白を含まないユーザー名を指定し、マッチ内のプレイヤーへhostを移譲します。" } },
+			{ command: "!mp invite <message>", description: { en: "Post the current match and beatmap invitation to Discord. Available once per match; alias: !mp inv.", ja: "現在のマッチとビートマップの招待をDiscordへ投稿します。1つのマッチにつき1回だけです。 !mp inv でも実行できます。" } },
+			{ command: "!mp battle [top/bp/bancho]", description: { en: "Add a replay ghost from Mamestagram top score, your best play, or official Bancho. Run it again in the same mode to disable it.", ja: "Mamestagramでの最高スコア、自分のベストプレイ、または公式osu!（Bancho）からゴーストを追加します。同じモードでもう一度実行すると解除します。" } }
+		]
+	},
+	{
+		icon: "people-roof",
+		title: { en: "Joining and creating clans", ja: "クランの参加・作成" },
+		description: {
+			en: "Always run commands containing a password in a DM with the bot (Momiji), and never reuse your Mamestagram account password.",
+			ja: "パスワードを含むコマンドは必ずBot（Momiji）のDMで実行し、Mamestagramアカウントと同じパスワードは使用しないでください。"
+		},
+		items: [
+			{ command: "!clan help", description: { en: "Show clan commands. Alias: !clan h.", ja: "クラン関連のコマンドの一覧を表示します。 !clan h でも実行できます。" } },
+			{ command: "!clan create <tag> <name> <password>", description: { en: "Create a clan. The tag must be 1–6 characters, the name 2–16 characters, and the password 2–20 characters; spaces are not allowed. You can also run it as !clan c.", ja: "クランを作成します。tagは1～6文字、nameは2～16文字、passwordは2～20文字で、空白は使えません。 !clan c でも実行できます。" } },
+			{ command: "!clan info <tag_or_name>", description: { en: "Show the clan's creation date and lists of its owner, officers, and members. You can also run it as !clan i.", ja: "クランの作成日とリーダー・管理者・メンバー一覧を表示します。 !clan i でも実行できます。" } },
+			{ command: "!clan list [page]", description: { en: "List registered clans by page. Alias: !clan l.", ja: "登録されているクランをページ単位で一覧表示します。 !clan l でも実行できます。" } },
+			{ command: "!clan join <tag_or_name> <password>", description: { en: "Join a public clan immediately or submit a request to a private clan. Alias: !clan j.", ja: "クランへ即時参加、または参加申請を送ります。 !clan j でも実行できます。" } },
+			{ command: "!clan leave", description: { en: "Leave your current clan. The owner must transfer ownership to a member first.", ja: "現在のクランから脱退します。リーダーはメンバーに移譲する必要があります。" } }
+		]
+	},
+	{
+		icon: "key",
+		title: { en: "Clan owner only", ja: "クランリーダー専用" },
+		description: {
+			en: "Only the clan owner can run the management commands below. Officers do not currently have permission to run them.",
+			ja: "以下の管理コマンドはクランリーダーのみ実行できます。現在、管理者には実行権限がありません。"
+		},
+		items: [
+			{ command: "!clan edit <tag/name> <new_value>", description: { en: "Change the clan tag or name. Alias: !clan e.", ja: "クランのtagまたはnameを変更します。 !clan e でも実行できます。" } },
+			{ command: "!clan public <on/off>", description: { en: "Switch the clan between public and private.", ja: "クランを公開にするかプライベートにするかを切り替えます。" } },
+			{ command: "!clan pending", description: { en: "Show pending join requests with username and user ID. Alias: !clan p.", ja: "未処理の参加申請をユーザー名とユーザーID付きで表示します。 !clan p でも実行できます。" } },
+			{ command: "!clan accept <user_id>", description: { en: "Accept a pending join request by user ID. Alias: !clan a.", ja: "ユーザーIDを指定して参加申請を承認します。 !clan a でも実行できます。" } },
+			{ command: "!clan password <new_password>", description: { en: "Change the clan password. Run it in a DM with the bot (Momiji). You can also run it as !clan pwd.", ja: "クランのパスワードを変更します。Bot（Momiji）のDMで実行してください。 !clan pwd でも実行できます。" } },
+			{ command: "!clan kick <user_id>", description: { en: "Kick a member by specifying their user ID. The owner cannot target themselves. You can also run it as !clan k.", ja: "ユーザーIDを指定してメンバーをキックします。リーダー自身は対象にできません。 !clan k でも実行できます。" } },
+			{ command: "!clan transfer <new_user_id>", description: { en: "Transfer ownership to another member of the clan. The former owner becomes a regular member. You can also run it as !clan t.", ja: "クラン内のメンバーへリーダーを移譲します。元リーダーは通常メンバーになります。 !clan t でも実行できます。" } },
+			{ command: "!clan disband", description: { en: "Immediately disband the clan with no confirmation and remove every member. Aliases: !clan delete and !clan d.", ja: "確認なしでクランを解散し、全メンバーの所属を解除します。 !clan delete や !clan d でも実行できます。" } }
 		]
 	}
 ] as const;
@@ -165,12 +173,40 @@ const copy = {
 			dans: "Dan Courses",
 			faq: "FAQ"
 		},
-		introTitle: "Overview",
-		introLead: "Mamestagram ranks scores that official servers do not, including Relax and Autopilot, while keeping independent leaderboards for every supported mode.",
-		introBody: "Earn score and performance points, compete for server #1, discover ranked community maps, and meet players through the Mamestagram community.",
-		introDan: "You can also challenge mode-specific Dan Courses and raise your player level by clearing them.",
-		featuresTitle: "Community highlights",
+		introTitle: "What is Mamestagram?",
+		introLead: "Mamestagram is an osu! community server with a dedicated leaderboard for every play mode, including Relax and Autopilot scores that are not ranked on official servers.",
+		introBody: "Players can earn score and PP (Performance Points), compete for the server's #1 spot, and play beatmaps Ranked by the community. They can also connect with other Mamestagram players through Discord chat, multiplayer, and more.",
+		introDan: "You can also challenge mode-specific Dans and earn Dan titles by meeting their passing requirements. Dan plays are detected and judged in both osu!stable and osu!lazer.",
+		featuresTitle: "Key feature categories",
 		features: [
+			{
+				icon: "display",
+				title: "Stable & Lazer",
+				body: "Play osu!stable and osu!lazer with the same account."
+			},
+			{
+				icon: "gamepad-modern",
+				title: "Vanilla",
+				body: "Records standard-play scores just like the official server."
+			},
+			{
+				icon: "computer-mouse",
+				title: "Relax",
+				body: "Records Relax scores in osu!, osu!taiko, and osu!catch."
+			},
+			{
+				icon: "location-crosshairs",
+				title: "Autopilot",
+				body: "Records Autopilot scores in osu!."
+			},
+			{
+				icon: "medal",
+				title: "Dans",
+				body: "Detects and judges mode-specific Dans in both osu!stable and osu!lazer."
+			}
+		],
+		communityTitle: "Discord community channels",
+		communityFeatures: [
 			{
 				icon: "trophy",
 				title: "Live score feed",
@@ -181,7 +217,7 @@ const copy = {
 			{
 				icon: "music-note",
 				title: "Map requests",
-				channel: "# nominate",
+				channel: "# nominate / # maplist",
 				body: "Request maps to be ranked or deranked. Approved submissions are announced after tester review.",
 				image: 2
 			},
@@ -193,12 +229,13 @@ const copy = {
 				image: 3
 			}
 		],
-		rulesLead: "Thank you for joining Mamestagram. The following rules must be strictly followed. There are rules for both the private server and Discord, so read and understand them before participating. Accounts may be suspended without warning when rules are not followed.",
+		rulesLead: "Thank you for joining Mamestagram. The following rules must be strictly followed while playing on Mamestagram. There are rules for both the private server and Discord, so read them carefully before participating. The administration may suspend accounts without warning when rules are not followed. By joining the server, you agree to these rules.",
 		discordRulesTitle: "Prohibited acts on Discord",
 		serverRulesTitle: "Prohibited acts on the server",
 		discordRules: [
 			"Acts that cause inconvenience to members, such as spam or posting phishing URLs.",
 			"Sending messages that put a load on members' devices.",
+			"Advertising other servers.",
 			"Discriminatory language, hatred, or discrimination based on race, gender, religion, creed, social status, or sexual orientation.",
 			"Making excessively abusive remarks.",
 			"Malicious impersonation of other users.",
@@ -208,7 +245,7 @@ const copy = {
 		],
 		serverRules: [
 			"Creating alternate accounts. Creating one results in an automatic restriction.",
-			"Using any cheat to play.",
+			"Submitting plays made with a cheat engine.",
 			"Using tablet filter functions that may trigger cheat-detection systems.",
 			"Using inappropriate avatars, banners, self-introductions, or usernames.",
 			"Discriminatory language, hatred, or discrimination based on race, gender, religion, creed, social status, or sexual orientation.",
@@ -219,7 +256,8 @@ const copy = {
 		clanRulesTitle: "About the clan feature",
 		clanRulesBody: "The server administration is not responsible for issues involving player-managed clans. Join or create clans at your own risk.",
 		reportTitle: "Reporting misconduct",
-		reportBody: "If you witness or discover misconduct, report it through support. False reports may result in account restrictions.",
+		reportBody: "If you witness or discover misconduct, report it through support.",
+		reportWarning: "False reports may result in account restrictions.",
 		appealTitle: "Appeals",
 		appealBody: "If you disagree with an administrative response, contact the administration through support.",
 		connectLead: "Create a dedicated osu! shortcut and add Mamestagram's devserver option. You can keep your normal Bancho shortcut alongside it.",
@@ -234,14 +272,19 @@ const copy = {
 		],
 		copyCommand: "Launch option",
 		connected: "You're ready. Launch the shortcut and sign in with your Mamestagram account.",
-		commandsLead: "Send these commands to the server bot from osu! chat. Arguments in <angle brackets> are required; [square brackets] are optional.",
+		commandsLead: "These are the general-player commands currently available in osu!stable. Prefix them with ! and run them from in-game chat.",
+		commandTips: [
+			{ icon: "messages", title: "Where to run commands", body: "We recommend running normal settings and query commands in a DM with the bot (Momiji). Run !mp only in the target match chat." },
+			{ icon: "terminal", title: "How to read syntax", body: "<value> is required, [value] is optional, and <a/b> means a or b. Command names are case-insensitive, but lowercase arguments are the safest choice." },
+			{ icon: "gamepad-modern", title: "Permissions", body: "Some commands are available only to Supporters, match hosts, or clan owners. Restricted or silenced accounts may be unable to run commands." }
+		],
 		commandsSource: "Open the current command channel",
 		dansLead: "Dan Courses are structured challenges with mode-specific clear requirements. Passing a course raises your player level by the level of that challenge.",
 		downloadAll: "Download all Dan maps",
 		danChannel: "Open # dan",
 		courses: "Featured courses",
 		downloadMode: "Download maps",
-		danHeaders: ["Course", "Level", "Keys", "Accuracy", "Score", "Mod", "Misses", "Combo"],
+		danHeaders: ["Course", "Level", "Key count", "Acc", "Score", "Mod", "Miss count", "Combo count"],
 		faqLead: "Quick answers to the questions players ask most often.",
 		faqs: [
 			["What is Mamestagram?", "Mamestagram is a Japanese osu! private server for every game mode. It offers a unique way to play with friends that is not available on official osu!."],
@@ -274,12 +317,40 @@ const copy = {
 			dans: "段位",
 			faq: "よくある質問"
 		},
-		introTitle: "概要",
-		introLead: "MamestagramではRelaxやAutopilotなど、公式サーバーではランク付けされないスコアも対応モードごとに集計します。",
-		introBody: "スコアやppを獲得してサーバー1位を目指したり、コミュニティでRankedになったマップや、他のプレイヤーとの交流を楽しめます。",
-		introDan: "モードごとの段位に挑戦し、クリアすることでプレイヤーレベルを上げることもできます。",
-		featuresTitle: "コミュニティの主な機能",
+		introTitle: "Mamestagramとは",
+		introLead: "Mamestagramは、公式サーバーではランキング対象にならないRelaxやAutopilotを含め、各プレイモードごとに専用のリーダーボードを備えた、osu!コミュニティサーバーです。",
+		introBody: "プレイヤーはスコアとPP（Performance Point）を獲得し、サーバー内1位を競いあったり、コミュニティによってRankedとなったビートマップをプレイしたりできます。また、Discordのチャットやマルチプレイなどを通じて、Mamestagram内のプレイヤーと交流することができます。",
+		introDan: "さらに、モード別に用意された段位に挑戦でき、合格条件を満たしてクリアすることで段位の称号を獲得できます。段位のプレイ検出と判定はosu!stableとosu!lazerの両方に実装されています。",
+		featuresTitle: "主要な機能カテゴリー",
 		features: [
+			{
+				icon: "display",
+				title: "Stable & Lazer",
+				body: "同一アカウントでosu!stableとosu!lazerをプレイできます。"
+			},
+			{
+				icon: "gamepad-modern",
+				title: "Vanilla",
+				body: "公式サーバーと同様、標準プレイのスコアを記録します。"
+			},
+			{
+				icon: "computer-mouse",
+				title: "Relax",
+				body: "osu!、osu!taiko、osu!catchにてRelaxのスコアが記録されます。"
+			},
+			{
+				icon: "location-crosshairs",
+				title: "Autopilot",
+				body: "osu!にてAutopilotのスコアが記録されます。"
+			},
+			{
+				icon: "medal",
+				title: "Dans",
+				body: "モード別で段位をosu!stable/osu!lazerの両方で検出・判定します。"
+			}
+		],
+		communityTitle: "Discordチャンネルの主な機能",
+		communityFeatures: [
 			{
 				icon: "trophy",
 				title: "スコア速報",
@@ -329,7 +400,8 @@ const copy = {
 		clanRulesTitle: "クラン機能について",
 		clanRulesBody: "当サーバーで作成できる、プレイヤーが運営するクランに関するトラブルについて、運営は一切責任を負いません。自己責任で加入・作成してください。",
 		reportTitle: "申告について",
-		reportBody: "不正行為を目撃・発見した場合は、supportにて運営へ報告してください。虚偽の申告はアカウントの制限対象になります。",
+		reportBody: "不正行為を目撃・発見した場合は、supportにて運営へ報告してください。",
+		reportWarning: "虚偽の申告はアカウントの制限対象になります。",
 		appealTitle: "異議申し立てについて",
 		appealBody: "運営の対応に異議がある場合は、supportにて運営へ報告してください。",
 		connectLead: "Mamestagram専用のosu!ショートカットを作り、devserverオプションを追加します。Bancho用のショートカットはそのまま併用できます。",
@@ -344,14 +416,19 @@ const copy = {
 		],
 		copyCommand: "起動オプション",
 		connected: "準備完了です。ショートカットを起動し、Mamestagramアカウントでサインインしてください。",
-		commandsLead: "osu!のチャットからサーバーBotへ送信して使います。<山括弧>の引数は必須、[角括弧]は任意です。",
+		commandsLead: "現在osu!stableから利用できる、一般プレイヤー向けコマンドです。先頭に ! を付け、ゲーム内チャットから実行してください。",
+		commandTips: [
+			{ icon: "messages", title: "実行する場所", body: "通常の設定変更や照会コマンドはBot（Momiji）のDMでの実行を推奨します。!mpだけは対象マッチのチャットで実行してください。" },
+			{ icon: "terminal", title: "入力表記", body: "<value>:必須、[value]:省略可能、<a/b>:a or b。コマンドは大文字・小文字を区別しませんが、引数は小文字で入力するのが安全です。" },
+			{ icon: "gamepad-modern", title: "利用条件", body: "一部はサポーター、マッチホスト、クランリーダー専用コマンドです。制限中またはサイレンス中のアカウントでは実行できない場合があります。" }
+		],
 		commandsSource: "最新のコマンドチャンネルを開く",
 		dansLead: "段位はモードごとに合格条件が設定されたチャレンジです。クリアすると、挑戦した段位レベルに応じてプレイヤーレベルが上がります。",
 		downloadAll: "段位マップをまとめてダウンロード",
 		danChannel: "# danを開く",
 		courses: "主なコース",
 		downloadMode: "マップをダウンロード",
-		danHeaders: ["コース", "レベル", "キー", "精度", "スコア", "Mod", "ミス", "コンボ"],
+		danHeaders: ["コース", "レベル", "キー数", "Acc", "スコア", "Mod", "ミス数", "コンボ数"],
 		faqLead: "プレイヤーからよく寄せられる質問をまとめています。",
 		faqs: [
 			["Mamestagramとは何ですか？", "Mamestagramは全モードを対象とした日本のosu!プライベートサーバーです。通常のosu!では味わえないプレイ体験を、仲間たちと一緒に楽しめます。"],
