@@ -222,7 +222,7 @@ export default function HeaderSearch() {
 					                                      title="Search Mamestagram players"
 					                                      body="Enter a username or player ID to open their profile."/>}
 					{phase === "loading" && <SearchSkeleton/>}
-					{phase === "error" && <SearchMessage icon="triangle-exclamation" title="Search unavailable" body={message}/>} 
+					{phase === "error" && <SearchMessage icon="triangle-exclamation" title="Search unavailable" body={message}/>}
 					{phase === "ready" && users.length === 0 && <SearchMessage icon="users-slash"
 					                                                              title="No players found"
 					                                                              body="Try another username or player ID."/>}

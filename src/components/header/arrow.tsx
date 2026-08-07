@@ -7,16 +7,16 @@ export default function ArrowChevron() {
 	const arrow = useRef<HTMLButtonElement>(null);
 	const navigation = useRef<HTMLElement>(null);
 	const [arrowDirection, setArrowDirection] = useState<"up" | "down">("down");
-	
+
 	const clickBody = (e: PointerEvent) => {
 		if (!arrow.current!.contains(e.target as HTMLDivElement))
 			setArrowDirection("down");
 	}
-	
+
 	const clickArrow = () => {
 		setArrowDirection((prevState) => prevState === "down" ? "up" : "down");
 	}
-	
+
 	useEffect(() => {
 		const arrowElement = arrow.current!;
 		navigation.current = document.querySelector("header .navigation");
@@ -27,7 +27,7 @@ export default function ArrowChevron() {
 			arrowElement.classList.remove("up");
 		}
 	}, []);
-	
+
 	useEffect(() => {
 		arrow.current!.classList.remove("up", "down");
 		arrow.current!.classList.add(arrowDirection);
@@ -37,9 +37,9 @@ export default function ArrowChevron() {
 			navigation.current!.classList.remove("mobile-show");
 		arrow.current!.classList.remove("up", "down");
 		arrow.current!.classList.add(arrowDirection);
-		
+
 	}, [arrowDirection]);
-	
+
 	return (
 		<button className="arrow down" type="button" onClick={clickArrow} ref={arrow}>
 			<FontAwesome prefix="fas" name="chevron-down"/>

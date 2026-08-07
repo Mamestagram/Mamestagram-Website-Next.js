@@ -7,7 +7,7 @@ import { signout } from "@/actions/auth";
 
 export default function UserContainer() {
 	const { serverInfo, userInfo } = useUserContext();
-	
+
 	if (userInfo.isLoggedIn) {
 		return (
 			<li className="avatar" title={userInfo.username}>

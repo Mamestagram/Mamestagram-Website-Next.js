@@ -8,7 +8,7 @@ export const sum = (x: number[]) => {
 export const generalizedMean = (x: number[], p: number) => {
 	if (x.some((value) => value < 0))
 		throw new Error(`x has some negative numbers\n${x}`);
-	
+
 	if (x.length > 0) {
 		if (p === Infinity) {
 			return Math.max(...x);

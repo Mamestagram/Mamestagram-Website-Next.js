@@ -130,7 +130,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 						<p className={styles.past_names}>aka: {info.pastNames}</p>}
 				</div>
 			</div>
-			
+
 			<div className={styles.meta}>
 				<ul className={styles.profile_facts}>
 					{!isClan &&
@@ -183,7 +183,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 						</ul>
 					</div>}
 			</div>
-			
+
 			{!isClan &&
 				<SocialConnections connections={{
 					mutual: info.mutual,
@@ -192,7 +192,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 				}}
 				mode={mode}
 				avatarBaseUrl={`https://a.${process.env.BASE_DOMAIN}`}/>}
-			
+
 			{!isClan && <div className={styles.last_online} data-online={info.isOnline}>
 				<span className={styles.activity_identity}>
 					<span className={styles.activity_icon}>

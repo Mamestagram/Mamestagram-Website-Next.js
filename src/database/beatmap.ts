@@ -1,8 +1,13 @@
 import "server-only";
 import { cache } from "react";
 import { executeQuery } from "@/database/connection";
+import {
+	beatmapDifficultiesQuery,
+	beatmapUserRankQuery,
+	beatmapUserScoreQuery,
+	scoreCountriesQuery
+} from "@/database/query/beatmap";
 import { ModeNum } from "@/lib/mode";
-import { Priv } from "@/lib/priv";
 
 export type Beatmap = {
 	server: "osu!" | "private",
@@ -129,13 +134,7 @@ export const getBeatmap = cache(async (setId: number, mapId: number): Promise<Be
 
 export const getBeatmapDifficulties = async (setId: number, server: Beatmap["server"]): Promise<BeatmapDifficulty[]> => {
 	const maps = await executeQuery<Pick<BeatmapApiMap, "id" | "set_id" | "version" | "mode" | "diff" | "cs">>(
-		`
-			SELECT id, set_id, version, mode, diff, cs
-				FROM maps
-			WHERE set_id = ?
-				AND server = ?
-			ORDER BY mode, diff, id
-		`,
+		beatmapDifficultiesQuery,
 		[setId, server]
 	);
 	return maps.map((map) => ({
@@ -176,9 +175,8 @@ type BeatmapScoresApi = {
 const getScoreCountries = async (scores: BeatmapScoreApiRow[]) => {
 	const userIds = [...new Set(scores.filter((score) => !score.country).map((score) => score.userid))];
 	if (userIds.length === 0) return new Map<number, string>();
-	const placeholders = userIds.map(() => "?").join(", ");
 	const countries = await executeQuery<{ id: number, country: string }>(
-		`SELECT id, country FROM users WHERE id IN (${placeholders})`,
+		scoreCountriesQuery(userIds.length),
 		userIds
 	);
 	return new Map(countries.map(({ id, country }) => [id, country]));
@@ -221,59 +219,14 @@ export const getBeatmapUserScore = async (
 	userId: number
 ): Promise<RankedBeatmapScore | null> => {
 	const scores = await executeQuery<BeatmapScore>(
-		`
-			SELECT s.id,
-			       s.userid AS userId,
-			       u.name,
-			       u.country,
-			       s.score,
-			       COALESCE(s.pp, 0) AS pp,
-			       s.acc AS accuracy,
-			       s.max_combo AS maxCombo,
-			       s.mods,
-			       s.n300,
-			       s.n100,
-			       s.n50,
-			       s.nmiss AS nMiss,
-			       s.ngeki AS nGeki,
-			       s.nkatu AS nKatu,
-			       s.grade,
-			       s.play_time AS playTime
-				FROM scores s
-			JOIN users u
-				ON u.id = s.userid
-			WHERE s.map_md5 = ?
-				AND s.mode = ?
-				AND s.userid = ?
-				AND s.deleted = 0
-				AND s.status <> 0
-				AND s.grade NOT IN ('F', 'N')
-			ORDER BY s.score DESC, s.id DESC
-			LIMIT 1
-		`,
+		beatmapUserScoreQuery,
 		[mapMd5, mode, userId]
 	);
 	const score = scores[0];
 	if (!score) return null;
 
 	const rankRows = await executeQuery<{ higherScores: number }>(
-		`
-			SELECT COUNT(*) AS higherScores
-				FROM (
-					SELECT s_rank.userid
-						FROM scores s_rank
-					JOIN users u_rank
-						ON u_rank.id = s_rank.userid
-					WHERE s_rank.map_md5 = ?
-						AND s_rank.mode = ?
-						AND s_rank.deleted = 0
-						AND s_rank.status <> 0
-						AND s_rank.grade NOT IN ('F', 'N')
-						AND (u_rank.priv & ${Priv.unrestricted}) > 0
-					GROUP BY s_rank.userid
-					HAVING MAX(s_rank.score) > ?
-				) ranked_scores
-		`,
+		beatmapUserRankQuery,
 		[mapMd5, mode, score.score]
 	);
 

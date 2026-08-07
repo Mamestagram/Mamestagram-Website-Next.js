@@ -66,7 +66,7 @@ export const executeQuery = async <T>(query: string, args?: QueryArgs, ignoreArg
 	const questionSymbol = query.match(/\?/g)?.length ?? 0, argsSize = args?.length ?? 0;
 	if (ignoreArgsCheck || questionSymbol === argsSize) {
 		const statMode = getStatMode(query);
-		
+
 		if (statMode === StatMode.select) {
 			try {
 				const [result] = await pool.query(query, args);

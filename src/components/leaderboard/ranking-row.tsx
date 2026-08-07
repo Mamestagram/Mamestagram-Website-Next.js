@@ -18,7 +18,7 @@ export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 	if (isClan) queries.push("clan");
 	if (sortBy === SortBy.dans) queries.push("dans");
 	const profileHref = `/profile/${listRow.id}/${mode}${queries.length > 0 ? `?${queries.join("&")}` : ""}`;
-	
+
 	return (
 		<ClickableRankingRow className={styles.ranking_row} href={profileHref}>
 			<td className={classNames(styles.rank, { [styles[`top_${listRow.rank}`]]: listRow.rank <= 3 })}>#{listRow.rank.toLocaleString()}</td>

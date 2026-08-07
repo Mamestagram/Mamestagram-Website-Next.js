@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { searchUsers, type UserSearchResult } from "@/database/search";
+import { writeError } from "@/lib/log";
 
 type UserSearchResponse = {
 	users: UserSearchResult[],
@@ -16,7 +17,8 @@ export const GET = async (request: NextRequest): Promise<NextResponse<UserSearch
 	try {
 		return NextResponse.json({ users: await searchUsers(query) });
 	}
-	catch {
+	catch (error: unknown) {
+		void writeError(error);
 		return NextResponse.json(
 			{ users: [], error: "Player search is temporarily unavailable." },
 			{ status: 500 }

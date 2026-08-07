@@ -1,3 +1,109 @@
+export const userExistsQuery = `
+	SELECT EXISTS(
+		SELECT *
+			FROM users
+		WHERE id = ?
+	) AS user_exists
+`;
+
+export const clanExistsQuery = `
+	SELECT EXISTS(
+		SELECT *
+			FROM clans
+		WHERE id = ?
+	) AS clan_exists
+`;
+
+export const userNameQuery = `
+	SELECT name
+		FROM users
+	WHERE id = ?
+`;
+
+export const clanTagQuery = `
+	SELECT tag
+		FROM clans
+	WHERE id = ?
+`;
+
+export const userPreferredModeQuery = `
+	SELECT preferred_mode
+		FROM users
+	WHERE id = ?
+`;
+
+export const clanPreferredModeQuery = `
+	SELECT preferred_mode
+		FROM clans
+	WHERE id = ?
+`;
+
+export const updateUserpageContentQuery = `
+	UPDATE users
+		SET userpage_content = ?
+	WHERE id = ?
+	LIMIT 1
+`;
+
+export const updateClanUserpageContentQuery = `
+	UPDATE clans
+		SET userpage_content = ?
+	WHERE id = ?
+		AND owner = ?
+	LIMIT 1
+`;
+
+export const clanOwnerQuery = `
+	SELECT id
+		FROM clans
+	WHERE id = ?
+		AND owner = ?
+	LIMIT 1
+`;
+
+export const updateClanPreferredModeQuery = `
+	UPDATE clans
+		SET preferred_mode = ?
+	WHERE id = ?
+		AND owner = ?
+	LIMIT 1
+`;
+
+export const updateUserPreferredModeQuery = `
+	UPDATE users
+		SET preferred_mode = ?
+	WHERE id = ?
+	LIMIT 1
+`;
+
+export const removableClanMemberQuery = `
+	SELECT u.id
+		FROM users u
+	JOIN clans c
+		ON c.id = u.clan_id
+	WHERE c.id = ?
+		AND c.owner = ?
+		AND u.id = ?
+		AND u.id <> c.owner
+	LIMIT 1
+`;
+
+export const removeClanMemberQuery = `
+	UPDATE users
+		SET clan_id = 0,
+		    clan_priv = 0
+	WHERE id = ?
+		AND clan_id = ?
+		AND id <> ?
+		AND EXISTS(
+			SELECT 1
+				FROM clans
+			WHERE id = ?
+				AND owner = ?
+		)
+	LIMIT 1
+`;
+
 export const userJoinedClanQuery = `
     SELECT CONCAT('[', tag, ']') AS tag
     	FROM clans

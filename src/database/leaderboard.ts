@@ -53,7 +53,7 @@ export const getCountryList = async () => {
 		return await executeQuery<{ country: string }>(countryListQuery);
 	}
 	catch (err) {
-		writeError(err).then();
+		void writeError(err);
 		throw new Error("Couldn't get country list");
 	}
 }
@@ -83,7 +83,7 @@ const getPages = async (sqlQuery: string, sqlArgs: QueryArgs) => {
 		return Math.ceil(recCount / 50);
 	}
 	catch (err) {
-		writeError(err).then();
+		void writeError(err);
 		throw new Error("Couldn't get ranking pages");
 	}
 }
@@ -107,7 +107,7 @@ const getClanRanking = async (mode: ModeNum, sortBy: SortBy, page: number): Prom
 			sCount: number,
 			aCount: number
 		};
-		
+
 		const usersStats = await executeQuery<UsersStats>(clanUsersStatsQuery, [mode]);
 		const statsByClan: UsersStats[] = [];
 		Map.groupBy(usersStats, ({ clan_id }) => clan_id).forEach((clan) => {
@@ -159,7 +159,7 @@ const getClanRanking = async (mode: ModeNum, sortBy: SortBy, page: number): Prom
 			plays: number,
 			pp: number
 		};
-		
+
 		const usersStats = await executeQuery<UsersDanStats>(clanUsersDanStatsQuery, [mode, mode]);
 		const statsByClan: UsersDanStats[] = [];
 		Map.groupBy(usersStats, ({ clan_id }) => clan_id).forEach((clan) => {
@@ -216,7 +216,7 @@ export const getLeaderboard = async (mode: ModeNum, sortBy: SortBy, page: number
 			return { ranking, pages };
 		}
 		catch (err) {
-			writeError(err).then();
+			void writeError(err);
 			throw new Error("Couldn't get leaderboard");
 		}
 	}

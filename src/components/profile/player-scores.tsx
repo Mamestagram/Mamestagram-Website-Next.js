@@ -26,7 +26,7 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 			playerScores = await getMostPlayedMaps(id, mode, isDans);
 			break;
 	}
-	
+
 	return (
 		<details className={styles.score_details} open>
 			<summary className={styles.score_summary}>

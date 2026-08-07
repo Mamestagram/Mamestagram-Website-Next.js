@@ -1,16 +1,17 @@
 import Image from "next/image";
-import { GET, type SupportData } from "@/app/api/support/route";
+import type { SupportData } from "@/app/api/support/route";
 import FontAwesome from "@/components/font-awesome";
 import SupportSidebar from "@/components/support/support-sidebar";
 import SupportSectionHeading from "@/components/support/support-section-heading";
 import SupportFeatures from "@/components/support/support-features";
 import SupportBackToTop from "@/components/support/support-back-to-top";
+import { fetchInternalJson } from "@/lib/fetch-json";
 import styles from "@s/support.module.css";
 
 export type SupportLocale = "en" | "ja";
 
-export default async function SupportContent({ locale }: { locale: SupportLocale }) {
-	const support = await GET().json() as SupportData;
+export default async function SupportContent({ locale }: Readonly<{ locale: SupportLocale }>) {
+	const support = await fetchInternalJson<SupportData>("/api/support");
 	const { links, mediaRoot, copy, features } = support;
 	const text = copy[locale];
 

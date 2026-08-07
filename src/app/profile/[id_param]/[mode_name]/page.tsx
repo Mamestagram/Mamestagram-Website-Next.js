@@ -26,7 +26,7 @@ export async function generateMetadata({ params, searchParams }: {
 		!isNaN(Number(id_param)) && Number(id_param) > 0,
 		clan === undefined || clan === "",
 	];
-	
+
 	let metadata: Metadata;
 	if (conds.every((cond) => cond)) {
 		const id = Number(id_param), isClan = clan !== undefined;
@@ -61,8 +61,8 @@ export default async function Profile({ params, searchParams }: {
 			[OsuMode.std, OsuMode.taiko, OsuMode.ctb, OsuMode.mania].includes(mode_name as OsuMode))
 	];
 	const queries = `(clan: ${clan}, dans: ${dans})`;
-	writeLog("GET", `/profile/${id_param}/${mode_name} ${queries}`).then(); // log
-	
+	void writeLog("GET", `/profile/${id_param}/${mode_name} ${queries}`); // log
+
 	if (conds.every((cond) => cond)) {
 		const id = Number(id_param), mode = ModeNum[mode_name as OsuMode],
 			isClan = clan !== undefined, isDans = dans !== undefined;
@@ -73,7 +73,7 @@ export default async function Profile({ params, searchParams }: {
 				!isClan ? getRankHistory(id, mode) : null
 			]);
 			const canManageProfile = currentUser.isLoggedIn && currentUser.id === (isClan ? info.ownerId : id);
-			
+
 			return (
 				<div className={styles.container}>
 					<div className={classNames(styles.section_area, styles.hero)}>
@@ -127,7 +127,9 @@ export default async function Profile({ params, searchParams }: {
 								</Suspense>
 							</div>
 						</div>}
-						<Achievements id={id} mode={mode}/>
+						<Achievements id={id}
+						              mode={mode}
+						              canRevealSecretConditions={!isClan && currentUser.isLoggedIn && currentUser.id === id}/>
 					</div>
 				</div>
 			);

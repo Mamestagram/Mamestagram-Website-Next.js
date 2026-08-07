@@ -1,4 +1,8 @@
-import fs from "fs";
+import "server-only";
+import { appendFile, mkdir } from "node:fs/promises";
+import { fetchInternalJson } from "@/lib/fetch-json";
+
+const UNKNOWN_IP = "Unknown IP address";
 
 const getDate = () => {
 	const datetime = new Date();
@@ -17,42 +21,52 @@ const getDate = () => {
 			timeZoneName: "longOffset"
 		})
 	};
-}
+};
 
 const getIpAddress = async () => {
-	const res = await fetch(new URL("/api/get_client_ip", process.env.BASE_URL));
-	return await res.json() as { ip: string };
-}
+	if (!process.env.BASE_URL) return UNKNOWN_IP;
 
-const writeFile = (dirPath: string, filePath: string, data: string) => {
-	fs.appendFile(filePath, data, (err) => {
-		if (err !== null) {
-			if (err.code === "ENOENT") {
-				fs.mkdirSync(dirPath);
-				writeFile(dirPath, filePath, data);
-			}
-			else {
-				writeError(err).then();
-				throw err;
-			}
-		}
-	});
-}
+	const data = await fetchInternalJson<{ ip: string }>("/api/get_client_ip");
+	return data.ip;
+};
+
+const writeFile = async (dirPath: string, filePath: string, data: string) => {
+	try {
+		await mkdir(dirPath, { recursive: true });
+		await appendFile(filePath, data);
+	}
+	catch (error: unknown) {
+		console.error(`Failed to append log file: ${filePath}`, error);
+	}
+};
+
+const getLogPaths = (root: string | undefined, year: number, month: string, day: string) => {
+	if (!root) return null;
+	const directory = `${root}/${year}.${month}`;
+	return { directory, file: `${directory}/${month}-${day}.log` };
+};
 
 export const writeLog = async (method: "GET" | "POST", pathname: string) => {
 	const date = getDate();
-	const { ip } = await getIpAddress();
-	const logDirPath = `${process.env.LOG_DIR}/${date.year}.${date.month}`,
-		logFilePath = `${logDirPath}/${date.month}-${date.day}.log`,
-		logData = `[${date.datetime}] ${method} ${pathname} (${ip})\n`;
-	writeFile(logDirPath, logFilePath, logData);
-}
+	const paths = getLogPaths(process.env.LOG_DIR, date.year, date.month, date.day);
+	if (!paths) {
+		console.error("LOG_DIR is not configured.");
+		return;
+	}
+
+	const ip = await getIpAddress();
+	await writeFile(paths.directory, paths.file, `[${date.datetime}] ${method} ${pathname} (${ip})\n`);
+};
 
 export const writeError = async (err: unknown) => {
 	const date = getDate();
-	const { ip } = await getIpAddress();
-	const errDirPath = `${process.env.ERR_DIR}/${date.year}.${date.month}`,
-		errFilePath = `${errDirPath}/${date.month}-${date.day}.log`,
-		errData = `[${date.datetime}] ERROR ${err} (${ip})\n`;
-	writeFile(errDirPath, errFilePath, errData);
-}
+	const paths = getLogPaths(process.env.ERR_DIR, date.year, date.month, date.day);
+	if (!paths) {
+		console.error("ERR_DIR is not configured.", err);
+		return;
+	}
+
+	const ip = await getIpAddress();
+	const message = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+	await writeFile(paths.directory, paths.file, `[${date.datetime}] ERROR ${message} (${ip})\n`);
+};

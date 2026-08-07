@@ -1,20 +1,14 @@
-"use client";
-
 import Image from "next/image";
-import { useEffect } from "react";
+import type { CSSProperties } from "react";
 import styles from "@s/profile.module.css";
 
-export default function CollectionMedals({ index, imgSrc, collected, total }: {
-	index: number,
+export default function CollectionMedals({ imgSrc, collected, total }: Readonly<{
 	imgSrc: string,
 	collected: number,
 	total: number
-}) {
-	useEffect(() => {
-		const coloredImg = document.querySelector(`.${styles.medal_container} ul li:nth-child(${index + 1}) .${styles.achv_img} img.${styles.colored}`) as HTMLElement;
-		coloredImg.style.setProperty("--collected-ratio", `${collected / total * 100}%`);
-	}, [collected, index, total]);
-	
+}>) {
+	const collectedRatio = total > 0 ? collected / total * 100 : 0;
+
 	return (
 		<>
 			<Image className={styles.glay} src={imgSrc}
@@ -27,6 +21,7 @@ export default function CollectionMedals({ index, imgSrc, collected, total }: {
 			       alt="medal"
 			       fill
 			       draggable={false}
+			       style={{ "--collected-ratio": `${collectedRatio}%` } as CSSProperties}
 			       sizes="(max-width: 768px) 100vw, 50vw"/>
 		</>
 	);

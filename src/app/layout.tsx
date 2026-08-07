@@ -26,7 +26,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 		baseDomain: process.env.BASE_DOMAIN!
 	};
 	const userInfo: UserInfo = await getCurrentUser();
-	
+
 	return (
 		<html lang="en">
 			<body>

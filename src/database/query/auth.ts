@@ -1,0 +1,34 @@
+export const userByLoginQuery = `
+	SELECT id, clan_id, priv, name, pw_bcrypt
+		FROM users
+	WHERE safe_name = ?
+		OR LOWER(email) = ?
+	LIMIT 1
+`;
+
+export const userByIdQuery = `
+	SELECT id, clan_id, priv, name, pw_bcrypt
+		FROM users
+	WHERE id = ?
+	LIMIT 1
+`;
+
+export const registrationConflictQuery = `
+	SELECT safe_name, email
+		FROM users
+	WHERE safe_name = ?
+		OR LOWER(email) = ?
+	LIMIT 1
+`;
+
+export const createUserQuery = `
+	INSERT INTO users (name, safe_name, email, pw_bcrypt, country, creation_time, latest_activity)
+	VALUES (?, ?, ?, ?, ?, ?, ?)
+`;
+
+export const createStatsQuery = (modeCount: number) => {
+	const placeholders = Array.from({ length: modeCount }, () => "(?, ?)").join(", ");
+	return `INSERT INTO stats (id, mode) VALUES ${placeholders}`;
+};
+
+export const createGachaStatsQuery = "INSERT INTO gacha_stats (id) VALUES (?)";

@@ -499,6 +499,8 @@
 }
 
 .back_to_top {
+	--footer-overlap: 0px;
+
 	display: inline-flex;
 	position: fixed;
 	z-index: 20;

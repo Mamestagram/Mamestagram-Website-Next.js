@@ -2,6 +2,18 @@ import bcrypt from "bcrypt";
 import { createHash } from "crypto";
 import type { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { executeQuery, withTransaction } from "./connection";
+import {
+	createGachaStatsQuery,
+	createStatsQuery,
+	createUserQuery,
+	registrationConflictQuery,
+	userByIdQuery,
+	userByLoginQuery
+} from "./query/auth";
+
+//
+// TODO ユーザー情報はmamesosu apiから取ってくるようにする
+//
 
 export type AuthUser = {
 	id: number,
@@ -32,13 +44,7 @@ const toAuthUser = (row: AuthUserRow): AuthUser => ({
 export const getUserByLogin = async (login: string) => {
 	const normalizedLogin = login.trim().toLowerCase();
 	const users = await executeQuery<AuthUserRow>(
-		`
-			SELECT id, clan_id, priv, name, pw_bcrypt
-				FROM users
-			WHERE safe_name = ?
-				OR LOWER(email) = ?
-			LIMIT 1
-		`,
+		userByLoginQuery,
 		[makeSafeName(login), normalizedLogin]
 	);
 	return users.at(0) ? toAuthUser(users.at(0)!) : null;
@@ -46,12 +52,7 @@ export const getUserByLogin = async (login: string) => {
 
 export const getUserById = async (id: number) => {
 	const users = await executeQuery<AuthUserRow>(
-		`
-			SELECT id, clan_id, priv, name, pw_bcrypt
-				FROM users
-			WHERE id = ?
-			LIMIT 1
-		`,
+		userByIdQuery,
 		[id]
 	);
 	return users.at(0) ? toAuthUser(users.at(0)!) : null;
@@ -59,13 +60,7 @@ export const getUserById = async (id: number) => {
 
 export const findRegistrationConflict = async (username: string, email: string) => {
 	const users = await executeQuery<RowDataPacket & { safe_name: string, email: string }>(
-		`
-			SELECT safe_name, email
-				FROM users
-			WHERE safe_name = ?
-				OR LOWER(email) = ?
-			LIMIT 1
-		`,
+		registrationConflictQuery,
 		[makeSafeName(username), email.toLowerCase()]
 	);
 	return users.at(0) ?? null;
@@ -94,21 +89,17 @@ export const createUser = async ({ username, email, password, country }: {
 
 	return await withTransaction(async (connection) => {
 		const [userResult] = await connection.query<ResultSetHeader>(
-			`
-				INSERT INTO users (name, safe_name, email, pw_bcrypt, country, creation_time, latest_activity)
-				VALUES (?, ?, ?, ?, ?, ?, ?)
-			`,
+			createUserQuery,
 			[username, safeName, email.toLowerCase(), passwordHash, country, now, now]
 		);
 		const id = userResult.insertId;
-		const statsPlaceholders = modes.map(() => "(?, ?)").join(", ");
 		const statsArgs = modes.flatMap((mode) => [id, mode]);
 
 		await connection.query(
-			`INSERT INTO stats (id, mode) VALUES ${statsPlaceholders}`,
+			createStatsQuery(modes.length),
 			statsArgs
 		);
-		await connection.query("INSERT INTO gacha_stats (id) VALUES (?)", [id]);
+		await connection.query(createGachaStatsQuery, [id]);
 
 		return {
 			id,

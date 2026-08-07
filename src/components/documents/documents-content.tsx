@@ -9,11 +9,12 @@ import SectionHeading from "@/components/documents/section-heading";
 import RuleCard from "@/components/documents/rule-card";
 import SupportNotice from "@/components/documents/support-notice";
 import DanRequirementsTable from "@/components/documents/dan-requirements-table";
-import { GET, type DocumentsData, type Locale } from "@/app/api/documents/route";
+import type { DocumentsData, Locale } from "@/app/api/documents/route";
+import { fetchInternalJson } from "@/lib/fetch-json";
 import styles from "@s/documents.module.css";
 
-export default async function DocumentsContent({ locale }: { locale: Locale }) {
-	const documents = await GET().json() as DocumentsData;
+export default async function DocumentsContent({ locale }: Readonly<{ locale: Locale }>) {
+	const documents = await fetchInternalJson<DocumentsData>("/api/documents");
 	const { links, commandCategories, copy, connectImages, danModes } = documents;
 	const text = copy[locale];
 

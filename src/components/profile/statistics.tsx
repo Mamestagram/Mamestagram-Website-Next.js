@@ -12,7 +12,7 @@ export default async function Statistics({ id, mode, isClan, isDans }: {
 }) {
 	const statistics = await getStatistics(id, mode, isClan, isDans);
 	const formatAggregate = (value: number) => (isClan ? Math.floor(value) : value).toLocaleString();
-	
+
 	return (
 		<>
 			<h1 className={styles.section_title}>

@@ -1,11 +1,6 @@
-import FontAwesome from "@/components/font-awesome";
+import SectionHeading from "@/components/section-heading";
 import styles from "@s/patcher.module.css";
 
-export default function PatcherSectionHeading({ icon, title }: { icon: string, title: string }) {
-	return (
-		<div className={styles.section_heading}>
-			<i><FontAwesome prefix="fad" name={icon}/></i>
-			<h2>{title}</h2>
-		</div>
-	);
+export default function PatcherSectionHeading({ icon, title }: Readonly<{ icon: string, title: string }>) {
+	return <SectionHeading className={styles.section_heading} icon={icon} title={title}/>;
 }

@@ -14,7 +14,7 @@ export default async function RankingList({ mode, sortBy, page, country, isClan 
 	isClan: boolean
 }) {
 	const { ranking, pages } = await getLeaderboard(ModeNum[mode], sortBy, Number(page), isClan, country);
-	
+
 	if (page <= pages) {
 		return (
 			<>

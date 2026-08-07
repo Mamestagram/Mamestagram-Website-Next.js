@@ -1,22 +1,17 @@
-"use client";
-
-import { useUserContext } from "@/components/context/user-provider";
 import styles from "@s/profile.module.css";
 
-export default function MedalInfo({ userId = 0, name, filename = "", description, condDescription }: {
-	userId?: number,
+export default function MedalInfo({ name, description, condDescription, showCondition = true }: Readonly<{
 	name: string,
-	filename?: string,
 	description: string,
-	condDescription: string
-}) {
-	const { userInfo } = useUserContext();
-	
+	condDescription: string,
+	showCondition?: boolean
+}>) {
+
 	return (
 		<>
 			<span className={styles.medal_name}>{name}</span>
 			<span className={styles.medal_description}>{description}</span>
-			{(!(/^hide-/).test(filename) || (userInfo.isLoggedIn && userId === userInfo.id)) &&
+			{showCondition &&
 				<span className={styles.medal_cond_description}>{condDescription}</span>}
 		</>
 	);
