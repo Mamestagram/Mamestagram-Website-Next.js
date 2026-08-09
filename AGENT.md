@@ -18,6 +18,7 @@ Mamestagram Web
 - クエリはdatabase/queryの中に書く
 - cssのカスタムプロパティは初期値を指定する
 - なるべく他のファイルのコードと書き方を統一する
+- 内部リンクはLinkタグで外部リンクはaタグを使う
 
 ### React
 - Server Componentsを優先
@@ -27,6 +28,9 @@ Mamestagram Web
 ### Components
 - コンポーネントは責務ごとに分割する
 - 共通化できるものは components に配置
+
+### Styles
+- cssファイルはpublic/stylesの中に入れる
 
 ### API
 - Route Handlersを使用

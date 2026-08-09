@@ -13,6 +13,7 @@ import SetMainModeButton from "@/components/profile/set-main-mode-button";
 import RankHistoryChart from "@/components/profile/rank-history";
 import SocialConnections from "@/components/profile/social-connections";
 import type { RankHistory } from "@/database/rank-history";
+import { getBadgeImageExtension } from "@/lib/badge";
 import styles from "@s/profile.module.css";
 
 const privilegeMeta: Partial<Record<Priv, {
@@ -91,6 +92,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 	});
 	const hiddenPrivilegeLabels = privileges.slice(3).map(({ label }) => label).join(", ");
 	const profileQuery = isClan ? "?clan" : "";
+	const avatarSubdomain = isClan ? "clan-a" : "a";
 	const countrySort = isDans ? "dans" : "performance";
 	const lastOnlineDate = info.latestActivity.toLocaleDateString("en-US", {
 		year: "numeric",
@@ -110,12 +112,20 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 		<div className={classNames(styles.section_box, styles.user_info)}>
 			<div className={styles.top}>
 				<span className={styles.avatar}>
-					<Image src={`https://a.${process.env.BASE_DOMAIN}/${id}`}
+					<Image src={`https://${avatarSubdomain}.${process.env.BASE_DOMAIN}/${id}`}
 					       alt="avatar"
 					       fill
 					       sizes="(max-width: 768px) 100vw, 50vw"
 					       draggable={false}
 					       priority/>
+					{!isClan && info.setBadge !== 0 &&
+						<Image className={styles.gacha_badge}
+						       src={`/images/gacha/${info.setBadge}.${getBadgeImageExtension(info.setBadge)}`}
+						       alt=""
+						       fill
+						       sizes="112px"
+						       draggable={false}
+						       priority/>}
 				</span>
 				<div className={styles.name_container}>
 					<div className={styles.name_row}>

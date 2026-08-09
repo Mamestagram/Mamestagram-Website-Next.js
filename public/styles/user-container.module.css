@@ -1,0 +1,155 @@
+:global(header .navigation li.avatar).container {
+	display: block;
+	position: relative;
+	height: 50px;
+	width: auto;
+	padding: 0;
+	z-index: 1;
+}
+
+.trigger {
+	display: grid;
+	grid-template-columns: 40px auto;
+	height: 100%;
+	width: auto;
+	padding: 4px 9px 4px 5px;
+	border-radius: inherit;
+	align-items: center;
+	column-gap: 9px;
+	cursor: pointer;
+	text-align: left;
+}
+
+.account_avatar {
+	position: relative;
+	display: block;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border-radius: 50%;
+	overflow: hidden;
+}
+
+.username {
+	display: block;
+	min-width: 0;
+	color: #fdfdfd;
+	font-size: .78rem;
+	line-height: 1.15;
+	text-align: left;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.menu {
+	display: grid;
+	position: absolute;
+	top: calc(100% + 10px);
+	left: 50%;
+	width: 185px;
+	padding: 6px;
+	background: var(--glass-bg-dark);
+	background-color: hsla(var(--user-hue), 44%, 36%, 75%);
+	border: 1px solid var(--glass-border-dark);
+	border-radius: 12px;
+	box-shadow: var(--glass-box-shadow-dark);
+	backdrop-filter: blur(14px);
+	visibility: hidden;
+	opacity: 0;
+	pointer-events: none;
+	z-index: 10;
+	transform: translateX(-50%) translateY(-10px);
+	transition:
+		opacity 180ms ease,
+		transform 180ms ease,
+		visibility 0s linear 180ms;
+}
+
+.menu[data-open="true"] {
+	visibility: visible;
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateX(-50%) translateY(0);
+	transition-delay: 0s;
+}
+
+:global(header .navigation li.avatar) .menu > a,
+:global(header .navigation li.avatar) .menu button {
+	display: flex;
+	width: 100%;
+	padding: 10px 12px;
+	border-radius: 8px;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 10px;
+	color: var(--text-sub);
+	font-size: .8rem;
+	line-height: 1.2;
+	text-align: left;
+	transition: background-color 150ms, color 150ms;
+}
+
+:global(header .navigation li.avatar) .menu > a i,
+:global(header .navigation li.avatar) .menu button i {
+	width: 16px;
+	text-align: center;
+}
+
+:global(header .navigation li.avatar) .menu > a:hover,
+:global(header .navigation li.avatar) .menu > a:focus-visible,
+:global(header .navigation li.avatar) .menu button:not(:disabled):hover,
+:global(header .navigation li.avatar) .menu button:not(:disabled):focus-visible {
+	background-color: hsla(var(--user-hue), 45%, 55%, .18);
+	color: #fff;
+	outline: none;
+}
+
+.menu button:disabled {
+	cursor: default;
+	opacity: .45;
+}
+
+.sign_out_row {
+	border-top: 1px solid var(--glass-border-dark);
+	margin-top: 4px;
+	padding-top: 4px;
+}
+
+@media (max-width: 872px) {
+	:global(header .navigation li.avatar).container {
+		display: block;
+		height: var(--mobile-height);
+		padding: 0;
+		line-height: normal;
+		grid-column: 1;
+	}
+
+	.trigger {
+		grid-template-columns: 40px minmax(0, 1fr);
+		width: 100%;
+		padding: 5px 12px;
+	}
+
+	.username {
+		max-width: none;
+	}
+
+	.menu {
+		top: calc(100% + 6px);
+		left: 12px;
+		right: 12px;
+		width: auto;
+		transform: translateY(-10px);
+	}
+
+	.menu[data-open="true"] {
+		transform: translateY(0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.menu {
+		transition: none;
+	}
+}

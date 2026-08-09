@@ -472,62 +472,6 @@ header {
 			}
 		}
 
-		& li.avatar {
-			display: flex;
-			height: 50px;
-			padding: 4px 9px 4px 5px;
-			align-items: center;
-			gap: 9px;
-
-			& .account-avatar {
-				position: relative;
-				display: block;
-				width: 40px;
-				height: 40px;
-				padding: 0;
-				border-radius: 50%;
-				overflow: hidden;
-				flex: 0 0 auto;
-			}
-
-			& .account-actions {
-				display: flex;
-				min-width: 0;
-				flex-direction: column;
-				gap: 2px;
-
-				& > a {
-					max-width: 110px;
-					padding: 0;
-					color: #fdfdfd;
-					font-size: .78rem;
-					line-height: 1.15;
-					white-space: nowrap;
-					overflow: hidden;
-					text-overflow: ellipsis;
-				}
-
-				& button {
-					color: var(--text-sub);
-					font-size: .66rem;
-					line-height: 1.15;
-					transition: color 150ms;
-
-					&:hover {
-						color: #fff;
-					}
-				}
-			}
-
-			@media (max-width: 872px) {
-				display: flex;
-				height: var(--mobile-height);
-				padding: 5px 12px;
-				line-height: normal;
-				grid-column: 1;
-			}
-		}
-		
 		@media (max-width: 872px) {
 			visibility: hidden;
 			position: relative;

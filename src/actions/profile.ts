@@ -2,12 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { removeClanMember, updateClanUserpageContent, updatePreferredMode, updateUserpageContent } from "@/database/profile";
+import { getAboutMeValidationMessage, normalizeAboutMe } from "@/lib/about-me";
 import { getCurrentUser } from "@/lib/session";
 import { bbCodeParser } from "@/lib/bb-code/bb-tags";
 import { ModeNum, OsuMode } from "@/lib/mode";
-
-const MAX_ABOUT_ME_LENGTH = 10_000;
-const MAX_ABOUT_ME_BYTES = 60_000;
 
 export type AboutMeUpdateResult = {
 	success: boolean,
@@ -26,13 +24,10 @@ export type ClanMemberKickResult = {
 	message: string
 };
 
-const normalizeAboutMe = (value: unknown) => String(value ?? "").replaceAll("\r\n", "\n").trim();
-
 const validateAboutMe = (content: string): AboutMeUpdateResult | null => {
-	if (content.length > MAX_ABOUT_ME_LENGTH || Buffer.byteLength(content, "utf8") > MAX_ABOUT_ME_BYTES)
-		return { success: false, message: `About Me must be ${MAX_ABOUT_ME_LENGTH.toLocaleString()} characters or fewer.` };
-	return null;
-}
+	const message = getAboutMeValidationMessage(content);
+	return message ? { success: false, message } : null;
+};
 
 export async function previewAboutMe(value: string): Promise<AboutMeUpdateResult> {
 	const currentUser = await getCurrentUser();

@@ -1,0 +1,115 @@
+.overlay {
+	display: grid;
+	position: fixed;
+	inset: 0;
+	z-index: 1200;
+	padding: 20px;
+	place-items: center;
+	background: rgba(2, 5, 10, .76);
+	backdrop-filter: blur(9px);
+}
+
+.dialog {
+	display: flex;
+	width: min(390px, 100%);
+	padding: 26px;
+	align-items: center;
+	flex-direction: column;
+	gap: 11px;
+	color: #dce5ef;
+	background:
+		radial-gradient(circle at 50% 0%, rgba(181, 54, 67, .16), transparent 42%),
+		linear-gradient(145deg, rgba(19, 25, 35, .98), rgba(5, 8, 14, .99));
+	border: 1px solid rgba(255, 132, 144, .2);
+	border-radius: 20px;
+	box-shadow: 0 24px 70px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .05);
+	text-align: center;
+}
+
+.dialog h2 {
+	font-size: 1rem;
+	font-weight: 900;
+}
+
+.dialog p {
+	color: #9facbc;
+	font-size: .72rem;
+	line-height: 1.55;
+}
+
+.dialog p strong {
+	color: #f1f5f9;
+	font-weight: 850;
+}
+
+.dialog > small {
+	color: #ff9ca6;
+	font-size: .63rem;
+	font-weight: 750;
+	line-height: 1.4;
+}
+
+.icon {
+	display: grid;
+	width: 46px;
+	height: 46px;
+	place-items: center;
+	color: #ff9ca6;
+	background: rgba(147, 37, 49, .2);
+	border: 1px solid rgba(255, 132, 144, .22);
+	border-radius: 14px;
+	font-size: 1.1rem;
+}
+
+.actions {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	width: 100%;
+	margin-top: 5px;
+	gap: 8px;
+}
+
+.actions form {
+	width: 100%;
+}
+
+.actions button {
+	min-height: 38px;
+	width: 100%;
+	color: #cbd5e1;
+	background: rgba(255, 255, 255, .055);
+	border: 1px solid rgba(255, 255, 255, .09);
+	border-radius: 10px;
+	font-size: .7rem;
+	font-weight: 850;
+	transition: color 140ms, background-color 140ms, border-color 140ms;
+}
+
+.actions button:hover:not(:disabled),
+.actions button:focus-visible {
+	color: #fff;
+	background-color: rgba(255, 255, 255, .1);
+	border-color: rgba(255, 255, 255, .18);
+}
+
+.actions button:focus-visible {
+	outline: 2px solid rgba(255, 255, 255, .34);
+	outline-offset: 2px;
+}
+
+.actions button:disabled {
+	cursor: wait;
+	opacity: .6;
+}
+
+.actions .confirm {
+	color: #ffd8dc;
+	background: rgba(151, 38, 51, .26);
+	border-color: rgba(255, 126, 139, .28);
+}
+
+.actions .confirm:hover:not(:disabled),
+.actions .confirm:focus-visible {
+	background-color: rgba(181, 48, 62, .48);
+	border-color: rgba(255, 139, 151, .5);
+}

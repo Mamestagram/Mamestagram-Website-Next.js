@@ -285,7 +285,7 @@ export const getInfo = async (id: number, isClan: boolean) => {
 					name: playerInfo.name,
 					pastNames: playerInfo.past_name,
 					showPastName: playerInfo.show_past_name === 1,
-					setBadge: setBadge.at(0)!.badge_id,
+					setBadge: setBadge.at(0)?.badge_id ?? 0,
 					country: playerInfo.country,
 					creationTime: new Date(playerInfo.creation_time * 1000),
 					latestActivity: new Date(playerInfo.latest_activity * 1000),

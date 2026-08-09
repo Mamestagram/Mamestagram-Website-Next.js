@@ -3,20 +3,18 @@
 import Link from "next/link";
 import Script from "next/script";
 import { useActionState, useEffect, useRef, useState } from "react";
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 import type { AuthState } from "@/actions/auth";
 import { register, signin } from "@/actions/auth";
 import FontAwesome from "@/components/font-awesome";
 import styles from "@s/auth.module.css";
 
-declare global {
-	interface Window {
-		grecaptcha?: {
-			execute: (siteKey: string, options: { action: string }) => Promise<string>,
-			ready: (callback: () => void) => void
-		};
-	}
-}
+type RecaptchaApi = {
+	execute: (siteKey: string, options: { action: string }) => Promise<string>,
+	ready: (callback: () => void) => void
+};
+
+const getRecaptcha = () => (window as Window & { grecaptcha?: RecaptchaApi }).grecaptcha;
 
 function PasswordField({ name, label, hint, error, autoComplete }: {
 	name: "password" | "confirmPassword",
@@ -68,13 +66,14 @@ export default function AuthForm({ type, recaptchaSiteKey = "", recaptchaEnabled
 		if (recaptchaRef.current) recaptchaRef.current.value = "";
 	}, [state]);
 
-	const submitWithRecaptcha = async (event: FormEvent<HTMLFormElement>) => {
+	const submitWithRecaptcha = async (event: SubmitEvent<HTMLFormElement>) => {
 		if (type !== "register" || !recaptchaEnabled || recaptchaRef.current?.value) return;
 		event.preventDefault();
-		if (!window.grecaptcha || !recaptchaSiteKey) return;
+		const recaptcha = getRecaptcha();
+		if (!recaptcha || !recaptchaSiteKey) return;
 
 		try {
-			const token = await window.grecaptcha.execute(recaptchaSiteKey, { action: "register" });
+			const token = await recaptcha.execute(recaptchaSiteKey, { action: "register" });
 			if (!recaptchaRef.current || !formRef.current) return;
 			recaptchaRef.current.value = token;
 			formRef.current.requestSubmit();
@@ -89,7 +88,7 @@ export default function AuthForm({ type, recaptchaSiteKey = "", recaptchaEnabled
 			{type === "register" && recaptchaEnabled && recaptchaSiteKey &&
 				<Script src={`https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(recaptchaSiteKey)}`}
 				        strategy="afterInteractive"
-				        onLoad={() => window.grecaptcha?.ready(() => setRecaptchaReady(true))}/>}
+				        onLoad={() => getRecaptcha()?.ready(() => setRecaptchaReady(true))}/>}
 			<form ref={formRef} className={styles.form} action={formAction} onSubmit={submitWithRecaptcha}>
 				<div className={styles.heading}>
 					<span className={styles.eyebrow}>MAMESTAGRAM ACCOUNT</span>

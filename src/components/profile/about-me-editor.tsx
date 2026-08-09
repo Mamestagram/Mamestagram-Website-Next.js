@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
-import type { FormEvent } from "react";
-import { createPortal } from "react-dom";
+import { useRef, useState, useTransition } from "react";
+import type { SubmitEvent } from "react";
 import { useRouter } from "next/navigation";
-import { previewAboutMe, updateAboutMe } from "@/actions/profile";
+import { previewAboutMe, updateAboutMe, type AboutMeUpdateResult } from "@/actions/profile";
+import ConfirmationDialog from "@/components/confirmation-dialog";
 import FontAwesome from "@/components/font-awesome";
 import BBCodeImageErrorHandler from "@/components/profile/bbcode-image-error-handler";
 import AboutMeEmptyState from "@/components/profile/about-me-empty-state";
 import Tooltip from "@/components/tooltip";
+import { MAX_ABOUT_ME_LENGTH, normalizeAboutMe } from "@/lib/about-me";
 import styles from "@s/profile.module.css";
 
-const MAX_LENGTH = 10_000;
 const BBCODE_TOOLS = [
 	{ icon: "heading", title: "Heading", open: "[heading]", close: "[/heading]", placeholder: "Heading" },
 	{ icon: "bold", title: "Bold", open: "[b]", close: "[/b]", placeholder: "bold text" },
@@ -32,17 +32,45 @@ const BBCODE_TOOLS = [
 	{ icon: "user", title: "Profile link", open: "[profile=7]", close: "[/profile]", placeholder: "username" }
 ] as const;
 
-export default function AboutMeEditor({ initialBBCode, initialHtml, profileId, isClan, mode }: Readonly<{
+const isAboutMeUpdateResult = (value: unknown): value is AboutMeUpdateResult => {
+	if (typeof value !== "object" || value === null) return false;
+	const result = value as Record<string, unknown>;
+	return typeof result.success === "boolean" && typeof result.message === "string" &&
+		(result.content === undefined || typeof result.content === "string") &&
+		(result.html === undefined || typeof result.html === "string");
+};
+
+const readAboutMeResponse = async (response: Response): Promise<AboutMeUpdateResult> => {
+	try {
+		const body: unknown = await response.json();
+		if (isAboutMeUpdateResult(body)) return body;
+	}
+	catch {
+		// The fallback below is used when the response is not JSON.
+	}
+	return { success: false, message: "The server returned an unexpected response." };
+};
+
+export default function AboutMeEditor({
+	initialBBCode,
+	initialHtml,
+	profileId,
+	isClan,
+	mode,
+	alwaysEditing = false,
+	settingsEndpoint
+}: Readonly<{
 	initialBBCode: string,
 	initialHtml: string,
 	profileId: number,
 	isClan: boolean,
-	mode: string
+	mode: string,
+	alwaysEditing?: boolean,
+	settingsEndpoint?: string
 }>) {
 	const router = useRouter();
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
-	const cancelNoButtonRef = useRef<HTMLButtonElement>(null);
-	const [isEditing, setIsEditing] = useState(false);
+	const [isEditing, setIsEditing] = useState(alwaysEditing);
 	const [isPreviewing, setIsPreviewing] = useState(false);
 	const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
 	const [isPending, startTransition] = useTransition();
@@ -51,21 +79,6 @@ export default function AboutMeEditor({ initialBBCode, initialHtml, profileId, i
 	const [renderedHtml, setRenderedHtml] = useState(initialHtml);
 	const [previewHtml, setPreviewHtml] = useState("");
 	const [status, setStatus] = useState<{ success: boolean, message: string } | null>(null);
-
-	useEffect(() => {
-		if (!isCancelConfirmOpen) return;
-		const previousOverflow = document.body.style.overflow;
-		const closeOnEscape = (event: KeyboardEvent) => {
-			if (event.key === "Escape") setIsCancelConfirmOpen(false);
-		};
-		document.body.style.overflow = "hidden";
-		document.addEventListener("keydown", closeOnEscape);
-		requestAnimationFrame(() => cancelNoButtonRef.current?.focus());
-		return () => {
-			document.body.style.overflow = previousOverflow;
-			document.removeEventListener("keydown", closeOnEscape);
-		};
-	}, [isCancelConfirmOpen]);
 
 	const insertBBCode = (open: string, close: string, placeholder: string) => {
 		const textarea = textareaRef.current;
@@ -76,8 +89,8 @@ export default function AboutMeEditor({ initialBBCode, initialHtml, profileId, i
 		const replacement = `${open}${innerText}${close}`;
 		const nextContent = `${content.slice(0, selectionStart)}${replacement}${content.slice(selectionEnd)}`;
 
-		if (nextContent.length > MAX_LENGTH) {
-			setStatus({ success: false, message: `About Me must be ${MAX_LENGTH.toLocaleString()} characters or fewer.` });
+		if (nextContent.length > MAX_ABOUT_ME_LENGTH) {
+			setStatus({ success: false, message: `About Me must be ${MAX_ABOUT_ME_LENGTH.toLocaleString()} characters or fewer.` });
 			return;
 		}
 
@@ -91,21 +104,34 @@ export default function AboutMeEditor({ initialBBCode, initialHtml, profileId, i
 		});
 	};
 
-	const submit = (event: FormEvent<HTMLFormElement>) => {
+	const submit = (event: SubmitEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget);
 		setStatus(null);
 
 		startTransition(async () => {
-			const result = await updateAboutMe(formData);
-			setStatus({ success: result.success, message: result.message });
-			if (!result.success) return;
+			try {
+				const result = settingsEndpoint
+					? await readAboutMeResponse(await fetch(settingsEndpoint, {
+						method: "PATCH",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ content })
+					}))
+					: await updateAboutMe(formData);
+				setStatus({ success: result.success, message: result.message });
+				if (!result.success) return;
 
-			setContent(result.content ?? "");
-			setSavedContent(result.content ?? "");
-			setRenderedHtml(result.html ?? "");
-			setIsEditing(false);
-			router.refresh();
+				const saved = result.content ?? normalizeAboutMe(content);
+				setContent(saved);
+				setSavedContent(saved);
+				setRenderedHtml(result.html ?? "");
+				setIsPreviewing(false);
+				if (!alwaysEditing) setIsEditing(false);
+				router.refresh();
+			}
+			catch {
+				setStatus({ success: false, message: "About Me could not be updated." });
+			}
 		});
 	};
 
@@ -113,7 +139,7 @@ export default function AboutMeEditor({ initialBBCode, initialHtml, profileId, i
 		setContent(savedContent);
 		setStatus(null);
 		setIsPreviewing(false);
-		setIsEditing(false);
+		if (!alwaysEditing) setIsEditing(false);
 	};
 	const cancelEditing = () => {
 		if (content !== savedContent) {
@@ -133,20 +159,31 @@ export default function AboutMeEditor({ initialBBCode, initialHtml, profileId, i
 
 		setStatus(null);
 		startTransition(async () => {
-			const result = await previewAboutMe(content);
-			if (!result.success) {
-				setStatus({ success: false, message: result.message });
-				return;
-			}
+			try {
+				const result = settingsEndpoint
+					? await readAboutMeResponse(await fetch(settingsEndpoint, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ content })
+					}))
+					: await previewAboutMe(content);
+				if (!result.success) {
+					setStatus({ success: false, message: result.message });
+					return;
+				}
 
-			setPreviewHtml(result.html ?? "");
-			setIsPreviewing(true);
+				setPreviewHtml(result.html ?? "");
+				setIsPreviewing(true);
+			}
+			catch {
+				setStatus({ success: false, message: "About Me preview could not be generated." });
+			}
 		});
 	};
 
 	return (
 		<>
-			<div className={styles.about_me_header}>
+			{!alwaysEditing && <div className={styles.about_me_header}>
 				<h1 className={styles.section_title}>
 					<FontAwesome prefix="fad" name="id-badge"/>
 					About Me
@@ -163,7 +200,7 @@ export default function AboutMeEditor({ initialBBCode, initialHtml, profileId, i
 						Edit
 					</button>
 				)}
-			</div>
+			</div>}
 
 			{isEditing ? (
 				<form className={styles.about_me_editor} onSubmit={submit}>
@@ -183,9 +220,9 @@ export default function AboutMeEditor({ initialBBCode, initialHtml, profileId, i
 							<textarea id="about-me-content"
 							          ref={textareaRef}
 							          name="content"
-							          aria-label="About Me"
-							          value={content}
-							          maxLength={MAX_LENGTH}
+						          aria-label="About Me"
+						          value={content}
+						          maxLength={MAX_ABOUT_ME_LENGTH}
 							          rows={12}
 							          onChange={(event) => setContent(event.target.value)}
 							          disabled={isPending}
@@ -216,7 +253,7 @@ export default function AboutMeEditor({ initialBBCode, initialHtml, profileId, i
 						</>
 					)}
 					<div className={styles.editor_footer}>
-						<span>{content.length.toLocaleString()} / {MAX_LENGTH.toLocaleString()}</span>
+						<span>{content.length.toLocaleString()} / {MAX_ABOUT_ME_LENGTH.toLocaleString()}</span>
 						<div className={styles.editor_actions}>
 							<button type="button"
 							        onClick={cancelEditing}
@@ -250,39 +287,15 @@ export default function AboutMeEditor({ initialBBCode, initialHtml, profileId, i
 				</p>
 			)}
 
-			{isCancelConfirmOpen && createPortal(
-				<div className={styles.clan_kick_overlay}
-				     onMouseDown={(event) => {
-					     if (event.target === event.currentTarget) setIsCancelConfirmOpen(false);
-				     }}>
-					<section className={styles.clan_kick_dialog}
-					         role="alertdialog"
-					         aria-modal="true"
-					         aria-labelledby="discard-about-me-title">
-						<span className={styles.clan_kick_icon}>
-							<FontAwesome prefix="fad" name="triangle-exclamation"/>
-						</span>
-						<h2 id="discard-about-me-title">Discard unsaved changes?</h2>
-						<p>Unsaved changes will be lost. Are you sure?</p>
-						<div className={styles.clan_kick_actions}>
-							<button ref={cancelNoButtonRef}
-							        type="button"
-							        onClick={() => setIsCancelConfirmOpen(false)}>
-								No
-							</button>
-							<button type="button"
-							        className={styles.confirm_kick}
-							        onClick={() => {
-								        setIsCancelConfirmOpen(false);
-								        discardChanges();
-							        }}>
-								Yes
-							</button>
-						</div>
-					</section>
-				</div>,
-				document.body
-			)}
+			<ConfirmationDialog isOpen={isCancelConfirmOpen}
+			                    title="Discard unsaved changes?"
+			                    description="Unsaved changes will be lost. Are you sure?"
+			                    icon="triangle-exclamation"
+			                    onCancel={() => setIsCancelConfirmOpen(false)}
+			                    onConfirm={() => {
+				                    setIsCancelConfirmOpen(false);
+				                    discardChanges();
+			                    }}/>
 		</>
 	);
 }

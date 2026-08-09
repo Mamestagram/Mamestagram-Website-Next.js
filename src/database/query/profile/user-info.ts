@@ -111,9 +111,9 @@ export const userJoinedClanQuery = `
 `;
 
 export const setBadgeQuery = `
-	SELECT set_badge AS badge_id
-	    FROM gacha_stats
-	WHERE id = ? -- number
+	SELECT badge_id
+	    FROM market_badge_equipment
+	WHERE owner_id = ? -- number
 `;
 
 export const clanInfoQuery = `
