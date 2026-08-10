@@ -6,6 +6,7 @@ import type { Profile } from "@/database/profile";
 import { ModeNum, OsuMode, type VnMode } from "@/lib/mode";
 import { Priv } from "@/lib/priv";
 import CountryFlag from "@/components/country-flag";
+import EquippedBadge from "@/components/equipped-badge";
 import FontAwesome from "@/components/font-awesome";
 import ModeIcon from "@/components/mode-icon";
 import ProfileModeSelection from "@/components/profile/mode-selection";
@@ -13,7 +14,6 @@ import SetMainModeButton from "@/components/profile/set-main-mode-button";
 import RankHistoryChart from "@/components/profile/rank-history";
 import SocialConnections from "@/components/profile/social-connections";
 import type { RankHistory } from "@/database/rank-history";
-import { getBadgeImageExtension } from "@/lib/badge";
 import styles from "@s/profile.module.css";
 
 const privilegeMeta: Partial<Record<Priv, {
@@ -83,6 +83,9 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 	rankHistory: RankHistory | null,
 	children?: ReactNode
 }) {
+	const baseDomain = process.env.BASE_DOMAIN;
+	if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
+
 	const preferredMode = getPreferredMode(info.preferredMode);
 	const selectedMode = ModeNum[mode];
 	const country = getCountryMeta(info.country);
@@ -112,20 +115,18 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 		<div className={classNames(styles.section_box, styles.user_info)}>
 			<div className={styles.top}>
 				<span className={styles.avatar}>
-					<Image src={`https://${avatarSubdomain}.${process.env.BASE_DOMAIN}/${id}`}
+					<Image src={`https://${avatarSubdomain}.${baseDomain}/${id}`}
 					       alt="avatar"
 					       fill
 					       sizes="(max-width: 768px) 100vw, 50vw"
 					       draggable={false}
 					       priority/>
-					{!isClan && info.setBadge !== 0 &&
-						<Image className={styles.gacha_badge}
-						       src={`/images/gacha/${info.setBadge}.${getBadgeImageExtension(info.setBadge)}`}
-						       alt=""
-						       fill
-						       sizes="112px"
-						       draggable={false}
-						       priority/>}
+					{!isClan &&
+						<EquippedBadge badgeId={info.setBadge}
+						               baseDomain={baseDomain}
+						               className={styles.avatar_badge}
+						               sizes="36px"
+						               priority/>}
 				</span>
 				<div className={styles.name_container}>
 					<div className={styles.name_row}>
@@ -201,7 +202,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 					followers: info.followers
 				}}
 				mode={mode}
-				avatarBaseUrl={`https://a.${process.env.BASE_DOMAIN}`}/>}
+				avatarBaseUrl={`https://a.${baseDomain}`}/>}
 
 			{!isClan && <div className={styles.last_online} data-online={info.isOnline}>
 				<span className={styles.activity_identity}>

@@ -20,7 +20,6 @@ import {
 	updateSelectedBadgeQuery
 } from "@/database/query/settings";
 import { makeSafeName } from "@/database/auth";
-import { getBadgeImageExtension, type BadgeImageExtension } from "@/lib/badge";
 
 type UserSettingsRow = RowDataPacket & {
 	name: string,
@@ -73,7 +72,6 @@ export type SettingsBadge = {
 	id: number,
 	name: string,
 	rarity: "common" | "rare" | "epic",
-	imageExtension: BadgeImageExtension,
 	isOwned: boolean
 };
 
@@ -168,7 +166,6 @@ export const getUserSettings = async (userId: number): Promise<UserSettings | nu
 			id: badge.badge_id,
 			name: badge.badge_name?.trim() || `Badge ${badge.badge_id}`,
 			rarity: getBadgeRarity(badge.prob),
-			imageExtension: getBadgeImageExtension(badge.badge_id),
 			isOwned: ownedBadgeIds.has(badge.badge_id) || selectedBadge === badge.badge_id
 		}))
 	};

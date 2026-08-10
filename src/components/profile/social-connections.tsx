@@ -13,25 +13,21 @@ type ConnectionType = "mutual" | "following" | "followers";
 
 const socialMeta: Record<ConnectionType, {
 	label: string,
-	caption: string,
 	icon: string,
 	description: string
 }> = {
 	mutual: {
 		label: "Mutual",
-		caption: "Connections",
 		icon: "user-group",
 		description: "Players who follow each other"
 	},
 	following: {
 		label: "Following",
-		caption: "Your network",
 		icon: "user-plus",
 		description: "Players this user follows"
 	},
 	followers: {
 		label: "Followers",
-		caption: "Audience",
 		icon: "users",
 		description: "Players following this user"
 	}
@@ -112,7 +108,7 @@ export default function SocialConnections({ connections, mode, avatarBaseUrl }: 
 		<>
 			<ul className={styles.social_strip}>
 				{(Object.keys(socialMeta) as ConnectionType[]).map((type) => {
-					const { label, caption, icon } = socialMeta[type];
+					const { label, icon } = socialMeta[type];
 					return (
 						<li key={type} data-social={type}>
 							<button className={styles.social_card}
@@ -123,7 +119,6 @@ export default function SocialConnections({ connections, mode, avatarBaseUrl }: 
 									<FontAwesome prefix="fad" name={icon}/>
 								</span>
 								<span className={styles.social_copy}>
-									<small>{caption}</small>
 									<strong>{label}</strong>
 								</span>
 								<span className={styles.social_value}>{connections[type].length.toLocaleString("en-US")}</span>

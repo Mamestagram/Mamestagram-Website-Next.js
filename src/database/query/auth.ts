@@ -1,15 +1,29 @@
 export const userByLoginQuery = `
-	SELECT id, clan_id, priv, name, pw_bcrypt
+	SELECT users.id,
+	       users.clan_id,
+	       users.priv,
+	       users.name,
+	       users.pw_bcrypt,
+	       market_badge_equipment.badge_id
 		FROM users
-	WHERE safe_name = ?
-		OR LOWER(email) = ?
+	LEFT JOIN market_badge_equipment
+		ON market_badge_equipment.owner_id = users.id
+	WHERE users.safe_name = ?
+		OR LOWER(users.email) = ?
 	LIMIT 1
 `;
 
 export const userByIdQuery = `
-	SELECT id, clan_id, priv, name, pw_bcrypt
+	SELECT users.id,
+	       users.clan_id,
+	       users.priv,
+	       users.name,
+	       users.pw_bcrypt,
+	       market_badge_equipment.badge_id
 		FROM users
-	WHERE id = ?
+	LEFT JOIN market_badge_equipment
+		ON market_badge_equipment.owner_id = users.id
+	WHERE users.id = ?
 	LIMIT 1
 `;
 

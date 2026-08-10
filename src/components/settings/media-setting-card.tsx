@@ -5,14 +5,23 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import ConfirmationDialog from "@/components/confirmation-dialog";
 import FontAwesome from "@/components/font-awesome";
+import ImageCropDialog, { type ImageCropType } from "@/components/settings/image-crop-dialog";
 import { readMutationResponse } from "@/lib/mutation-response";
 import styles from "@s/settings.module.css";
 
-type MediaType = "avatar" | "banner" | "background";
+type MediaType = ImageCropType;
 type MediaScope = "profile" | "clan";
+type CropSource = {
+	file: File,
+	url: string
+};
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
 const supportedTypes = new Set(["image/png", "image/jpeg", "image/webp", "image/gif"]);
+const supportedExtensions = new Set(["png", "jpg", "jpeg", "webp", "gif"]);
+const getFileExtension = (file: File) => file.name.split(".").pop()?.toLowerCase() ?? "";
+const isGifFile = (file: File) =>
+	file.type === "image/gif" || getFileExtension(file) === "gif";
 
 const mediaMeta: Record<MediaType, {
 	label: string,
@@ -63,6 +72,8 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 	const router = useRouter();
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
+	const [selectedSourceFile, setSelectedSourceFile] = useState<File | null>(null);
+	const [cropSource, setCropSource] = useState<CropSource | null>(null);
 	const [previewUrl, setPreviewUrl] = useState("");
 	const [currentImageUrl, setCurrentImageUrl] = useState(imageUrl);
 	const [isCustomImage, setIsCustomImage] = useState(hasCustomImage);
@@ -81,28 +92,53 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 		if (previewUrl) URL.revokeObjectURL(previewUrl);
 	}, [previewUrl]);
 
+	useEffect(() => () => {
+		if (cropSource) URL.revokeObjectURL(cropSource.url);
+	}, [cropSource]);
+
+	const clearSelectedFile = () => {
+		setSelectedFile(null);
+		setSelectedSourceFile(null);
+		setPreviewUrl("");
+	};
+
+	const openCropper = (file: File) => {
+		setCropSource({ file, url: URL.createObjectURL(file) });
+	};
+
 	const selectFile = (file: File | undefined) => {
 		setStatus(null);
-		if (!file) {
-			setSelectedFile(null);
-			setPreviewUrl("");
-			return;
-		}
+		if (!file) return;
 		if (file.size > MAX_FILE_BYTES) {
-			setSelectedFile(null);
-			setPreviewUrl("");
+			clearSelectedFile();
 			setStatus({ success: false, message: "The image must be 5 MB or smaller." });
 			return;
 		}
-		if (file.type && !supportedTypes.has(file.type)) {
-			setSelectedFile(null);
-			setPreviewUrl("");
+		if (!supportedExtensions.has(getFileExtension(file)) ||
+			(file.type && !supportedTypes.has(file.type))) {
+			clearSelectedFile();
 			setStatus({ success: false, message: "Use a PNG, JPG, WebP, or GIF image." });
 			return;
 		}
 
+		if (isGifFile(file)) {
+			setSelectedSourceFile(file);
+			setSelectedFile(file);
+			setPreviewUrl(URL.createObjectURL(file));
+			setCropSource(null);
+			setIsImageUnavailable(false);
+			return;
+		}
+
+		openCropper(file);
+	};
+
+	const applyCrop = (file: File) => {
+		if (!cropSource) return;
+		setSelectedSourceFile(cropSource.file);
 		setSelectedFile(file);
 		setPreviewUrl(URL.createObjectURL(file));
+		setCropSource(null);
 		setIsImageUnavailable(false);
 	};
 
@@ -119,8 +155,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 				setStatus(result);
 				if (!result.success) return;
 
-				setSelectedFile(null);
-				setPreviewUrl("");
+				clearSelectedFile();
 				setCurrentImageUrl(`${imageUrl}?v=${Date.now()}`);
 				setIsCustomImage(true);
 				if (inputRef.current) inputRef.current.value = "";
@@ -150,8 +185,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 				setStatus(result);
 				setIsResetOpen(false);
 				setIsCustomImage(false);
-				setSelectedFile(null);
-				setPreviewUrl("");
+				clearSelectedFile();
 				setCurrentImageUrl(`${imageUrl}?v=${Date.now()}`);
 				if (inputRef.current) inputRef.current.value = "";
 				router.refresh();
@@ -192,16 +226,29 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 			<div className={styles.media_controls}>
 				<label className={styles.file_picker}>
 					<FontAwesome prefix="fas" name="folder-open"/>
-					<span>{selectedFile?.name || "Choose image"}</span>
+					<span>{selectedSourceFile?.name || "Choose image"}</span>
 					<input ref={inputRef}
 					       type="file"
 					       accept=".png,.jpg,.jpeg,.webp,.gif,image/png,image/jpeg,image/webp,image/gif"
 					       disabled={isPending}
-					       onChange={(event) => selectFile(event.target.files?.item(0) ?? undefined)}/>
+					       onChange={(event) => {
+						       const file = event.currentTarget.files?.item(0) ?? undefined;
+						       event.currentTarget.value = "";
+						       selectFile(file);
+					       }}/>
 				</label>
 				<div className={styles.media_actions}>
 					<button type="button"
 					        className={styles.secondary_button}
+					        disabled={isPending || !selectedSourceFile || isGifFile(selectedSourceFile)}
+					        onClick={() => {
+						        if (selectedSourceFile) openCropper(selectedSourceFile);
+					        }}>
+						<FontAwesome prefix="fas" name="sliders"/>
+						Crop
+					</button>
+					<button type="button"
+					        className={styles.danger_button}
 					        disabled={isPending || !isCustomImage}
 					        onClick={() => {
 						        setResetError("");
@@ -221,7 +268,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 					</button>
 				</div>
 			</div>
-			<p className={styles.media_note}>PNG, JPG, WebP, or GIF · 5 MB maximum</p>
+			<p className={styles.media_note}>PNG, JPG, WebP, or GIF · 5 MB maximum · Original format preserved · GIF is not cropped</p>
 			{status && <p className={styles.status} data-success={status.success} role="status">{status.message}</p>}
 
 			<ConfirmationDialog isOpen={isResetOpen}
@@ -233,6 +280,12 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 			                    error={resetError}
 			                    onCancel={() => setIsResetOpen(false)}
 			                    onConfirm={reset}/>
+			{cropSource &&
+				<ImageCropDialog sourceUrl={cropSource.url}
+				                 sourceName={cropSource.file.name}
+				                 mediaType={type}
+				                 onCancel={() => setCropSource(null)}
+				                 onApply={applyCrop}/>}
 		</article>
 	);
 }

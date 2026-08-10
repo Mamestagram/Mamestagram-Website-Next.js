@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, useTransition } from "react";
 import { signout } from "@/actions/auth";
 import ConfirmationDialog from "@/components/confirmation-dialog";
 import { useUserContext } from "@/components/context/user-provider";
+import EquippedBadge from "@/components/equipped-badge";
 import FontAwesome from "@/components/font-awesome";
 import styles from "@s/user-container.module.css";
 
@@ -13,8 +14,14 @@ export default function UserContainer() {
 	const { serverInfo, userInfo } = useUserContext();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isSignOutConfirmationOpen, setIsSignOutConfirmationOpen] = useState(false);
+	const [, startSignOutTransition] = useTransition();
 	const containerRef = useRef<HTMLLIElement>(null);
 	const menuId = useId();
+	const confirmSignOut = () => {
+		setIsMenuOpen(false);
+		setIsSignOutConfirmationOpen(false);
+		startSignOutTransition(() => signout());
+	};
 
 	useEffect(() => {
 		if (!isMenuOpen) return;
@@ -62,14 +69,11 @@ export default function UserContainer() {
 						       draggable={false}
 						       sizes="42px"
 						       priority/>
-						{userInfo.badge !== undefined && userInfo.badge !== 0 && userInfo.badgeExt !== undefined &&
-							<Image className="gacha-badge"
-							       src={`/images/gacha/${userInfo.badge}.${userInfo.badgeExt}`}
-							       alt=""
-							       fill
-							       draggable={false}
-							       sizes="42px"
-							       priority/>}
+						<EquippedBadge badgeId={userInfo.badge ?? 0}
+						               baseDomain={serverInfo.baseDomain}
+						               className={styles.account_badge}
+						               sizes="18px"
+						               priority/>
 					</span>
 					<span className={styles.username}>{userInfo.username}</span>
 				</button>
@@ -111,7 +115,7 @@ export default function UserContainer() {
 				                    title="Sign out?"
 				                    description="Are you sure you want to sign out?"
 				                    icon="arrow-right-from-bracket"
-				                    confirmAction={signout}
+				                    onConfirm={confirmSignOut}
 				                    onCancel={() => setIsSignOutConfirmationOpen(false)}/>
 			</li>
 		);

@@ -734,7 +734,7 @@ footer {
 	}
 }
 
-body:is(.register, .sign-in) footer {
+body:is(.register, .sign-in, .profile) footer {
 	position: relative;
 	z-index: 1;
 }

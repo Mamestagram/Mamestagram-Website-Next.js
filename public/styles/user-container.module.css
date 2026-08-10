@@ -27,7 +27,28 @@
 	height: 40px;
 	padding: 0;
 	border-radius: 50%;
-	overflow: hidden;
+	overflow: visible;
+}
+
+.account_avatar > img {
+	border-radius: inherit;
+	object-fit: cover;
+}
+
+.account_badge {
+	display: block;
+	position: absolute;
+	right: -2px;
+	bottom: -2px;
+	width: 18px;
+	height: 18px;
+	pointer-events: none;
+	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .8));
+	z-index: 1;
+}
+
+.account_badge img {
+	object-fit: contain;
 }
 
 .username {

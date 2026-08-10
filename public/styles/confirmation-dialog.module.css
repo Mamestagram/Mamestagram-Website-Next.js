@@ -26,6 +26,13 @@
 	text-align: center;
 }
 
+.dialog[data-tone="success"] {
+	background:
+		radial-gradient(circle at 50% 0%, rgba(47, 180, 126, .18), transparent 42%),
+		linear-gradient(145deg, rgba(19, 29, 32, .98), rgba(5, 10, 12, .99));
+	border-color: rgba(114, 232, 174, .24);
+}
+
 .dialog h2 {
 	font-size: 1rem;
 	font-weight: 900;
@@ -61,12 +68,22 @@
 	font-size: 1.1rem;
 }
 
+.dialog[data-tone="success"] .icon {
+	color: #8ff0bd;
+	background: rgba(42, 151, 103, .2);
+	border-color: rgba(114, 232, 174, .24);
+}
+
 .actions {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 	width: 100%;
 	margin-top: 5px;
 	gap: 8px;
+}
+
+.actions[data-single-action="true"] {
+	grid-template-columns: minmax(0, 1fr);
 }
 
 .actions form {
@@ -112,4 +129,16 @@
 .actions .confirm:focus-visible {
 	background-color: rgba(181, 48, 62, .48);
 	border-color: rgba(255, 139, 151, .5);
+}
+
+.dialog[data-tone="success"] .actions .confirm {
+	color: #d9ffeb;
+	background: rgba(42, 151, 103, .28);
+	border-color: rgba(114, 232, 174, .3);
+}
+
+.dialog[data-tone="success"] .actions .confirm:hover:not(:disabled),
+.dialog[data-tone="success"] .actions .confirm:focus-visible {
+	background-color: rgba(47, 180, 126, .46);
+	border-color: rgba(137, 244, 193, .54);
 }

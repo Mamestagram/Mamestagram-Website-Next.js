@@ -1,3 +1,103 @@
+.profile_page {
+	position: relative;
+	isolation: isolate;
+	min-height: 100vh;
+
+	&.with_background::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background-image:
+			linear-gradient(var(--grid-minor) 1px, transparent 1px),
+			linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px),
+			linear-gradient(var(--grid-major) 1px, transparent 1px),
+			linear-gradient(90deg, var(--grid-major) 1px, transparent 1px);
+		background-size: 26px 26px, 26px 26px, 104px 104px, 104px 104px;
+		pointer-events: none;
+	}
+}
+
+.profile_background {
+	position: fixed;
+	inset: 0;
+	z-index: -2;
+	overflow: hidden;
+	pointer-events: none;
+}
+
+.profile_background_image {
+	object-fit: cover;
+	object-position: center;
+	filter: blur(5px) saturate(.78) brightness(.52);
+	transform: scale(1.025);
+}
+
+.profile_background_overlay {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(180deg, rgba(5, 7, 11, .42), rgba(5, 7, 11, .72) 88%);
+}
+
+.profile_cover {
+	position: relative;
+	height: clamp(190px, 23vw, 280px);
+	min-height: 190px;
+	overflow: hidden;
+	border-bottom: 1px solid hsla(var(--user-hue), 58%, 70%, .17);
+
+	&::after {
+		content: "";
+		position: absolute;
+		inset: auto 0 0;
+		height: 48%;
+		background: linear-gradient(transparent, #090a0e);
+		pointer-events: none;
+	}
+}
+
+.profile_cover_image {
+	object-fit: cover;
+	object-position: center;
+	filter: saturate(.82) brightness(.58) contrast(1.08);
+	transform: scale(1.015);
+}
+
+.profile_cover_fallback {
+	position: absolute;
+	inset: 0;
+	background:
+		radial-gradient(circle at 20% 24%, hsla(var(--user-hue), 68%, 56%, .26), transparent 34%),
+		radial-gradient(circle at 82% 18%, hsla(var(--user-hue), 42%, 48%, .18), transparent 32%),
+		linear-gradient(125deg, hsl(var(--user-hue), 24%, 14%), #07090d 72%);
+
+	&::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background:
+			linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, .035) 42% 43%, transparent 43%),
+			repeating-linear-gradient(0deg, transparent 0 31px, rgba(255, 255, 255, .018) 31px 32px);
+	}
+
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: url("../images/logo.png") center / clamp(82px, 8vw, 116px) no-repeat;
+		filter: grayscale(1);
+		opacity: .09;
+	}
+}
+
+.profile_cover_overlay {
+	position: absolute;
+	inset: 0;
+	background:
+		linear-gradient(90deg, rgba(4, 5, 8, .72), rgba(5, 6, 9, .24) 52%, rgba(5, 6, 9, .5)),
+		repeating-linear-gradient(90deg, transparent 0 69px, rgba(255, 255, 255, .025) 69px 70px);
+}
+
 .container {
 	--box-gap: 16px;
 	
@@ -7,6 +107,13 @@
 	grid-gap: var(--box-gap);
 	justify-content: center;
 	padding: 32px 0 128px;
+
+	&.with_cover {
+		position: relative;
+		z-index: 3;
+		padding-top: 0;
+		margin-top: clamp(-140px, -11.5vw, -95px);
+	}
 	
 	& .section_area {
 		&.hero {
@@ -34,16 +141,27 @@
 						width: 112px;
 						border-radius: 28px;
 						
-						& img {
+						& > img {
 							height: inherit;
 							width: inherit;
 							border-radius: inherit;
+							object-fit: cover;
 						}
 
-						& img.gacha_badge {
-							object-fit: contain;
+						& .avatar_badge {
+							display: block;
+							position: absolute;
+							right: -7px;
+							bottom: -7px;
+							width: 36px;
+							height: 36px;
+							filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .8));
 							pointer-events: none;
 							z-index: 1;
+
+							& img {
+								object-fit: contain;
+							}
 						}
 					}
 					
@@ -304,6 +422,13 @@
 						& .avatar {
 							height: 92px;
 							width: 92px;
+
+							& .avatar_badge {
+								right: -5px;
+								bottom: -5px;
+								width: 30px;
+								height: 30px;
+							}
 						}
 
 						& .name_container .name {
@@ -602,22 +727,11 @@
 					display: flex;
 					min-width: 0;
 					flex-direction: column;
-					gap: 2px;
 
-					& small,
 					& strong {
 						overflow: hidden;
 						text-overflow: ellipsis;
 						white-space: nowrap;
-					}
-
-					& small {
-						color: #718094;
-						font-size: .43rem;
-						font-weight: 850;
-						letter-spacing: .07em;
-						line-height: 1;
-						text-transform: uppercase;
 					}
 
 					& strong {
@@ -677,10 +791,6 @@
 						width: 28px;
 						height: 28px;
 						font-size: .68rem;
-					}
-
-					& .social_copy small {
-						display: none;
 					}
 
 					& .social_copy strong {
@@ -2928,6 +3038,17 @@
 				}
 			}
 		}
+	}
+}
+
+@media (max-width: 480px) {
+	.profile_cover {
+		height: 210px;
+		min-height: 210px;
+	}
+
+	.container.with_cover {
+		margin-top: -105px;
 	}
 }
 

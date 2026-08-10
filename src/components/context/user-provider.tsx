@@ -14,7 +14,6 @@ export type UserInfo = {
 	username?: string,
 	country?: string,
 	badge?: number,
-	badgeExt?: "png" | "gif",
 	isLoggedIn: boolean
 };
 

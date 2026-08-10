@@ -4,6 +4,8 @@ import { useLayoutEffect } from "react";
 
 export default function NameBodyHeader({ className }: Readonly<{ className: string }>) {
 	useLayoutEffect(() => {
+		const header = document.querySelector("header");
+
 		switch (className) {
 			case "register":
 			case "sign-in":
@@ -25,12 +27,12 @@ export default function NameBodyHeader({ className }: Readonly<{ className: stri
 				break;
 		}
 		document.body.classList.add(className);
-		document.querySelector("header")!.classList.add(className);
+		header?.classList.add(className);
 		return () => {
 			document.documentElement.style.removeProperty("--user-hue");
 			document.body.classList.remove(className);
-			document.querySelector("header")!.classList.remove(className);
-		}
+			header?.classList.remove(className);
+		};
 	}, [className]);
 	return null;
 }

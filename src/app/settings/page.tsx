@@ -9,7 +9,7 @@ import ClanSettingsForm from "@/components/settings/clan-settings-form";
 import MediaSettingCard from "@/components/settings/media-setting-card";
 import ProfileSettingsForm from "@/components/settings/profile-settings-form";
 import { getOwnedClanSettings, getUserSettings } from "@/database/settings";
-import { getBadgeImageExtension } from "@/lib/badge";
+import { getBadgeImageUrl } from "@/lib/badge";
 import { profileMediaExists } from "@/lib/profile-media";
 import { getCurrentUser } from "@/lib/session";
 import styles from "@s/settings.module.css";
@@ -43,7 +43,7 @@ const profileSectionMeta: Record<SettingsSection, SectionMeta> = {
 	},
 	me: {
 		eyebrow: "PROFILE",
-		title: "Me",
+		title: "Me!",
 		description: "Write and preview the BBCode description shown on your profile.",
 		icon: "id-badge"
 	},
@@ -70,7 +70,7 @@ const clanSectionMeta: Record<Exclude<SettingsSection, "badge">, SectionMeta> = 
 	},
 	me: {
 		eyebrow: "CLAN OWNER",
-		title: "Clan Me",
+		title: "Clan Me!",
 		description: "Write and preview the BBCode description shown on your clan profile.",
 		icon: "id-badge"
 	}
@@ -150,7 +150,7 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 							       priority/>
 							{!isClanScope && settings.selectedBadge !== 0 &&
 								<Image className={styles.hero_badge}
-								       src={`/images/gacha/${settings.selectedBadge}.${getBadgeImageExtension(settings.selectedBadge)}`}
+								       src={getBadgeImageUrl(settings.selectedBadge, baseDomain)}
 								       alt=""
 								       fill
 								       sizes="88px"
@@ -218,9 +218,9 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 							<Link href={isClanScope ? "/settings?scope=clan&section=me" : "/settings?section=me"}
 							      scroll={false}
 							      data-active={activeSection === "me"}
-							      aria-current={activeSection === "me" ? "page" : undefined}>
+								      aria-current={activeSection === "me" ? "page" : undefined}>
 								<FontAwesome prefix="fad" name="id-badge"/>
-								Me
+								Me!
 							</Link>
 							{!isClanScope && settings.canManageBadges &&
 								<Link href="/settings?section=badge"

@@ -94,13 +94,14 @@ export default function ClanSettingsForm({ tag: initialTag, showPastTags: initia
 				</span>
 				<div className={styles.form_actions}>
 					<button type="button"
-					        className={styles.secondary_button}
+					        className={styles.danger_button}
 					        disabled={isPending || !hasChanges}
 					        onClick={() => {
 						        setTag(savedTag);
 						        setShowPastTags(savedShowPastTags);
 						        setStatus(null);
 					        }}>
+						<FontAwesome prefix="fas" name="rotate-left"/>
 						Reset
 					</button>
 					<button type="submit" className={styles.primary_button} disabled={isPending || !hasChanges}>

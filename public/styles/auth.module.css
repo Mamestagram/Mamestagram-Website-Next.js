@@ -383,6 +383,7 @@
 .password_field input {
 	min-height: 46px;
 	padding: 11px 14px;
+	line-height: 1.5;
 	outline: none;
 }
 

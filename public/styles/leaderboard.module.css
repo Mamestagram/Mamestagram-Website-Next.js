@@ -985,9 +985,10 @@
 				white-space: nowrap;
 
 				& .name_text {
-					display: block;
-					overflow: hidden;
-					text-overflow: ellipsis;
+					display: inline-block;
+					padding-block: 2px;
+					line-height: 1.35;
+					vertical-align: middle;
 				}
 			}
 			

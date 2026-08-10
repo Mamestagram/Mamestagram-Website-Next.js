@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import { useEffect, useId, useRef, useSyncExternalStore, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import FontAwesome from "@/components/font-awesome";
 import styles from "@s/confirmation-dialog.module.css";
@@ -10,6 +10,10 @@ type ConfirmAction = (formData: FormData) => void | Promise<void>;
 type ConfirmationHandler =
 	| { confirmAction: ConfirmAction, onConfirm?: never }
 	| { confirmAction?: never, onConfirm: () => void };
+
+const subscribeToClient = () => () => undefined;
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
 
 type ConfirmationDialogProps = Readonly<{
 	isOpen: boolean,
@@ -21,6 +25,8 @@ type ConfirmationDialogProps = Readonly<{
 	pendingLabel?: string,
 	isPending?: boolean,
 	error?: ReactNode,
+	tone?: "danger" | "success",
+	singleAction?: boolean,
 	onCancel: () => void
 } & ConfirmationHandler>;
 
@@ -34,12 +40,16 @@ export default function ConfirmationDialog({
 	pendingLabel,
 	isPending = false,
 	error,
+	tone = "danger",
+	singleAction = false,
 	onCancel,
 	confirmAction,
 	onConfirm
 }: ConfirmationDialogProps) {
+	const isClient = useSyncExternalStore(subscribeToClient, getClientSnapshot, getServerSnapshot);
 	const titleId = useId();
 	const cancelButtonRef = useRef<HTMLButtonElement>(null);
+	const confirmButtonRef = useRef<HTMLButtonElement>(null);
 	const onCancelRef = useRef(onCancel);
 
 	useEffect(() => {
@@ -56,17 +66,21 @@ export default function ConfirmationDialog({
 
 		document.body.style.overflow = "hidden";
 		document.addEventListener("keydown", closeOnEscape);
-		requestAnimationFrame(() => cancelButtonRef.current?.focus());
+		requestAnimationFrame(() => {
+			if (singleAction) confirmButtonRef.current?.focus();
+			else cancelButtonRef.current?.focus();
+		});
 		return () => {
 			document.body.style.overflow = previousOverflow;
 			document.removeEventListener("keydown", closeOnEscape);
 		};
-	}, [isOpen, isPending]);
+	}, [isOpen, isPending, singleAction]);
 
-	if (!isOpen) return null;
+	if (!isOpen || !isClient) return null;
 
 	const confirmButton = (
-		<button type={confirmAction ? "submit" : "button"}
+		<button ref={confirmButtonRef}
+		        type={confirmAction ? "submit" : "button"}
 		        className={styles.confirm}
 		        disabled={isPending}
 		        onClick={onConfirm}>
@@ -80,7 +94,8 @@ export default function ConfirmationDialog({
 			     if (event.target === event.currentTarget && !isPending) onCancel();
 		     }}>
 			<section className={styles.dialog}
-			         role="alertdialog"
+			         role={singleAction ? "dialog" : "alertdialog"}
+			         data-tone={tone}
 			         aria-modal="true"
 			         aria-labelledby={titleId}>
 				<span className={styles.icon}>
@@ -89,13 +104,14 @@ export default function ConfirmationDialog({
 				<h2 id={titleId}>{title}</h2>
 				<p>{description}</p>
 				{error && <small role="alert">{error}</small>}
-				<div className={styles.actions}>
-					<button ref={cancelButtonRef}
-					        type="button"
-					        disabled={isPending}
-					        onClick={onCancel}>
-						{cancelLabel}
-					</button>
+				<div className={styles.actions} data-single-action={singleAction}>
+					{!singleAction &&
+						<button ref={cancelButtonRef}
+						        type="button"
+						        disabled={isPending}
+						        onClick={onCancel}>
+							{cancelLabel}
+						</button>}
 					{confirmAction ? <form action={confirmAction}>{confirmButton}</form> : confirmButton}
 				</div>
 			</section>

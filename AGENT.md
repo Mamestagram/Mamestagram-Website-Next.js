@@ -16,7 +16,6 @@ Mamestagram Web
 - ESLintエラーを出さない
 - Prettierに従う
 - クエリはdatabase/queryの中に書く
-- cssのカスタムプロパティは初期値を指定する
 - なるべく他のファイルのコードと書き方を統一する
 - 内部リンクはLinkタグで外部リンクはaタグを使う
 
@@ -31,6 +30,7 @@ Mamestagram Web
 
 ### Styles
 - cssファイルはpublic/stylesの中に入れる
+- カスタムプロパティは初期値を指定する
 
 ### API
 - Route Handlersを使用

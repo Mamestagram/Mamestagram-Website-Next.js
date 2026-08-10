@@ -94,13 +94,14 @@ export default function ProfileSettingsForm({ username: initialUsername, showPas
 				</span>
 				<div className={styles.form_actions}>
 					<button type="button"
-					        className={styles.secondary_button}
+					        className={styles.danger_button}
 					        disabled={isPending || !hasChanges}
 					        onClick={() => {
 						        setUsername(savedUsername);
 						        setShowPastNames(savedShowPastNames);
 						        setStatus(null);
 					        }}>
+						<FontAwesome prefix="fas" name="rotate-left"/>
 						Reset
 					</button>
 					<button type="submit" className={styles.primary_button} disabled={isPending || !hasChanges}>

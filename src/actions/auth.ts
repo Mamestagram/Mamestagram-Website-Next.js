@@ -104,7 +104,7 @@ export const signin = async (_prevState: AuthState, formData: FormData): Promise
 		return { errors: {}, message: "Sign in is temporarily unavailable. Please try again later." };
 	}
 
-	redirect("/");
+	redirect("/?signin=success");
 }
 
 export const signout = async () => {

@@ -20,7 +20,8 @@ export type AuthUser = {
 	clanId?: number,
 	priv: number,
 	username: string,
-	passwordHash: string
+	passwordHash: string,
+	badge: number
 };
 
 type AuthUserRow = RowDataPacket & {
@@ -28,7 +29,8 @@ type AuthUserRow = RowDataPacket & {
 	clan_id: number | null,
 	priv: number,
 	name: string,
-	pw_bcrypt: string
+	pw_bcrypt: string,
+	badge_id: number | null
 };
 
 export const makeSafeName = (username: string) => username.trim().toLowerCase().replaceAll(" ", "_");
@@ -38,7 +40,8 @@ const toAuthUser = (row: AuthUserRow): AuthUser => ({
 	clanId: row.clan_id ?? undefined,
 	priv: row.priv,
 	username: row.name,
-	passwordHash: row.pw_bcrypt
+	passwordHash: row.pw_bcrypt,
+	badge: row.badge_id ?? 0
 });
 
 export const getUserByLogin = async (login: string) => {
@@ -105,7 +108,8 @@ export const createUser = async ({ username, email, password, country }: {
 			id,
 			priv: 1,
 			username,
-			passwordHash
+			passwordHash,
+			badge: 0
 		} satisfies AuthUser;
 	});
 }

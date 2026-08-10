@@ -593,7 +593,8 @@
 }
 
 .primary_button,
-.secondary_button {
+.secondary_button,
+.danger_button {
 	display: inline-flex;
 	min-height: 40px;
 	padding: 0 14px;
@@ -619,6 +620,12 @@
 	background: rgba(255, 255, 255, .04);
 }
 
+.danger_button {
+	color: #ffc3ca;
+	background: rgba(132, 24, 40, .28);
+	border-color: rgba(255, 94, 111, .3);
+}
+
 .primary_button:hover:not(:disabled),
 .primary_button:focus-visible:not(:disabled) {
 	color: #fff;
@@ -634,14 +641,28 @@
 	border-color: rgba(255, 255, 255, .18);
 }
 
+.danger_button:hover:not(:disabled),
+.danger_button:focus-visible:not(:disabled) {
+	color: #fff;
+	background-color: rgba(176, 32, 52, .5);
+	border-color: rgba(255, 112, 126, .58);
+	transform: translateY(-1px);
+}
+
 .primary_button:focus-visible,
-.secondary_button:focus-visible {
+.secondary_button:focus-visible,
+.danger_button:focus-visible {
 	outline: 2px solid hsla(var(--user-hue), 68%, 72%, .58);
 	outline-offset: 2px;
 }
 
+.danger_button:focus-visible {
+	outline-color: rgba(255, 112, 126, .72);
+}
+
 .primary_button:disabled,
-.secondary_button:disabled {
+.secondary_button:disabled,
+.danger_button:disabled {
 	cursor: not-allowed;
 	opacity: .42;
 }
@@ -1106,6 +1127,7 @@
 @media (prefers-reduced-motion: reduce) {
 	.primary_button,
 	.secondary_button,
+	.danger_button,
 	.profile_link,
 	.badge_option,
 	.scope_switch::before,
