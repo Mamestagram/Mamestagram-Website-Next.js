@@ -10,6 +10,7 @@ import MediaSettingCard from "@/components/settings/media-setting-card";
 import ProfileSettingsForm from "@/components/settings/profile-settings-form";
 import { getOwnedClanSettings, getUserSettings } from "@/database/settings";
 import { getBadgeImageUrl } from "@/lib/badge";
+import { resolveProfileBackgroundUrl, resolveProfileBannerUrl } from "@/lib/profile-banner";
 import { profileMediaExists } from "@/lib/profile-media";
 import { getCurrentUser } from "@/lib/session";
 import styles from "@s/settings.module.css";
@@ -128,6 +129,12 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 				profileMediaExists("background", ownedClan.id, "clan")
 			])
 			: Promise.resolve([false, false, false] as const)
+	]);
+	const [profileBannerUrl, profileBackgroundUrl, clanBannerUrl, clanBackgroundUrl] = await Promise.all([
+		resolveProfileBannerUrl(currentUser.id, false, baseDomain),
+		resolveProfileBackgroundUrl(currentUser.id, false, baseDomain),
+		ownedClan ? resolveProfileBannerUrl(ownedClan.id, true, baseDomain) : Promise.resolve(null),
+		ownedClan ? resolveProfileBackgroundUrl(ownedClan.id, true, baseDomain) : Promise.resolve(null)
 	]);
 	const avatarUrl = `https://a.${baseDomain}/${currentUser.id}`;
 	const clanAvatarUrl = ownedClan ? `https://clan-a.${baseDomain}/${ownedClan.id}` : "";
@@ -264,10 +271,10 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 									                  imageUrl={avatarUrl}
 									                  hasCustomImage={hasAvatar}/>
 									<MediaSettingCard type="banner"
-									                  imageUrl={`https://banner.${baseDomain}/${currentUser.id}`}
+									                  imageUrl={profileBannerUrl ?? `https://banner.${baseDomain}/${currentUser.id}`}
 									                  hasCustomImage={hasBanner}/>
 									<MediaSettingCard type="background"
-									                  imageUrl={`https://bg.${baseDomain}/${currentUser.id}`}
+									                  imageUrl={profileBackgroundUrl ?? `https://bg.${baseDomain}/${currentUser.id}`}
 									                  hasCustomImage={hasBackground}/>
 								</div>}
 							{activeSection === "me" &&
@@ -283,11 +290,11 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 									                  hasCustomImage={hasClanAvatar}
 									                  scope="clan"/>
 									<MediaSettingCard type="banner"
-									                  imageUrl={`https://clan-banner.${baseDomain}/${activeClan.id}`}
+									                  imageUrl={clanBannerUrl ?? `https://clan-banner.${baseDomain}/${activeClan.id}`}
 									                  hasCustomImage={hasClanBanner}
 									                  scope="clan"/>
 									<MediaSettingCard type="background"
-									                  imageUrl={`https://clan-bg.${baseDomain}/${activeClan.id}`}
+									                  imageUrl={clanBackgroundUrl ?? `https://clan-bg.${baseDomain}/${activeClan.id}`}
 									                  hasCustomImage={hasClanBackground}
 									                  scope="clan"/>
 								</div>}

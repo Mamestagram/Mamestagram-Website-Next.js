@@ -23,6 +23,12 @@ const getFileExtension = (file: File) => file.name.split(".").pop()?.toLowerCase
 const isGifFile = (file: File) =>
 	file.type === "image/gif" || getFileExtension(file) === "gif";
 
+const getVersionedImageUrl = (imageUrl: string) => {
+	const url = new URL(imageUrl, window.location.origin);
+	url.searchParams.set("v", Date.now().toString());
+	return imageUrl.startsWith("/") ? `${url.pathname}${url.search}` : url.toString();
+};
+
 const mediaMeta: Record<MediaType, {
 	label: string,
 	description: string,
@@ -156,7 +162,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 				if (!result.success) return;
 
 				clearSelectedFile();
-				setCurrentImageUrl(`${imageUrl}?v=${Date.now()}`);
+				setCurrentImageUrl(getVersionedImageUrl(imageUrl));
 				setIsCustomImage(true);
 				if (inputRef.current) inputRef.current.value = "";
 				router.refresh();
@@ -186,7 +192,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 				setIsResetOpen(false);
 				setIsCustomImage(false);
 				clearSelectedFile();
-				setCurrentImageUrl(`${imageUrl}?v=${Date.now()}`);
+				setCurrentImageUrl(getVersionedImageUrl(imageUrl));
 				if (inputRef.current) inputRef.current.value = "";
 				router.refresh();
 			}
@@ -210,7 +216,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 			</div>
 
 			<div className={styles.media_preview} data-media={type} data-unavailable={isImageUnavailable}>
-				{!isImageUnavailable
+				{isCustomImage && !isImageUnavailable
 					? <Image src={previewUrl || currentImageUrl}
 					         alt={`${meta.label} preview`}
 					         fill
