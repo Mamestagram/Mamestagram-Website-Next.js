@@ -70,6 +70,7 @@ export const getCurrentUser = async (): Promise<UserInfo> => {
 			clanId: user.clanId,
 			priv: user.priv,
 			username: user.username,
+			country: user.country,
 			badge: user.badge,
 			isLoggedIn: true
 		};

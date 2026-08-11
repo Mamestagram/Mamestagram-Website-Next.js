@@ -3,6 +3,7 @@ export const userByLoginQuery = `
 	       users.clan_id,
 	       users.priv,
 	       users.name,
+	       users.country,
 	       users.pw_bcrypt,
 	       market_badge_equipment.badge_id
 		FROM users
@@ -18,6 +19,7 @@ export const userByIdQuery = `
 	       users.clan_id,
 	       users.priv,
 	       users.name,
+	       users.country,
 	       users.pw_bcrypt,
 	       market_badge_equipment.badge_id
 		FROM users

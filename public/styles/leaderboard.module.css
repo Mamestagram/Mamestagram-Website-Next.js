@@ -529,18 +529,17 @@
 
 	& .leaderboard_scope_switch {
 		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-template-columns: repeat(3, minmax(0, 1fr));
 		position: absolute;
 		top: 0;
 		right: max(3%, 24px);
-		width: 214px;
+		width: 330px;
 		padding: 4px;
 		background: rgba(9, 11, 17, .88);
 		border: 1px solid var(--glass-border-dark);
 		border-radius: 15px;
 		box-shadow: var(--glass-shadow);
 		backdrop-filter: blur(14px);
-		overflow: hidden;
 		isolation: isolate;
 		z-index: 51;
 
@@ -550,7 +549,7 @@
 			top: 4px;
 			bottom: 4px;
 			left: 4px;
-			width: calc(50% - 4px);
+			width: calc(33.333% - 2.667px);
 			background: linear-gradient(145deg, hsla(var(--user-hue), 58%, 58%, .32), hsla(var(--user-hue), 45%, 42%, .18));
 			border: 1px solid hsla(var(--user-hue), 65%, 72%, .28);
 			border-radius: 11px;
@@ -559,11 +558,16 @@
 			transition: transform 260ms cubic-bezier(.22, 1, .36, 1);
 		}
 
-		&[data-scope="clans"]::before {
+		&[data-scope="country"]::before {
 			transform: translateX(100%);
 		}
 
-		& a {
+		&[data-scope="clans"]::before {
+			transform: translateX(200%);
+		}
+
+		& > a,
+		& > button {
 			display: inline-flex;
 			min-height: 42px;
 			align-items: center;
@@ -574,6 +578,7 @@
 			font-size: .72rem;
 			font-weight: 800;
 			letter-spacing: .01em;
+			white-space: nowrap;
 			transition: color 170ms, background-color 170ms;
 
 			& i { font-size: .82rem; }
@@ -594,22 +599,129 @@
 			}
 		}
 
+		& .country_ranking_menu {
+			position: absolute;
+			top: calc(100% + 10px);
+			right: 0;
+			width: min(400px, calc(100vw - 48px));
+			padding: 12px;
+			background: rgba(9, 13, 21, .98);
+			border: 1px solid hsla(var(--user-hue), 42%, 70%, .2);
+			border-radius: 16px;
+			box-shadow: 0 22px 60px rgba(0, 0, 0, .48), var(--glass-shadow);
+			backdrop-filter: blur(18px);
+			animation: leaderboard-country-menu-enter 180ms cubic-bezier(.22, 1, .36, 1) both;
+			z-index: 2;
+
+			& .country_ranking_heading {
+				display: flex;
+				padding: 3px 4px 11px;
+				align-items: baseline;
+				justify-content: space-between;
+				gap: 12px;
+
+				& strong {
+					color: #e5edf7;
+					font-size: .78rem;
+					font-weight: 800;
+				}
+
+				& small {
+					color: #7f8998;
+					font-size: .62rem;
+					font-weight: 700;
+				}
+			}
+
+			& .country_ranking_options {
+				display: grid;
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+				gap: 5px;
+				max-height: min(380px, 55vh);
+				overflow-y: auto;
+				overscroll-behavior: contain;
+				scrollbar-color: hsla(var(--user-hue), 38%, 58%, .35) transparent;
+
+				& a {
+					display: grid;
+					grid-template-columns: 22px minmax(0, 1fr) max-content;
+					min-height: 38px;
+					padding: 6px 9px;
+					align-items: center;
+					gap: 8px;
+					color: #a7b2c1;
+					background: rgba(255, 255, 255, .035);
+					border: 1px solid rgba(255, 255, 255, .055);
+					border-radius: 9px;
+					font-size: .68rem;
+					font-weight: 700;
+					transition: color 140ms, background-color 140ms, border-color 140ms;
+
+					& > i {
+						font-size: 1rem;
+					}
+
+					& > span {
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+					}
+
+					& > small {
+						color: #697587;
+						font-size: .56rem;
+						font-weight: 800;
+					}
+
+					&:hover,
+					&:focus-visible,
+					&.selected_country {
+						color: #fff;
+						background: hsla(var(--user-hue), 48%, 52%, .16);
+						border-color: hsla(var(--user-hue), 60%, 72%, .25);
+					}
+
+					&:focus-visible {
+						outline: 2px solid hsl(var(--user-hue), 62%, 68%);
+						outline-offset: -2px;
+					}
+				}
+			}
+		}
+
 		@media (max-width: 1155px) {
 			position: relative;
 			top: auto;
 			right: auto;
-			width: 214px;
+			width: 330px;
 			margin: 0 auto 12px;
 		}
 
 		@media (max-width: 480px) {
-			width: min(214px, calc(100% - 24px));
+			width: min(330px, calc(100% - 24px));
 
-			& a { min-height: 38px; }
+			& > a,
+			& > button {
+				min-height: 38px;
+				gap: 5px;
+				font-size: .66rem;
+			}
+
+			& .country_ranking_menu {
+				right: 50%;
+				width: calc(100vw - 24px);
+				transform: translateX(50%);
+
+				& .country_ranking_options {
+					grid-template-columns: 1fr;
+				}
+			}
 		}
 
 		@media (prefers-reduced-motion: reduce) {
 			&::before { transition-duration: 1ms; }
+
+			& .country_ranking_menu { animation: none; }
 		}
 	}
 	
@@ -1278,5 +1390,19 @@
 	to {
 		opacity: 0;
 		translate: -16px 0;
+	}
+}
+
+@keyframes leaderboard-country-menu-enter {
+	from {
+		opacity: 0;
+		translate: 0 -7px;
+		scale: .98;
+	}
+
+	to {
+		opacity: 1;
+		translate: 0 0;
+		scale: 1;
 	}
 }

@@ -20,6 +20,7 @@ export type AuthUser = {
 	clanId?: number,
 	priv: number,
 	username: string,
+	country: string,
 	passwordHash: string,
 	badge: number
 };
@@ -29,6 +30,7 @@ type AuthUserRow = RowDataPacket & {
 	clan_id: number | null,
 	priv: number,
 	name: string,
+	country: string,
 	pw_bcrypt: string,
 	badge_id: number | null
 };
@@ -40,6 +42,7 @@ const toAuthUser = (row: AuthUserRow): AuthUser => ({
 	clanId: row.clan_id ?? undefined,
 	priv: row.priv,
 	username: row.name,
+	country: row.country,
 	passwordHash: row.pw_bcrypt,
 	badge: row.badge_id ?? 0
 });
@@ -108,6 +111,7 @@ export const createUser = async ({ username, email, password, country }: {
 			id,
 			priv: 1,
 			username,
+			country,
 			passwordHash,
 			badge: 0
 		} satisfies AuthUser;

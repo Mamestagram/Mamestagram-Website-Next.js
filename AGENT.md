@@ -23,6 +23,7 @@ Mamestagram Web
 - Server Componentsを優先
 - Client Componentsは必要な場合のみ
 - "use client"は最小限
+- headerタグは使わない
 
 ### Components
 - コンポーネントは責務ごとに分割する
