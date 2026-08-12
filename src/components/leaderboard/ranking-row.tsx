@@ -21,7 +21,9 @@ export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 
 	return (
 		<ClickableRankingRow className={styles.ranking_row} href={profileHref}>
-			<td className={classNames(styles.rank, { [styles[`top_${listRow.rank}`]]: listRow.rank <= 3 })}>#{listRow.rank.toLocaleString()}</td>
+			<td className={classNames(styles.rank, { [styles[`top_${listRow.rank}`]]: listRow.rank <= 3 })}>
+				<span className={styles.numeric_value}>#{listRow.rank.toLocaleString()}</span>
+			</td>
 			<td className={!isClan ? styles.country : styles.avatar}>
 				{!isClan
 					? <CountryFlag code={listRow.country}/>
@@ -39,22 +41,22 @@ export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 				</Link>
 			</td>
 			<td className={classNames(styles.acc, { [styles.sorted]: sortBy === SortBy.accuracy })}>
-				{listRow.acc.toFixed(2)}<span className={styles.percent_label}>%</span>
+				<span className={styles.numeric_value}>{listRow.acc.toFixed(2)}</span><span className={styles.percent_label}>%</span>
 			</td>
 			<td className={classNames(styles.playcount, { [styles.sorted]: sortBy === SortBy.playcount })}>
-				{Math.floor(listRow.plays).toLocaleString()}
+				<span className={styles.numeric_value}>{Math.floor(listRow.plays).toLocaleString()}</span>
 			</td>
 			<td className={classNames(styles.pp, { [styles.sorted]: sortBy === SortBy.performance || sortBy === SortBy.dans })}>
-				{Math.round(listRow.pp).toLocaleString()}<span className={styles.pp_label}>pp</span>
+				<span className={styles.numeric_value}>{Math.round(listRow.pp).toLocaleString()}</span><span className={styles.pp_label}>pp</span>
 			</td>
 			{sortBy !== SortBy.dans &&
 				<>
 					<td className={classNames(styles.score, { [styles.sorted]: sortBy === SortBy.score })}>
-						{Math.round(listRow.score).toLocaleString()}
+						<span className={styles.numeric_value}>{Math.round(listRow.score).toLocaleString()}</span>
 					</td>
-					<td className={styles.ss_count}>{Math.floor(listRow.xCount).toLocaleString()}</td>
-					<td className={styles.s_count}>{Math.floor(listRow.sCount).toLocaleString()}</td>
-					<td className={styles.a_count}>{Math.floor(listRow.aCount).toLocaleString()}</td>
+					<td className={styles.ss_count}><span className={styles.numeric_value}>{Math.floor(listRow.xCount).toLocaleString()}</span></td>
+					<td className={styles.s_count}><span className={styles.numeric_value}>{Math.floor(listRow.sCount).toLocaleString()}</span></td>
+					<td className={styles.a_count}><span className={styles.numeric_value}>{Math.floor(listRow.aCount).toLocaleString()}</span></td>
 				</>
 			}
 		</ClickableRankingRow>

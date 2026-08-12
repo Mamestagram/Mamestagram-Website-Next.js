@@ -747,6 +747,7 @@
 					min-width: 0;
 					overflow: hidden;
 					color: #f3f7fb;
+					font-family: var(--font-kode-mono), sans-serif;
 					font-size: 1.32rem;
 					font-weight: 900;
 					font-variant-numeric: tabular-nums;
@@ -930,6 +931,7 @@
 					background: rgba(2, 5, 10, .3);
 					border: 1px solid rgba(255, 255, 255, .055);
 					border-radius: 0 16px 16px 0;
+					font-family: var(--font-kode-mono), sans-serif;
 					font-variant-numeric: tabular-nums;
 
 					& strong {
@@ -1268,6 +1270,7 @@
 
 						& strong {
 							color: #e4edf7;
+							font-family: var(--font-kode-mono), sans-serif;
 							font-size: .72rem;
 							font-weight: 850;
 							font-variant-numeric: tabular-nums;
@@ -1401,6 +1404,7 @@
 
 					& strong {
 						color: #f3f8fe;
+						font-family: var(--font-kode-mono), sans-serif;
 						font-size: .72rem;
 						font-weight: 850;
 						font-variant-numeric: tabular-nums;
@@ -1582,6 +1586,7 @@
 							}
 
 							& p {
+								font-family: var(--font-kode-mono), sans-serif;
 								font-size: 1.08rem;
 								font-variant-numeric: tabular-nums;
 								font-weight: 800;
@@ -1608,6 +1613,10 @@
 						}
 
 						&.grade_count_area {
+							& li h3 {
+								font-family: var(--font-space-mono), sans-serif;
+							}
+
 							& li[data-grade="xh"] h3,
 							& li[data-grade="sh"] h3 {
 								color: #d9efff;
@@ -2179,8 +2188,9 @@
 								border: 1px solid rgba(255, 255, 255, .14);
 								border-radius: 12px;
 								box-shadow: 0 6px 18px rgba(0, 0, 0, .34), inset 0 1px 0 rgba(255, 255, 255, .08);
+								font-family: var(--font-space-mono), sans-serif;
 								font-size: 1.28rem;
-								font-weight: 950;
+								font-weight: 700;
 								letter-spacing: -.035em;
 								line-height: 1;
 								text-shadow: 0 0 12px currentColor;
@@ -2355,6 +2365,11 @@
 								}
 							}
 
+							& .score_numeric_value,
+							& .pp_label {
+								font-family: var(--font-kode-mono), sans-serif;
+							}
+
 							& .weighted,
 							& .failed {
 								display: inline-flex;
@@ -2456,6 +2471,10 @@
 						--size-rate: 1.5;
 						
 						grid-template-columns: repeat(auto-fit, minmax(calc(var(--ach-img-size) * var(--size-rate)), 1fr));
+
+						& li > p {
+							font-family: var(--font-kode-mono), sans-serif;
+						}
 						
 						& li .achv_img {
 							height: calc(var(--ach-img-size) * var(--size-rate));
@@ -2700,7 +2719,7 @@
 				background: rgba(4, 7, 13, .66);
 				border: 1px solid rgba(255, 255, 255, .14);
 				border-radius: 12px;
-				font-family: "JetBrainsMono", "Inter", "Noto_Sans", sans-serif;
+				font-family: var(--font-jetbrains-mono), sans-serif;
 				font-size: .86rem;
 				line-height: 1.55;
 				outline: none;
@@ -2975,7 +2994,7 @@
 			& code,
 			& pre {
 				background-color: rgba(0, 0, 0, .3);
-				font-family: "JetBrainsMono", "Inter", "Noto_Sans", sans-serif;
+				font-family: var(--font-jetbrains-mono), sans-serif;
 				border-radius: 6px;
 			}
 			

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import FontAwesome from "@/components/font-awesome";
+import PageHero from "@/components/page-hero";
 import PatcherSidebar from "@/components/patcher/patcher-sidebar";
 import PatcherSectionHeading from "@/components/patcher/patcher-section-heading";
 import PatcherFaq from "@/components/patcher/patcher-faq";
@@ -56,20 +57,12 @@ const faqs = [
 export default function PatcherContent() {
 	return (
 		<div className={styles.page}>
-			<section className={styles.hero}>
-				<Image className={styles.hero_image}
-				       src="/images/banner/documents.jpg"
-				       alt=""
-				       draggable={false}
-				       fill
-				       sizes="100vw"
-				       priority/>
-				<div className={styles.hero_overlay}></div>
-				<div className={styles.hero_content}>
-					<h1>Patcher</h1>
-					<p>Restore essential gameplay feedback for a more complete Relax experience.</p>
-				</div>
-			</section>
+			<PageHero
+				description="Restore essential gameplay feedback for a more complete Relax experience."
+				imageSrc="/images/banner/documents.jpg"
+				title="Patcher"
+				variant="patcher"
+			/>
 
 			<div className={styles.shell}>
 				<PatcherSidebar nav={nav} version={VERSION}/>

@@ -20,12 +20,12 @@ export default function PlayerScoreValue({ i, map, scope, isDans }: {
 				<>
 					<span className={classNames(styles.recorded, { [styles.not_taken]: scoreMap.status !== BeatmapStatus.ranked && scoreMap.status !== BeatmapStatus.approved })}>
 						{(scoreMap.status !== BeatmapStatus.ranked && scoreMap.status !== BeatmapStatus.approved && "-") ||
-							<>{Math.round(scoreMap.pp).toLocaleString()}<span className={styles.pp_label}>pp</span></>}
+							<><span className={styles.score_numeric_value}>{Math.round(scoreMap.pp).toLocaleString()}</span><span className={styles.pp_label}>pp</span></>}
 					</span>
 					{!isDans && scope === ScoreScope.bestPP &&
 						<span className={styles.weighted}>
 							<span className={styles.auxiliary_label}>weighted</span>
-							{Math.round(scoreMap.pp * 0.95 ** i).toLocaleString()}<span className={styles.pp_label}>pp</span>
+							<span className={styles.score_numeric_value}>{Math.round(scoreMap.pp * 0.95 ** i).toLocaleString()}</span><span className={styles.pp_label}>pp</span>
 						</span>}
 					{scope !== ScoreScope.bestPP && scoreMap.grade === "F" &&
 						<span className={styles.failed}>Failed</span>}
@@ -36,7 +36,7 @@ export default function PlayerScoreValue({ i, map, scope, isDans }: {
 			return (
 				<span className={classNames(styles.recorded)}>
 					<FontAwesome prefix="fad" name="play"/>
-					{mostPlayedMap.plays.toLocaleString()}
+					<span className={styles.score_numeric_value}>{mostPlayedMap.plays.toLocaleString()}</span>
 				</span>
 			);
 	}

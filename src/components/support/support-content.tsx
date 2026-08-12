@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { SupportData } from "@/app/api/support/route";
 import FontAwesome from "@/components/font-awesome";
+import PageHero from "@/components/page-hero";
 import SupportSidebar from "@/components/support/support-sidebar";
 import SupportSectionHeading from "@/components/support/support-section-heading";
 import SupportFeatures from "@/components/support/support-features";
@@ -17,11 +18,12 @@ export default async function SupportContent({ locale }: Readonly<{ locale: Supp
 
 	return (
 		<div className={styles.page} lang={locale}>
-			<section className={styles.hero}>
-				<Image className={styles.hero_image} src="https://img.mamesosu.net/2" alt="" draggable={false} fill sizes="100vw" priority/>
-				<div className={styles.hero_overlay}></div>
-				<div className={styles.hero_content}><h1>{text.title}</h1><p>{text.description}</p></div>
-			</section>
+			<PageHero
+				description={text.description}
+				imageSrc="https://img.mamesosu.net/2"
+				title={text.title}
+				variant="support"
+			/>
 
 			<div className={styles.shell}>
 				<SupportSidebar locale={locale} languageLabel={text.language} nav={text.nav}/>

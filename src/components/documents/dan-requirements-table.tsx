@@ -25,13 +25,13 @@ export default function DanRequirementsTable({ dan, headers }: {
 					<tbody key={`${group[0].course}-${groupIndex}`}>{group.map((requirement, index) =>
 						<tr key={`${requirement.level ?? requirement.keys}-${index}`}>
 							{index === 0 && <td data-course="true" rowSpan={group.length}>{requirement.course}</td>}
-							{dan.mode !== OsuMode.mania && <td data-level="true">{requirement.level}</td>}
-							{dan.mode === OsuMode.mania && <td data-level="true" data-optional="true">{requirement.keys ?? "—"}</td>}
-							<td data-highlight={dan.mode !== OsuMode.taiko}>{requirement.accuracy}</td>
-							<td data-highlight={dan.mode === OsuMode.taiko}>{requirement.score}</td>
+							{dan.mode !== OsuMode.mania && <td data-level="true" data-numeric="true">{requirement.level}</td>}
+							{dan.mode === OsuMode.mania && <td data-level="true" data-numeric="true" data-optional="true">{requirement.keys ?? "—"}</td>}
+							<td data-highlight={dan.mode !== OsuMode.taiko} data-numeric="true">{requirement.accuracy}</td>
+							<td data-highlight={dan.mode === OsuMode.taiko} data-numeric="true">{requirement.score}</td>
 							<td data-highlight="true">{requirement.mod}</td>
-							<td data-highlight={dan.mode === OsuMode.std}>{requirement.misses}</td>
-							<td data-highlight={dan.mode === OsuMode.std}>{requirement.combo}</td>
+							<td data-highlight={dan.mode === OsuMode.std} data-numeric="true">{requirement.misses}</td>
+							<td data-highlight={dan.mode === OsuMode.std} data-numeric="true">{requirement.combo}</td>
 						</tr>)}</tbody>)}
 			</table>
 		</div>

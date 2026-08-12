@@ -57,7 +57,7 @@ export default async function AchievementCollection({ achievements }: Readonly<{
 							                  collected={collected}
 							                  total={total}/>
 						</Tooltip>
-						<p>{collected} / {total}</p>
+						<p>{collected}/{total}</p>
 						<p>{percentage.toFixed(2)}%</p>
 					</li>
 				);

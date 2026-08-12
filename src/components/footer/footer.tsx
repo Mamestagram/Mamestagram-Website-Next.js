@@ -18,11 +18,6 @@ export default function Footer() {
 						<li className="home">
 							<Link href="/">Home</Link>
 						</li>
-						{/*
-						<li className="beatmaps">
-							<Link href="/">Beatmaps</Link>
-						</li>
-						*/}
 						<li className="leaderboard">
 							<Link href="/leaderboard">Leaderboard</Link>
 						</li>

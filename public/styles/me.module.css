@@ -78,14 +78,14 @@
 		
 		& code {
 			background-color: #22222a;
-			font-family: "JetBrainsMono", "Inter", "Noto_Sans", sans-serif;
+			font-family: var(--font-jetbrains-mono), "Inter", "Noto_Sans", sans-serif;
 			padding: 1px 4px;
 			border-radius: 4px;
 		}
 		
 		& pre {
 			background-color: #22222a;
-			font-family: "JetBrainsMono", "Inter", "Noto_Sans", sans-serif;
+			font-family: var(--font-jetbrains-mono), "Inter", "Noto_Sans", sans-serif;
 			padding: 10px;
 			border-radius: 4px;
 			white-space: pre-wrap;
@@ -94,7 +94,7 @@
 		& form {
 			& textarea {
 				height: 500px;
-				font-family: "JetBrainsMono", "Inter", "Noto_Sans", sans-serif;
+				font-family: var(--font-jetbrains-mono), "Inter", "Noto_Sans", sans-serif;
 				font-size: 16px;
 				width: 100%;
 				outline: none;

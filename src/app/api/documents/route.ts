@@ -400,10 +400,10 @@ const copy = {
 		clanRulesTitle: "クラン機能について",
 		clanRulesBody: "当サーバーで作成できる、プレイヤーが運営するクランに関するトラブルについて、運営は一切責任を負いません。自己責任で加入・作成してください。",
 		reportTitle: "申告について",
-		reportBody: "不正行為を目撃・発見した場合は、supportにて運営へ報告してください。",
+		reportBody: "不正行為を目撃・発見した場合は、#supportにて運営へ報告してください。",
 		reportWarning: "虚偽の申告はアカウントの制限対象になります。",
 		appealTitle: "異議申し立てについて",
-		appealBody: "運営の対応に異議がある場合は、supportにて運営へ報告してください。",
+		appealBody: "運営の対応に異議がある場合は、#supportにて運営へ報告してください。",
 		connectLead: "Mamestagram専用のosu!ショートカットを作り、devserverオプションを追加します。Bancho用のショートカットはそのまま併用できます。",
 		connectSteps: [
 			"osu!が保存されているフォルダーを開きます。",

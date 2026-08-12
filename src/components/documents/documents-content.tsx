@@ -1,6 +1,7 @@
 import Image from "next/image";
 import FontAwesome from "@/components/font-awesome";
 import ModeIcon from "@/components/mode-icon";
+import PageHero from "@/components/page-hero";
 import DocumentsSidebar from "@/components/documents/documents-sidebar";
 import ConnectGuide from "@/components/documents/connect-guide";
 import FaqList from "@/components/documents/faq-list";
@@ -20,20 +21,12 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 
 	return (
 		<div className={styles.page} lang={locale}>
-			<section className={styles.hero}>
-				<Image className={styles.hero_image}
-				       src="/images/banner/documents.jpg"
-				       alt=""
-				       draggable={false}
-				       fill
-				       sizes="100vw"
-				       priority/>
-				<div className={styles.hero_overlay}></div>
-				<div className={styles.hero_content}>
-					<h1>{text.title}</h1>
-					<p>{text.description}</p>
-				</div>
-			</section>
+			<PageHero
+				description={text.description}
+				imageSrc="/images/banner/documents.jpg"
+				title={text.title}
+				variant="documents"
+			/>
 
 			<div className={styles.shell}>
 				<DocumentsSidebar locale={locale} languageLabel={text.language} nav={text.nav}/>

@@ -79,6 +79,7 @@ export default function AboutMeEditor({
 	const [renderedHtml, setRenderedHtml] = useState(initialHtml);
 	const [previewHtml, setPreviewHtml] = useState("");
 	const [status, setStatus] = useState<{ success: boolean, message: string } | null>(null);
+	const hasChanges = content !== savedContent;
 
 	const insertBBCode = (open: string, close: string, placeholder: string) => {
 		const textarea = textareaRef.current;
@@ -142,7 +143,7 @@ export default function AboutMeEditor({
 		if (!alwaysEditing) setIsEditing(false);
 	};
 	const cancelEditing = () => {
-		if (content !== savedContent) {
+		if (hasChanges) {
 			setIsCancelConfirmOpen(true);
 			return;
 		}
@@ -257,7 +258,7 @@ export default function AboutMeEditor({
 						<div className={styles.editor_actions}>
 							<button type="button"
 							        onClick={cancelEditing}
-							        disabled={isPending}>
+							        disabled={isPending || (alwaysEditing && !hasChanges)}>
 								Cancel
 							</button>
 							<button className={styles.save_about_me}

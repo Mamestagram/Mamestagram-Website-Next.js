@@ -36,7 +36,7 @@ html {
 
 body {
 	background-color: #000;
-	font-family: "Inter", "Noto_Sans", sans-serif;
+	font-family: var(--font-share-tech-mono), sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	color: #fdfdfd;

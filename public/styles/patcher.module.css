@@ -14,70 +14,6 @@
 	}
 }
 
-.hero {
-	position: relative;
-	height: clamp(190px, 23vw, 280px);
-	min-height: 190px;
-	overflow: hidden;
-	border-bottom: 1px solid rgba(235, 199, 101, .17);
-
-	&::after {
-		content: "";
-		position: absolute;
-		inset: auto 0 0;
-		height: 42%;
-		background: linear-gradient(transparent, #090a0e);
-		pointer-events: none;
-	}
-}
-
-.hero_image {
-	object-fit: cover;
-	object-position: center 47%;
-	filter: saturate(.72) brightness(.46) contrast(1.1);
-	transform: scale(1.015);
-}
-
-.hero_overlay {
-	position: absolute;
-	inset: 0;
-	background:
-		linear-gradient(90deg, rgba(4, 5, 8, .93) 0%, rgba(5, 6, 9, .64) 47%, rgba(5, 6, 9, .2) 100%),
-		repeating-linear-gradient(90deg, transparent 0 69px, rgba(255, 255, 255, .025) 69px 70px);
-}
-
-.hero_content {
-	display: flex;
-	position: relative;
-	z-index: 2;
-	width: min(1380px, 94vw);
-	height: 100%;
-	margin: 0 auto;
-	padding-bottom: clamp(48px, 6vw, 68px);
-	justify-content: flex-end;
-	flex-direction: column;
-
-	& h1 {
-		max-width: 720px;
-		color: #fff;
-		font-size: clamp(2rem, 4vw, 3.6rem);
-		font-weight: 900;
-		letter-spacing: -.055em;
-		line-height: .98;
-		white-space: nowrap;
-	}
-
-	& p {
-		max-width: none;
-		margin-top: 20px;
-		padding-left: 8px;
-		color: #aeb7c4;
-		font-size: clamp(.85rem, 1.35vw, 1.03rem);
-		line-height: 1.7;
-		white-space: nowrap;
-	}
-}
-
 .shell {
 	display: grid;
 	grid-template-columns: 230px minmax(0, 1120px);
@@ -436,7 +372,7 @@
 	& h3 {
 		margin: 5px 0 6px;
 		color: #f1f2f4;
-		font-family: "JetBrainsMono", monospace;
+		font-family: var(--font-jetbrains-mono), sans-serif;
 		font-size: 1rem;
 		font-weight: 750;
 	}
@@ -676,7 +612,6 @@
 }
 
 @media (max-width: 760px) {
-	.hero_overlay { background: linear-gradient(90deg, rgba(4, 5, 8, .9), rgba(5, 6, 9, .46)); }
 	.shell { width: 94vw; margin-top: -22px; }
 	.patcher_section { padding: 20px 16px; border-radius: 17px; }
 	.summary_grid,
@@ -689,12 +624,6 @@
 }
 
 @media (max-width: 480px) {
-	.hero { height: 210px; min-height: 210px; }
-	.hero_content {
-		& h1 { font-size: 2rem; }
-		& p { max-width: 94vw; font-size: .76rem; line-height: 1.55; white-space: normal; }
-	}
-
 	.sidebar { top: 59px; }
 	.sidebar_meta { display: none; }
 

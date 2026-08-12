@@ -1,65 +1,5 @@
-.hero {
-	position: relative;
-	height: clamp(190px, 23vw, 280px);
-	min-height: 190px;
-	overflow: hidden;
-	border-bottom: 1px solid hsla(var(--user-hue), 58%, 70%, .17);
-
-	&::after {
-		content: "";
-		position: absolute;
-		inset: auto 0 0;
-		height: 42%;
-		background: linear-gradient(transparent, #090a0e);
-		pointer-events: none;
-	}
-}
-
-.hero_image {
-	object-fit: cover;
-	object-position: center 48%;
-	filter: saturate(.78) brightness(.54) contrast(1.08);
-	transform: scale(1.015);
-}
-
-.hero_overlay {
-	position: absolute;
-	inset: 0;
-	background:
-		linear-gradient(90deg, rgba(4, 5, 8, .93) 0%, rgba(5, 6, 9, .64) 47%, rgba(5, 6, 9, .2) 100%),
-		repeating-linear-gradient(90deg, transparent 0 69px, rgba(255, 255, 255, .025) 69px 70px);
-}
-
-.hero_content {
-	display: flex;
-	position: relative;
-	z-index: 2;
-	width: min(1380px, 94vw);
-	height: 100%;
-	margin: 0 auto;
-	padding-bottom: clamp(48px, 6vw, 68px);
-	justify-content: flex-end;
-	flex-direction: column;
-
-	& h1 {
-		max-width: 720px;
-		color: #fff;
-		font-size: clamp(2rem, 4vw, 3.6rem);
-		font-weight: 900;
-		letter-spacing: -.055em;
-		line-height: .98;
-		white-space: nowrap;
-	}
-
-	& > p {
-		max-width: none;
-		margin-top: 20px;
-		padding-left: 8px;
-		color: #aeb7c4;
-		font-size: clamp(.85rem, 1.35vw, 1.03rem);
-		line-height: 1.7;
-		white-space: nowrap;
-	}
+.numeric_value {
+	font-family: var(--font-kode-mono), sans-serif;
 }
 
 .container {
@@ -918,7 +858,7 @@
 		padding: 40px;
 		border: 1px solid var(--glass-border-dark);
 		border-radius: 24px;
-		margin: 40px calc(10% + 8px) 40px 10%;
+		margin: 40px calc(10% + 8px) 120px 10%;
 		box-shadow: var(--glass-shadow);
 		overflow: auto;
 		
@@ -999,26 +939,27 @@
 					}
 					
 					&.rank {
-						font-size: 1.25rem;
+						color: #8d9bab;
+						font-size: 1.125rem;
 						font-weight: 500;
 						
 						&.top_1 {
 							color: var(--rank-1);
-							font-size: 1.5rem;
+							font-size: 1.375rem;
 							font-weight: 800;
 							text-shadow: var(--rank-1-shadow);
 						}
 						
 						&.top_2 {
 							color: var(--rank-2);
-							font-size: 1.375rem;
+							font-size: 1.25rem;
 							font-weight: 800;
 							text-shadow: var(--rank-2-shadow);
 						}
 						
 						&.top_3 {
 							color: var(--rank-3);
-							font-size: 1.375rem;
+							font-size: 1.25rem;
 							font-weight: 800;
 							text-shadow: var(--rank-3-shadow);
 						}
@@ -1150,17 +1091,6 @@
 	}
 }
 
-@media (max-width: 480px) {
-	.hero {
-		height: 210px;
-		min-height: 210px;
-	}
-
-	.hero_content {
-		& h1 { font-size: 2rem; }
-		& > p { font-size: .76rem; line-height: 1.55; }
-	}
-}
 
 .ranking_list_loading {
 	min-width: 0;

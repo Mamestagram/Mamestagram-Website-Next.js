@@ -267,20 +267,26 @@ function FeaturedScoreCard({ score, rank, mode, mapMaxCombo, personal = false }:
 				<Link href={`/profile/${score.userId}/${mode}`}>{score.name}</Link>
 				<span><CountryFlag code={score.country} escapeOverflow/> achieved {formatRelativeTime(score.playTime)} ago</span>
 			</span>
-			<span className={styles.top_metric}><small>Total score</small><strong>{score.score.toLocaleString()}</strong></span>
+			<span className={styles.top_metric}>
+				<small>Total score</small>
+				<strong><span className={styles.top_metric_value}>{score.score.toLocaleString()}</span></strong>
+			</span>
 			<span className={styles.top_metric}>
 				<small>Accuracy</small>
 				<strong className={classNames({ [styles.perfect_value]: score.accuracy === 100 })}>
-					{score.accuracy.toFixed(2)}%
+					<span className={styles.top_metric_value}>{score.accuracy.toFixed(2)}%</span>
 				</strong>
 			</span>
 			<span className={styles.top_metric}>
 				<small>Max combo</small>
 				<strong className={classNames({ [styles.perfect_value]: score.maxCombo === mapMaxCombo })}>
-					{score.maxCombo.toLocaleString()}x
+					<span className={styles.top_metric_value}>{score.maxCombo.toLocaleString()}x</span>
 				</strong>
 			</span>
-			<span className={classNames(styles.top_metric, styles.top_pp)}><small>Performance</small><strong>{Math.round(score.pp).toLocaleString()}<small>pp</small></strong></span>
+			<span className={classNames(styles.top_metric, styles.top_pp)}>
+				<small>Performance</small>
+				<strong><span className={styles.top_metric_value}>{Math.round(score.pp).toLocaleString()}<small>pp</small></span></strong>
+			</span>
 			<ModsList mods={score.mods}/>
 		</div>
 	);
@@ -490,8 +496,8 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 											{score.grade.replace(/H$/, "")}
 										</span>
 									</td>
-									<td className={styles.score_cell}>{score.score.toLocaleString()}</td>
-									<td className={classNames(styles.accuracy_cell, {
+									<td className={classNames(styles.score_cell, styles.score_data_cell)}>{score.score.toLocaleString()}</td>
+									<td className={classNames(styles.accuracy_cell, styles.score_data_cell, {
 										[styles.perfect_value]: score.accuracy === 100
 									})}>{score.accuracy.toFixed(2)}%</td>
 									<td className={styles.player_cell}>
@@ -500,12 +506,12 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 											<Link href={`/profile/${score.userId}/${selectedScoreMode.route}`}>{score.name}</Link>
 										</span>
 									</td>
-									<td className={classNames({
+									<td className={classNames(styles.score_data_cell, {
 										[styles.perfect_value]: score.maxCombo === map.maxCombo
 									})}>{score.maxCombo.toLocaleString()}x</td>
-									{hitColumns.map(({ label, getValue }) => <td key={label}>{getValue(score)}</td>)}
-									<td className={styles.pp_cell}>{Math.round(score.pp).toLocaleString()}<small>pp</small></td>
-									<td><time dateTime={score.playTime.toISOString()} title={score.playTime.toLocaleString("en-US")}>{formatRelativeTime(score.playTime)}</time></td>
+									{hitColumns.map(({ label, getValue }) => <td className={styles.score_data_cell} key={label}>{getValue(score)}</td>)}
+									<td className={classNames(styles.pp_cell, styles.score_data_cell)}>{Math.round(score.pp).toLocaleString()}<small>pp</small></td>
+									<td className={styles.score_data_cell}><time dateTime={score.playTime.toISOString()} title={score.playTime.toLocaleString("en-US")}>{formatRelativeTime(score.playTime)}</time></td>
 									<td className={styles.mods_cell}><ModsList mods={score.mods}/></td>
 								</tr>)}
 						</tbody>
