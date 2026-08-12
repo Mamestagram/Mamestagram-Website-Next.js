@@ -70,7 +70,7 @@ export default function SectionSidebar({
 	};
 
 	return (
-		<aside className={className}>
+		<aside className={className} data-page-enter="box">
 			{header}
 			{meta &&
 				<div className={meta.className}>

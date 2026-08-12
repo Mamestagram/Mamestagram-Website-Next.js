@@ -17,7 +17,7 @@ export default function AboutMe({ bbCode, canEdit = false, profileId, isClan, mo
 	const hasContent = html.trim().length > 0;
 
 	return (
-		<div className={classNames(styles.section_box, styles.about_me)}>
+		<div className={classNames(styles.section_box, styles.about_me)} data-page-enter="box">
 			{canEdit ? (
 				<AboutMeEditor initialBBCode={bbCode ?? ""}
 				               initialHtml={html}

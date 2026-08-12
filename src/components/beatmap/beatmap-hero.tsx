@@ -151,7 +151,7 @@ export default async function BeatmapHero({ map, difficulties }: Readonly<{
 							</a>}
 					</div>
 				</div>
-				<aside className={styles.hero_sidebar}>
+				<aside className={styles.hero_sidebar} data-page-enter="box">
 					<div className={styles.difficulty_header}>
 						<span>
 							<FontAwesome prefix="fad" name="chart-simple"/>

@@ -105,7 +105,7 @@ export default async function Profile({ params, searchParams }: {
 									             canManage={canManageProfile}/>
 								</Suspense>}
 							</UserInfo>
-							<div className={classNames(styles.section_box, styles.statistics)}>
+							<div className={classNames(styles.section_box, styles.statistics)} data-page-enter="box">
 								<Suspense fallback={<StatisticsLoading/>}>
 									<Statistics id={id} mode={mode} isClan={isClan} isDans={isDans}/>
 								</Suspense>
@@ -118,22 +118,22 @@ export default async function Profile({ params, searchParams }: {
 						         mode={mode_name}/>
 						<div className={classNames(styles.section_area, styles.map_scores, { [styles.clan_map_scores]: isClan })}>
 							{!isClan && <div className={styles.player_scores}>
-								<div className={classNames(styles.section_box, styles.list_container)}>
+								<div className={classNames(styles.section_box, styles.list_container)} data-page-enter="box">
 									<Suspense fallback={<PlayerScoresLoading label="Best Performance"/>}>
 										<PlayerScores scope={ScoreScope.bestPP} id={id} mode={mode} isDans={isDans}/>
 									</Suspense>
 								</div>
-								<div className={classNames(styles.section_box, styles.list_container)}>
+								<div className={classNames(styles.section_box, styles.list_container)} data-page-enter="box">
 									<Suspense fallback={<PlayerScoresLoading label="First Place Ranks"/>}>
 										<PlayerScores scope={ScoreScope.firstPlace} id={id} mode={mode} isDans={isDans}/>
 									</Suspense>
 								</div>
-								<div className={classNames(styles.section_box, styles.list_container)}>
+								<div className={classNames(styles.section_box, styles.list_container)} data-page-enter="box">
 									<Suspense fallback={<PlayerScoresLoading label="Most Played Maps" hasGrade={false}/>}>
 										<PlayerScores scope={ScoreScope.mostPlayed} id={id} mode={mode} isDans={isDans}/>
 									</Suspense>
 								</div>
-								<div className={classNames(styles.section_box, styles.list_container)}>
+								<div className={classNames(styles.section_box, styles.list_container)} data-page-enter="box">
 									<Suspense fallback={<PlayerScoresLoading label="Recent Played Maps"/>}>
 										<PlayerScores scope={ScoreScope.recentPlayed} id={id} mode={mode} isDans={isDans}/>
 									</Suspense>

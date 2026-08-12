@@ -68,16 +68,16 @@ export default function PatcherContent() {
 				<PatcherSidebar nav={nav} version={VERSION}/>
 
 				<article className={styles.content}>
-					<section id="overview" className={styles.patcher_section}>
+					<section id="overview" className={styles.patcher_section} data-page-enter="section">
 						<PatcherSectionHeading icon="sparkles" title="Overview"/>
-						<div className={styles.lead_card}>
+						<div className={styles.lead_card} data-page-enter="box">
 							<span className={styles.lead_badge}><FontAwesome prefix="fab" name="windows"/> Windows utility</span>
 							<h2>Mamestagram Patcher</h2>
 							<p>A lightweight launcher for Relax play that brings back core gameplay feedback without requiring manual changes to your osu! client.</p>
 						</div>
 						<div className={styles.summary_grid}>
 							{summaries.map(([icon, title, body]) =>
-								<article key={title} className={styles.summary_card}>
+								<article key={title} className={styles.summary_card} data-page-enter="box">
 									<i><FontAwesome prefix="fad" name={icon}/></i>
 									<h3>{title}</h3>
 									<p>{body}</p>
@@ -85,12 +85,12 @@ export default function PatcherContent() {
 						</div>
 					</section>
 
-					<section id="features" className={styles.patcher_section}>
+					<section id="features" className={styles.patcher_section} data-page-enter="section">
 						<PatcherSectionHeading icon="wand-magic-sparkles" title="Features"/>
 						<p className={styles.section_lead}>Bring familiar visual feedback back into Relax sessions while keeping the normal osu! workflow.</p>
 						<div className={styles.feature_grid}>
 							{features.map((feature) =>
-								<article key={feature.title} className={styles.feature_card}>
+								<article key={feature.title} className={styles.feature_card} data-page-enter="box">
 									<div className={styles.feature_copy}>
 										<i><FontAwesome prefix="fad" name={feature.icon}/></i>
 										<span><h3>{feature.title}</h3><p>{feature.body}</p></span>
@@ -107,9 +107,9 @@ export default function PatcherContent() {
 						</div>
 					</section>
 
-					<section id="download" className={styles.patcher_section}>
+					<section id="download" className={styles.patcher_section} data-page-enter="section">
 						<PatcherSectionHeading icon="download" title="Download"/>
-						<div className={styles.download_panel}>
+						<div className={styles.download_panel} data-page-enter="box">
 							<div className={styles.download_icon}><FontAwesome prefix="fad" name="file-arrow-down"/></div>
 							<div className={styles.download_copy}>
 								<span>Latest release · {VERSION}</span>
@@ -128,11 +128,11 @@ export default function PatcherContent() {
 						</div>
 					</section>
 
-					<section id="how-to-use" className={styles.patcher_section}>
+					<section id="how-to-use" className={styles.patcher_section} data-page-enter="section">
 						<PatcherSectionHeading icon="list-check" title="How to use"/>
 						<ol className={styles.steps}>
 							{steps.map(([icon, title, body], index) =>
-								<li key={title}>
+								<li key={title} data-page-enter="box">
 									<span className={styles.step_number}>{String(index + 1).padStart(2, "0")}</span>
 									<i><FontAwesome prefix="fad" name={icon}/></i>
 									<div><h3>{title}</h3><p>{body}</p></div>
@@ -140,7 +140,7 @@ export default function PatcherContent() {
 						</ol>
 					</section>
 
-					<section id="faq" className={styles.patcher_section}>
+					<section id="faq" className={styles.patcher_section} data-page-enter="section">
 						<PatcherSectionHeading icon="circle-question" title="FAQ"/>
 						<PatcherFaq items={faqs}/>
 					</section>

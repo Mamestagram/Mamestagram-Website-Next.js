@@ -32,7 +32,7 @@ export default function FaqList({ items, idPrefix, classNames }: Readonly<{
 				const isOpen = openItems.has(index);
 				const answerId = `${idPrefix}-${index}`;
 				return (
-					<div key={question} className={classNames.item} data-open={isOpen}>
+					<div key={question} className={classNames.item} data-open={isOpen} data-page-enter="box">
 						<button type="button"
 						        className={classNames.question}
 						        aria-expanded={isOpen}

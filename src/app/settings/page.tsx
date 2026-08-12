@@ -179,7 +179,7 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 				</section>
 
 				<div className={styles.layout}>
-					<aside className={styles.sidebar} aria-label="Settings sections">
+					<aside className={styles.sidebar} data-page-enter="box" aria-label="Settings sections">
 						<div className={styles.sidebar_heading}>
 							<FontAwesome prefix="fad" name="sliders"/>
 							<span>
@@ -254,7 +254,7 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 					</aside>
 
 					<div className={styles.sections}>
-						<section className={styles.section_card}>
+						<section className={styles.section_card} data-page-enter="box">
 							<div className={styles.section_heading}>
 								<span><FontAwesome prefix="fad" name={activeMeta.icon}/></span>
 								<div>

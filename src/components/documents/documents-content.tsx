@@ -32,9 +32,9 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 				<DocumentsSidebar locale={locale} languageLabel={text.language} nav={text.nav}/>
 
 				<article className={styles.content}>
-					<section id="introduction" className={styles.document_section}>
+					<section id="introduction" className={styles.document_section} data-page-enter="section">
 						<SectionHeading icon="sparkles" title={text.nav.introduction}/>
-						<div className={styles.lead_card}>
+						<div className={styles.lead_card} data-page-enter="box">
 							<h2>{text.introTitle}</h2>
 							<p>{text.introLead}</p>
 							<p>{text.introBody}</p>
@@ -46,7 +46,7 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 						<h3 className={styles.subheading}>{text.featuresTitle}</h3>
 						<div className={styles.overview_grid}>
 							{text.features.map((feature) =>
-								<article key={feature.title} className={styles.overview_card}>
+								<article key={feature.title} className={styles.overview_card} data-page-enter="box">
 									<i><FontAwesome prefix="fad" name={feature.icon}/></i>
 									<span>
 										<strong>{feature.title}</strong>
@@ -59,6 +59,7 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 							{text.communityFeatures.map((feature, index) =>
 								<a key={feature.title}
 								   className={styles.feature_card}
+								   data-page-enter="box"
 								   href={links.featureLinks[index]}
 								   target="_blank"
 								   rel="noopener noreferrer">
@@ -78,14 +79,14 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 						</div>
 					</section>
 
-					<section id="rules" className={styles.document_section}>
+					<section id="rules" className={styles.document_section} data-page-enter="section">
 						<SectionHeading icon="shield-check" title={text.nav.rules}/>
 						<p className={`${styles.section_lead} ${styles.rules_lead}`}>{text.rulesLead}</p>
 						<div className={styles.rule_grid}>
 							<RuleCard icon="messages" title={text.discordRulesTitle} rules={text.discordRules}/>
 							<RuleCard icon="gamepad-modern" title={text.serverRulesTitle} rules={text.serverRules}/>
 						</div>
-						<div className={styles.clan_notice}>
+						<div className={styles.clan_notice} data-page-enter="box">
 							<FontAwesome prefix="fad" name="people-roof"/>
 							<span><strong>{text.clanRulesTitle}</strong><p>{text.clanRulesBody}</p></span>
 						</div>
@@ -93,18 +94,18 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 						<SupportNotice icon="envelope-open-text" title={text.appealTitle} body={text.appealBody} href={links.ticket}/>
 					</section>
 
-					<section id="connect" className={styles.document_section}>
+					<section id="connect" className={styles.document_section} data-page-enter="section">
 						<SectionHeading icon="plug-circle-bolt" title={text.nav.connect}/>
 						<p className={styles.section_lead}>{text.connectLead}</p>
 						<ConnectGuide text={text} images={connectImages[locale]} launchOption={links.launchOption}/>
 					</section>
 
-					<section id="commands" className={styles.document_section}>
+					<section id="commands" className={styles.document_section} data-page-enter="section">
 						<SectionHeading icon="terminal" title={text.nav.commands}/>
 						<p className={styles.section_lead}>{text.commandsLead}</p>
 						<div className={styles.command_tips}>
 							{text.commandTips.map((tip) =>
-								<article key={tip.title}>
+								<article key={tip.title} data-page-enter="box">
 									<i><FontAwesome prefix="fad" name={tip.icon}/></i>
 									<span><strong>{tip.title}</strong><p>{tip.body}</p></span>
 								</article>)}
@@ -116,7 +117,7 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 									<p>{category.description[locale]}</p>
 									<div className={styles.command_grid}>
 										{category.items.map((item) =>
-											<article key={item.command} className={styles.command_item}>
+											<article key={item.command} className={styles.command_item} data-page-enter="box">
 												<code>{item.command}</code>
 												<p>{item.description[locale]}</p>
 											</article>)}
@@ -128,7 +129,7 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 						</a>
 					</section>
 
-					<section id="dans" className={styles.document_section}>
+					<section id="dans" className={styles.document_section} data-page-enter="section">
 						<SectionHeading icon="medal" title={text.nav.dans}/>
 						<p className={styles.section_lead}>{text.dansLead}</p>
 						<div className={styles.dan_actions}>
@@ -141,7 +142,7 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 						</div>
 						<div className={styles.dan_grid}>
 							{danModes.map((dan) =>
-								<article key={dan.mode} className={styles.dan_card}>
+								<article key={dan.mode} className={styles.dan_card} data-page-enter="box">
 									<div className={styles.dan_card_header}>
 										<ModeIcon mode={dan.mode}/>
 										<span><h3>{dan.name}</h3></span>
@@ -154,7 +155,7 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 						</div>
 					</section>
 
-					<section id="faq" className={styles.document_section}>
+					<section id="faq" className={styles.document_section} data-page-enter="section">
 						<SectionHeading icon="circle-question" title={text.nav.faq}/>
 						<p className={styles.section_lead}>{text.faqLead}</p>
 						<FaqList faqs={text.faqs}/>

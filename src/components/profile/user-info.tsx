@@ -112,7 +112,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 	});
 
 	return (
-		<div className={classNames(styles.section_box, styles.user_info)}>
+		<div className={classNames(styles.section_box, styles.user_info)} data-page-enter="box">
 			<div className={styles.top}>
 				<span className={styles.avatar}>
 					<Image src={`https://${avatarSubdomain}.${baseDomain}/${id}`}

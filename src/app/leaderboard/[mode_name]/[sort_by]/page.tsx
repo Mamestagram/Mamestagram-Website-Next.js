@@ -47,7 +47,7 @@ export default async function Leaderboard({ params, searchParams }: {
 		return (
 			<>
 				<LeaderboardHero/>
-				<div className={styles.container}>
+				<div className={styles.container} data-page-enter="box">
 					<LeaderboardScopeSwitch mode={mode}
 						                        sortBy={sortBy}
 						                        countries={countryCodes}

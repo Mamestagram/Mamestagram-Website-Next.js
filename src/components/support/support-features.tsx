@@ -80,7 +80,7 @@ export default function SupportFeatures({ features, labels }: {
 						? feature.supporter
 						: feature.free ?? { body: labels.unavailable };
 					return (
-						<article key={feature.title} className={styles.feature_card} data-supporter={displaySupporter}>
+						<article key={feature.title} className={styles.feature_card} data-supporter={displaySupporter} data-page-enter="box">
 							<div className={styles.feature_header}>
 								<span>{String(index + 1).padStart(2, "0")}</span>
 								<i><FontAwesome prefix="fad" name={feature.icon}/></i>

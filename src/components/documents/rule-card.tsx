@@ -7,7 +7,7 @@ export default function RuleCard({ icon, title, rules }: {
 	rules: readonly string[]
 }) {
 	return (
-		<article className={styles.rule_card}>
+		<article className={styles.rule_card} data-page-enter="box">
 			<div><i><FontAwesome prefix="fad" name={icon}/></i><h3>{title}</h3></div>
 			<ol>{rules.map((rule, index) => <li key={rule}><span>{index + 1}</span><p>{rule}</p></li>)}</ol>
 		</article>

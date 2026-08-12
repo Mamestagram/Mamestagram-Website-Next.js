@@ -9,7 +9,7 @@ export default function SupportNotice({ icon, title, body, emphasis, href }: {
 	href: string
 }) {
 	return (
-		<div className={styles.notice}>
+		<div className={styles.notice} data-page-enter="box">
 			<FontAwesome prefix="fad" name={icon}/>
 			<span>
 				<strong>{title}</strong>

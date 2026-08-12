@@ -398,7 +398,7 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 
 	return (
 		<div className={styles.container}>
-			<section className={classNames(styles.card, styles.ranking)}>
+			<section className={classNames(styles.card, styles.ranking)} data-page-enter="box">
 				<div className={styles.ranking_header}>
 					<span className={styles.section_heading}>
 						<FontAwesome prefix="fad" name="trophy"/>

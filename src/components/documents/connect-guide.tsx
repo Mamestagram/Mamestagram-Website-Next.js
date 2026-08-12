@@ -30,7 +30,7 @@ export default function ConnectGuide({ text, images, launchOption }: {
 
 	return (
 		<>
-			<button type="button" className={styles.command_box} onClick={copyLaunchOption} aria-label={`${text.copy}: ${launchOption}`}>
+			<button type="button" className={styles.command_box} data-page-enter="box" onClick={copyLaunchOption} aria-label={`${text.copy}: ${launchOption}`}>
 				<span><small>{text.copyCommand}</small><code>{launchOption}</code></span>
 				<span className={styles.copy_status} data-copied={copied}>
 					<FontAwesome prefix="fad" name={copied ? "check" : "copy"}/>{copied ? text.copied : text.copy}
@@ -38,7 +38,7 @@ export default function ConnectGuide({ text, images, launchOption }: {
 			</button>
 			<ol className={styles.steps}>
 				{text.connectSteps.map((step, index) =>
-					<li key={step}>
+					<li key={step} data-page-enter="box">
 						<span className={styles.step_number}>{String(index + 1).padStart(2, "0")}</span>
 						<div className={styles.step_body}>
 							<p>{index === 5
@@ -52,7 +52,7 @@ export default function ConnectGuide({ text, images, launchOption }: {
 						</div>
 					</li>)}
 			</ol>
-			<div className={styles.success_message}>
+			<div className={styles.success_message} data-page-enter="box">
 				<FontAwesome prefix="fad" name="circle-check"/>
 				<strong>{text.connected}</strong>
 			</div>

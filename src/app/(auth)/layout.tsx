@@ -17,7 +17,7 @@ export default function AuthLayout({ children }: Readonly<{ children: ReactNode 
 				       draggable={false}/>
 			</div>
 			<div className={styles.glow} aria-hidden="true"/>
-			<section className={styles.card}>
+			<section className={styles.card} data-page-enter="box">
 				<div className={styles.visual} aria-hidden="true">
 					<Image className={styles.visual_image}
 					       src={authImage}
