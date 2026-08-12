@@ -62,6 +62,7 @@ export default function LeaderboardScopeSwitch({ mode, sortBy, countries, countr
 		<nav ref={switchRef}
 		     className={styles.leaderboard_scope_switch}
 		     data-scope={selectedScope}
+		     data-page-enter="box"
 		     aria-label="Leaderboard type">
 			<Link href={basePath}
 			      aria-current={selectedScope === "global" ? "page" : undefined}

@@ -2,7 +2,7 @@ import styles from "@s/leaderboard.module.css";
 
 export default function RankingListLoading() {
 	return (
-		<div className={styles.ranking_list_loading} role="status" aria-label="Loading leaderboard rankings">
+		<div className={styles.ranking_list_loading} data-page-enter="box" role="status" aria-label="Loading leaderboard rankings">
 			<div className={styles.ranking_pages_loading} aria-hidden="true">
 				{Array.from({ length: 7 }, (_, index) => <i key={index}/>) }
 			</div>

@@ -24,7 +24,7 @@ export default function RankingSortSwitch({ mode, sortBy, country, isClan }: Rea
 	const queryString = query.length > 0 ? `?${query.join("&")}` : "";
 
 	return (
-		<nav className={styles.ranking_sort_switch} aria-label="Ranking category">
+		<nav className={styles.ranking_sort_switch} data-page-enter="box" aria-label="Ranking category">
 			<div>
 				{sortOptions.map((option) => {
 					const isSelected = sortBy === option.value ||

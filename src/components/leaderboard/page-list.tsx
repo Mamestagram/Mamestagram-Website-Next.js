@@ -173,7 +173,8 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 
 	return (
 		<div ref={pageWrapperRef}
-		     className={classNames(styles.page_wrapper, { [styles.over_ranking]: isOverRanking })}>
+		     className={classNames(styles.page_wrapper, { [styles.over_ranking]: isOverRanking })}
+		     data-page-enter="box">
 			{currentPage > 1 ?
 				<Link href={`/leaderboard/${mode}/${sortBy}?page=${currentPage - 1}${queryStr}`}
 				      aria-label="previous page">
