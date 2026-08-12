@@ -39,7 +39,7 @@ export default function Header() {
 						<Link href="/documents">Documents</Link>
 					</li>
 					<li className="patcher">
-						<Link href="/patcher">Patcher</Link>
+						<Link href="/lazer">Lazer</Link>
 					</li>
 					<li className="community">
 						<a href="https://discord.com/invite/xqncGVrHSf"

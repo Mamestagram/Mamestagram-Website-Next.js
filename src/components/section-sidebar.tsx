@@ -6,7 +6,8 @@ import FontAwesome from "@/components/font-awesome";
 type SidebarSection = {
 	id: string,
 	icon: string,
-	label: string
+	label: string,
+	prefix?: "fad" | "fab"
 };
 
 type SidebarMeta = {
@@ -85,7 +86,7 @@ export default function SectionSidebar({
 					   aria-current={activeSection === section.id ? "location" : undefined}
 					   onClick={(event) => scrollToSection(event, section.id)}>
 						<span>{String(index + 1).padStart(2, "0")}</span>
-						<FontAwesome prefix="fad" name={section.icon}/>
+						<FontAwesome prefix={section.prefix ?? "fad"} name={section.icon}/>
 						<strong>{section.label}</strong>
 					</a>)}
 			</nav>

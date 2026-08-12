@@ -230,11 +230,15 @@
 }
 
 .section_lead {
+	width: 100%;
+	min-width: 0;
 	max-width: none;
 	margin: -6px 0 20px;
 	color: #a099a2;
 	font-size: .96rem;
 	line-height: 1.75;
+	overflow-wrap: anywhere;
+	white-space: normal;
 }
 
 .comparison_bar {

@@ -36,10 +36,9 @@
 	backdrop-filter: blur(18px);
 }
 
-.sidebar_meta {
+.language_switcher {
 	display: flex;
-	min-height: 38px;
-	padding: 4px 7px 11px;
+	padding: 7px 7px 12px;
 	align-items: center;
 	justify-content: space-between;
 	gap: 10px;
@@ -53,16 +52,28 @@
 		text-transform: uppercase;
 	}
 
-	& > strong {
-		min-height: 25px;
-		padding: 0 9px;
-		align-content: center;
-		color: #18150e;
-		background: var(--patcher-gold);
-		border-radius: 6px;
-		box-shadow: 0 4px 12px rgba(228, 189, 88, .18);
-		font-size: .62rem;
-		font-weight: 900;
+	& > div {
+		display: flex;
+		padding: 2px;
+		background: rgba(255, 255, 255, .045);
+		border-radius: 7px;
+
+		& button {
+			min-width: 34px;
+			height: 25px;
+			color: #7d8591;
+			border-radius: 5px;
+			font-size: .64rem;
+			font-weight: 900;
+			text-align: center;
+			transition: color 160ms, background-color 160ms, box-shadow 160ms;
+
+			&[data-active="true"] {
+				color: #18150e;
+				background: var(--patcher-gold);
+				box-shadow: 0 4px 14px rgba(228, 189, 88, .2);
+			}
+		}
 	}
 }
 
@@ -267,11 +278,15 @@
 }
 
 .section_lead {
-	max-width: 820px;
+	width: 100%;
+	min-width: 0;
+	max-width: none;
 	margin: -6px 0 20px;
 	color: #9ba6b5;
 	font-size: .96rem;
 	line-height: 1.75;
+	overflow-wrap: anywhere;
+	white-space: normal;
 }
 
 .feature_grid {
@@ -316,6 +331,28 @@
 
 	& h3 { color: #e9ebef; font-size: .98rem; font-weight: 860; line-height: 1.35; }
 	& p { margin-top: 6px; color: #8d98a7; font-size: .8rem; line-height: 1.65; }
+}
+
+.platform_details {
+	display: flex;
+	padding: 0 18px 18px;
+	flex-direction: column;
+	gap: 9px;
+
+	& li {
+		display: flex;
+		align-items: center;
+		gap: 9px;
+		color: #8d98a7;
+		font-size: .78rem;
+		line-height: 1.5;
+
+		& > i {
+			width: 18px;
+			color: var(--patcher-gold);
+			text-align: center;
+		}
+	}
 }
 
 .feature_image {
@@ -395,12 +432,28 @@
 	font-size: .76rem;
 	font-weight: 900;
 	transition: filter 170ms, box-shadow 170ms, transform 170ms;
+	cursor: pointer;
 
 	&:hover,
 	&:focus-visible {
 		filter: brightness(1.1);
 		box-shadow: 0 15px 34px rgba(228, 189, 88, .23);
 		transform: translateY(-2px);
+	}
+
+	&[aria-disabled="true"] {
+		color: #b8ad8a;
+		background: rgba(228, 189, 88, .08);
+		border-color: rgba(235, 199, 101, .16);
+		box-shadow: none;
+		cursor: default;
+	}
+
+	&[aria-disabled="true"]:hover,
+	&[aria-disabled="true"]:focus-visible {
+		filter: none;
+		box-shadow: none;
+		transform: none;
 	}
 }
 
@@ -438,6 +491,43 @@
 	}
 }
 
+.guide_actions {
+	display: flex;
+	margin: -7px 0 18px;
+	flex-wrap: wrap;
+	gap: 8px;
+
+	& a,
+	& span {
+		display: inline-flex;
+		min-height: 36px;
+		padding: 0 12px;
+		align-items: center;
+		gap: 8px;
+		color: #dfd2a1;
+		background: rgba(228, 189, 88, .07);
+		border: 1px solid rgba(228, 189, 88, .14);
+		border-radius: 9px;
+		font-size: .72rem;
+		font-weight: 850;
+		transition: color 160ms, background-color 160ms, border-color 160ms;
+	}
+
+	& a {
+		&:hover,
+		&:focus-visible {
+			color: #fff3c7;
+			background-color: rgba(228, 189, 88, .14);
+			border-color: rgba(235, 199, 101, .3);
+		}
+	}
+
+	& span[aria-disabled="true"] {
+		color: #817960;
+		cursor: default;
+	}
+}
+
 .steps {
 	display: flex;
 	flex-direction: column;
@@ -467,6 +557,8 @@
 
 		& h3 { color: #e7e9ed; font-size: .9rem; font-weight: 850; }
 		& p { margin-top: 4px; color: #84909f; font-size: .78rem; line-height: 1.55; }
+		& code { color: #eed47f; font-family: var(--font-jetbrains-mono), sans-serif; font-size: .76rem; }
+		& strong { color: #d9dee6; font-weight: 850; }
 	}
 }
 
@@ -585,7 +677,7 @@
 	}
 
 	.sidebar { top: 67px; padding: 8px; }
-	.sidebar_meta { padding: 3px 6px 8px; }
+	.language_switcher { padding: 3px 6px 8px; }
 
 	.patcher_nav {
 		display: grid;
@@ -625,7 +717,6 @@
 
 @media (max-width: 480px) {
 	.sidebar { top: 59px; }
-	.sidebar_meta { display: none; }
 
 	.patcher_nav a {
 		grid-template-columns: minmax(max-content, 1fr);
@@ -653,6 +744,7 @@
 	.feature_card,
 	.feature_image img,
 	.patcher_nav a,
+	.guide_actions a,
 	.faq_answer,
 	.faq_answer p,
 	.back_to_top { transition: none; }
