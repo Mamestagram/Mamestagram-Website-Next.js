@@ -1,7 +1,7 @@
 :global(header .navigation li.avatar).container {
 	display: block;
 	position: relative;
-	height: 50px;
+	height: 56px;
 	width: auto;
 	padding: 0;
 	z-index: 1;
@@ -9,10 +9,10 @@
 
 .trigger {
 	display: grid;
-	grid-template-columns: 40px auto;
+	grid-template-columns: 44px auto;
 	height: 100%;
 	width: auto;
-	padding: 4px 9px 4px 5px;
+	padding: 6px 9px 6px 5px;
 	border-radius: inherit;
 	align-items: center;
 	column-gap: 9px;
@@ -23,8 +23,8 @@
 .account_avatar {
 	position: relative;
 	display: block;
-	width: 40px;
-	height: 40px;
+	width: 44px;
+	height: 44px;
 	padding: 0;
 	border-radius: 50%;
 	overflow: visible;
@@ -150,6 +150,11 @@
 		grid-template-columns: 40px minmax(0, 1fr);
 		width: 100%;
 		padding: 5px 12px;
+	}
+
+	.account_avatar {
+		width: 40px;
+		height: 40px;
 	}
 
 	.username {

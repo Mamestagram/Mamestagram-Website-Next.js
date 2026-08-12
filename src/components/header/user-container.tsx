@@ -67,7 +67,7 @@ export default function UserContainer() {
 						       alt=""
 						       fill
 						       draggable={false}
-						       sizes="42px"
+						       sizes="44px"
 						       priority/>
 						<EquippedBadge badgeId={userInfo.badge ?? 0}
 						               baseDomain={serverInfo.baseDomain}

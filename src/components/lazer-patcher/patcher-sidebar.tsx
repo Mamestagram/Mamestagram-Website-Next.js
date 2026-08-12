@@ -13,12 +13,15 @@ const sectionMeta: ReadonlyArray<{ id: SectionKey, icon: string, prefix?: "fad" 
 	{ id: "macos", icon: "apple", prefix: "fab" }
 ];
 
-export default function PatcherSidebar({ locale, languageLabel, nav }: Readonly<{
+export default function PatcherSidebar({ locale, languageLabel, nav, showSetupGuides }: Readonly<{
 	locale: LazerLocale,
 	languageLabel: string,
-	nav: Record<SectionKey, string>
+	nav: Record<SectionKey, string>,
+	showSetupGuides: boolean
 }>) {
-	const sections = sectionMeta.map(({ id, icon, prefix }) => ({ id, icon, label: nav[id], prefix }));
+	const sections = sectionMeta
+		.filter(({ id }) => showSetupGuides || (id !== "windows" && id !== "macos"))
+		.map(({ id, icon, prefix }) => ({ id, icon, label: nav[id], prefix }));
 	return <SectionSidebar className={styles.sidebar}
 	                       navigationClassName={styles.patcher_nav}
 	                       navigationLabel={locale === "ja" ? "Lazerページのセクション" : "Lazer sections"}
