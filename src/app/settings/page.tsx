@@ -161,6 +161,7 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 								       alt=""
 								       fill
 								       sizes="88px"
+								       crossOrigin="anonymous"
 								       priority/>}
 						</span>
 						<div>

@@ -8,20 +8,16 @@ export default function Loading() {
 		         aria-busy="true"
 		         aria-label="Loading page">
 			<div className={styles.panel}>
-				<div className={styles.logo} aria-hidden="true">
-					<span/>
-					<Image src="/images/logo.png"
+				<span className={styles.logo_ring} aria-hidden="true">
+					<Image className={styles.logo}
+					       src="/images/logo.png"
 					       alt=""
-					       width={64}
-					       height={64}
+					       width={56}
+					       height={56}
 					       priority/>
-				</div>
-				<div className={styles.copy}>
-					<strong>Mamestagram</strong>
-					<p>Loading page...</p>
-				</div>
+				</span>
+				<span className={styles.label}>Loading...</span>
 				<span className={styles.progress} aria-hidden="true"><i/></span>
-				<span className={styles.dots} aria-hidden="true"><i/><i/><i/></span>
 			</div>
 		</section>
 	);

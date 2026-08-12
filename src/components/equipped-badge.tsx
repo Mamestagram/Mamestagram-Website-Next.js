@@ -16,6 +16,7 @@ export default function EquippedBadge({ badgeId, baseDomain, className, sizes, p
 			       alt=""
 			       fill
 			       sizes={sizes}
+			       crossOrigin="anonymous"
 			       draggable={false}
 			       priority={priority}/>
 		</span>
