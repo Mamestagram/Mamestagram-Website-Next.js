@@ -149,6 +149,63 @@
 
 }
 
+.hero_title {
+	position: relative;
+	min-width: 0;
+	max-width: 950px;
+
+	&:hover .title_tooltip,
+	&:focus-within .title_tooltip {
+		opacity: 1;
+		visibility: visible;
+		transform: translateY(0);
+	}
+
+	& h1:focus-visible {
+		outline: 2px solid var(--beatmap-accent);
+		outline-offset: 4px;
+		border-radius: 5px;
+	}
+}
+
+.title_tooltip {
+	pointer-events: none;
+	display: block;
+	position: absolute;
+	top: calc(100% + 11px);
+	left: 0;
+	z-index: 20;
+	width: max-content;
+	max-width: min(760px, 76vw);
+	padding: 10px 13px;
+	color: #f4f8fc;
+	background: rgba(7, 12, 20, .97);
+	border: 1px solid hsla(var(--user-hue, 200), 58%, 70%, .28);
+	border-radius: 10px;
+	box-shadow: 0 13px 32px rgba(0, 0, 0, .46), inset 0 1px 0 rgba(255, 255, 255, .06);
+	backdrop-filter: blur(14px);
+	font-family: var(--font-nova-mono), sans-serif;
+	font-size: clamp(.76rem, 1.3vw, .95rem);
+	font-weight: 750;
+	letter-spacing: -.02em;
+	line-height: 1.45;
+	overflow-wrap: anywhere;
+	white-space: normal;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(-5px);
+	transition: opacity 150ms ease, visibility 150ms, transform 150ms ease;
+
+	&::before {
+		content: "";
+		position: absolute;
+		left: 18px;
+		bottom: 100%;
+		border: 6px solid transparent;
+		border-bottom-color: hsla(var(--user-hue, 200), 58%, 70%, .28);
+	}
+}
+
 .hero_artist {
 	margin-top: 7px;
 	padding-left: var(--hero-identity-offset);
@@ -1741,7 +1798,8 @@
 	.hero_image,
 	.hero_actions > a,
 	.hero_actions > button,
-	.difficulty_link {
+	.difficulty_link,
+	.title_tooltip {
 		transition: none;
 		transform: none;
 	}

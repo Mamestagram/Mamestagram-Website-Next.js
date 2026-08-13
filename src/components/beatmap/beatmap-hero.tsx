@@ -104,7 +104,12 @@ export default async function BeatmapHero({ map, difficulties }: Readonly<{
 					</div>
 					<div className={styles.hero_identity}>
 						<span className={styles.mode_badge}><ModeIcon mode={vanillaMode}/></span>
-						<div><h1>{map.title}</h1></div>
+						<div className={styles.hero_title}>
+							<h1 tabIndex={0} aria-describedby="beatmap-title-tooltip">{map.title}</h1>
+							<span id="beatmap-title-tooltip" className={styles.title_tooltip} role="tooltip">
+								{map.title}
+							</span>
+						</div>
 					</div>
 					<p className={styles.hero_artist}>{map.artist}</p>
 					<nav className={styles.hero_difficulties} aria-label="Beatmap difficulties">

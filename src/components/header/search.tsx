@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
@@ -8,41 +7,18 @@ import { createPortal } from "react-dom";
 import { useHeaderSearch } from "@/components/context/header-search-provider";
 import { useUserContext } from "@/components/context/user-provider";
 import FontAwesome from "@/components/font-awesome";
-import { modeAbbreviation, type ModeNum } from "@/lib/mode";
-import { Priv } from "@/lib/priv";
+import { SearchBeatmapList, SearchClanList, SearchUserList } from "@/components/search/result-lists";
+import type { SearchBeatmap, SearchClan, SearchResponse, SearchUser } from "@/lib/search";
 import styles from "@s/header-search.module.css";
-
-type SearchUser = {
-	id: number,
-	name: string,
-	country: string,
-	preferredMode: number,
-	privileges: number[]
-};
-
-type SearchResponse = {
-	users: SearchUser[],
-	error?: string
-};
 
 type SearchPhase = "idle" | "loading" | "ready" | "error";
 
-const privilegeMeta: Partial<Record<Priv, { label: string, icon: string }>> = {
-	[Priv.whitelisted]: { label: "Verified", icon: "badge-check" },
-	[Priv.supporter]: { label: "Supporter", icon: "heart" },
-	[Priv.premium]: { label: "Premium", icon: "gem" },
-	[Priv.alumni]: { label: "Alumni", icon: "graduation-cap" },
-	[Priv.tourneyManager]: { label: "Tournament Manager", icon: "trophy" },
-	[Priv.nominator]: { label: "Nominator", icon: "pen-nib" },
-	[Priv.moderator]: { label: "Moderator", icon: "shield-halved" },
-	[Priv.administrator]: { label: "Administrator", icon: "user-shield" },
-	[Priv.developer]: { label: "Developer", icon: "code" }
+const emptyResults: SearchResponse = {
+	users: [],
+	clans: [],
+	beatmaps: [],
+	totals: { users: 0, clans: 0, beatmaps: 0 }
 };
-
-const getPrivilegeMeta = (privileges: number[]) => privileges.flatMap((privilege) => {
-	const meta = privilegeMeta[privilege as Priv];
-	return meta ? [meta] : [];
-});
 
 const subscribeToClient = () => () => undefined;
 const getClientSnapshot = () => true;
@@ -70,7 +46,7 @@ export default function HeaderSearch() {
 	const { isOpen, closeSearch } = useHeaderSearch();
 	const isClient = useSyncExternalStore(subscribeToClient, getClientSnapshot, getServerSnapshot);
 	const [query, setQuery] = useState("");
-	const [users, setUsers] = useState<SearchUser[]>([]);
+	const [results, setResults] = useState<SearchResponse>(emptyResults);
 	const [phase, setPhase] = useState<SearchPhase>("idle");
 	const [message, setMessage] = useState("");
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -79,7 +55,7 @@ export default function HeaderSearch() {
 	const updateQuery = (nextQuery: string) => {
 		setQuery(nextQuery);
 		if (nextQuery.trim()) return;
-		setUsers([]);
+		setResults(emptyResults);
 		setPhase("idle");
 		setMessage("");
 	};
@@ -130,26 +106,35 @@ export default function HeaderSearch() {
 			setPhase("loading");
 			setMessage("");
 			try {
-				const response = await fetch(`/api/search/users?q=${encodeURIComponent(trimmed)}`, {
+				const response = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`, {
 					signal: controller.signal
 				});
 				const data = await response.json() as SearchResponse;
 				if (!response.ok) {
-					setUsers([]);
+					setResults(emptyResults);
 					setPhase("error");
-					setMessage(data.error || "Player search is temporarily unavailable.");
+					setMessage(data.error || "Search is temporarily unavailable.");
 					return;
 				}
-				setUsers(data.users);
+				setResults({
+					users: data.users ?? [],
+					clans: data.clans ?? [],
+					beatmaps: data.beatmaps ?? [],
+					totals: data.totals ?? {
+						users: data.users?.length ?? 0,
+						clans: data.clans?.length ?? 0,
+						beatmaps: data.beatmaps?.length ?? 0
+					}
+				});
 				setPhase("ready");
 			}
 			catch (error) {
 				if (controller.signal.aborted) return;
-				setUsers([]);
+				setResults(emptyResults);
 				setPhase("error");
 				setMessage(error instanceof Error && error.message
 					? error.message
-					: "Player search is temporarily unavailable.");
+					: "Search is temporarily unavailable.");
 			}
 		}, 220);
 
@@ -159,10 +144,22 @@ export default function HeaderSearch() {
 		};
 	}, [query]);
 
+	const users = results.users ?? [];
+	const clans = results.clans ?? [];
+	const beatmaps = results.beatmaps ?? [];
+	const visibleResultCount = users.length + clans.length + beatmaps.length;
+	const hasResults = users.length > 0 || clans.length > 0 || beatmaps.length > 0;
+	const hasManyResults = phase === "ready" && visibleResultCount > 6;
+
 	const visitFirstResult = () => {
-		if (!users[0]) return;
+		const firstUser = users[0];
+		const firstClan = clans[0];
+		const firstBeatmap = beatmaps[0];
+		if (!firstUser && !firstClan && !firstBeatmap) return;
 		closeSearch();
-		router.push(`/profile/${users[0].id}`);
+		if (firstUser) router.push(`/profile/${firstUser.id}`);
+		else if (firstClan) router.push(`/profile/${firstClan.id}?clan`);
+		else if (firstBeatmap) router.push(`/beatmaps/${firstBeatmap.setId}/${firstBeatmap.id}`);
 	};
 
 	const dialog = (
@@ -174,7 +171,8 @@ export default function HeaderSearch() {
 		     }}>
 			<section ref={dialogRef}
 			         className={styles.dialog}
-			         data-expanded={phase === "loading" || (phase === "ready" && users.length > 0)}
+			         data-expanded={phase === "loading" || (phase === "ready" && hasResults)}
+			         data-tall={hasManyResults}
 			         role="dialog"
 			         aria-modal="true"
 			         aria-labelledby="header-search-title">
@@ -191,7 +189,9 @@ export default function HeaderSearch() {
 
 				<div className={styles.category_bar}>
 					<span><FontAwesome prefix="fad" name="users"/>Players</span>
-					<small>More search categories will be added later.</small>
+					<span><FontAwesome prefix="fad" name="people-group"/>Clans</span>
+					<span><FontAwesome prefix="fad" name="compact-disc"/>Beatmaps</span>
+					<small>Search across players, clans, and beatmaps.</small>
 				</div>
 
 				<form className={styles.search_form} onSubmit={(event) => {
@@ -204,8 +204,8 @@ export default function HeaderSearch() {
 					       value={query}
 					       maxLength={64}
 					       autoComplete="off"
-					       placeholder="Search players by name or ID"
-					       aria-label="Search players by name or ID"
+					       placeholder="Search players, clans, or beatmaps"
+					       aria-label="Search players, clans, or beatmaps"
 				       onChange={(event) => updateQuery(event.target.value)}/>
 					{phase === "loading" && <FontAwesome className={styles.spinner} prefix="fas" name="spinner"/>}
 					{query && phase !== "loading" &&
@@ -218,57 +218,34 @@ export default function HeaderSearch() {
 				</form>
 
 				<div className={styles.results} aria-live="polite" aria-busy={phase === "loading"}>
-					{phase === "idle" && <SearchMessage icon="user-magnifying-glass"
-					                                      title="Search Mamestagram players"
-					                                      body="Enter a username or player ID to open their profile."/>}
+					{phase === "idle" && <SearchMessage icon="magnifying-glass"
+					                                      title="Search Mamestagram"
+					                                      body="Find players and clans by name, tag, or ID, and beatmaps by title, artist, creator, difficulty, or ID."/>}
 					{phase === "loading" && <SearchSkeleton/>}
 					{phase === "error" && <SearchMessage icon="triangle-exclamation" title="Search unavailable" body={message}/>}
-					{phase === "ready" && users.length === 0 && <SearchMessage icon="users-slash"
-					                                                              title="No players found"
-					                                                              body="Try another username or player ID."/>}
-					{phase === "ready" && users.length > 0 &&
-						<ul className={styles.result_list}>
-							{users.map((user) => {
-								const privileges = getPrivilegeMeta(user.privileges);
-								const primaryPrivilege = privileges.at(-1);
-								return (
-								<li key={user.id}>
-									<Link href={`/profile/${user.id}`} onClick={closeSearch}>
-										<span className={styles.avatar}>
-											<Image src={`https://a.${serverInfo.baseDomain}/${user.id}`}
-											       alt=""
-											       fill
-											       sizes="48px"
-											       draggable={false}/>
-										</span>
-										<span className={styles.identity}>
-											<span className={styles.name_with_tooltip}>
-												<strong>{user.name}</strong>
-												<span className={styles.name_tooltip} role="tooltip">{user.name}</span>
-											</span>
-											<small>Player #{user.id.toLocaleString("en-US")}</small>
-										</span>
-										<span className={styles.meta}>
-											<span className={styles.meta_primary}>
-												<small className={styles.country}>
-													<i className={`fi fi-${user.country.toLowerCase()}`}></i>
-													{user.country.toUpperCase()}
-												</small>
-												<small>{modeAbbreviation(user.preferredMode as ModeNum)}</small>
-											</span>
-											{primaryPrivilege &&
-												<small className={styles.privilege}
-												       title={privileges.map(({ label }) => label).join(", ")}>
-													<FontAwesome prefix="fas" name={primaryPrivilege.icon}/>
-													{primaryPrivilege.label}
-												</small>}
-										</span>
-										<FontAwesome className={styles.open_icon} prefix="fas" name="chevron-right"/>
-									</Link>
-								</li>
-								);
-							})}
-						</ul>}
+					{phase === "ready" && !hasResults && <SearchMessage icon="magnifying-glass-minus"
+					                                                      title="No results found"
+					                                                      body="Try another player name, clan tag, beatmap title, artist, creator, difficulty, or ID."/>}
+					{phase === "ready" && hasResults &&
+						<div className={styles.result_groups}>
+							{users.length > 0 &&
+								<SearchUserResults users={users}
+								                   baseDomain={serverInfo.baseDomain}
+								                   query={query.trim()}
+								                   total={results.totals?.users ?? users.length}
+								                   onSelect={closeSearch}/>}
+							{clans.length > 0 &&
+								<SearchClanResults clans={clans}
+								                   baseDomain={serverInfo.baseDomain}
+								                   query={query.trim()}
+								                   total={results.totals?.clans ?? clans.length}
+								                   onSelect={closeSearch}/>}
+							{beatmaps.length > 0 &&
+								<SearchBeatmapResults beatmaps={beatmaps}
+								                      query={query.trim()}
+								                      total={results.totals?.beatmaps ?? beatmaps.length}
+								                      onSelect={closeSearch}/>}
+						</div>}
 				</div>
 
 				<div className={styles.hint}>
@@ -289,6 +266,75 @@ function SearchMessage({ icon, title, body }: { icon: string, title: string, bod
 			<strong>{title}</strong>
 			<p>{body}</p>
 		</div>
+	);
+}
+
+function SearchUserResults({ users, baseDomain, query, total, onSelect }: Readonly<{
+	users: SearchUser[],
+	baseDomain: string,
+	query: string,
+	total: number,
+	onSelect: () => void
+}>) {
+	return (
+		<section className={styles.result_group} aria-labelledby="player-search-results">
+			<h2 id="player-search-results" className={styles.result_group_heading}>
+				<span><FontAwesome prefix="fad" name="users"/>Players</span>
+				<SearchGroupActions category="players" query={query} total={total} onSelect={onSelect}/>
+			</h2>
+			<SearchUserList items={users} baseDomain={baseDomain} onSelect={onSelect}/>
+		</section>
+	);
+}
+
+function SearchClanResults({ clans, baseDomain, query, total, onSelect }: Readonly<{
+	clans: SearchClan[],
+	baseDomain: string,
+	query: string,
+	total: number,
+	onSelect: () => void
+}>) {
+	return (
+		<section className={styles.result_group} aria-labelledby="clan-search-results">
+			<h2 id="clan-search-results" className={styles.result_group_heading}>
+				<span><FontAwesome prefix="fad" name="people-group"/>Clans</span>
+				<SearchGroupActions category="clans" query={query} total={total} onSelect={onSelect}/>
+			</h2>
+			<SearchClanList items={clans} baseDomain={baseDomain} onSelect={onSelect}/>
+		</section>
+	);
+}
+
+function SearchBeatmapResults({ beatmaps, query, total, onSelect }: Readonly<{
+	beatmaps: SearchBeatmap[],
+	query: string,
+	total: number,
+	onSelect: () => void
+}>) {
+	return (
+		<section className={styles.result_group} aria-labelledby="beatmap-search-results">
+			<h2 id="beatmap-search-results" className={styles.result_group_heading}>
+				<span><FontAwesome prefix="fad" name="compact-disc"/>Beatmaps</span>
+				<SearchGroupActions category="beatmaps" query={query} total={total} onSelect={onSelect}/>
+			</h2>
+			<SearchBeatmapList items={beatmaps} onSelect={onSelect}/>
+		</section>
+	);
+}
+
+function SearchGroupActions({ category, query, total, onSelect }: Readonly<{
+	category: "players" | "clans" | "beatmaps",
+	query: string,
+	total: number,
+	onSelect: () => void
+}>) {
+	return (
+		<span className={styles.result_group_actions}>
+			<small>{total.toLocaleString("en-US")}</small>
+			<Link href={`/search/${category}?q=${encodeURIComponent(query)}`} onClick={onSelect}>
+				Show more <FontAwesome prefix="fas" name="arrow-right"/>
+			</Link>
+		</span>
 	);
 }
 

@@ -6,6 +6,7 @@ import SupportSidebar from "@/components/support/support-sidebar";
 import SupportSectionHeading from "@/components/support/support-section-heading";
 import SupportFeatures from "@/components/support/support-features";
 import SupportBackToTop from "@/components/support/support-back-to-top";
+import SupportPriceBar from "@/components/support/support-price-bar";
 import { fetchInternalJson } from "@/lib/fetch-json";
 import styles from "@s/support.module.css";
 
@@ -55,6 +56,7 @@ export default async function SupportContent({ locale }: Readonly<{ locale: Supp
 							<article data-page-enter="box"><i><FontAwesome prefix="fad" name="tags"/></i><span><strong>{text.price}</strong><p>{text.priceCaption}</p></span></article>
 							<article data-page-enter="box"><i><FontAwesome prefix="fad" name="bolt"/></i><span><strong>{text.assignment}</strong><p>{text.assignmentCaption}</p></span></article>
 						</div>
+						<SupportPriceBar labels={text.pricing}/>
 						<div className={styles.cancel_note} data-page-enter="box"><FontAwesome prefix="fad" name="calendar-check"/><p>{text.cancelNote}</p></div>
 						<div className={styles.cta_card} data-page-enter="box">
 							<div><h3>{text.ctaTitle}</h3><p>{text.ctaBody}</p></div>
