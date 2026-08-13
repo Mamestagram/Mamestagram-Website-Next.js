@@ -53,11 +53,13 @@ export default async function Leaderboard({ params, searchParams }: {
 						                        countries={countryCodes}
 						                        country={selectedCountry}
 						                        isClan={isClan}/>
-					<ModeSelection mode={mode} sortBy={sortBy} country={selectedCountry} isClan={isClan}/>
-					<RankingSortSwitch mode={mode}
-					                   sortBy={sortBy}
-					                   country={selectedCountry}
-					                   isClan={isClan}/>
+					<div className={styles.leaderboard_control_stack}>
+						<ModeSelection mode={mode} sortBy={sortBy} country={selectedCountry} isClan={isClan}/>
+						<RankingSortSwitch mode={mode}
+						                   sortBy={sortBy}
+						                   country={selectedCountry}
+						                   isClan={isClan}/>
+					</div>
 					<Suspense fallback={<RankingListLoading/>}>
 						<RankingList mode={mode} sortBy={sortBy} page={Number(page)} country={selectedCountry} isClan={isClan}/>
 					</Suspense>

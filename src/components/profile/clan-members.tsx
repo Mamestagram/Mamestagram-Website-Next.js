@@ -54,10 +54,6 @@ export default async function ClanMembers({ clanId, mode, isDans, canManage }: {
 											<small>
 												<FontAwesome prefix="fas" name={role.icon}/>
 												{role.label}
-												<span>·</span>
-												{Math.round(member.pp).toLocaleString()}pp
-												<span>·</span>
-												{member.acc.toFixed(2)}%
 											</small>
 										</span>
 									</Link>

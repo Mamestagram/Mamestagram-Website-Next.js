@@ -25,7 +25,7 @@ export default async function RankingList({ mode, sortBy, page, country, isClan 
 				          sortBy={sortBy}
 				          isClan={isClan}
 				          country={country}/>
-				<div className={styles.table_wrapper} data-page-enter="box">
+				<div className={styles.table_wrapper}>
 					{ranking.length > 0 &&
 						<table>
 							<thead>

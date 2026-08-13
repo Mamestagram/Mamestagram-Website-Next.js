@@ -1337,24 +1337,24 @@
 .rank_cell {
 	color: #8d9bab !important;
 	font-family: var(--font-kode-mono), sans-serif;
-	font-size: 1rem !important;
+	font-size: .85rem !important;
 	font-weight: 900 !important;
 
 	&[data-rank="1"] {
 		color: var(--rank-1) !important;
-		font-size: 1.2rem !important;
+		font-size: 1rem !important;
 		text-shadow: var(--rank-1-shadow);
 	}
 
 	&[data-rank="2"] {
 		color: var(--rank-2) !important;
-		font-size: 1.125rem !important;
+		font-size: .9375rem !important;
 		text-shadow: var(--rank-2-shadow);
 	}
 
 	&[data-rank="3"] {
 		color: var(--rank-3) !important;
-		font-size: 1.125rem !important;
+		font-size: .875rem !important;
 		text-shadow: var(--rank-3-shadow);
 	}
 }
