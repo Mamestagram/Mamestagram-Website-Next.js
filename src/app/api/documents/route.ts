@@ -288,18 +288,16 @@ const copy = {
 		faqLead: "Quick answers to the questions players ask most often.",
 		faqs: [
 			["What is Mamestagram?", "Mamestagram is a Japanese osu! private server for every game mode. It offers a unique way to play with friends that is not available on official osu!."],
-			["What is Mamestagram 4K?", "Mamestagram 4K is an osu!mania 4K-exclusive private server. It uses an Etterna-like rating system, ranks every beatmap, and fully analyzes maps independently of existing osu! difficulties."],
 			["What is a private server?", "A private server is an unofficial osu! server with its own systems and rules. Mamestagram includes additional commands, Dan courses, and game modes that provide a different environment from Bancho."],
 			["How do I connect to Mamestagram?", "Connect to mamesosu.net. The detailed shortcut setup is available in How to connect above, and the server is designed to be approachable for first-time private-server players."],
-			["How do I connect to Mamestagram 4K?", "Connect to mames1.jp. The server is still in development and does not yet have complete documentation; contact support if you need help."],
 			["How do I challenge the Dan courses?", "Download the Dan beatmaps from the Dan Courses section or the Dan certification channel, then clear a course under its listed requirements."],
-			["Can I use my Bancho account on Mamestagram?", "No. Mamestagram and Bancho accounts are completely separate. Creating a private-server account does not count as multi-accounting; create a new account on the official Mamestagram website."],
+			["Can I use my Bancho account on Mamestagram?", "No. Mamestagram and Bancho accounts are completely separate. Creating a private-server account does not count as multi-accounting; create a new account on the register page."],
 			["Where can I find the server commands?", "All commands are listed in the In-game commands section above and the Discord command channel. Send commands to Momiji to customize your server experience."],
 			["My player level is not increasing. What should I do?", "Mamestagram player level is determined by Dan level. For example, clearing a 1st Dan increases your level for that mode by one."],
-			["My account was restricted, but I do not know why.", "Open a support ticket and ask the administration for assistance."],
+			["My account was restricted, but I do not know why.", "Open a #support ticket and ask the administration for assistance."],
 			["osu! says my version is too old, but I cannot update it.", "osu! cannot update while connected to Mamestagram or another private server. Connect to Bancho, complete the update, and then sign back into Mamestagram."],
-			["How do I report a bug?", "Report it in the Discord bug-report forum."],
-			["I want to suggest a new feature.", "Create a post in the Discord idea forum. Suggestions of any size are welcome."]
+			["How do I report a bug?", "Report it in the Discord #bug-report forum."],
+			["I want to suggest a new feature.", "Create a post in the Discord #idea forum. Suggestions of any size are welcome."]
 		],
 		backToTop: "Back to top"
 	},
@@ -432,18 +430,16 @@ const copy = {
 		faqLead: "プレイヤーからよく寄せられる質問をまとめています。",
 		faqs: [
 			["Mamestagramとは何ですか？", "Mamestagramは全モードを対象とした日本のosu!プライベートサーバーです。通常のosu!では味わえないプレイ体験を、仲間たちと一緒に楽しめます。"],
-			["Mamestagram 4Kとは何ですか？", "Mamestagram 4Kはosu!mania 4K専用のプライベートサーバーです。Etternaのようなレートシステムを採用しており、すべての譜面がRankedです。osu!のような既存の難易度には依存せず、譜面を完全に分析するため、実力向上に最適です。"],
 			["プライベートサーバーとは何ですか？", "プライベートサーバーとはosu!の非公式サーバーです。接続することで、サーバー独自のシステムを楽しめます。Mamestagramには多くの追加コマンド、段位認定、ゲームモードがあり、Banchoとは異なる環境でosu!をプレイできます。ルールもサーバーごとに異なるため、注意が必要です。"],
 			["Mamestagramにはどう接続しますか？", "mamesosu.netに接続します。詳しい情報は、このページの接続方法をご確認ください。初めてのプライベートサーバーでも安心して遊べるのがMamestagramです。"],
-			["osu!mania 4K専用サーバー Mamestagram 4Kにはどう接続しますか？", "mames1.jpに接続します。このサーバーはまだ開発段階のため、ドキュメントはありません。分からないことがあればsupportでチケットを作成してください。"],
-			["段位認定に挑戦したいのですが、どうすればいいですか？", "段位認定の課題譜面はすべてダウンロードできます。詳しい情報はDan CoursesセクションまたはDiscordの段位認定チャンネルをご確認ください。"],
-			["BanchoのアカウントをMamestagramで使用できますか？", "使用できません。MamestagramのアカウントとBanchoのアカウントはまったくの別物です。プライベートサーバーのアカウントを作成してもマルチアカウントにはなりません。アカウントは公式サイトから作成してください。"],
+			["段位認定に挑戦したいのですが、どうすればいいですか？", "段位認定の課題譜面はすべてダウンロードできます。詳しい情報は段位セクションまたはDiscordの段位認定チャンネルをご確認ください。"],
+			["BanchoのアカウントをMamestagramで使用できますか？", "使用できません。MamestagramのアカウントとBanchoのアカウントはまったくの別物です。プライベートサーバーのアカウントを作成してもマルチアカウントにはなりません。アカウントはアカウント作成ページから作成してください。"],
 			["サーバーコマンドはどこに書いてありますか？", "コマンドはこのページのゲーム内コマンドセクションとDiscordのコマンドチャンネルにすべて掲載しています。Momijiにコマンドを送信することで、サーバーでのプレイ体験を自分好みにカスタマイズできます。"],
 			["プレイヤーレベルが上がりません！どうすればいいですか？", "Mamestagramのプレイヤーレベルは段位のレベルによって決まります。例えば1段をクリアすると、そのモードのレベルも1上がります。"],
-			["アカウントが制限されましたが、心当たりがありません。", "supportにてチケットを作成してください。日本語が話せるスタッフもいるため、安心してお問い合わせいただけます。"],
+			["アカウントが制限されましたが、心当たりがありません。", "#supportにてチケットを作成してください。日本語が話せるスタッフもいるため、安心してお問い合わせいただけます。"],
 			["osu!のバージョンが古いと言われ、バージョンアップもできません。", "osu!の仕様上、Mamestagramを含むプライベートサーバーからアップデートすることはできません。一度Banchoに接続してアップデートを完了させてから、Mamestagramへログインしてください。"],
-			["バグはどのように報告しますか？", "バグを発見した場合は、Discordのbug-reportへ報告してください。日本語でも英語でも構いません。"],
-			["新しい機能を提案したいです！", "Discordのideaで投稿を作成してください。気軽に新しい機能をご提案ください。"]
+			["バグはどのように報告しますか？", "バグを発見した場合は、Discordの#bug-reportへ報告してください。日本語でも英語でも構いません。"],
+			["新しい機能を提案したいです！", "Discordの#ideaで投稿を作成してください。気軽に新しい機能をご提案ください。"]
 		],
 		backToTop: "トップへ戻る"
 	}
