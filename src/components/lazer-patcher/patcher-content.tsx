@@ -51,7 +51,7 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 						</div>
 						<div className={styles.summary_grid}>
 							{text.summaries.map(([icon, title, body]) =>
-								<article key={title} className={styles.summary_card} data-page-enter="box">
+								<article key={icon} className={styles.summary_card} data-page-enter="box">
 									<i><FontAwesome prefix="fad" name={icon}/></i>
 									<h3>{title}</h3>
 									<p>{body}</p>

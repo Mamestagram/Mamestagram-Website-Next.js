@@ -357,6 +357,11 @@
 	& img,
 	& video { width: 100%; height: 100%; object-fit: contain; }
 
+	&[data-blurred="true"] img {
+		filter: blur(12px);
+		transform: scale(1.06);
+	}
+
 	&[data-empty="true"] {
 		display: grid;
 		place-items: center;

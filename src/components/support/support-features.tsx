@@ -8,11 +8,13 @@ import styles from "@s/support.module.css";
 type FeatureMedia = {
 	type: "image" | "video",
 	src: string,
-	alt: string
+	alt: string,
+	blurred?: boolean
 };
 
 type FeatureView = {
 	body: string,
+	available?: boolean,
 	media?: FeatureMedia
 };
 
@@ -25,7 +27,7 @@ export type SupportFeature = {
 
 export default function SupportFeatures({ features, labels }: {
 	features: readonly SupportFeature[],
-	labels: { free: string, supporter: string, unavailable: string }
+	labels: { free: string, supporter: string, available: string, unavailable: string }
 }) {
 	const [selectedSupporter, setSelectedSupporter] = useState(true);
 	const [displaySupporter, setDisplaySupporter] = useState(true);
@@ -78,7 +80,8 @@ export default function SupportFeatures({ features, labels }: {
 				{features.map((feature, index) => {
 					const view: FeatureView = displaySupporter
 						? feature.supporter
-						: feature.free ?? { body: labels.unavailable };
+						: feature.free ?? { body: labels.unavailable, available: false };
+					const isAvailable = view.available !== false;
 					return (
 						<article key={feature.title} className={styles.feature_card} data-supporter={displaySupporter} data-page-enter="box">
 							<div className={styles.feature_header}>
@@ -88,12 +91,17 @@ export default function SupportFeatures({ features, labels }: {
 								<small>{displaySupporter ? labels.supporter : labels.free}</small>
 							</div>
 							<div className={styles.feature_stage}>
-								<div className={styles.feature_media} data-empty={!view.media}>
+								<div className={styles.feature_media}
+								     data-empty={!view.media}
+								     data-blurred={view.media?.blurred ?? false}>
 									{view.media?.type === "image" &&
 										<Image src={view.media.src} alt={view.media.alt} draggable={false} fill sizes="(max-width: 760px) 94vw, 520px"/>}
 									{view.media?.type === "video" &&
 										<video key={view.media.src} src={view.media.src} aria-label={view.media.alt} autoPlay loop muted playsInline preload="metadata"/>}
-									{!view.media && <span><FontAwesome prefix="fad" name="lock-keyhole"/>{labels.unavailable}</span>}
+								{!view.media && <span>
+									<FontAwesome prefix="fad" name={isAvailable ? "circle-check" : "lock-keyhole"}/>
+									{isAvailable ? labels.available : labels.unavailable}
+								</span>}
 								</div>
 								<p>{view.body}</p>
 							</div>
