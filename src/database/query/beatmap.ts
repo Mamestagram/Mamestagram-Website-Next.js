@@ -13,6 +13,28 @@ export const scoreCountriesQuery = (userCount: number) => {
 	return `SELECT id, country FROM users WHERE id IN (${placeholders})`;
 };
 
+export const beatmapScoreIdsQuery = (scoreCount: number) => {
+	const scoreFilters = Array.from({ length: scoreCount }, () => `(
+		s.userid = ?
+		AND s.score = ?
+		AND s.mods = ?
+		AND s.play_time = ?
+	)`).join(" OR ");
+	return `
+		SELECT s.id,
+		       s.userid AS userId,
+		       s.score,
+		       s.mods,
+		       DATE_FORMAT(s.play_time, '%Y-%m-%dT%H:%i:%s') AS playTime
+			FROM scores s
+		WHERE s.map_md5 = ?
+			AND s.mode = ?
+			AND s.deleted = 0
+			AND (${scoreFilters})
+		ORDER BY s.id DESC
+	`;
+};
+
 export const beatmapUserScoreQuery = `
 	SELECT s.id,
 	       s.userid AS userId,

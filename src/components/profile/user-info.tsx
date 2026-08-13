@@ -73,6 +73,20 @@ function getCountryMeta(country: string) {
 	}
 }
 
+function formatRelativeTime(date: Date) {
+	const elapsedSeconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
+	if (elapsedSeconds < 10) return "just now";
+
+	const relativeTime = new Intl.RelativeTimeFormat("en", { numeric: "always" });
+	if (elapsedSeconds < 60) return relativeTime.format(-elapsedSeconds, "second");
+	if (elapsedSeconds < 60 * 60) return relativeTime.format(-Math.floor(elapsedSeconds / 60), "minute");
+	if (elapsedSeconds < 24 * 60 * 60) return relativeTime.format(-Math.floor(elapsedSeconds / (60 * 60)), "hour");
+	if (elapsedSeconds < 7 * 24 * 60 * 60) return relativeTime.format(-Math.floor(elapsedSeconds / (24 * 60 * 60)), "day");
+	if (elapsedSeconds < 30 * 24 * 60 * 60) return relativeTime.format(-Math.floor(elapsedSeconds / (7 * 24 * 60 * 60)), "week");
+	if (elapsedSeconds < 365 * 24 * 60 * 60) return relativeTime.format(-Math.floor(elapsedSeconds / (30 * 24 * 60 * 60)), "month");
+	return relativeTime.format(-Math.floor(elapsedSeconds / (365 * 24 * 60 * 60)), "year");
+}
+
 export default function UserInfo({ id, info, mode, isClan, isDans, canManageProfile, rankHistory, children }: {
 	id: number,
 	info: Profile,
@@ -97,6 +111,8 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 	const profileQuery = isClan ? "?clan" : "";
 	const avatarSubdomain = isClan ? "clan-a" : "a";
 	const countrySort = isDans ? "dans" : "performance";
+	const displayName = `${info.tag ?? ""}${info.name}`;
+	const nameTooltipId = `profile-name-tooltip-${isClan ? "clan" : "user"}-${id}`;
 	const lastOnlineDate = info.latestActivity.toLocaleDateString("en-US", {
 		year: "numeric",
 		month: "short",
@@ -110,6 +126,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 		timeZone: "UTC",
 		timeZoneName: "short"
 	});
+	const lastOnlineRelative = formatRelativeTime(info.latestActivity);
 
 	return (
 		<div className={classNames(styles.section_box, styles.user_info)} data-page-enter="box">
@@ -130,7 +147,14 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 				</span>
 				<div className={styles.name_container}>
 					<div className={styles.name_row}>
-						<h1 className={styles.name}>{info.tag}{info.name}</h1>
+						<div className={styles.name_with_tooltip}>
+							<h1 className={styles.name} tabIndex={0} aria-describedby={nameTooltipId}>
+								{displayName}
+							</h1>
+							<span id={nameTooltipId} className={styles.name_tooltip} role="tooltip">
+								{displayName}
+							</span>
+						</div>
 						<div className={styles.profile_mode_controls}>
 							<ProfileModeSelection id={id} mode={mode} isClan={isClan} isDans={isDans}/>
 							{canManageProfile && !isDans && selectedMode !== info.preferredMode &&
@@ -211,7 +235,10 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 					</span>
 					<span className={styles.activity_copy}>
 						<small>Presence</small>
-						<strong>{info.isOnline ? "Online now" : "Last online"}</strong>
+						<strong>
+							{info.isOnline ? "Online now" : "Last online"}
+							{!info.isOnline && <span className={styles.activity_relative}>{lastOnlineRelative}</span>}
+						</strong>
 					</span>
 				</span>
 				<time className={styles.activity_time} dateTime={info.latestActivity.toISOString()}>

@@ -1,19 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getClanMembers } from "@/database/profile";
-import { ModeNum, type OsuMode } from "@/lib/mode";
+import type { ClanMember } from "@/database/profile";
+import type { OsuMode } from "@/lib/mode";
 import CountryFlag from "@/components/country-flag";
 import FontAwesome from "@/components/font-awesome";
 import KickClanMemberButton from "@/components/profile/kick-clan-member-button";
 import styles from "@s/profile.module.css";
 
-export default async function ClanMembers({ clanId, mode, isDans, canManage }: {
+const getRoleMeta = (member: ClanMember) => {
+	if (member.isOwner) return { label: "Owner", icon: "crown" };
+	if (member.rank.toLowerCase() === "officer") return { label: "Officer", icon: "shield-halved" };
+	return { label: member.rank || "Member", icon: "user" };
+};
+
+export default function ClanMembers({ clanId, members, mode, isDans, canManage }: {
 	clanId: number,
+	members: ClanMember[],
 	mode: OsuMode,
 	isDans: boolean,
 	canManage: boolean
 }) {
-	const members = await getClanMembers(clanId, ModeNum[mode], isDans);
 	const profileQuery = isDans ? "?dans" : "";
 
 	return (
@@ -30,9 +36,7 @@ export default async function ClanMembers({ clanId, mode, isDans, canManage }: {
 						{members.map((member) => {
 							const countryCode = member.country.trim().toLowerCase();
 							const hasCountry = /^[a-z]{2}$/.test(countryCode);
-							const role = member.isOwner
-								? { label: "Owner", icon: "crown" }
-								: { label: "Member", icon: "user" };
+							const role = getRoleMeta(member);
 							return (
 								<li key={member.id} className={styles.clan_member_grid_item}>
 									<Link className={styles.clan_member_card}

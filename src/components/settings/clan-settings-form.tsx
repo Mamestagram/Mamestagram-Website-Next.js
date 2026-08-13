@@ -75,7 +75,7 @@ export default function ClanSettingsForm({ tag: initialTag, showPastTags: initia
 					<span className={styles.toggle_icon}><FontAwesome prefix="fad" name="clock-rotate-left"/></span>
 					<span>
 						<strong>Display past tags publicly</strong>
-						<small>Show previous clan tags beneath the current tag on the clan profile.</small>
+						<small>Show up to three previous clan tags beneath the current tag on the clan profile.</small>
 					</span>
 				</span>
 				<input type="checkbox"

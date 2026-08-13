@@ -6,35 +6,15 @@ export const userExistsQuery = `
 	) AS user_exists
 `;
 
-export const clanExistsQuery = `
-	SELECT EXISTS(
-		SELECT *
-			FROM clans
-		WHERE id = ?
-	) AS clan_exists
-`;
-
 export const userNameQuery = `
 	SELECT name
 		FROM users
 	WHERE id = ?
 `;
 
-export const clanTagQuery = `
-	SELECT tag
-		FROM clans
-	WHERE id = ?
-`;
-
 export const userPreferredModeQuery = `
 	SELECT preferred_mode
 		FROM users
-	WHERE id = ?
-`;
-
-export const clanPreferredModeQuery = `
-	SELECT preferred_mode
-		FROM clans
 	WHERE id = ?
 `;
 
@@ -114,12 +94,6 @@ export const setBadgeQuery = `
 	SELECT badge_id
 	    FROM market_badge_equipment
 	WHERE owner_id = ? -- number
-`;
-
-export const clanInfoQuery = `
-	SELECT tag, past_tag, show_past_tag, created_at, preferred_mode, userpage_content, public, owner
-	    FROM clans
-	WHERE id = ? -- number
 `;
 
 export const mutualQuery = `

@@ -5,6 +5,8 @@ import type { PlayerMostPlayedMap, PlayerScoreMap } from "@/database/profile";
 import { ScoreScope, getMostPlayedMaps, getPlayerScores } from "@/database/profile";
 import { ModeNum } from "@/lib/mode";
 import FontAwesome from "@/components/font-awesome";
+import PlayerScoreCard from "@/components/profile/player-score-card";
+import PlayerScoreHeading from "@/components/profile/player-score-heading";
 import PlayerScoreValue from "@/components/profile/player-score-value";
 import ScoreList from "@/components/profile/score-list";
 import styles from "@s/profile.module.css";
@@ -26,6 +28,14 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 			playerScores = await getMostPlayedMaps(id, mode, isDans);
 			break;
 	}
+	const sectionTitle = {
+		[ScoreScope.bestPP]: "Best Performance",
+		[ScoreScope.firstPlace]: "First Place Ranks",
+		[ScoreScope.mostPlayed]: "Most Played Maps",
+		[ScoreScope.recentPlayed]: "Recent Played Maps"
+	}[scope];
+	const baseDomain = process.env.BASE_DOMAIN;
+	if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
 
 	return (
 		<details className={styles.score_details} open>
@@ -40,7 +50,7 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 					<FontAwesome className={styles.collapse_icon} prefix="fas" name="chevron-down"/>
 				</h1>
 			</summary>
-			<ScoreList count={playerScores.length}>
+			<ScoreList count={playerScores.length} title={sectionTitle}>
 				{playerScores.length === 0 &&
 					<div className={styles.no_scores} role="status">
 						<span className={styles.empty_score_icon}>
@@ -75,11 +85,7 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 								</span>
 							</span>}
 						<div className={styles.map_meta}>
-							<h2 className={styles.map_heading}>
-								<span className={styles.artist}>{map.artist}</span>
-								<span className={styles.heading_separator}>—</span>
-								<span className={styles.title}>{map.title}</span>
-							</h2>
+							<PlayerScoreHeading artist={map.artist} title={map.title}/>
 							<p className={styles.map_details}>
 								<span className={styles.difficulty}>
 									<FontAwesome prefix="fas" name="layer-group"/>
@@ -94,13 +100,24 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 							</span>
 						</p>
 					</>;
-					return map.set_id > 0 && map.id > 0
-						? <Link key={`${map.set_id}-${map.id}-${i}`}
-						        className={className}
-						        href={`/beatmaps/${map.set_id}/${map.id}`}>
+					if (map.set_id <= 0 || map.id <= 0)
+						return <div key={`${map.set_id}-${map.id}-${i}`} className={className}>{content}</div>;
+					if (scope === ScoreScope.mostPlayed)
+						return <Link key={`${map.set_id}-${map.id}-${i}`}
+						             className={className}
+						             aria-label={`${map.artist} — ${map.title}`}
+						             href={`/beatmaps/${map.set_id}/${map.id}`}>
 							{content}
-						</Link>
-						: <div key={`${map.set_id}-${map.id}-${i}`} className={className}>{content}</div>;
+						</Link>;
+
+					const scoreMap = map as PlayerScoreMap;
+					return <PlayerScoreCard key={`${map.set_id}-${map.id}-${scoreMap.score_id}-${i}`}
+					                        className={className}
+					                        label={`${map.artist} — ${map.title}`}
+					                        beatmapHref={`/beatmaps/${map.set_id}/${map.id}`}
+					                        replayUrl={`https://render.${baseDomain}/embed/${scoreMap.score_id}`}>
+						{content}
+					</PlayerScoreCard>;
 				})}
 			</ScoreList>
 		</details>

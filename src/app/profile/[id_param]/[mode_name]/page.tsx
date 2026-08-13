@@ -2,7 +2,17 @@ import classNames from "classnames";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { accountExists, getName, getInfo, ScoreScope } from "@/database/profile";
+import {
+	accountExists,
+	getClanProfile,
+	getClanStatistics,
+	getName,
+	getUserInfo,
+	ScoreScope,
+	type ClanMember,
+	type PlayerStatistics,
+	type Profile as ProfileInfo
+} from "@/database/profile";
 import { getRankHistory } from "@/database/rank-history";
 import { writeLog } from "@/lib/log";
 import { resolveProfileBackgroundUrl, resolveProfileBannerUrl } from "@/lib/profile-banner";
@@ -72,13 +82,26 @@ export default async function Profile({ params, searchParams }: {
 		if (id >= (!isClan ? 3 : 1) && await accountExists(id, isClan)) {
 			const baseDomain = process.env.BASE_DOMAIN;
 			if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
-			const [info, currentUser, rankHistory, bannerUrl, backgroundUrl] = await Promise.all([
-				getInfo(id, isClan),
+			const profileDataPromise = isClan
+				? getClanProfile(id).then((clanProfile) => ({ type: "clan" as const, clanProfile }))
+				: getUserInfo(id).then((info) => ({ type: "user" as const, info }));
+			const [profileData, currentUser, rankHistory, bannerUrl, backgroundUrl] = await Promise.all([
+				profileDataPromise,
 				getCurrentUser(),
 				!isClan ? getRankHistory(id, mode) : null,
 				resolveProfileBannerUrl(id, isClan, baseDomain),
 				resolveProfileBackgroundUrl(id, isClan, baseDomain)
 			]);
+			let info: ProfileInfo;
+			let clanMembers: ClanMember[] = [];
+			let clanStatistics: PlayerStatistics | undefined;
+			if (profileData.type === "clan") {
+				if (!profileData.clanProfile) notFound();
+				info = profileData.clanProfile.info;
+				clanMembers = profileData.clanProfile.members;
+				clanStatistics = getClanStatistics(profileData.clanProfile, mode, isDans);
+			}
+			else info = profileData.info;
 			const canManageProfile = currentUser.isLoggedIn && currentUser.id === (isClan ? info.ownerId : id);
 
 			return (
@@ -96,18 +119,20 @@ export default async function Profile({ params, searchParams }: {
 							          isDans={isDans}
 							          canManageProfile={canManageProfile}
 							          rankHistory={rankHistory}>
-								{isClan && <Suspense fallback={
-									<div className={styles.clan_members_loading}>Loading clan members…</div>
-								}>
+								{isClan &&
 									<ClanMembers clanId={id}
+									             members={clanMembers}
 									             mode={mode_name as OsuMode}
 									             isDans={isDans}
-									             canManage={canManageProfile}/>
-								</Suspense>}
+									             canManage={canManageProfile}/>}
 							</UserInfo>
 							<div className={classNames(styles.section_box, styles.statistics)} data-page-enter="box">
 								<Suspense fallback={<StatisticsLoading/>}>
-									<Statistics id={id} mode={mode} isClan={isClan} isDans={isDans}/>
+									<Statistics id={id}
+									            mode={mode}
+									            isClan={isClan}
+									            isDans={isDans}
+									            statistics={clanStatistics}/>
 								</Suspense>
 							</div>
 						</div>
@@ -116,8 +141,8 @@ export default async function Profile({ params, searchParams }: {
 						         profileId={id}
 						         isClan={isClan}
 						         mode={mode_name}/>
-						<div className={classNames(styles.section_area, styles.map_scores, { [styles.clan_map_scores]: isClan })}>
-							{!isClan && <div className={styles.player_scores}>
+						{!isClan && <div className={classNames(styles.section_area, styles.map_scores)}>
+							<div className={styles.player_scores}>
 								<div className={classNames(styles.section_box, styles.list_container)} data-page-enter="box">
 									<Suspense fallback={<PlayerScoresLoading label="Best Performance"/>}>
 										<PlayerScores scope={ScoreScope.bestPP} id={id} mode={mode} isDans={isDans}/>
@@ -138,11 +163,11 @@ export default async function Profile({ params, searchParams }: {
 										<PlayerScores scope={ScoreScope.recentPlayed} id={id} mode={mode} isDans={isDans}/>
 									</Suspense>
 								</div>
-							</div>}
+							</div>
 							<Achievements id={id}
 							              mode={mode}
-							              canRevealSecretConditions={!isClan && currentUser.isLoggedIn && currentUser.id === id}/>
-						</div>
+							              canRevealSecretConditions={currentUser.isLoggedIn && currentUser.id === id}/>
+						</div>}
 					</div>
 				</div>
 			);

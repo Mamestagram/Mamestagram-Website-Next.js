@@ -3,6 +3,7 @@ import { cache } from "react";
 import { executeQuery } from "@/database/connection";
 import {
 	beatmapDifficultiesQuery,
+	beatmapScoreIdsQuery,
 	beatmapUserRankQuery,
 	beatmapUserScoreQuery,
 	scoreCountriesQuery
@@ -149,6 +150,7 @@ export const getBeatmapDifficulties = async (setId: number, server: Beatmap["ser
 
 type BeatmapScoreApiRow = {
 	id?: number,
+	map_md5: string,
 	userid: number,
 	player_name: string,
 	country?: string,
@@ -172,6 +174,36 @@ type BeatmapScoresApi = {
 	scores?: BeatmapScoreApiRow[]
 };
 
+type BeatmapScoreIdRow = {
+	id: number,
+	userId: number,
+	score: number,
+	mods: number,
+	playTime: string
+};
+
+const getScoreIdentity = ({ userid, score, mods, play_time }: Pick<
+	BeatmapScoreApiRow,
+	"userid" | "score" | "mods" | "play_time"
+>) => `${userid}:${score}:${mods}:${play_time}`;
+
+const getBeatmapScoreIds = async (scores: BeatmapScoreApiRow[], mode: ModeNum) => {
+	const scoresWithoutIds = scores.filter((score) => score.id === undefined);
+	if (scoresWithoutIds.length === 0) return new Map<string, number>();
+	const scoreIds = await executeQuery<BeatmapScoreIdRow>(
+		beatmapScoreIdsQuery(scoresWithoutIds.length),
+		[
+			scoresWithoutIds[0].map_md5,
+			mode,
+			...scoresWithoutIds.flatMap((score) => [score.userid, score.score, score.mods, score.play_time])
+		]
+	);
+	return new Map(scoreIds.map((score) => [
+		`${score.userId}:${score.score}:${score.mods}:${score.playTime}`,
+		score.id
+	]));
+};
+
 const getScoreCountries = async (scores: BeatmapScoreApiRow[]) => {
 	const userIds = [...new Set(scores.filter((score) => !score.country).map((score) => score.userid))];
 	if (userIds.length === 0) return new Map<number, string>();
@@ -191,9 +223,12 @@ export const getBeatmapScores = async (mapId: number, mode: ModeNum): Promise<Be
 	}));
 	if (!response || response.status !== "success") return [];
 	const scores = response.scores ?? [];
-	const countries = await getScoreCountries(scores);
+	const [countries, scoreIds] = await Promise.all([
+		getScoreCountries(scores),
+		getBeatmapScoreIds(scores, mode)
+	]);
 	return scores.map((score, index) => ({
-		id: score.id ?? -(index + 1),
+		id: score.id ?? scoreIds.get(getScoreIdentity(score)) ?? -(index + 1),
 		userId: score.userid,
 		name: score.player_name,
 		country: score.country ?? countries.get(score.userid) ?? "xx",

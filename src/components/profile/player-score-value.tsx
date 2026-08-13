@@ -27,8 +27,8 @@ export default function PlayerScoreValue({ i, map, scope, isDans }: {
 							<span className={styles.auxiliary_label}>weighted</span>
 							<span className={styles.score_numeric_value}>{Math.round(scoreMap.pp * 0.95 ** i).toLocaleString()}</span><span className={styles.pp_label}>pp</span>
 						</span>}
-					{scope !== ScoreScope.bestPP && scoreMap.grade === "F" &&
-						<span className={styles.failed}>Failed</span>}
+					{scope !== ScoreScope.bestPP && scoreMap.status === BeatmapStatus.loved &&
+						<span className={styles.loved}>Loved</span>}
 				</>
 			);
 		case ScoreScope.mostPlayed:

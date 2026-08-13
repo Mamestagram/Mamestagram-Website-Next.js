@@ -1,17 +1,19 @@
 import classNames from "classnames";
-import { getStatistics } from "@/database/profile";
+import { getStatistics, type PlayerStatistics } from "@/database/profile";
 import { ModeNum } from "@/lib/mode";
 import FontAwesome from "@/components/font-awesome";
 import styles from "@s/profile.module.css";
 
-export default async function Statistics({ id, mode, isClan, isDans }: {
+export default async function Statistics({ id, mode, isClan, isDans, statistics: initialStatistics }: {
 	id: number,
 	mode: ModeNum,
 	isClan: boolean,
-	isDans: boolean
+	isDans: boolean,
+	statistics?: PlayerStatistics
 }) {
-	const statistics = await getStatistics(id, mode, isClan, isDans);
+	const statistics = initialStatistics ?? await getStatistics(id, mode, isClan, isDans);
 	const formatAggregate = (value: number) => (isClan ? Math.floor(value) : value).toLocaleString();
+	const isVanillaMode = [ModeNum.std, ModeNum.taiko, ModeNum.ctb, ModeNum.mania].includes(mode);
 
 	return (
 		<>
@@ -31,22 +33,22 @@ export default async function Statistics({ id, mode, isClan, isDans }: {
 									: "-"}
 							</p>
 						</li>
-						<li>
+						{!isClan && <li>
 							<h3>Country Rank</h3>
 							<p>
 								{statistics.rank.country !== 0
 									? `#${statistics.rank.country.toLocaleString()}`
 									: "-"}
 							</p>
-						</li>
-						<li>
+						</li>}
+						{!isClan && isVanillaMode && <li>
 							<h3>Bancho Rank</h3>
 							<p>
 								{statistics.rank.bancho !== 0
 									? `#${statistics.rank.bancho.toLocaleString()}`
 									: "-"}
 							</p>
-						</li>
+						</li>}
 					</ul>
 				</section>
 
@@ -55,7 +57,7 @@ export default async function Statistics({ id, mode, isClan, isDans }: {
 					<ul className={styles.grade_count_area}>
 						{Object.entries(statistics.gradeCount).map(([key, value]) =>
 							<li key={key} data-grade={key}>
-								<h3>{key.toUpperCase()}</h3>
+								<h3>{key.replace(/h$/, "").toUpperCase()}</h3>
 								<p>{value.toLocaleString()}</p>
 							</li>
 						)}

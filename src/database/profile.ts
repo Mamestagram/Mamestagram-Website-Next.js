@@ -1,10 +1,7 @@
+import { cache } from "react";
 import { executeQuery } from "./connection";
 import {
-	clanExistsQuery,
-	clanInfoQuery,
 	clanOwnerQuery,
-	clanPreferredModeQuery,
-	clanTagQuery,
 	followingQuery,
 	followersQuery,
 	mutualQuery,
@@ -20,7 +17,6 @@ import {
 	userNameQuery,
 	userPreferredModeQuery
 } from "./query/profile/user-info";
-import { clanMembersDansQuery, clanMembersQuery } from "./query/profile/clan-members";
 import {
 	dansBestPPQuery,
 	dansFirstPlaceQuery,
@@ -37,14 +33,6 @@ import {
 	dansMaxComboQuery
 } from "./query/profile/statistics/personal-dans";
 import {
-	clanStatsSimpleAggQuery,
-	clanStatsComplexAggQuery,
-	clanDanGradeCountQuery,
-	clanDanMaxComboQuery,
-	clanDanRewardAccPlaysQuery,
-	clanManiaDanPPQuery
-} from "./query/profile/statistics/clan";
-import {
 	medalSkillQuery,
 	medalModQuery,
 	medalOthersQuery
@@ -53,11 +41,10 @@ import { ModeNum, OsuMode } from "@/lib/mode";
 import { getPrivs, Priv } from "@/lib/priv";
 import { BeatmapStatus } from "@/lib/beatmap-status";
 import { writeError } from "@/lib/log";
-import { generalizedMean } from "@/lib/aggregate";
 
-const fetchProfileResponse = async (url: string, label: string) => {
+const fetchProfileResponse = async (url: string, label: string, init?: RequestInit) => {
 	try {
-		return await fetch(url);
+		return await fetch(url, init);
 	}
 	catch (error: unknown) {
 		void writeError(error);
@@ -76,10 +63,7 @@ export const accountExists = async (id: number, isClan: boolean) => {
 		}
 		// clan
 		else {
-			return (await executeQuery<{ clan_exists: 0 | 1 }>(
-				clanExistsQuery,
-				[id]
-			)).at(0)!.clan_exists === 1;
+			return await getClanProfile(id) !== null;
 		}
 	}
 	catch (err) {
@@ -99,10 +83,9 @@ export const getName = async (id: number, isClan: boolean) => {
 		}
 		// clan
 		else {
-			return (await executeQuery<{ tag: string }>(
-				clanTagQuery,
-				[id]
-			)).at(0)!.tag;
+			const clan = await getClanProfile(id);
+			if (!clan) throw new Error("Clan not found");
+			return clan.info.name;
 		}
 	}
 	catch (err) {
@@ -123,11 +106,9 @@ export const getPreferredMode = async (id: number, isClan: boolean) => {
 		}
 		// clan
 		else {
-			const preferredModeNum = (await executeQuery<{ preferred_mode: ModeNum }>(
-				clanPreferredModeQuery,
-				[id]
-			)).at(0)!.preferred_mode;
-			return ModeNum[preferredModeNum] as OsuMode;
+			const clan = await getClanProfile(id);
+			if (!clan) throw new Error("Clan not found");
+			return ModeNum[clan.info.preferredMode] as OsuMode;
 		}
 	}
 	catch (err) {
@@ -220,172 +201,195 @@ export type ProfileConnection = {
 	country: string
 };
 
-export const getInfo = async (id: number, isClan: boolean) => {
-	let info: Profile;
-	if (!isClan) {
-		type PlayerStatusApi = {
-			player_status: {
-				online: boolean
-			}
-		};
-		type PlayerInfoApi = {
-			player: {
-				info: {
-					name: string,
-					priv: number,
-					country: string,
-					creation_time: number, // unix timestamp
-					userpage_content: string | null,
-					show_past_name: 0 | 1,
-					past_name: string,
-					latest_activity: number, // unix timestamp
-					clan_id: number,
-					preferred_mode: ModeNum,
-					private: 0 | 1
-				}
-			}
-		};
+type PlayerStatusApi = {
+	player_status: {
+		online: boolean
+	}
+};
 
-		// 0: player status, 1: player info
-		const apiUrl = !Boolean(Number(process.env.LOCAL_ONLY)) ? [
-			`https://api.${process.env.BASE_DOMAIN}/v1/get_player_status?id=${id}`, // player status
-			`https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=info` // player info
-		] : [
-			`${process.env.BASE_URL}/api/v1/get_player_status?id=${id}`, // player status
-			`${process.env.BASE_URL}/api/v1/get_player_info?id=${id}&scope=info` // player info
-		];
-		const mamesosuApi = await Promise.all(apiUrl.map((url, index) =>
-			fetchProfileResponse(url, index === 0 ? "player status" : "player info")));
-		if (mamesosuApi.every((response) => response.ok)) {
-			const [
-				playerStatusApi,
-				playerInfoApi
-			] = await Promise.all<[Promise<PlayerStatusApi>, Promise<PlayerInfoApi>]>([
-				mamesosuApi.at(0)!.json(), // playerStatusApi
-				mamesosuApi.at(1)!.json() // playerInfoApi
-			]);
-			const playerStatus = playerStatusApi.player_status,
-				playerInfo = playerInfoApi.player.info;
-			try {
-				const [
-					joinedClan,
-					setBadge,
-					mutual,
-					following,
-					followers
-				] = await Promise.all([
-					executeQuery<{ tag: string }>(userJoinedClanQuery, [playerInfo.clan_id]), // tag
-					executeQuery<{ badge_id: number }>(setBadgeQuery, [id]), // setBadge
-					executeQuery<ProfileConnection>(mutualQuery, [id]), // mutual
-					executeQuery<ProfileConnection>(followingQuery, [id]), // following
-					executeQuery<ProfileConnection>(followersQuery, [id]) // followers
-				]);
-				info = {
-					tag: joinedClan.at(0)?.tag ?? null,
-					name: playerInfo.name,
-					pastNames: playerInfo.past_name,
-					showPastName: playerInfo.show_past_name === 1,
-					setBadge: setBadge.at(0)?.badge_id ?? 0,
-					country: playerInfo.country,
-					creationTime: new Date(playerInfo.creation_time * 1000),
-					latestActivity: new Date(playerInfo.latest_activity * 1000),
-					priv: getPrivs(playerInfo.priv),
-					mutual,
-					following,
-					followers,
-					preferredMode: playerInfo.preferred_mode,
-					userpageContent: playerInfo.userpage_content,
-					ownerId: null,
-					isOnline: playerStatus.online,
-					isPrivate: playerInfo.private === 1
-				};
-			}
-			catch (err) {
-				void writeError(err);
-				throw new Error("Couldn't get user info");
-			}
-		}
-		else {
-			let errMsg: string = "";
-			mamesosuApi.forEach((response, i) => {
-				if (!response.ok) {
-					switch (i) {
-						case 0: errMsg += `Couldn't fetch player status (status: ${response.status})\n`; break;
-						case 1: errMsg += `Couldn't fetch player info (status: ${response.status})\n`; break;
-					}
-					void writeError(`${response.status}: ${response.statusText} (url: ${apiUrl[i]})`);
-				}
-			});
-			throw new Error(errMsg);
+type PlayerInfoApi = {
+	player: {
+		info: {
+			name: string,
+			priv: number,
+			country: string,
+			creation_time: number,
+			userpage_content: string | null,
+			show_past_name: 0 | 1,
+			past_name: string,
+			latest_activity: number,
+			clan_id: number,
+			preferred_mode: ModeNum,
+			private: 0 | 1
 		}
 	}
-	else {
-		type ClanInfo = {
-			tag: string,
-			past_tag: string | null,
-			show_past_tag: 0 | 1,
-			created_at: number, // unix timestamp
-			preferred_mode: ModeNum,
-			userpage_content: string,
-			public: 0 | 1,
-			owner: number
-		};
+};
 
-		try {
-			const clanInfo = (await executeQuery<ClanInfo>(clanInfoQuery, [id])).at(0)!;
-			info = {
+export const getUserInfo = async (id: number): Promise<Profile> => {
+	const apiUrl = !Boolean(Number(process.env.LOCAL_ONLY)) ? [
+		`https://api.${process.env.BASE_DOMAIN}/v1/get_player_status?id=${id}`,
+		`https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=info`
+	] : [
+		`${process.env.BASE_URL}/api/v1/get_player_status?id=${id}`,
+		`${process.env.BASE_URL}/api/v1/get_player_info?id=${id}&scope=info`
+	];
+	const mamesosuApi = await Promise.all(apiUrl.map((url, index) =>
+		fetchProfileResponse(url, index === 0 ? "player status" : "player info")));
+	if (!mamesosuApi.every((response) => response.ok)) {
+		let errMsg = "";
+		mamesosuApi.forEach((response, index) => {
+			if (response.ok) return;
+			const label = index === 0 ? "player status" : "player info";
+			errMsg += `Couldn't fetch ${label} (status: ${response.status})\n`;
+			void writeError(`${response.status}: ${response.statusText} (url: ${apiUrl[index]})`);
+		});
+		throw new Error(errMsg);
+	}
+
+	const [playerStatusApi, playerInfoApi] = await Promise.all<[Promise<PlayerStatusApi>, Promise<PlayerInfoApi>]>([
+		mamesosuApi[0].json(),
+		mamesosuApi[1].json()
+	]);
+	const playerStatus = playerStatusApi.player_status;
+	const playerInfo = playerInfoApi.player.info;
+	try {
+		const [joinedClan, setBadge, mutual, following, followers] = await Promise.all([
+			executeQuery<{ tag: string }>(userJoinedClanQuery, [playerInfo.clan_id]),
+			executeQuery<{ badge_id: number }>(setBadgeQuery, [id]),
+			executeQuery<ProfileConnection>(mutualQuery, [id]),
+			executeQuery<ProfileConnection>(followingQuery, [id]),
+			executeQuery<ProfileConnection>(followersQuery, [id])
+		]);
+		return {
+			tag: joinedClan.at(0)?.tag ?? null,
+			name: playerInfo.name,
+			pastNames: playerInfo.past_name,
+			showPastName: playerInfo.show_past_name === 1,
+			setBadge: setBadge.at(0)?.badge_id ?? 0,
+			country: playerInfo.country,
+			creationTime: new Date(playerInfo.creation_time * 1000),
+			latestActivity: new Date(playerInfo.latest_activity * 1000),
+			priv: getPrivs(playerInfo.priv),
+			mutual,
+			following,
+			followers,
+			preferredMode: playerInfo.preferred_mode,
+			userpageContent: playerInfo.userpage_content,
+			ownerId: null,
+			isOnline: playerStatus.online,
+			isPrivate: playerInfo.private === 1
+		};
+	}
+	catch (error: unknown) {
+		void writeError(error);
+		throw new Error("Couldn't get user info", { cause: error });
+	}
+};
+
+type ClanApiMember = {
+	id: number,
+	name: string,
+	country: string,
+	rank: string
+};
+
+type ClanApiStatistics = {
+	rank_pp: number,
+	rank_score: number,
+	rank_dan: number,
+	xh_count: number,
+	x_count: number,
+	sh_count: number,
+	s_count: number,
+	a_count: number,
+	pp: number,
+	pp_4k: number,
+	pp_6k: number,
+	pp_7k: number,
+	pp_10k: number,
+	acc: number,
+	plays: number,
+	playtime: number,
+	total_hits: number,
+	rscore: number,
+	tscore: number,
+	max_combo: number,
+	replay_views: number
+};
+
+type ClanApiResponse = {
+	id: number,
+	name: string,
+	tag: string,
+	past_tag: string | null,
+	show_past_tag: boolean,
+	created_at: string,
+	preferred_mode: ModeNum,
+	userpage_content: string | null,
+	public: boolean,
+	members: ClanApiMember[],
+	owner: ClanApiMember,
+	stats: Record<string, ClanApiStatistics>
+};
+
+export type ClanMember = ClanApiMember & { isOwner: boolean };
+
+export type ClanProfile = {
+	info: Profile,
+	members: ClanMember[],
+	stats: Record<string, ClanApiStatistics>
+};
+
+export const getClanProfile = cache(async (id: number): Promise<ClanProfile | null> => {
+	const baseDomain = process.env.BASE_DOMAIN;
+	if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
+	const url = `https://api.${baseDomain}/v1/get_clan?id=${id}`;
+	const response = await fetchProfileResponse(url, "clan info", { cache: "no-store" });
+	if (response.status === 404) return null;
+	if (!response.ok) {
+		void writeError(`${response.status}: ${response.statusText} (url: ${url})`);
+		throw new Error(`Couldn't fetch clan info (status: ${response.status})`);
+	}
+
+	try {
+		const clan = await response.json() as ClanApiResponse;
+		if (clan.id !== id || !Array.isArray(clan.members) || !clan.stats) {
+			throw new Error("Invalid clan API response");
+		}
+		const creationTime = new Date(clan.created_at);
+		if (Number.isNaN(creationTime.getTime())) throw new Error("Invalid clan creation time");
+		return {
+			info: {
 				tag: null,
-				name: clanInfo.tag,
-				pastNames: clanInfo.past_tag,
-				showPastName: clanInfo.show_past_tag === 1,
+				name: clan.tag,
+				pastNames: clan.past_tag,
+				showPastName: clan.show_past_tag,
 				setBadge: 0,
 				country: "",
-				creationTime: new Date(clanInfo.created_at * 1000),
-				latestActivity: new Date(),
+				creationTime,
+				latestActivity: creationTime,
 				priv: [],
 				mutual: [],
 				following: [],
 				followers: [],
-				preferredMode: clanInfo.preferred_mode,
-				userpageContent: clanInfo.userpage_content,
-				ownerId: clanInfo.owner,
+				preferredMode: clan.preferred_mode,
+				userpageContent: clan.userpage_content,
+				ownerId: clan.owner.id,
 				isOnline: false,
-				isPrivate: clanInfo.public === 0
-			};
-		}
-		catch (err) {
-			void writeError(err);
-			throw new Error("Couldn't get clan info");
-		}
+				isPrivate: !clan.public
+			},
+			members: clan.members.map((member) => ({
+				...member,
+				isOwner: member.id === clan.owner.id || member.rank.toLowerCase() === "owner"
+			})),
+			stats: clan.stats
+		};
 	}
-	return info;
-}
-
-export type ClanMember = {
-	id: number,
-	name: string,
-	country: string,
-	privileges: Priv[],
-	isOwner: 0 | 1,
-	acc: number,
-	plays: number,
-	pp: number,
-	score: number
-};
-
-export const getClanMembers = async (clanId: number, mode: ModeNum, isDans: boolean) => {
-	try {
-		type ClanMemberRow = Omit<ClanMember, "privileges"> & { priv: number };
-		const members = !isDans
-			? await executeQuery<ClanMemberRow>(clanMembersQuery, [mode, clanId])
-			: await executeQuery<ClanMemberRow>(clanMembersDansQuery, [mode, mode, mode, clanId]);
-		return members.map(({ priv, ...member }) => ({ ...member, privileges: getPrivs(priv) }));
+	catch (error: unknown) {
+		void writeError(error);
+		throw new Error("Couldn't read clan info", { cause: error });
 	}
-	catch (err) {
-		void writeError(err);
-		throw new Error("Couldn't get clan members");
-	}
-}
+});
 
 /* player scores */
 export enum ScoreScope {
@@ -396,6 +400,7 @@ export enum ScoreScope {
 }
 
 export type PlayerScoreMap = {
+	score_id: number,
 	set_id: number,
 	id: number,
 	grade: string,
@@ -427,6 +432,7 @@ export const getPlayerScores = async (scope: Exclude<ScoreScope, ScoreScope.most
 			case ScoreScope.recentPlayed:
 				type PlayerScoresApi = {
 					scores?: {
+						id: number,
 						pp: number,
 						acc: number,
 						mods: number,
@@ -458,6 +464,7 @@ export const getPlayerScores = async (scope: Exclude<ScoreScope, ScoreScope.most
 						const beatmap = score.beatmap;
 						if (!beatmap) return [];
 						return [{
+							score_id: score.id,
 							set_id: beatmap.set_id,
 							id: beatmap.id,
 							grade: score.grade,
@@ -561,7 +568,7 @@ type PlayTime = {
 	minutes: number
 };
 
-type PlayerStatistics = {
+export type PlayerStatistics = {
 	rank: Rank,
 	gradeCount: GradeCount,
 	pp: PP,
@@ -584,6 +591,45 @@ const getPlayTimeDHS = (playtime: number): PlayTime => {
 	const minutes = Math.floor(playtimeSeconds / 60);
 	return { days, hours, minutes };
 }
+
+export const getClanStatistics = (
+	clanProfile: ClanProfile,
+	mode: ModeNum,
+	isDans: boolean
+): PlayerStatistics => {
+	const stats = clanProfile.stats[String(mode)];
+	if (!stats) throw new Error(`Clan statistics are unavailable for mode ${mode}`);
+
+	return {
+		rank: {
+			global: isDans ? stats.rank_dan : stats.rank_pp,
+			country: 0,
+			bancho: 0
+		},
+		gradeCount: {
+			xh: stats.xh_count,
+			x: stats.x_count,
+			sh: stats.sh_count,
+			s: stats.s_count,
+			a: stats.a_count
+		},
+		pp: {
+			default: stats.pp,
+			k4: stats.pp_4k,
+			k6: stats.pp_6k,
+			k7: stats.pp_7k,
+			k10: stats.pp_10k
+		},
+		acc: stats.acc,
+		plays: stats.plays,
+		playtime: getPlayTimeDHS(stats.playtime),
+		totalHits: stats.total_hits,
+		rankedScore: stats.rscore,
+		totalScore: stats.tscore,
+		maxCombo: stats.max_combo,
+		replaysWatched: stats.replay_views
+	};
+};
 
 export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, isDans: boolean) => {
 	let statistics: PlayerStatistics;
@@ -751,146 +797,9 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 		}
 	}
 	else {
-		let // rank: Rank,
-			gradeCount: GradeCount,
-			pp: PP,
-			acc: number,
-			playtime: PlayTime,
-			plays: number,
-			totalHits: number,
-			rankedScore: number,
-			totalScore: number,
-			maxCombo: number,
-			replaysWatched: number;
-		const rank = { // TODO
-			global: 0,
-			country: 0,
-			bancho: 0
-		};
-		const p = 10;
-		if (!isDans) {
-			type SimpleAggregate = {
-				playtime: number,
-				xh_count: number,
-				x_count: number,
-				sh_count: number,
-				s_count: number,
-				a_count: number,
-				total_hits: number,
-				max_combo: number,
-				replay_views: number
-			};
-			type ComplexAggregate = {
-				pp: number,
-				pp_4k: number,
-				pp_6k: number,
-				pp_7k: number,
-				pp_10k: number,
-				acc: number,
-				plays: number,
-				rscore: number,
-				tscore: number,
-			};
-
-			try {
-				const [
-					simpleAgg,
-					complexAgg
-				] = await Promise.all([
-					executeQuery<SimpleAggregate>(clanStatsSimpleAggQuery, [id, mode]), // simpleAgg (1 record)
-					executeQuery<ComplexAggregate>(clanStatsComplexAggQuery, [id, mode]) // complexAgg
-				]);
-				/* simple aggregate */
-				playtime = getPlayTimeDHS(simpleAgg.at(0)?.playtime ?? 0);
-				gradeCount = {
-					xh: simpleAgg.at(0)?.xh_count ?? 0,
-					x: simpleAgg.at(0)?.x_count ?? 0,
-					sh: simpleAgg.at(0)?.sh_count ?? 0,
-					s: simpleAgg.at(0)?.s_count ?? 0,
-					a: simpleAgg.at(0)?.a_count ?? 0
-				};
-				totalHits = simpleAgg.at(0)?.total_hits ?? 0;
-				maxCombo = simpleAgg.at(0)?.max_combo ?? 0;
-				replaysWatched = simpleAgg.at(0)?.replay_views ?? 0;
-				/* complex aggregate */
-				pp = {
-					default: generalizedMean(complexAgg.map(({ pp }) => pp), p),
-					k4: generalizedMean(complexAgg.map(({ pp_4k }) => pp_4k), p),
-					k6: generalizedMean(complexAgg.map(({ pp_6k }) => pp_6k), p),
-					k7: generalizedMean(complexAgg.map(({ pp_7k }) => pp_7k), p),
-					k10: generalizedMean(complexAgg.map(({ pp_10k }) => pp_10k), p),
-				};
-				acc = generalizedMean(complexAgg.map(({ acc }) => acc), p);
-				plays = generalizedMean(complexAgg.map(({ plays }) => plays), p);
-				rankedScore = generalizedMean(complexAgg.map(({ rscore }) => rscore), p);
-				totalScore = generalizedMean(complexAgg.map(({ tscore }) => tscore), p);
-			} catch (err) {
-				void writeError(err);
-				throw new Error("Couldn't get clan statistics");
-			}
-		}
-		else {
-			playtime = { days: 0, hours: 0, minutes: 0 };
-			totalHits = 0;
-			rankedScore = 0;
-			totalScore = 0;
-			replaysWatched = 0;
-			try {
-				const [
-					danGradeCount,
-					danMaxCombo,
-					danComplexAgg,
-					maniaDanReward
-				] = await Promise.all([
-					executeQuery<{
-						grade: "XH" | "X" | "SH" | "S" | "A",
-						count: number
-					}>(clanDanGradeCountQuery, [id, mode]), // danGradeCount
-					executeQuery<{ combo: number }>(clanDanMaxComboQuery, [id, mode]), // danMaxCombo
-					executeQuery<{
-						acc: number,
-						plays: number,
-						pp: number
-					}>(clanDanRewardAccPlaysQuery, [id, mode, id, mode]), // danComplexAgg
-					executeQuery<{ cs: 4 | 6 | 7 | 10, pp: number }>(clanManiaDanPPQuery, [id]), // maniaDanReward
-				]);
-				/* simple aggregate */
-				gradeCount = {
-					xh: danGradeCount.find(({ grade }) => grade === "XH")?.count ?? 0,
-					x: danGradeCount.find(({ grade }) => grade === "X")?.count ?? 0,
-					sh: danGradeCount.find(({ grade }) => grade === "SH")?.count ?? 0,
-					s: danGradeCount.find(({ grade }) => grade === "S")?.count ?? 0,
-					a: danGradeCount.find(({ grade }) => grade === "A")?.count ?? 0
-				};
-				maxCombo = danMaxCombo.at(0)!.combo;
-				/* complex aggregate */
-				pp = {
-					default: generalizedMean(danComplexAgg.map(({ pp }) => pp), p),
-					k4: generalizedMean(maniaDanReward.filter(({ cs }) => cs === 4).map(({ pp }) => pp), p),
-					k6: generalizedMean(maniaDanReward.filter(({ cs }) => cs === 6).map(({ pp }) => pp), p),
-					k7: generalizedMean(maniaDanReward.filter(({ cs }) => cs === 7).map(({ pp }) => pp), p),
-					k10: generalizedMean(maniaDanReward.filter(({ cs }) => cs === 10).map(({ pp }) => pp), p)
-				};
-				acc = generalizedMean(danComplexAgg.map(({ acc }) => acc), p);
-				plays = generalizedMean(danComplexAgg.map(({ plays }) => plays), p);
-			} catch (err) {
-				void writeError(err);
-				throw new Error("Couldn't get clan dan statistics");
-			}
-		}
-		statistics = {
-			rank,
-			playtime,
-			gradeCount,
-			pp,
-			acc,
-			plays,
-			totalHits,
-			rankedScore,
-			totalScore,
-			maxCombo,
-			replaysWatched
-		};
+		const clanProfile = await getClanProfile(id);
+		if (!clanProfile) throw new Error("Clan not found");
+		statistics = getClanStatistics(clanProfile, mode, isDans);
 	}
 	return statistics;
 }

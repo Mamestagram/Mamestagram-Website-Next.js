@@ -4,6 +4,7 @@ import Link from "next/link";
 import CountryFlag from "@/components/country-flag";
 import FontAwesome from "@/components/font-awesome";
 import ModeIcon from "@/components/mode-icon";
+import ReplayViewer from "@/components/replay-viewer";
 import {
 	getBeatmapScores,
 	getBeatmapUserScore,
@@ -243,11 +244,13 @@ function ModsList({ mods }: Readonly<{ mods: number }>) {
 	);
 }
 
-function FeaturedScoreCard({ score, rank, mode, mapMaxCombo, personal = false }: Readonly<{
+function FeaturedScoreCard({ score, rank, mode, mapMaxCombo, replayLabel, replayUrl, personal = false }: Readonly<{
 	score: BeatmapScore,
 	rank: number,
 	mode: OsuMode,
 	mapMaxCombo: number,
+	replayLabel: string,
+	replayUrl: string,
 	personal?: boolean
 }>) {
 	return (
@@ -288,6 +291,14 @@ function FeaturedScoreCard({ score, rank, mode, mapMaxCombo, personal = false }:
 				<strong><span className={styles.top_metric_value}>{Math.round(score.pp).toLocaleString()}<small>pp</small></span></strong>
 			</span>
 			<ModsList mods={score.mods}/>
+			{score.id > 0
+				? <ReplayViewer className={styles.featured_replay_button}
+				                label={replayLabel}
+				                replayUrl={replayUrl}
+				                buttonLabel={`Watch ${score.name}'s replay`}>
+					<FontAwesome prefix="fas" name="circle-play"/>
+				</ReplayViewer>
+				: <span className={styles.replay_unavailable}>—</span>}
 		</div>
 	);
 }
@@ -296,6 +307,8 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 	map: Beatmap,
 	searchParams: BeatmapLeaderboardSearchParams
 }>) {
+	const baseDomain = process.env.BASE_DOMAIN;
+	if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
 	const scoreModeOptions = getScoreModeOptions(map.mode);
 	const convertScoreModeOptions = map.mode === ModeNum.std
 		? scoreModeOptions.filter(({ mode }) => [ModeNum.std, ModeNum.taiko, ModeNum.ctb, ModeNum.mania].includes(mode))
@@ -471,11 +484,15 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 				{topScore && <FeaturedScoreCard score={topScore}
 				                                rank={1}
 				                                mode={selectedScoreMode.route}
-				                                mapMaxCombo={map.maxCombo}/>}
+				                                mapMaxCombo={map.maxCombo}
+				                                replayLabel={`${topScore.name} — ${map.artist} — ${map.title}`}
+				                                replayUrl={`https://render.${baseDomain}/embed/${topScore.id}`}/>}
 				{personalScore && <FeaturedScoreCard score={personalScore.score}
 				                                     rank={personalScore.rank}
 				                                     mode={selectedScoreMode.route}
 				                                     mapMaxCombo={map.maxCombo}
+				                                     replayLabel={`${personalScore.score.name} — ${map.artist} — ${map.title}`}
+				                                     replayUrl={`https://render.${baseDomain}/embed/${personalScore.score.id}`}
 				                                     personal/>}
 
 				{scores.length > 0 ? <div className={styles.score_table_scroller}>
@@ -484,7 +501,7 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 							<tr>
 								<th>Rank</th><th>Grade</th><th>Score</th><th>Accuracy</th><th>Player</th><th>Combo</th>
 								{hitColumns.map(({ label }) => <th key={label}>{label}</th>)}
-								<th>PP</th><th>Time</th><th>Mods</th>
+								<th>PP</th><th>Time</th><th>Mods</th><th>Replay</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -513,10 +530,20 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 									<td className={classNames(styles.pp_cell, styles.score_data_cell)}>{Math.round(score.pp).toLocaleString()}<small>pp</small></td>
 									<td className={styles.score_data_cell}><time dateTime={score.playTime.toISOString()} title={score.playTime.toLocaleString("en-US")}>{formatRelativeTime(score.playTime)}</time></td>
 									<td className={styles.mods_cell}><ModsList mods={score.mods}/></td>
+									<td className={styles.replay_cell}>
+										{score.id > 0
+											? <ReplayViewer className={styles.table_replay_button}
+											                label={`${score.name} — ${map.artist} — ${map.title}`}
+											                replayUrl={`https://render.${baseDomain}/embed/${score.id}`}
+											                buttonLabel={`Watch ${score.name}'s replay`}>
+												<FontAwesome prefix="fas" name="circle-play"/>
+											</ReplayViewer>
+											: <span className={styles.replay_unavailable}>—</span>}
+									</td>
 								</tr>)}
 						</tbody>
 					</table>
-				</div> : <div className={styles.empty_scores}>
+				</div> : <div className={styles.empty_scores} role="status">
 					<span><FontAwesome prefix="fad" name="compact-disc"/></span>
 					<strong>{selectedMods.length > 0 ? "No matching scores" : "No scores yet"}</strong>
 					<p>{selectedMods.length > 0

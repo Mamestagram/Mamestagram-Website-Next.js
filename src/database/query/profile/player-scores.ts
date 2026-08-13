@@ -3,7 +3,7 @@ import { ModNum } from "@/lib/mods";
 import { ModeNum } from "@/lib/mode";
 
 export const firstPlaceMapsQuery = `
-    SELECT set_id, m.id, grade, title, artist, version, creator, m.status, mods, acc, pp
+	SELECT s.id AS score_id, set_id, m.id, grade, title, artist, version, creator, m.status, mods, acc, pp
 		FROM scores s
 	JOIN maps m
 		ON map_md5 = md5
@@ -29,13 +29,15 @@ export const firstPlaceMapsQuery = `
 `;
 
 export const dansBestPPQuery = `
-	SELECT ANY_VALUE(set_id) AS set_id,
+	SELECT CAST(SUBSTRING_INDEX(GROUP_CONCAT(s.id ORDER BY reward DESC, s.id DESC), ',', 1) AS UNSIGNED) AS score_id,
+	       ANY_VALUE(set_id) AS set_id,
 	       m.id,
 	       ANY_VALUE(grade) AS grade,
 	       ANY_VALUE(title) AS title,
 	       ANY_VALUE(artist) AS artist,
 	       ANY_VALUE(version) AS version,
            ANY_VALUE(creator) AS creator,
+	       ANY_VALUE(m.status) AS status,
 	       ANY_VALUE(s.mods) AS mods,
 	       ANY_VALUE(s.acc) AS acc,
 	       MAX(reward) AS pp
@@ -63,7 +65,7 @@ export const dansBestPPQuery = `
 `;
 
 export const dansFirstPlaceQuery = `
-	SELECT set_id, m.id, grade, title, artist, version, s.mods, s.acc, reward AS pp
+	SELECT s.id AS score_id, set_id, m.id, grade, title, artist, version, creator, m.status, s.mods, s.acc, reward AS pp
 	    FROM scores s
 	JOIN danmaps d
 	    ON map_md5 = d.md5
@@ -125,7 +127,7 @@ export const dansMostPlayedQuery = `
 `;
 
 export const dansRecentPlayedQuery = `
-	SELECT set_id, m.id, grade, title, artist, version, creator, m.status, s.mods, s.acc, reward AS pp
+	SELECT s.id AS score_id, set_id, m.id, grade, title, artist, version, creator, m.status, s.mods, s.acc, reward AS pp
 	    FROM scores s
 	JOIN danmaps d
 	    ON map_md5 = d.md5

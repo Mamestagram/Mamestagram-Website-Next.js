@@ -124,18 +124,24 @@ const getSettingsSchema = async () => {
 	} as const;
 };
 
+const MAX_PAST_NAMES = 3;
+
 const appendPastName = (pastNames: string | null, previousName: string, nextName: string) => {
 	if (previousName === nextName) return pastNames;
 
+	const previousNameKey = previousName.toLocaleLowerCase();
+	const nextNameKey = nextName.toLocaleLowerCase();
 	const previousNames = (pastNames ?? "")
 		.split(",")
 		.map((name) => name.trim())
 		.filter(Boolean)
-		.filter((name) => name.toLocaleLowerCase() !== previousName.toLocaleLowerCase());
+		.filter((name) => {
+			const nameKey = name.toLocaleLowerCase();
+			return nameKey !== previousNameKey && nameKey !== nextNameKey;
+		});
 	previousNames.unshift(previousName);
 
-	while (Array.from(previousNames.join(", ")).length > 255) previousNames.pop();
-	return previousNames.join(", ") || null;
+	return previousNames.slice(0, MAX_PAST_NAMES).join(", ") || null;
 };
 
 export const getUserSettings = async (userId: number): Promise<UserSettings | null> => {

@@ -127,10 +127,6 @@ export default function RankHistoryChart({ history }: { history: RankHistory }) 
 						<circle className={styles.rank_chart_active_point}
 						        cx={activePoint.x} cy={activePoint.y} r="5"/>
 					</>}
-					<circle className={styles.rank_chart_point}
-					        cx={lastPoint.x} cy={lastPoint.y} r="4.5">
-						<title>{`${lastPoint.date}: ${formatRank(lastPoint.rank)}`}</title>
-					</circle>
 				</svg>
 				{activePoint && <span
 					className={styles.rank_chart_tooltip}

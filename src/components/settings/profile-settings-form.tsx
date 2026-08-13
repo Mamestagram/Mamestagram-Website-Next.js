@@ -75,7 +75,7 @@ export default function ProfileSettingsForm({ username: initialUsername, showPas
 					<span className={styles.toggle_icon}><FontAwesome prefix="fad" name="clock-rotate-left"/></span>
 					<span>
 						<strong>Display past names publicly</strong>
-						<small>Show your previous usernames beneath your current name on your profile.</small>
+						<small>Show up to three previous usernames beneath your current name on your profile.</small>
 					</span>
 				</span>
 				<input type="checkbox"
