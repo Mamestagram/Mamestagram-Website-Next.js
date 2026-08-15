@@ -11,9 +11,10 @@ export default function Loading() {
 				<span className={styles.logo_ring} aria-hidden="true">
 					<Image className={styles.logo}
 					       src="/images/logo.png"
-					       alt=""
+					       alt="Mamestagram logo"
 					       width={56}
 					       height={56}
+					       draggable={false}
 					       priority/>
 				</span>
 				<span className={styles.label}>Loading...</span>

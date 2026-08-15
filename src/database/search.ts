@@ -4,6 +4,7 @@ import {
 	beatmapSearchQuery,
 	clanSearchCountQuery,
 	clanSearchQuery,
+	getBeatmapSearchDifficultiesQuery,
 	userSearchCountQuery,
 	userSearchQuery
 } from "@/database/query/search";
@@ -37,6 +38,8 @@ type BeatmapSearchRow = {
 	mode: number,
 	diff: number
 };
+
+type BeatmapSearchSetRow = { set_id: number };
 
 type ClanSearchRow = {
 	id: number,
@@ -163,34 +166,50 @@ export const searchBeatmaps = async (query: string, page = 1, pageSize = 12): Pr
 	const contains = `%${escaped}%`;
 	const startsWith = `${escaped}%`;
 	const { limit, offset } = getPagination(page, pageSize);
-	const rows = await executeQuery<BeatmapSearchRow>(beatmapSearchQuery, [
-		exactId,
-		exactId,
-		contains,
-		contains,
-		contains,
-		contains,
+	const setRows = await executeQuery<BeatmapSearchSetRow>(beatmapSearchQuery, [
 		exactId,
 		exactId,
 		normalized,
 		startsWith,
 		startsWith,
 		startsWith,
+		exactId,
+		exactId,
+		contains,
+		contains,
+		contains,
+		contains,
 		limit,
 		offset
 	]);
+	if (setRows.length === 0) return [];
 
-	return rows.map(({ id, set_id, status, artist, title, version, creator, mode, diff }) => ({
-		id,
-		setId: set_id,
-		status,
-		artist,
-		title,
-		version,
-		creator,
-		mode,
-		difficulty: diff
-	}));
+	const setIds = setRows.map(({ set_id }) => set_id);
+	const rows = await executeQuery<BeatmapSearchRow>(
+		getBeatmapSearchDifficultiesQuery(setIds.length),
+		setIds
+	);
+	const rowsBySetId = Map.groupBy(rows, ({ set_id }) => set_id);
+
+	return setRows.flatMap(({ set_id }) => {
+		const setMaps = rowsBySetId.get(set_id) ?? [];
+		const representative = setMaps.at(0);
+		if (!representative) return [];
+
+		return [{
+			setId: set_id,
+			artist: representative.artist,
+			title: representative.title,
+			creator: representative.creator,
+			difficulties: setMaps.map(({ id, status, version, mode, diff }) => ({
+				id,
+				status,
+				version,
+				mode,
+				difficulty: diff
+			}))
+		}];
+	});
 };
 
 export const countSearchBeatmaps = async (query: string): Promise<number> => {

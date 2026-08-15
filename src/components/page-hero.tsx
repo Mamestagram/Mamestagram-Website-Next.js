@@ -16,7 +16,7 @@ export default function PageHero({ description, imageSrc, title, variant }: Page
 			<Image
 				className={styles.image}
 				src={imageSrc}
-				alt=""
+				alt={`${title} hero`}
 				draggable={false}
 				fill
 				sizes="100vw"

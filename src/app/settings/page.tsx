@@ -151,17 +151,19 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 					<div className={styles.hero_identity}>
 						<span className={styles.hero_avatar}>
 							<Image src={heroAvatarUrl}
-							       alt=""
+							       alt={`${activeClan?.tag ?? settings.username} avatar`}
 							       fill
 							       sizes="88px"
+							       draggable={false}
 							       priority/>
 							{!isClanScope && settings.selectedBadge !== 0 &&
 								<Image className={styles.hero_badge}
 								       src={getBadgeImageUrl(settings.selectedBadge, baseDomain)}
-								       alt=""
+								       alt={`${settings.username} equipped badge`}
 								       fill
 								       sizes="88px"
 								       crossOrigin="anonymous"
+								       draggable={false}
 								       priority/>}
 						</span>
 						<div>

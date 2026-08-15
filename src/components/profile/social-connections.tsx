@@ -182,7 +182,7 @@ export default function SocialConnections({ connections, mode, avatarBaseUrl }: 
 											      onClick={closeConnections}>
 												<span className={styles.connection_avatar}>
 													<Image src={`${avatarBaseUrl}/${connection.user}`}
-													       alt=""
+													       alt={`${connection.name} avatar`}
 													       fill
 													       sizes="44px"
 													       draggable={false}/>

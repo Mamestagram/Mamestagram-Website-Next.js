@@ -9,7 +9,12 @@ export default function BannerImage() {
 	if (bannerImages.includes(segment)) {
 		return (
 			<div className="banner">
-				<Image src={`/images/banner/${segment}.jpg`} fill sizes="100vw" alt="" priority/>
+				<Image src={`/images/banner/${segment}.jpg`}
+				       alt={`${segment} banner`}
+				       fill
+				       sizes="100vw"
+				       draggable={false}
+				       priority/>
 			</div>
 		);
 	}

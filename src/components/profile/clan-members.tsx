@@ -43,7 +43,7 @@ export default function ClanMembers({ clanId, members, mode, isDans, canManage }
 									      href={`/profile/${member.id}/${mode}${profileQuery}`}>
 										<span className={styles.clan_member_grid_avatar}>
 											<Image src={`https://a.${process.env.BASE_DOMAIN}/${member.id}`}
-											       alt=""
+											       alt={`${member.name} avatar`}
 											       fill
 											       sizes="38px"
 											       draggable={false}/>

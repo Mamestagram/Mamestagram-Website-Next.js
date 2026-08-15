@@ -159,7 +159,10 @@ export default function HeaderSearch() {
 		closeSearch();
 		if (firstUser) router.push(`/profile/${firstUser.id}`);
 		else if (firstClan) router.push(`/profile/${firstClan.id}?clan`);
-		else if (firstBeatmap) router.push(`/beatmaps/${firstBeatmap.setId}/${firstBeatmap.id}`);
+		else if (firstBeatmap) {
+			const firstDifficulty = firstBeatmap.difficulties.at(0);
+			if (firstDifficulty) router.push(`/beatmaps/${firstBeatmap.setId}/${firstDifficulty.id}`);
+		}
 	};
 
 	const dialog = (

@@ -58,6 +58,36 @@ export const clanSearchCountQuery = `
 `;
 
 export const beatmapSearchQuery = `
+	SELECT set_id,
+	       MIN(CASE
+		       WHEN id = ? THEN 0
+		       WHEN set_id = ? THEN 1
+		       WHEN title = ? THEN 2
+		       WHEN title LIKE ? THEN 3
+		       WHEN artist LIKE ? THEN 4
+		       WHEN creator LIKE ? THEN 5
+		       ELSE 6
+	       END) AS match_priority,
+	       MAX(plays) AS max_plays,
+	       MIN(id) AS first_map_id
+		FROM maps
+	WHERE server = 'osu!'
+		AND (
+			id = ?
+			OR set_id = ?
+			OR artist LIKE ?
+			OR title LIKE ?
+			OR version LIKE ?
+			OR creator LIKE ?
+		)
+	GROUP BY set_id
+	ORDER BY match_priority ASC,
+	max_plays DESC,
+	first_map_id ASC
+	LIMIT ? OFFSET ?
+`;
+
+export const getBeatmapSearchDifficultiesQuery = (setCount: number) => `
 	SELECT id,
 	       set_id,
 	       status,
@@ -69,30 +99,15 @@ export const beatmapSearchQuery = `
 	       diff
 		FROM maps
 	WHERE server = 'osu!'
-		AND (
-			id = ?
-			OR set_id = ?
-			OR artist LIKE ?
-			OR title LIKE ?
-			OR version LIKE ?
-			OR creator LIKE ?
-		)
-	ORDER BY CASE
-		WHEN id = ? THEN 0
-		WHEN set_id = ? THEN 1
-		WHEN title = ? THEN 2
-		WHEN title LIKE ? THEN 3
-		WHEN artist LIKE ? THEN 4
-		WHEN creator LIKE ? THEN 5
-		ELSE 6
-	END,
-	plays DESC,
+		AND set_id IN (${Array.from({ length: setCount }, () => "?").join(", ")})
+	ORDER BY set_id ASC,
+	mode ASC,
+	diff ASC,
 	id ASC
-	LIMIT ? OFFSET ?
 `;
 
 export const beatmapSearchCountQuery = `
-	SELECT COUNT(*) AS total
+	SELECT COUNT(DISTINCT set_id) AS total
 		FROM maps
 	WHERE server = 'osu!'
 		AND (

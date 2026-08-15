@@ -18,6 +18,7 @@ Mamestagram Web
 - クエリはdatabase/queryの中に書く
 - なるべく他のファイルのコードと書き方を統一する
 - 内部リンクはLinkタグで外部リンクはaタグを使う
+- Imageタグには必ずaltに値を入れ、draggableをfalseにする
 
 ### React
 - Server Componentsを優先

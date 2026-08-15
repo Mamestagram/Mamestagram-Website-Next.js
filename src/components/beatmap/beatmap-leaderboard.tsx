@@ -261,8 +261,9 @@ function FeaturedScoreCard({ score, rank, mode, mapMaxCombo, replayLabel, replay
 			</span>
 			<Link className={styles.top_avatar} href={`/profile/${score.userId}/${mode}`}>
 				<Image src={`https://a.${process.env.BASE_DOMAIN}/${score.userId}`}
-				       alt=""
+				       alt={`${score.name} avatar`}
 				       fill
+				       draggable={false}
 				       sizes="64px"/>
 			</Link>
 			<span className={styles.top_player}>

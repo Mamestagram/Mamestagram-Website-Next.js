@@ -243,7 +243,7 @@ header {
 		& ul {
 			display: grid;
 			grid-template-rows: var(--header-height);
-			grid-template-columns: repeat(5, max-content) 1fr repeat(2, max-content);
+			grid-template-columns: repeat(6, max-content) 1fr repeat(2, max-content);
 			grid-gap: 0 10px;
 			font-size: 1rem;
 			justify-items: center;
@@ -261,7 +261,7 @@ header {
 			
 			&:has(.avatar) {
 				@media (max-width: 872px) {
-					grid-template-rows: repeat(5, 45px);
+					grid-template-rows: repeat(6, 45px);
 				}
 			}
 			
@@ -461,14 +461,14 @@ header {
 			}
 			
 			@media (max-width: 872px) {
-				grid-template-rows: repeat(6, var(--mobile-height));
+				grid-template-rows: repeat(7, var(--mobile-height));
 				grid-template-columns: 1fr;
 				grid-gap: 0;
 				justify-items: start;
 			}
 			
 			@media (max-width: 480px) {
-				grid-template-rows: repeat(6, calc(var(--mobile-height) - 5px));
+				grid-template-rows: repeat(7, calc(var(--mobile-height) - 5px));
 			}
 		}
 

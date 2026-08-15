@@ -7,7 +7,7 @@ export default function ProfileBanner({ imageUrl }: Readonly<{ imageUrl: string 
 			{imageUrl
 				? <Image className={styles.profile_cover_image}
 				         src={imageUrl}
-				         alt=""
+				         alt="Profile banner"
 				         fill
 				         sizes="100vw"
 				         draggable={false}

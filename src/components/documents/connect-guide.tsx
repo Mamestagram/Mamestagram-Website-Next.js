@@ -46,8 +46,11 @@ export default function ConnectGuide({ text, images, launchOption }: {
 								: step}</p>
 							{images[index].length > 0 &&
 								<div className={styles.step_images} data-count={images[index].length} data-step={index + 1}>
-									{images[index].map((image) =>
-										<Image key={image.src} {...image} alt="" draggable={false}/>)}
+									{images[index].map((image, imageIndex) =>
+										<Image key={image.src}
+										       {...image}
+										       alt={`Connection step ${index + 1} image ${imageIndex + 1}`}
+										       draggable={false}/>)}
 								</div>}
 						</div>
 					</li>)}

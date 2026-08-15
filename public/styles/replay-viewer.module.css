@@ -1,24 +1,54 @@
-.replay_fullscreen {
+.replay_backdrop {
 	display: grid;
 	position: fixed;
 	inset: 0;
 	z-index: 5000;
+	padding: clamp(12px, 3vw, 38px);
+	place-items: center;
+	overflow: hidden;
+	background: rgba(1, 4, 9, .82);
+	backdrop-filter: blur(10px);
+	animation: replay-backdrop-enter 180ms ease-out both;
+
+	&[data-closing="true"] {
+		pointer-events: none;
+		animation: replay-backdrop-exit 200ms ease-in both;
+
+		& .replay_dialog {
+			animation: replay-dialog-exit 200ms ease-in both;
+		}
+	}
+}
+
+.replay_dialog {
+	display: grid;
+	width: min(1240px, 100%);
+	max-height: calc(100dvh - 24px);
 	grid-template-rows: max-content minmax(0, 1fr);
-	width: 100vw;
-	height: 100dvh;
 	overflow: hidden;
 	color: #e8eef6;
 	background: #02050a;
-	animation: replay-fullscreen-enter 180ms ease-out both;
+	border: 1px solid rgba(255, 255, 255, .12);
+	border-radius: 20px;
+	box-shadow: 0 28px 90px rgba(0, 0, 0, .62), inset 0 1px 0 rgba(255, 255, 255, .055);
+	animation: replay-dialog-enter 200ms ease-out both;
 
 	& > iframe {
 		display: block;
-		width: 100%;
-		height: 100%;
+		width: calc(100% - 20px);
+		height: auto;
+		max-height: calc(100dvh - 126px);
 		min-width: 0;
 		min-height: 0;
+		margin: 10px;
+		aspect-ratio: 16 / 9;
 		background: #02050a;
-		border: 0;
+		border: 2px solid rgba(255, 255, 255, .16);
+		border-radius: 13px;
+		box-shadow:
+			0 0 0 1px rgba(255, 255, 255, .055),
+			0 12px 34px rgba(0, 0, 0, .42),
+			0 0 20px rgba(255, 255, 255, .035);
 	}
 }
 
@@ -112,11 +142,33 @@
 	}
 }
 
-@keyframes replay-fullscreen-enter {
+@keyframes replay-backdrop-enter {
 	from { opacity: 0; }
 	to { opacity: 1; }
 }
 
+@keyframes replay-dialog-enter {
+	from {
+		opacity: 0;
+		transform: translateY(12px) scale(.97);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes replay-backdrop-exit {
+	from { opacity: 1; }
+	to { opacity: 0; }
+}
+
+@keyframes replay-dialog-exit {
+	from { opacity: 1; }
+	to { opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-	.replay_fullscreen { animation: none; }
+	.replay_backdrop,
+	.replay_dialog { animation: none; }
 }

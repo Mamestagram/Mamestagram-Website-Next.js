@@ -6,7 +6,7 @@ export default function ProfileBackground({ imageUrl }: Readonly<{ imageUrl: str
 		<div className={styles.profile_background} aria-hidden="true">
 			<Image className={styles.profile_background_image}
 			       src={imageUrl}
-			       alt=""
+			       alt="Profile background"
 			       fill
 			       sizes="100vw"
 			       draggable={false}/>

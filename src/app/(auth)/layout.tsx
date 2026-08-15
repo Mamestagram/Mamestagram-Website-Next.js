@@ -10,7 +10,7 @@ export default function AuthLayout({ children }: Readonly<{ children: ReactNode 
 		<div className={styles.page}>
 			<div className={styles.page_image} aria-hidden="true">
 				<Image src={authImage}
-				       alt=""
+				       alt="Mamestagram authentication background"
 				       fill
 				       priority
 				       sizes="100vw"
@@ -21,7 +21,7 @@ export default function AuthLayout({ children }: Readonly<{ children: ReactNode 
 				<div className={styles.visual} aria-hidden="true">
 					<Image className={styles.visual_image}
 					       src={authImage}
-					       alt=""
+					       alt="Mamestagram authentication artwork"
 					       fill
 					       priority
 						       sizes="(max-width: 760px) 100vw, 35vw"

@@ -64,7 +64,7 @@ export default function UserContainer() {
 					<span className={styles.account_avatar}>
 						<Image className="avatar-img"
 						       src={`https://a.${serverInfo.baseDomain}/${userInfo.id}`}
-						       alt=""
+						       alt={`${userInfo.username ?? "User"} avatar`}
 						       fill
 						       draggable={false}
 						       sizes="44px"

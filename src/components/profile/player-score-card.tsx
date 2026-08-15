@@ -53,7 +53,7 @@ export default function PlayerScoreCard({ className, label, beatmapHref, replayU
 							              buttonLabel="Watch replay">
 								<FontAwesome prefix="fad" name="circle-play"/>
 								<span>Watch replay</span>
-								<FontAwesome prefix="fas" name="expand"/>
+								<FontAwesome prefix="fas" name="window-maximize"/>
 							</ReplayViewer>
 						</div>
 					</div>

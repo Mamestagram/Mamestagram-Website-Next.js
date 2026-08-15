@@ -13,7 +13,7 @@ export default function EquippedBadge({ badgeId, baseDomain, className, sizes, p
 	return (
 		<span className={className} data-avatar-badge={badgeId} aria-hidden="true">
 			<Image src={getBadgeImageUrl(badgeId, baseDomain)}
-			       alt=""
+			       alt={`Badge ${badgeId}`}
 			       fill
 			       sizes={sizes}
 			       crossOrigin="anonymous"

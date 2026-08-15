@@ -221,6 +221,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 					         alt={`${meta.label} preview`}
 					         fill
 					         unoptimized
+					         draggable={false}
 					         sizes={type === "avatar" ? "180px" : "(max-width: 760px) 100vw, 520px"}
 					         onError={() => setIsImageUnavailable(true)}/>
 					: <span className={styles.media_placeholder}>

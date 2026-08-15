@@ -65,7 +65,7 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 								   rel="noopener noreferrer">
 									<span className={styles.feature_image}>
 										<Image src={`/images/documents/about/${feature.image}.png`}
-										       alt=""
+										       alt={`${feature.title} preview`}
 										       draggable={false}
 										       width={1920}
 										       height={1080}/>

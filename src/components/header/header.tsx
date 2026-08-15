@@ -14,7 +14,7 @@ export default function Header() {
 			<header>
 				<nav className="top-bar">
 				<Link className="top" href="/">
-					<Image src="/images/logo.png" alt="" fill sizes="(max-width: 768px) 100vw, 50vw" priority/>
+					<Image src="/images/logo.png" alt="Mamestagram logo" fill sizes="(max-width: 768px) 100vw, 50vw" draggable={false} priority/>
 				</Link>
 				<PageTitle/>
 				<div className="donation">
@@ -46,6 +46,13 @@ export default function Header() {
 						   target="_blank"
 						   rel="noopener noreferrer">
 							Community
+						</a>
+					</li>
+					<li className="report">
+						<a href={`https://report.${process.env.BASE_DOMAIN}/`}
+						   target="_blank"
+						   rel="noopener noreferrer">
+							Report
 						</a>
 					</li>
 					<li className="donation">

@@ -6,16 +6,20 @@ export type SearchUser = {
 	privileges: number[]
 };
 
-export type SearchBeatmap = {
+export type SearchBeatmapDifficulty = {
 	id: number,
-	setId: number,
 	status: number,
-	artist: string,
-	title: string,
 	version: string,
-	creator: string,
 	mode: number,
 	difficulty: number
+};
+
+export type SearchBeatmap = {
+	setId: number,
+	artist: string,
+	title: string,
+	creator: string,
+	difficulties: SearchBeatmapDifficulty[]
 };
 
 export type SearchClan = {

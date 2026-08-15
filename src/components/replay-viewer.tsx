@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import FontAwesome from "@/components/font-awesome";
 import styles from "@s/replay-viewer.module.css";
@@ -12,30 +12,52 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 	className?: string,
 	children: ReactNode
 }>) {
-	const [isOpen, setIsOpen] = useState(false);
+	const [dialogState, setDialogState] = useState<"closed" | "open" | "closing">("closed");
+	const dialogStateRef = useRef(dialogState);
+	const closeTimeoutRef = useRef<number | null>(null);
 	const replayId = useId();
 	const replayTitleId = useId();
 	const openButtonRef = useRef<HTMLButtonElement>(null);
 	const closeButtonRef = useRef<HTMLButtonElement>(null);
+	const isOpen = dialogState !== "closed";
+	const openReplay = useCallback(() => {
+		if (closeTimeoutRef.current !== null) window.clearTimeout(closeTimeoutRef.current);
+		dialogStateRef.current = "open";
+		setDialogState("open");
+	}, []);
+	const closeReplay = useCallback(() => {
+		if (dialogStateRef.current !== "open") return;
+		dialogStateRef.current = "closing";
+		setDialogState("closing");
+		closeTimeoutRef.current = window.setTimeout(() => {
+			dialogStateRef.current = "closed";
+			closeTimeoutRef.current = null;
+			setDialogState("closed");
+		}, 200);
+	}, []);
 
 	useEffect(() => {
 		if (!isOpen) return;
 		const previousOverflow = document.body.style.overflow;
 		const returnFocusTarget = openButtonRef.current;
-		const closeReplay = (event: globalThis.KeyboardEvent) => {
-			if (event.key === "Escape") setIsOpen(false);
+		const closeOnEscape = (event: globalThis.KeyboardEvent) => {
+			if (event.key === "Escape") closeReplay();
 		};
 
 		document.body.style.overflow = "hidden";
-		document.addEventListener("keydown", closeReplay);
+		document.addEventListener("keydown", closeOnEscape);
 		requestAnimationFrame(() => closeButtonRef.current?.focus());
 
 		return () => {
 			document.body.style.overflow = previousOverflow;
-			document.removeEventListener("keydown", closeReplay);
+			document.removeEventListener("keydown", closeOnEscape);
 			requestAnimationFrame(() => returnFocusTarget?.focus());
 		};
-	}, [isOpen]);
+	}, [closeReplay, isOpen]);
+
+	useEffect(() => () => {
+		if (closeTimeoutRef.current !== null) window.clearTimeout(closeTimeoutRef.current);
+	}, []);
 
 	return (
 		<>
@@ -47,35 +69,41 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 			        aria-controls={replayId}
 			        aria-label={buttonLabel}
 			        title={buttonLabel}
-			        onClick={() => setIsOpen(true)}>
+			        onClick={openReplay}>
 				{children}
 			</button>
 			{isOpen && createPortal(
-				<section id={replayId}
-				         className={styles.replay_fullscreen}
-				         role="dialog"
-				         aria-modal="true"
-				         aria-labelledby={replayTitleId}>
-					<div className={styles.replay_toolbar}>
-						<span>
-							<FontAwesome prefix="fad" name="circle-play"/>
+				<div className={styles.replay_backdrop}
+				     data-closing={dialogState === "closing"}
+				     onMouseDown={(event) => {
+					     if (event.target === event.currentTarget) closeReplay();
+				     }}>
+					<section id={replayId}
+					         className={styles.replay_dialog}
+					         role="dialog"
+					         aria-modal="true"
+					         aria-labelledby={replayTitleId}>
+						<div className={styles.replay_toolbar}>
 							<span>
-								<small>Mamestagram replay</small>
-								<strong id={replayTitleId}>{label}</strong>
+								<FontAwesome prefix="fad" name="circle-play"/>
+								<span>
+									<small>Mamestagram replay</small>
+									<strong id={replayTitleId}>{label}</strong>
+								</span>
 							</span>
-						</span>
-						<button ref={closeButtonRef}
-						        type="button"
-						        aria-label="Close replay"
-						        onClick={() => setIsOpen(false)}>
-							<FontAwesome prefix="fas" name="xmark"/>
-						</button>
-					</div>
-					<iframe src={replayUrl}
-					        title="Mamestagram replay"
-					        allow="autoplay; fullscreen"
-					        allowFullScreen/>
-				</section>,
+							<button ref={closeButtonRef}
+							        type="button"
+							        aria-label="Close replay"
+							        onClick={closeReplay}>
+								<FontAwesome prefix="fas" name="xmark"/>
+							</button>
+						</div>
+						<iframe src={replayUrl}
+						        title="Mamestagram replay"
+						        allow="autoplay; fullscreen"
+						        allowFullScreen/>
+					</section>
+				</div>,
 				document.body
 			)}
 		</>
