@@ -3,13 +3,14 @@ import LanguageSwitcher from "@/components/language-switcher";
 import SectionSidebar from "@/components/section-sidebar";
 import styles from "@s/documents.module.css";
 
-type SectionKey = "introduction" | "rules" | "connect" | "commands" | "dans" | "faq";
+type SectionKey = "introduction" | "rules" | "connect" | "commands" | "bbcode" | "dans" | "faq";
 
 const sectionMeta: ReadonlyArray<{ id: SectionKey, icon: string }> = [
 	{ id: "introduction", icon: "sparkles" },
 	{ id: "rules", icon: "shield-check" },
 	{ id: "connect", icon: "plug-circle-bolt" },
 	{ id: "commands", icon: "terminal" },
+	{ id: "bbcode", icon: "brackets-square" },
 	{ id: "dans", icon: "medal" },
 	{ id: "faq", icon: "circle-question" }
 ];

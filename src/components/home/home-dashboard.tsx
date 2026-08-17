@@ -493,7 +493,7 @@ export default function HomeDashboard({
               data-page-enter="box"
             >
               <span>
-                <FontAwesome prefix="fad" name="badge" />
+                <FontAwesome prefix="fad" name="bag-shopping" />
               </span>
               <span>
                 <strong>Badge Market</strong>

@@ -2,6 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import type { SubmitEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { previewAboutMe, updateAboutMe, type AboutMeUpdateResult } from "@/actions/profile";
 import ConfirmationDialog from "@/components/confirmation-dialog";
@@ -243,13 +244,10 @@ export default function AboutMeEditor({
 										</button>
 									</Tooltip>
 								))}
-								<a className={styles.bbcode_help}
-								   href="https://github.com/Mamestagram/BBCode-Usage"
-								   target="_blank"
-								   rel="noopener noreferrer">
+								<Link className={styles.bbcode_help} href="/documents#bbcode">
 									<FontAwesome prefix="fas" name="circle-question"/>
 									Help
-								</a>
+								</Link>
 							</div>
 						</>
 					)}

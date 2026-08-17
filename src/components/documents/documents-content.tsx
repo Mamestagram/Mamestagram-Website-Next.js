@@ -10,13 +10,14 @@ import SectionHeading from "@/components/documents/section-heading";
 import RuleCard from "@/components/documents/rule-card";
 import SupportNotice from "@/components/documents/support-notice";
 import DanRequirementsTable from "@/components/documents/dan-requirements-table";
+import BbcodeGuide from "@/components/documents/bbcode-guide";
 import type { DocumentsData, Locale } from "@/app/api/documents/route";
 import { fetchInternalJson } from "@/lib/fetch-json";
 import styles from "@s/documents.module.css";
 
 export default async function DocumentsContent({ locale }: Readonly<{ locale: Locale }>) {
 	const documents = await fetchInternalJson<DocumentsData>("/api/documents");
-	const { links, commandCategories, copy, connectImages, danModes } = documents;
+	const { links, commandCategories, bbcodeCategories, copy, connectImages, danModes } = documents;
 	const text = copy[locale];
 
 	return (
@@ -127,6 +128,15 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 						<a className={styles.command_source} href={links.commandsChannel} target="_blank" rel="noopener noreferrer">
 							<FontAwesome prefix="fab" name="discord"/>{text.commandsSource}<FontAwesome prefix="fas" name="arrow-up-right"/>
 						</a>
+					</section>
+
+					<section id="bbcode" className={styles.document_section} data-page-enter="section">
+						<SectionHeading icon="brackets-square" title={text.nav.bbcode}/>
+						<BbcodeGuide locale={locale}
+						             lead={text.bbcodeLead}
+						             sourceLabel={text.bbcodeSource}
+						             sourceHref={links.bbcodeGuide}
+						             categories={bbcodeCategories}/>
 					</section>
 
 					<section id="dans" className={styles.document_section} data-page-enter="section">

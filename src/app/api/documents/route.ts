@@ -7,6 +7,7 @@ const ticket = "https://discord.com/channels/944248031136587796/1171728223407710
 const danChannel = "https://discord.com/channels/944248031136587796/1175719230650449940";
 const allDans = "https://mega.nz/file/QOtzmZBD#5vbWgGLsJ2gMfXPxrjgW_OrljnTdMx3_CZpTOpKS5ww";
 const commandsChannel = "https://discord.com/channels/944248031136587796/1087987989600280686";
+const bbcodeGuide = "https://github.com/Mamestagram/BBCode-Usage";
 const featureLinks = [
 	"https://discord.com/channels/944248031136587796/1081737936401350717",
 	"https://discord.com/channels/944248031136587796/1093845482247307276",
@@ -158,6 +159,87 @@ const commandCategories = [
 	}
 ] as const;
 
+const bbcodeCategories = [
+	{
+		icon: "heading",
+		title: { en: "Headings and text formatting", ja: "見出し・文字装飾" },
+		description: {
+			en: "Structure your profile and emphasize important text.",
+			ja: "プロフィールを整理し、重要な文字を強調します。"
+		},
+		items: [
+			{ label: { en: "Heading", ja: "見出し" }, syntax: "[heading]text[/heading]" },
+			{ label: { en: "Bold", ja: "太字" }, syntax: "[b]text[/b]" },
+			{ label: { en: "Italic", ja: "斜体" }, syntax: "[i]text[/i]" },
+			{ label: { en: "Underline", ja: "下線" }, syntax: "[u]text[/u]" },
+			{ label: { en: "Strike-through", ja: "取り消し線" }, syntax: "[s]text[/s]" }
+		]
+	},
+	{
+		icon: "quote-left",
+		title: { en: "Quotes and code", ja: "引用・コード" },
+		description: {
+			en: "Quote another user or display inline and block code.",
+			ja: "ユーザーの発言やインライン・ブロック形式のコードを表示します。"
+		},
+		items: [
+			{ label: { en: "Quote", ja: "引用" }, syntax: "[quote=NAME]text[/quote]" },
+			{ label: { en: "Inline code", ja: "インラインコード" }, syntax: "[c]git status[/c]" },
+			{ label: { en: "Code block", ja: "コードブロック" }, syntax: "[code]git add[/code]" }
+		]
+	},
+	{
+		icon: "palette",
+		title: { en: "Text customization", ja: "文字のカスタマイズ" },
+		description: {
+			en: "Change text color, size, visibility, and alignment.",
+			ja: "文字色、サイズ、表示状態、配置を変更します。"
+		},
+		items: [
+			{ label: { en: "Color", ja: "文字色" }, syntax: "[color=#0969DA]text[/color]" },
+			{ label: { en: "Size", ja: "文字サイズ" }, syntax: "[size=50]text[/size]" },
+			{ label: { en: "Spoiler", ja: "スポイラー" }, syntax: "[spoiler]text[/spoiler]" },
+			{ label: { en: "Center", ja: "中央揃え" }, syntax: "[center]text[/center]" }
+		]
+	},
+	{
+		icon: "link",
+		title: { en: "Links", ja: "リンク" },
+		description: {
+			en: "Create a masked URL or a direct Mamestagram profile link.",
+			ja: "マスクリンクやMamestagramプロフィールへのリンクを作成します。"
+		},
+		items: [
+			{ label: { en: "Masked link", ja: "マスクリンク" }, syntax: "[url=URL]text[/url]" },
+			{ label: { en: "Profile link", ja: "プロフィールリンク" }, syntax: "[profile=USERID]NAME[/profile]" }
+		]
+	},
+	{
+		icon: "list",
+		title: { en: "Lists and dropdowns", ja: "リスト・ドロップダウン" },
+		description: {
+			en: "Group information into lists or expandable boxes.",
+			ja: "情報をリストや展開式のボックスにまとめます。"
+		},
+		items: [
+			{ label: { en: "Basic list", ja: "基本リスト" }, syntax: "[list][*]item[/list]" },
+			{ label: { en: "Styled list", ja: "形式指定リスト" }, syntax: "[list=disc][*]item[/list]" },
+			{ label: { en: "Dropdown", ja: "ドロップダウン" }, syntax: "[box=NAME]text[/box]" }
+		]
+	},
+	{
+		icon: "image",
+		title: { en: "Images", ja: "画像" },
+		description: {
+			en: "Display an image hosted at a public URL.",
+			ja: "公開URLに保存されている画像を表示します。"
+		},
+		items: [
+			{ label: { en: "Image", ja: "画像" }, syntax: "[img]URL[/img]" }
+		]
+	}
+] as const;
+
 const copy = {
 	en: {
 		title: "Documents",
@@ -165,12 +247,13 @@ const copy = {
 		language: "Language",
 		copy: "Copy",
 		copied: "Copied",
-		nav: {
-			introduction: "Introduction",
-			rules: "Rules",
-			connect: "How to connect",
-			commands: "In-game commands",
-			dans: "Dan Courses",
+			nav: {
+				introduction: "Introduction",
+				rules: "Rules",
+				connect: "How to connect",
+				commands: "In-game commands",
+				bbcode: "BBCode",
+				dans: "Dan Courses",
 			faq: "FAQ"
 		},
 		introTitle: "What is Mamestagram?",
@@ -278,8 +361,10 @@ const copy = {
 			{ icon: "terminal", title: "How to read syntax", body: "<value> is required, [value] is optional, and <a/b> means a or b. Command names are case-insensitive, but lowercase arguments are the safest choice." },
 			{ icon: "gamepad-modern", title: "Permissions", body: "Some commands are available only to Supporters, match hosts, or clan owners. Restricted or silenced accounts may be unable to run commands." }
 		],
-		commandsSource: "Open the current command channel",
-		dansLead: "Dan Courses are structured challenges with mode-specific clear requirements. Passing a course raises your player level by the level of that challenge.",
+			commandsSource: "Open the current command channel",
+			bbcodeLead: "Use BBCode in your Me! section to format text, add links and images, and build a profile that is uniquely yours. Wrap content with matching opening and closing tags as shown below.",
+			bbcodeSource: "Open the complete BBCode guide",
+			dansLead: "Dan Courses are structured challenges with mode-specific clear requirements. Passing a course raises your player level by the level of that challenge.",
 		downloadAll: "Download all Dan maps",
 		danChannel: "Open # dan",
 		courses: "Featured courses",
@@ -307,12 +392,13 @@ const copy = {
 		language: "言語",
 		copy: "コピー",
 		copied: "コピー済み",
-		nav: {
-			introduction: "サーバー紹介",
-			rules: "ルール",
-			connect: "接続方法",
-			commands: "ゲーム内コマンド",
-			dans: "段位",
+			nav: {
+				introduction: "サーバー紹介",
+				rules: "ルール",
+				connect: "接続方法",
+				commands: "ゲーム内コマンド",
+				bbcode: "BBCode",
+				dans: "段位",
 			faq: "よくある質問"
 		},
 		introTitle: "Mamestagramとは",
@@ -420,8 +506,10 @@ const copy = {
 			{ icon: "terminal", title: "入力表記", body: "<value>:必須、[value]:省略可能、<a/b>:a or b。コマンドは大文字・小文字を区別しませんが、引数は小文字で入力するのが安全です。" },
 			{ icon: "gamepad-modern", title: "利用条件", body: "一部はサポーター、マッチホスト、クランリーダー専用コマンドです。制限中またはサイレンス中のアカウントでは実行できない場合があります。" }
 		],
-		commandsSource: "最新のコマンドチャンネルを開く",
-		dansLead: "段位はモードごとに合格条件が設定されたチャレンジです。クリアすると、挑戦した段位レベルに応じてプレイヤーレベルが上がります。",
+			commandsSource: "最新のコマンドチャンネルを開く",
+			bbcodeLead: "Me!欄ではBBCodeを使用して文字を装飾し、リンクや画像を追加できます。以下の例のように、内容を対応する開始タグと終了タグで囲んで使用してください。",
+			bbcodeSource: "完全なBBCodeガイドを開く",
+			dansLead: "段位はモードごとに合格条件が設定されたチャレンジです。クリアすると、挑戦した段位レベルに応じてプレイヤーレベルが上がります。",
 		downloadAll: "段位マップをまとめてダウンロード",
 		danChannel: "# danを開く",
 		courses: "主なコース",
@@ -568,10 +656,12 @@ const documentsData = {
 		danChannel,
 		allDans,
 		commandsChannel,
+		bbcodeGuide,
 		featureLinks,
 		launchOption
 	},
 	commandCategories,
+	bbcodeCategories,
 	copy,
 	connectImages,
 	danModes: danModes.map((dan) => ({
