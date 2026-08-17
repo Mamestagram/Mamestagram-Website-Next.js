@@ -73,6 +73,7 @@ export const accountExists = async (id: number, isClan: boolean) => {
 }
 
 export const getName = async (id: number, isClan: boolean) => {
+	let clanName: string | null = null;
 	try {
 		// personal
 		if (!isClan) {
@@ -84,17 +85,19 @@ export const getName = async (id: number, isClan: boolean) => {
 		// clan
 		else {
 			const clan = await getClanProfile(id);
-			if (!clan) throw new Error("Clan not found");
-			return clan.info.name;
+			clanName = clan?.info.name ?? null;
 		}
 	}
 	catch (err) {
 		void writeError(err);
 		throw new Error(`Couldn't get ${!isClan ? "user" : "clan"} data`);
 	}
+	if (!clanName) throw new Error("Couldn't get clan data");
+	return clanName;
 }
 
 export const getPreferredMode = async (id: number, isClan: boolean) => {
+	let clanMode: OsuMode | null = null;
 	try {
 		// presonal
 		if (!isClan) {
@@ -107,14 +110,15 @@ export const getPreferredMode = async (id: number, isClan: boolean) => {
 		// clan
 		else {
 			const clan = await getClanProfile(id);
-			if (!clan) throw new Error("Clan not found");
-			return ModeNum[clan.info.preferredMode] as OsuMode;
+			clanMode = clan ? ModeNum[clan.info.preferredMode] as OsuMode : null;
 		}
 	}
 	catch (err) {
 		void writeError(err);
 		throw new Error(`Couldn't get ${!isClan ? "user" : "clan"}`);
 	}
+	if (!clanMode) throw new Error("Couldn't get clan");
+	return clanMode;
 }
 
 export const updateUserpageContent = async (id: number, content: string) => {
@@ -351,14 +355,26 @@ export const getClanProfile = cache(async (id: number): Promise<ClanProfile | nu
 		throw new Error(`Couldn't fetch clan info (status: ${response.status})`);
 	}
 
+	let clan: ClanApiResponse;
 	try {
-		const clan = await response.json() as ClanApiResponse;
-		if (clan.id !== id || !Array.isArray(clan.members) || !clan.stats) {
-			throw new Error("Invalid clan API response");
-		}
-		const creationTime = new Date(clan.created_at);
-		if (Number.isNaN(creationTime.getTime())) throw new Error("Invalid clan creation time");
-		return {
+		clan = await response.json() as ClanApiResponse;
+	}
+	catch (error: unknown) {
+		void writeError(error);
+		throw new Error("Couldn't read clan info", { cause: error });
+	}
+	if (clan.id !== id || !Array.isArray(clan.members) || !clan.stats) {
+		const error = new Error("Invalid clan API response");
+		void writeError(error);
+		throw new Error("Couldn't read clan info", { cause: error });
+	}
+	const creationTime = new Date(clan.created_at);
+	if (Number.isNaN(creationTime.getTime())) {
+		const error = new Error("Invalid clan creation time");
+		void writeError(error);
+		throw new Error("Couldn't read clan info", { cause: error });
+	}
+	return {
 			info: {
 				tag: null,
 				name: clan.tag,
@@ -383,12 +399,7 @@ export const getClanProfile = cache(async (id: number): Promise<ClanProfile | nu
 				isOwner: member.id === clan.owner.id || member.rank.toLowerCase() === "owner"
 			})),
 			stats: clan.stats
-		};
-	}
-	catch (error: unknown) {
-		void writeError(error);
-		throw new Error("Couldn't read clan info", { cause: error });
-	}
+	};
 });
 
 /* player scores */

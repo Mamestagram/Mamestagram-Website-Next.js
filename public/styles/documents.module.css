@@ -14,42 +14,6 @@
 	}
 }
 
-.documents_state {
-	display: flex;
-	min-height: 72vh;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	gap: 16px;
-	color: #cbd3df;
-
-	& > i {
-		color: var(--doc-gold-soft);
-		font-size: 2rem;
-		animation: documents-spin 1s linear infinite;
-	}
-
-	&[data-error="true"] > i { animation: none; }
-
-	& > strong { font-size: .86rem; letter-spacing: .03em; }
-
-	& > button {
-		padding: 9px 18px;
-		border: 1px solid rgba(228, 189, 88, .4);
-		border-radius: 8px;
-		background: rgba(228, 189, 88, .12);
-		color: var(--doc-gold-soft);
-		font: inherit;
-		font-size: .75rem;
-		font-weight: 800;
-		cursor: pointer;
-	}
-}
-
-@keyframes documents-spin {
-	to { transform: rotate(360deg); }
-}
-
 .shell {
 	display: grid;
 	grid-template-columns: 230px minmax(0, 1120px);
@@ -1179,46 +1143,6 @@
 			color: #e9e9e7;
 			font-size: .98rem;
 			font-weight: 860;
-		}
-	}
-}
-
-.course_list {
-	flex: 1 1 auto;
-	margin-top: 11px;
-	padding: 10px;
-	background: rgba(2, 4, 7, .25);
-	border-radius: 9px;
-
-	& > small {
-		color: #666f7b;
-		font-size: .5rem;
-		font-weight: 900;
-		letter-spacing: .08em;
-		text-transform: uppercase;
-	}
-
-	& ul {
-		display: flex;
-		margin-top: 7px;
-		flex-direction: column;
-		gap: 5px;
-
-		& li {
-			display: flex;
-			align-items: center;
-			gap: 7px;
-			color: #aab2bd;
-			font-size: .6rem;
-
-			&::before {
-				content: "";
-				width: 4px;
-				height: 4px;
-				flex: 0 0 auto;
-				background: #b99d48;
-				border-radius: 50%;
-			}
 		}
 	}
 }

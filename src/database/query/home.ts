@@ -35,7 +35,7 @@ export const homeTopPlayersQuery = `
 				AND s.acc > 0
 		) ranked
 	WHERE ranked.modeRank = 1
-	ORDER BY ranked.mode ASC
+	ORDER BY ranked.mode
 `;
 
 export const homeRecentActivityQuery = `

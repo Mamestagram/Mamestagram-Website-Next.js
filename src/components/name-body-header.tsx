@@ -4,7 +4,7 @@ import { useLayoutEffect } from "react";
 
 export default function NameBodyHeader({ className }: Readonly<{ className: string }>) {
 	useLayoutEffect(() => {
-		const header = document.querySelector("header");
+		const header = document.querySelector("[data-site-header]");
 
 		switch (className) {
 			case "register":

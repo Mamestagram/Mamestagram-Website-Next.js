@@ -1,4 +1,4 @@
-:global(header .navigation li.avatar).container {
+:global([data-site-header] .navigation li.avatar).container {
 	display: block;
 	position: relative;
 	height: 56px;
@@ -95,8 +95,8 @@
 	transition-delay: 0s;
 }
 
-:global(header .navigation li.avatar) .menu > a,
-:global(header .navigation li.avatar) .menu button {
+:global([data-site-header] .navigation li.avatar) .menu > a,
+:global([data-site-header] .navigation li.avatar) .menu button {
 	display: flex;
 	width: 100%;
 	padding: 10px 12px;
@@ -111,16 +111,16 @@
 	transition: background-color 150ms, color 150ms;
 }
 
-:global(header .navigation li.avatar) .menu > a i,
-:global(header .navigation li.avatar) .menu button i {
+:global([data-site-header] .navigation li.avatar) .menu > a i,
+:global([data-site-header] .navigation li.avatar) .menu button i {
 	width: 16px;
 	text-align: center;
 }
 
-:global(header .navigation li.avatar) .menu > a:hover,
-:global(header .navigation li.avatar) .menu > a:focus-visible,
-:global(header .navigation li.avatar) .menu button:not(:disabled):hover,
-:global(header .navigation li.avatar) .menu button:not(:disabled):focus-visible {
+:global([data-site-header] .navigation li.avatar) .menu > a:hover,
+:global([data-site-header] .navigation li.avatar) .menu > a:focus-visible,
+:global([data-site-header] .navigation li.avatar) .menu button:not(:disabled):hover,
+:global([data-site-header] .navigation li.avatar) .menu button:not(:disabled):focus-visible {
 	background-color: hsla(var(--user-hue), 45%, 55%, .18);
 	color: #fff;
 	outline: none;
@@ -138,7 +138,7 @@
 }
 
 @media (max-width: 872px) {
-	:global(header .navigation li.avatar).container {
+	:global([data-site-header] .navigation li.avatar).container {
 		display: block;
 		height: var(--mobile-height);
 		padding: 0;

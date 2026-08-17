@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import FontAwesome from "@/components/font-awesome";
 import NameBodyHeader from "@/components/name-body-header";
 import AboutMeSettingsEditor from "@/components/settings/about-me-settings-editor";
+import BadgeSettingsForm from "@/components/settings/badge-settings-form";
 import ClanSettingsForm from "@/components/settings/clan-settings-form";
 import MediaSettingCard from "@/components/settings/media-setting-card";
 import ProfileSettingsForm from "@/components/settings/profile-settings-form";
@@ -284,6 +285,10 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 								<AboutMeSettingsEditor initialBBCode={activeClan?.aboutMe ?? settings.aboutMe}
 								                       profileId={activeClan?.id ?? currentUser.id}
 								                       isClan={isClanScope}/>}
+							{!isClanScope && activeSection === "badge" &&
+								<BadgeSettingsForm badges={settings.badges}
+								                   selectedBadge={settings.selectedBadge}
+								                   baseDomain={baseDomain}/>}
 							{activeClan && activeSection === "rename" &&
 								<ClanSettingsForm tag={activeClan.tag} showPastTags={activeClan.showPastTags}/>}
 							{activeClan && activeSection === "images" &&

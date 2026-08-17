@@ -64,7 +64,7 @@ const commandCategories = [
 			ja: "達成済みのmania段位から、プロフィールやリーダーボードへ優先表示する称号を選びます。"
 		},
 		items: [
-			{ command: "!setdan <id> [id] [id]", description: { en: "Select up to three titles from completed mania Dans. IDs: 0: REFORM v2, 1: 4K LN v2, 2: TR1PLE, 3: shoegazer, 4: Chordjack Joker, 5: Malody 4K v3.", ja: "達成済みmania段位の称号を最大3件選択できます。IDは0: REFORM v2、1: 4K LN v2、2: TR1PLE、3: shoegazer、4: Chordjack Joker、5: Malody 4K v3です。" } },
+			{ command: "!setdan <id> [id] [id]", description: { en: "Choose up to three titles from completed mania Dans. IDs: 0: REFORM v2, 1: 4K LN v2, 2: TR1PLE, 3: shoegazer, 4: Chordjack Joker, 5: Malody 4K v3.", ja: "達成済みmania段位の称号を最大3件選択できます。IDは0: REFORM v2、1: 4K LN v2、2: TR1PLE、3: shoegazer、4: Chordjack Joker、5: Malody 4K v3です。" } },
 			{ command: "!setdan reset", description: { en: "Reset the displayed mania Dan titles to the default IDs 0 and 1.", ja: "表示するmania段位の称号を既定のID: 0/1へ戻します。" } }
 		]
 	},

@@ -8,6 +8,8 @@ import CountryFlag from "@/components/country-flag";
 import ClickableRankingRow from "@/components/leaderboard/clickable-ranking-row";
 import styles from "@s/leaderboard.module.css";
 
+const topRankStyles = [styles.top_1, styles.top_2, styles.top_3] as const;
+
 export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 	listRow: RankingList,
 	mode: OsuMode,
@@ -21,7 +23,7 @@ export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 
 	return (
 		<ClickableRankingRow className={styles.ranking_row} href={profileHref}>
-			<td className={classNames(styles.rank, { [styles[`top_${listRow.rank}`]]: listRow.rank <= 3 })}>
+			<td className={classNames(styles.rank, topRankStyles[listRow.rank - 1])}>
 				<span className={styles.numeric_value}>#{listRow.rank.toLocaleString()}</span>
 			</td>
 			<td className={!isClan ? styles.country : styles.avatar}>

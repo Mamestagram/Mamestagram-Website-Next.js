@@ -1,29 +1,19 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function ScrollMotion() {
-	const header = useRef<HTMLElement>(null);
-	const [scrollPos, setScrollPos] = useState(0);
-
-	const scrollHeader = () => {
-		setScrollPos(window.scrollY);
-	}
-
 	useEffect(() => {
-		header.current = document.querySelector("header");
-		window.addEventListener("scroll", scrollHeader);
-		return () => {
-			window.removeEventListener("scroll", scrollHeader);
-		}
+		const header = document.querySelector<HTMLElement>("[data-site-header]");
+		if (!header) return;
+		const updateHeader = () => {
+			header.classList.toggle("scrolled", window.scrollY >= header.offsetHeight);
+		};
+
+		updateHeader();
+		window.addEventListener("scroll", updateHeader, { passive: true });
+		return () => window.removeEventListener("scroll", updateHeader);
 	}, []);
-
-	useEffect(() => {
-		if (scrollPos >= header.current!.offsetHeight)
-			header.current!.classList.add("scrolled");
-		else
-			header.current!.classList.remove("scrolled");
-	}, [scrollPos]);
 
 	return null;
 }

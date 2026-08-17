@@ -9,7 +9,7 @@ export default function ArrowChevron() {
 	const [arrowDirection, setArrowDirection] = useState<"up" | "down">("down");
 
 	const clickBody = (e: PointerEvent) => {
-		if (!arrow.current!.contains(e.target as HTMLDivElement))
+		if (e.target instanceof Node && !arrow.current?.contains(e.target))
 			setArrowDirection("down");
 	}
 
@@ -18,9 +18,11 @@ export default function ArrowChevron() {
 	}
 
 	useEffect(() => {
-		const arrowElement = arrow.current!;
-		navigation.current = document.querySelector("header .navigation");
-		navigation.current!.classList.remove("mobile-show");
+		const arrowElement = arrow.current;
+		const navigationElement = document.querySelector<HTMLElement>("[data-site-header] .navigation");
+		if (!arrowElement || !navigationElement) return;
+		navigation.current = navigationElement;
+		navigationElement.classList.remove("mobile-show");
 		document.addEventListener("click", clickBody);
 		return () => {
 			document.removeEventListener("click", clickBody);
@@ -29,15 +31,12 @@ export default function ArrowChevron() {
 	}, []);
 
 	useEffect(() => {
-		arrow.current!.classList.remove("up", "down");
-		arrow.current!.classList.add(arrowDirection);
-		if (arrowDirection === "up")
-			navigation.current!.classList.add("mobile-show");
-		else
-			navigation.current!.classList.remove("mobile-show");
-		arrow.current!.classList.remove("up", "down");
-		arrow.current!.classList.add(arrowDirection);
-
+		const arrowElement = arrow.current;
+		const navigationElement = navigation.current;
+		if (!arrowElement || !navigationElement) return;
+		arrowElement.classList.remove("up", "down");
+		arrowElement.classList.add(arrowDirection);
+		navigationElement.classList.toggle("mobile-show", arrowDirection === "up");
 	}, [arrowDirection]);
 
 	return (

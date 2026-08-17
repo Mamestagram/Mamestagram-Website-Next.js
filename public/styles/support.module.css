@@ -395,7 +395,7 @@
 }
 
 .price_calculator {
-	--price-position: 9.5px;
+	--price-position: 10px;
 	--price-progress: 0%;
 
 	margin-top: 12px;

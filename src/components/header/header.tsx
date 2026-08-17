@@ -11,19 +11,16 @@ import HeaderSearch, { HeaderSearchTrigger } from "./search";
 export default function Header() {
 	return (
 		<HeaderSearchProvider>
-			<header>
+			<div data-site-header role="banner">
 				<nav className="top-bar">
 				<Link className="top" href="/">
 					<Image src="/images/logo.png" alt="Mamestagram logo" fill sizes="(max-width: 768px) 100vw, 50vw" draggable={false} priority/>
 				</Link>
 				<PageTitle/>
 				<div className="donation">
-					<a title="Support us!"
-					   href="/support"
-					   target="_blank"
-					   rel="noopener noreferrer">
+					<Link title="Support us!" href="/support">
 						<FontAwesome prefix="fas" name="heart"/>
-					</a>
+					</Link>
 				</div>
 				<HeaderSearchTrigger location="top"/>
 				<ArrowChevron/>
@@ -65,7 +62,7 @@ export default function Header() {
 				</ul>
 				</nav>
 				<ScrollMotion/>
-			</header>
+			</div>
 			<HeaderSearch/>
 		</HeaderSearchProvider>
 	);

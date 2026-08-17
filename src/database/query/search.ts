@@ -12,7 +12,7 @@ export const userSearchQuery = `
 		WHEN safe_name LIKE ? THEN 2
 		ELSE 3
 	END,
-	id ASC
+	id
 	LIMIT ? OFFSET ?
 `;
 
@@ -45,7 +45,7 @@ export const clanSearchQuery = `
 		WHEN c.name LIKE ? THEN 4
 		ELSE 5
 	END,
-	c.id ASC
+	c.id
 	LIMIT ? OFFSET ?
 `;
 
@@ -81,9 +81,9 @@ export const beatmapSearchQuery = `
 			OR creator LIKE ?
 		)
 	GROUP BY set_id
-	ORDER BY match_priority ASC,
+	ORDER BY match_priority,
 	max_plays DESC,
-	first_map_id ASC
+	first_map_id
 	LIMIT ? OFFSET ?
 `;
 
@@ -100,10 +100,10 @@ export const getBeatmapSearchDifficultiesQuery = (setCount: number) => `
 		FROM maps
 	WHERE server = 'osu!'
 		AND set_id IN (${Array.from({ length: setCount }, () => "?").join(", ")})
-	ORDER BY set_id ASC,
-	mode ASC,
-	diff ASC,
-	id ASC
+	ORDER BY set_id,
+	mode,
+	diff,
+	id
 `;
 
 export const beatmapSearchCountQuery = `

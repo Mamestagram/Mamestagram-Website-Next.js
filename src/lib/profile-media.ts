@@ -46,7 +46,10 @@ const getMediaPath = (
 	profileId: number,
 	scope: ProfileMediaScope,
 	extension: string
-) => path.join(getMediaRoot(type, scope), `${profileId}.${extension}`);
+) => path.join(
+	/* turbopackIgnore: true */ getMediaRoot(type, scope),
+	`${profileId}.${extension}`
+);
 
 const getExistingMediaPaths = async (
 	type: ProfileMediaType,
@@ -55,10 +58,10 @@ const getExistingMediaPaths = async (
 ) => {
 	const root = getMediaRoot(type, scope);
 	const expectedName = String(profileId);
-	const entries = await readdir(root, { withFileTypes: true });
+	const entries = await readdir(/* turbopackIgnore: true */ root, { withFileTypes: true });
 	return entries
 		.filter((entry) => entry.isFile() && entry.name.split(".", 1)[0] === expectedName)
-		.map((entry) => path.join(root, entry.name));
+		.map((entry) => path.join(/* turbopackIgnore: true */ root, entry.name));
 };
 
 const hasBytes = (bytes: Uint8Array, expected: readonly number[], offset: number = 0) =>
@@ -124,7 +127,7 @@ export const saveProfileMedia = async (
 	const targetPath = getMediaPath(type, profileId, scope, extension);
 	const targetDirectory = path.dirname(targetPath);
 	const temporaryPath = path.join(
-		targetDirectory,
+		/* turbopackIgnore: true */ targetDirectory,
 		`.${profileId}.${randomUUID()}.tmp`
 	);
 	try {

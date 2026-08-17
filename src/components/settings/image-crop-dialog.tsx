@@ -318,7 +318,7 @@ export default function ImageCropDialog({
 			         aria-labelledby={titleId}
 			         aria-describedby={descriptionId}
 			         data-processing={isProcessing}>
-				<header className={styles.header}>
+				<div className={styles.header}>
 					<span className={styles.header_icon}><FontAwesome prefix="fad" name="images"/></span>
 					<div>
 						<small>{config.ratioLabel} CROP</small>
@@ -330,7 +330,7 @@ export default function ImageCropDialog({
 					        onClick={onCancel}>
 						<FontAwesome prefix="fas" name="xmark"/>
 					</button>
-				</header>
+				</div>
 
 				<p id={descriptionId} className={styles.instructions}>
 					Drag the image to reposition it, then use the slider to zoom.
