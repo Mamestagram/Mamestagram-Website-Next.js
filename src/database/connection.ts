@@ -9,6 +9,13 @@ enum StatMode {
 	select = "SELECT"
 }
 
+const RETRYABLE_READ_ERROR_CODES = new Set([
+	"EADDRNOTAVAIL",
+	"ECONNRESET",
+	"ETIMEDOUT",
+	"PROTOCOL_CONNECTION_LOST"
+]);
+
 export type QueryArgs = (string | number | boolean | readonly (string | number | boolean)[])[] | null;
 
 const [host, user, password, database] = [
@@ -62,6 +69,29 @@ const getStatMode = (query: string) => {
 	else return StatMode.select;
 }
 
+const getErrorMessage = (error: unknown) =>
+	error instanceof Error ? error.message : "Unexpected error has occurred.";
+
+const isRetryableReadError = (error: unknown) => {
+	if (typeof error === "object" && error !== null && "code" in error &&
+		typeof error.code === "string" && RETRYABLE_READ_ERROR_CODES.has(error.code))
+		return true;
+	const message = getErrorMessage(error);
+	return Array.from(RETRYABLE_READ_ERROR_CODES).some((code) => message.includes(code));
+};
+
+const executeReadQuery = async <T>(query: string, args?: QueryArgs) => {
+	try {
+		const [result] = await pool.query(query, args);
+		return result as T extends undefined ? QueryResult : T[];
+	}
+	catch (error: unknown) {
+		if (!isRetryableReadError(error)) throw error;
+		const [result] = await pool.query(query, args);
+		return result as T extends undefined ? QueryResult : T[];
+	}
+};
+
 export const executeQuery = async <T>(query: string, args?: QueryArgs, ignoreArgsCheck: boolean = false) => {
 	const questionSymbol = query.match(/\?/g)?.length ?? 0, argsSize = args?.length ?? 0;
 	if (ignoreArgsCheck || questionSymbol === argsSize) {
@@ -69,12 +99,11 @@ export const executeQuery = async <T>(query: string, args?: QueryArgs, ignoreArg
 
 		if (statMode === StatMode.select) {
 			try {
-				const [result] = await pool.query(query, args);
-				return result as T extends undefined ? QueryResult : T[];
+				return await executeReadQuery<T>(query, args);
 			}
 			catch (err) {
 				console.error(err);
-				throw new Error(err instanceof Error ? err.message : "Unexpected error has occurred.");
+				throw new Error(getErrorMessage(err), { cause: err });
 			}
 		}
 		else {
@@ -88,7 +117,7 @@ export const executeQuery = async <T>(query: string, args?: QueryArgs, ignoreArg
 			catch (err) {
 				await connection.rollback(); // rollback
 				console.error(err);
-				throw new Error(err instanceof Error ? err.message : "Unexpected error has occurred.");
+				throw new Error(getErrorMessage(err), { cause: err });
 			}
 			finally {
 				connection.release();

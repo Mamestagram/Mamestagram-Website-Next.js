@@ -47,17 +47,18 @@ export default function RankHistoryChart({ history }: { history: RankHistory }) 
 	const coordinates = history.points.map(({ date, rank }, index) => {
 		const x = history.points.length === 1
 			? CHART_WIDTH / 2
-			: index / (history.points.length - 1) * CHART_WIDTH;
+			: CHART_PADDING + index / (history.points.length - 1) * (CHART_WIDTH - CHART_PADDING * 2);
 		const y = rankRange === 0
 			? CHART_HEIGHT / 2
 			: CHART_PADDING + (rank - minRank) / rankRange * (CHART_HEIGHT - CHART_PADDING * 2);
 		return { date, rank, x, y };
 	});
+	const firstPoint = coordinates.at(0)!;
+	const lastPoint = coordinates.at(-1)!;
 	const linePath = coordinates.map(({ x, y }, index) =>
 		`${index === 0 ? "M" : "L"}${x.toFixed(2)} ${y.toFixed(2)}`
 	).join(" ");
-	const areaPath = `${linePath} L${CHART_WIDTH} ${CHART_HEIGHT} L0 ${CHART_HEIGHT} Z`;
-	const lastPoint = coordinates.at(-1)!;
+	const areaPath = `${linePath} L${lastPoint.x} ${CHART_HEIGHT} L${firstPoint.x} ${CHART_HEIGHT} Z`;
 	const middlePoint = history.points[Math.floor((history.points.length - 1) / 2)];
 	const changeDirection = change > 0 ? "up" : change < 0 ? "down" : "same";
 	const activePoint = activeIndex === null ? null : coordinates[activeIndex];

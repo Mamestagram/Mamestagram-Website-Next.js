@@ -26,8 +26,14 @@ const getDate = () => {
 const getIpAddress = async () => {
 	if (!process.env.BASE_URL) return UNKNOWN_IP;
 
-	const data = await fetchInternalJson<{ ip: string }>("/api/get_client_ip");
-	return data.ip;
+	try {
+		const data = await fetchInternalJson<{ ip: string }>("/api/get_client_ip");
+		return data.ip;
+	}
+	catch (error: unknown) {
+		console.error("Failed to resolve the request IP for logging.", error);
+		return UNKNOWN_IP;
+	}
 };
 
 const writeFile = async (dirPath: string, filePath: string, data: string) => {

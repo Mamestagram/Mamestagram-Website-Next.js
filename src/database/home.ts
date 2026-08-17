@@ -41,6 +41,11 @@ type PlayerCountApi = {
 	counts?: HomePlayerCounts
 };
 
+const globalHomeData = globalThis as typeof globalThis & {
+	topPlayers?: HomeTopPlayer[],
+	recentActivity?: HomeRecentActivity[]
+};
+
 const getPlayerCounts = async (): Promise<HomePlayerCounts | null> => {
 	const baseDomain = process.env.BASE_DOMAIN;
 	if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
@@ -65,21 +70,25 @@ const getPlayerCounts = async (): Promise<HomePlayerCounts | null> => {
 
 const getTopPlayers = async (): Promise<HomeTopPlayer[]> => {
 	try {
-		return await executeQuery<HomeTopPlayer>(homeTopPlayersQuery);
+		const players = await executeQuery<HomeTopPlayer>(homeTopPlayersQuery);
+		globalHomeData.topPlayers = players;
+		return players;
 	}
 	catch (error: unknown) {
 		void writeError(error);
-		return [];
+		return globalHomeData.topPlayers ?? [];
 	}
 };
 
 const getRecentActivity = async (): Promise<HomeRecentActivity[]> => {
 	try {
-		return await executeQuery<HomeRecentActivity>(homeRecentActivityQuery);
+		const activity = await executeQuery<HomeRecentActivity>(homeRecentActivityQuery);
+		globalHomeData.recentActivity = activity;
+		return activity;
 	}
 	catch (error: unknown) {
 		void writeError(error);
-		return [];
+		return globalHomeData.recentActivity ?? [];
 	}
 };
 
