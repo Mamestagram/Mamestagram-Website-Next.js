@@ -8,6 +8,43 @@ import styles from "@s/documents.module.css";
 
 type DocumentText = DocumentsData["copy"][Locale];
 type ConnectImages = DocumentsData["connectImages"][Locale];
+type LegacyCopyDocument = {
+	execCommand: (command: "copy") => boolean
+};
+
+const copyWithSelection = (text: string) => {
+	const textarea = document.createElement("textarea");
+	const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+	textarea.value = text;
+	textarea.readOnly = true;
+	textarea.style.position = "fixed";
+	textarea.style.inset = "0 auto auto -9999px";
+	document.body.append(textarea);
+	textarea.select();
+	textarea.setSelectionRange(0, text.length);
+
+	try {
+		return (document as unknown as LegacyCopyDocument).execCommand("copy");
+	}
+	catch {
+		return false;
+	}
+	finally {
+		textarea.remove();
+		previousFocus?.focus();
+	}
+};
+
+const copyText = async (text: string) => {
+	if (typeof navigator.clipboard?.writeText !== "function") return copyWithSelection(text);
+	try {
+		await navigator.clipboard.writeText(text);
+		return true;
+	}
+	catch {
+		return copyWithSelection(text);
+	}
+};
 
 export default function ConnectGuide({ text, images, launchOption }: {
 	text: DocumentText,
@@ -22,7 +59,8 @@ export default function ConnectGuide({ text, images, launchOption }: {
 	}, []);
 
 	const copyLaunchOption = async () => {
-		await navigator.clipboard.writeText(launchOption);
+		const copiedSuccessfully = await copyText(launchOption);
+		if (!copiedSuccessfully) return;
 		setCopied(true);
 		if (copiedTimer.current !== null) window.clearTimeout(copiedTimer.current);
 		copiedTimer.current = window.setTimeout(() => setCopied(false), 1800);

@@ -1,6 +1,6 @@
 "use client";
 
-import { type MouseEvent, type ReactNode, useEffect, useState } from "react";
+import { type MouseEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import FontAwesome from "@/components/font-awesome";
 
 type SidebarSection = {
@@ -32,6 +32,7 @@ export default function SectionSidebar({
 	meta?: SidebarMeta
 }>) {
 	const [activeSection, setActiveSection] = useState(sections[0]?.id ?? "");
+	const navigationRef = useRef<HTMLElement>(null);
 
 	useEffect(() => {
 		let frame = 0;
@@ -61,6 +62,25 @@ export default function SectionSidebar({
 		};
 	}, [sections]);
 
+	useEffect(() => {
+		const navigation = navigationRef.current;
+		const activeLink = navigation?.querySelector<HTMLAnchorElement>(`a[href="#${activeSection}"]`);
+		if (!navigation || !activeLink) return;
+
+		const edgePadding = 8;
+		const navigationRect = navigation.getBoundingClientRect();
+		const activeLinkRect = activeLink.getBoundingClientRect();
+		let nextScrollLeft = navigation.scrollLeft;
+		if (activeLinkRect.left < navigationRect.left + edgePadding)
+			nextScrollLeft += activeLinkRect.left - navigationRect.left - edgePadding;
+		else if (activeLinkRect.right > navigationRect.right - edgePadding)
+			nextScrollLeft += activeLinkRect.right - navigationRect.right + edgePadding;
+
+		if (Math.abs(nextScrollLeft - navigation.scrollLeft) < 1) return;
+		const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		navigation.scrollTo({ left: nextScrollLeft, behavior: reduceMotion ? "auto" : "smooth" });
+	}, [activeSection]);
+
 	const scrollToSection = (event: MouseEvent<HTMLAnchorElement>, section: string) => {
 		event.preventDefault();
 		const target = document.getElementById(section);
@@ -78,7 +98,7 @@ export default function SectionSidebar({
 					<span>{meta.label}</span>
 					<strong>{meta.value}</strong>
 				</div>}
-			<nav className={navigationClassName} aria-label={navigationLabel}>
+			<nav ref={navigationRef} className={navigationClassName} aria-label={navigationLabel}>
 				{sections.map((section, index) =>
 					<a key={section.id}
 					   href={`#${section.id}`}

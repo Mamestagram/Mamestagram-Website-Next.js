@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
-	JetBrains_Mono,
-	Kode_Mono,
-	M_PLUS_1_Code,
-	Nova_Mono,
-	Share_Tech_Mono,
-	Space_Mono
+  JetBrains_Mono,
+  Kode_Mono,
+  M_PLUS_1_Code,
+  Nova_Mono,
+  Share_Tech_Mono,
+  Space_Mono,
 } from "next/font/google";
 import type { ReactNode } from "react";
 import type { ServerInfo, UserInfo } from "@/components/context/user-provider";
@@ -22,73 +22,81 @@ import "@s/global/flag-icon.css";
 import "@s/global/tooltip.css";
 
 const jetBrainsMono = JetBrains_Mono({
-	display: "swap",
-	subsets: ["latin"],
-	variable: "--font-jetbrains-mono"
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
 });
 const novaMono = Nova_Mono({
-	display: "swap",
-	subsets: ["latin"],
-	variable: "--font-nova-mono",
-	weight: "400"
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-nova-mono",
+  weight: "400",
 });
 const shareTechMono = Share_Tech_Mono({
-	display: "swap",
-	subsets: ["latin"],
-	variable: "--font-share-tech-mono",
-	weight: "400"
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-share-tech-mono",
+  weight: "400",
 });
 const kodeMono = Kode_Mono({
-	display: "swap",
-	subsets: ["latin"],
-	variable: "--font-kode-mono"
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-kode-mono",
 });
 const mPlusOneCode = M_PLUS_1_Code({
-	display: "swap",
-	subsets: ["latin"],
-	variable: "--font-m-plus-1-code"
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-m-plus-1-code",
 });
 const spaceMono = Space_Mono({
-	display: "swap",
-	style: ["normal", "italic"],
-	subsets: ["latin"],
-	variable: "--font-space-mono",
-	weight: ["400", "700"]
+  display: "swap",
+  style: ["normal", "italic"],
+  subsets: ["latin"],
+  variable: "--font-space-mono",
+  weight: ["400", "700"],
 });
 const fontVariables = [
-	jetBrainsMono.variable,
-	novaMono.variable,
-	shareTechMono.variable,
-	kodeMono.variable,
-	mPlusOneCode.variable,
-	spaceMono.variable
+  jetBrainsMono.variable,
+  novaMono.variable,
+  shareTechMono.variable,
+  kodeMono.variable,
+  mPlusOneCode.variable,
+  spaceMono.variable,
 ].join(" ");
 
 export const metadata: Metadata = {
-	title: {
-		default: "Home | Mamestagram",
-		template: "%s | Mamestagram"
-	},
-	description: "Welcome to Mamestagram! This is an osu! private server operated by Mamesosu Dev Team."
+  title: {
+    default: "Home | Mamestagram",
+    template: "%s | Mamestagram",
+  },
+  description:
+    "Welcome to Mamestagram! This is an osu! private server operated by Mamesosu Dev Team.",
 };
 
-export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-	const serverInfo: ServerInfo = {
-		baseDomain: process.env.BASE_DOMAIN!
-	};
-	const userInfo: UserInfo = await getCurrentUser();
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#06070b",
+};
 
-	return (
-		<html className={fontVariables} lang="en">
-			<body>
-				<UserProvider serverInfo={serverInfo} userInfo={userInfo}>
-					<Header/>
-					<main>
-						{children}
-					</main>
-					<Footer/>
-				</UserProvider>
-			</body>
-		</html>
-	);
+export default async function RootLayout({
+  children,
+}: Readonly<{ children: ReactNode }>) {
+  const serverInfo: ServerInfo = {
+    baseDomain: process.env.BASE_DOMAIN!,
+  };
+  const userInfo: UserInfo = await getCurrentUser();
+
+  return (
+    <html className={fontVariables} lang="en">
+      <body>
+        <UserProvider serverInfo={serverInfo} userInfo={userInfo}>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </UserProvider>
+      </body>
+    </html>
+  );
 }

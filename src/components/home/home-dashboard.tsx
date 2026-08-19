@@ -299,7 +299,7 @@ export default function HomeDashboard({
                             src={`https://a.${baseDomain}/${player.id}`}
                             alt={`${player.name} avatar`}
                             fill
-                            sizes="(max-width: 560px) 45vw, (max-width: 980px) 22vw, 110px"
+                            sizes="110px"
                             draggable={false}
                           />
                         </span>

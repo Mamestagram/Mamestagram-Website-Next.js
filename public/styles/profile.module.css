@@ -530,11 +530,13 @@
           }
 
           @media (max-width: 600px) {
-            grid-gap: 14px;
+            grid-template-columns: 82px minmax(0, 1fr);
+            grid-gap: 12px;
 
             & .avatar {
-              height: 92px;
-              width: 92px;
+              height: 82px;
+              width: 82px;
+              border-radius: 22px;
 
               & .avatar_badge {
                 right: -5px;
@@ -546,6 +548,10 @@
 
             & .name_container .name {
               font-size: 1.75rem;
+            }
+
+            & .name_container .name_row {
+              gap: 8px;
             }
 
             & .profile_mode_selection .profile_mode_trigger {
@@ -946,7 +952,7 @@
             }
 
             & .social_card {
-              grid-template-columns: 28px minmax(0, 1fr) max-content;
+              grid-template-columns: 28px minmax(0, 1fr);
               gap: 6px;
             }
           }
@@ -958,11 +964,15 @@
           }
 
           & .social_copy strong {
-            font-size: 0.54rem;
+            font-size: 0.64rem;
           }
 
           & .social_value {
-            font-size: 1.12rem;
+            font-size: 1.24rem;
+          }
+
+          & .social_open_icon {
+            display: none;
           }
         }
 
@@ -1509,6 +1519,7 @@
           cursor: crosshair;
           outline: none;
           touch-action: pan-y;
+          user-select: none;
 
           &:focus-visible {
             box-shadow: inset 0 0 0 1px hsla(var(--user-hue), 62%, 72%, 0.5);
@@ -1555,11 +1566,22 @@
         }
 
         & .rank_chart_active_point {
-          fill: #fff;
-          stroke: hsl(var(--user-hue), 78%, 60%);
-          stroke-width: 3;
-          filter: drop-shadow(0 0 5px hsla(var(--user-hue), 74%, 60%, 0.72));
-          vector-effect: non-scaling-stroke;
+          --rank-point-x: 50%;
+          --rank-point-y: 50%;
+
+          position: absolute;
+          z-index: 2;
+          left: var(--rank-point-x);
+          top: var(--rank-point-y);
+          width: 13px;
+          height: 13px;
+          box-sizing: border-box;
+          pointer-events: none;
+          background: #fff;
+          border: 3px solid hsl(var(--user-hue), 78%, 60%);
+          border-radius: 50%;
+          box-shadow: 0 0 5px hsla(var(--user-hue), 74%, 60%, 0.72);
+          transform: translate(-50%, -50%);
         }
 
         & .rank_chart_tooltip {
@@ -1568,7 +1590,7 @@
 
           display: flex;
           position: absolute;
-          z-index: 2;
+          z-index: 3;
           left: var(--rank-point-x);
           top: var(--rank-point-y);
           min-width: 78px;
@@ -1672,6 +1694,10 @@
         }
 
         @media (max-width: 600px) {
+          & .rank_history_title > span small {
+            font-size: 0.67rem;
+          }
+
           & .rank_history_header {
             align-items: flex-start;
             flex-direction: column;
@@ -1685,11 +1711,33 @@
               min-width: 0;
               flex: 1 1 0;
               align-items: flex-start;
+
+              & small {
+                font-size: 0.54rem;
+              }
+
+              & strong {
+                font-size: 0.82rem;
+              }
             }
           }
 
           & .rank_chart {
             height: 124px;
+          }
+
+          & .rank_chart_tooltip {
+            & small {
+              font-size: 0.58rem;
+            }
+
+            & strong {
+              font-size: 0.82rem;
+            }
+          }
+
+          & .rank_chart_axis {
+            font-size: 0.6rem;
           }
         }
 
@@ -2330,6 +2378,7 @@
               & .map_details {
                 display: flex;
                 min-width: 0;
+                padding-right: 18px;
                 align-items: center;
                 gap: 7px;
                 color: #aeb9c8;
@@ -2676,6 +2725,11 @@
     border-radius: 24px;
     box-shadow: var(--glass-shadow);
 
+    @media (max-width: 600px) {
+      padding: 18px;
+      border-radius: 18px;
+    }
+
     & .section_title {
       display: flex;
       align-items: center;
@@ -2684,6 +2738,11 @@
       text-transform: uppercase;
       letter-spacing: 0.08em;
       margin: 0 0 14px;
+
+      @media (max-width: 600px) {
+        min-width: 0;
+        line-height: 1.35;
+      }
 
       .container .section_box.statistics & {
         gap: 3px;
@@ -3588,6 +3647,44 @@
   }
 }
 
+@media (max-width: 872px) {
+  .container {
+    grid-template-columns: minmax(0, 94vw);
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    --box-gap: 12px;
+  }
+
+  .container .section_area.map_scores .player_scores .list_container .score_list .score {
+    & .recorded {
+      font-size: 1.42rem;
+
+      & .pp_label {
+        font-size: 0.78rem;
+      }
+
+      & i {
+        font-size: 0.8rem;
+      }
+    }
+
+    & .weighted {
+      font-size: 0.68rem;
+
+      & .auxiliary_label {
+        font-size: 0.5rem;
+      }
+
+      & .pp_label {
+        font-size: 0.54rem;
+      }
+    }
+  }
+}
+
 .statistics_loading,
 .player_scores_loading {
   min-width: 0;
@@ -4203,13 +4300,14 @@
 @media (max-width: 520px) {
   .social_modal_overlay {
     padding: 8px;
-    align-items: end;
+    place-items: center;
   }
 
   .social_modal {
     width: 100%;
+    height: min(82dvh, 720px);
     max-height: min(82dvh, 720px);
-    border-radius: 20px 20px 14px 14px;
+    border-radius: 20px;
   }
 
   .social_modal_header {

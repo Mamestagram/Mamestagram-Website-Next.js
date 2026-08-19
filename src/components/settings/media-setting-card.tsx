@@ -93,6 +93,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 		? { ...mediaMeta[type], ...clanMediaMeta[type] }
 		: mediaMeta[type];
 	const endpoint = `/api/settings/media/${type}${scope === "clan" ? "?scope=clan" : ""}`;
+	const displayedImageUrl = previewUrl || (isCustomImage ? currentImageUrl : "");
 
 	useEffect(() => () => {
 		if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -216,14 +217,20 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 			</div>
 
 			<div className={styles.media_preview} data-media={type} data-unavailable={isImageUnavailable}>
-				{isCustomImage && !isImageUnavailable
-					? <Image src={previewUrl || currentImageUrl}
-					         alt={`${meta.label} preview`}
-					         fill
-					         unoptimized
-					         draggable={false}
-					         sizes={type === "avatar" ? "180px" : "(max-width: 760px) 100vw, 520px"}
-					         onError={() => setIsImageUnavailable(true)}/>
+				{displayedImageUrl && !isImageUnavailable
+					? <>
+						<Image src={displayedImageUrl}
+						       alt={`${meta.label} preview`}
+						       fill
+						       unoptimized
+						       draggable={false}
+						       sizes={type === "avatar" ? "180px" : "(max-width: 760px) 100vw, 520px"}
+						       onError={() => setIsImageUnavailable(true)}/>
+						{previewUrl && <span className={styles.media_preview_badge}>
+							<FontAwesome prefix="fas" name="eye"/>
+							Preview
+						</span>}
+					</>
 					: <span className={styles.media_placeholder}>
 						<FontAwesome prefix="fad" name={meta.icon}/>
 						No custom {type}

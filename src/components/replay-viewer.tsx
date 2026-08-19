@@ -80,6 +80,7 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 				     }}>
 					<section id={replayId}
 					         className={styles.replay_dialog}
+					         data-closing={dialogState === "closing"}
 					         role="dialog"
 					         aria-modal="true"
 					         aria-labelledby={replayTitleId}>

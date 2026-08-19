@@ -101,6 +101,27 @@
 }
 
 @media (max-width: 760px) {
+	.hero {
+		height: clamp(180px, 46vw, 200px);
+		min-height: 180px;
+	}
+
+	.content {
+		width: calc(100% - 32px);
+		padding-bottom: 0;
+		justify-content: center;
+
+		& h1,
+		& p {
+			max-width: 100%;
+			white-space: normal;
+		}
+
+		& h1 {
+			overflow-wrap: anywhere;
+		}
+	}
+
 	.hero[data-variant="patcher"] .overlay {
 		background: linear-gradient(90deg, rgba(4, 5, 8, .9), rgba(5, 6, 9, .46));
 	}
@@ -120,15 +141,10 @@
 	}
 }
 
-@media (max-width: 480px) {
-	.hero {
-		height: 210px;
-		min-height: 210px;
-	}
-
+@media (max-width: 560px) {
 	.content {
-		& h1 { font-size: 2rem; }
-		& p { font-size: .76rem; line-height: 1.55; }
+		& h1 { font-size: 2.35rem; }
+		& p { font-size: 1.05rem; line-height: 1.65; }
 	}
 
 	.hero:is([data-variant="patcher"], [data-variant="support"]) .content p {

@@ -41,16 +41,7 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 	const positionAnimation = useRef<Animation>(null);
 	const isOverRankingRef = useRef(false);
 	const [isOverRanking, setIsOverRanking] = useState(false);
-	const [displayAmount, setDisplayAmount] = useState(() => {
-		if (typeof window !== "undefined") {
-			if (window.innerWidth <= 346) return 1;
-			else if (window.innerWidth <= 525) return 3;
-			else return 7;
-		}
-		else {
-			return 7;
-		}
-	});
+	const [displayAmount, setDisplayAmount] = useState(7);
 	const [pageOrder, setPageOrder] = useState<number[]>(() =>
 		makePageOrder(currentPage - 1, displayAmount, totalPage));
 	const pageTranslateX = -1 * (buttonSize + buttonGap) * (pageOrder.at(0) ?? 0);
@@ -110,8 +101,10 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 	}
 
 	useEffect(() => {
+		const initialResizeFrame = window.requestAnimationFrame(resizeWindow);
 		window.addEventListener("resize", resizeWindow);
 		return () => {
+			window.cancelAnimationFrame(initialResizeFrame);
 			window.removeEventListener("resize", resizeWindow);
 		}
 	}, [resizeWindow]);

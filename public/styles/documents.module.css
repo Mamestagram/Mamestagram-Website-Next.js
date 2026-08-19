@@ -1283,16 +1283,28 @@
 
 	.sidebar {
 		top: 67px;
+		max-width: 100%;
 		padding: 8px;
+		overflow: hidden;
 	}
 
 	.language_switcher {
 		padding: 3px 6px 8px;
+
+		& > span:first-child {
+			font-size: .68rem;
+		}
+
+		& > div button {
+			min-width: 40px;
+			height: 36px;
+			font-size: .72rem;
+		}
 	}
 
 	.document_nav {
 		display: grid;
-		grid-template-columns: repeat(7, minmax(max-content, 1fr));
+		grid-template-columns: repeat(7, max-content);
 		padding: 0;
 		overflow-x: auto;
 		scrollbar-width: none;
@@ -1301,12 +1313,14 @@
 
 		& a {
 			grid-template-columns: 18px minmax(max-content, 1fr);
-			min-height: 39px;
+			min-height: 44px;
 			padding: 0 10px;
 			gap: 6px;
+			font-size: .8rem;
 
 			&::before { left: 9px; right: 9px; top: auto; bottom: -8px; width: auto; height: 2px; }
 			& > span { display: none; }
+			& > i { font-size: .88rem; }
 			& strong { overflow: visible; }
 		}
 	}
@@ -1363,12 +1377,72 @@
 @media (max-width: 480px) {
 	.sidebar { top: 59px; }
 
+	.back_to_top {
+		left: 50%;
+		right: auto;
+		transform: translate(-50%, 8px);
+
+		&[data-floating="true"] { transform: translate(-50%, 0); }
+		&[data-floating="true"]:hover { transform: translate(-50%, -2px); }
+	}
+
 	.document_nav a {
 		grid-template-columns: minmax(max-content, 1fr);
 		padding: 0 11px;
-		font-size: .63rem;
+		font-size: .76rem;
 
 		& > i { display: none; }
+	}
+
+	.content {
+		& .section_heading h2 { font-size: 1.6rem; }
+		& .lead_card h2 { font-size: 1.5rem; }
+		& .lead_card p { font-size: 1.06rem; }
+		& .section_lead { font-size: 1.04rem; }
+		& .subheading { font-size: .94rem; }
+		& .ruleset_chips span { font-size: .8rem; }
+
+		& .overview_card strong { font-size: .98rem; }
+		& .overview_card p { font-size: .86rem; }
+		& .feature_copy small { font-size: .72rem; }
+		& .feature_copy strong { font-size: .94rem; }
+		& .feature_card > p { font-size: .88rem; }
+
+		& .rule_card > div h3 { font-size: 1.02rem; }
+		& .rule_card ol li > span { font-size: .66rem; }
+		& .rule_card ol li p { font-size: .86rem; }
+		& :is(.clan_notice, .notice > span) strong { font-size: .92rem; }
+		& :is(.clan_notice, .notice > span) p { font-size: .83rem; }
+		& .notice > a { font-size: .8rem; }
+
+		& .command_box > span:first-child small { font-size: .72rem; }
+		& .command_box > span:first-child code { font-size: .9rem; }
+		& .copy_status { font-size: .76rem; }
+		& .inline_command code { font-size: .9rem; }
+		& .inline_copy_feedback { font-size: .72rem; }
+		& .command_tips strong { font-size: .86rem; }
+		& .command_tips p { font-size: .78rem; }
+		& .command_category > h3 { font-size: 1rem; }
+		& .command_category > p { font-size: .81rem; }
+		& .command_item code { font-size: .88rem; }
+		& .command_item p { font-size: .83rem; }
+		& .command_source { font-size: .81rem; }
+
+		& .bbcode_card_heading h3 { font-size: .94rem; }
+		& .bbcode_card_heading p { font-size: .78rem; }
+		& .bbcode_examples strong { font-size: .76rem; }
+		& .bbcode_examples code { font-size: .78rem; }
+		& .bbcode_source { font-size: .81rem; }
+
+		& .step_body > p { font-size: 1rem; }
+		& .success_message strong { font-size: .96rem; }
+		& .dan_actions a { font-size: .84rem; }
+		& .dan_card > a { font-size: .8rem; }
+		& .dan_table { font-size: .86rem; }
+		& .dan_table th { font-size: .75rem; }
+		& .dan_card_header h3 { font-size: 1.05rem; }
+		& .faq_question { font-size: .86rem; }
+		& .faq_answer p { font-size: .88rem; }
 	}
 
 	.section_heading {
@@ -1407,7 +1481,7 @@
 	.step_number { width: 42px; height: 42px; font-size: .84rem; }
 	.step_body > p { min-height: 42px; }
 
-	.faq_question { grid-template-columns: 29px minmax(0, 1fr) 20px; padding: 0 9px; font-size: .78rem; }
+	.faq_question { grid-template-columns: 29px minmax(0, 1fr) 20px; padding: 0 9px; }
 
 	.faq_answer p { padding: 0 36px 13px; }
 }

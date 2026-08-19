@@ -142,3 +142,18 @@
 	background-color: rgba(47, 180, 126, .46);
 	border-color: rgba(137, 244, 193, .54);
 }
+
+@media (max-width: 480px) {
+	.overlay {
+		padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+	}
+
+	.dialog {
+		padding: 21px 17px;
+		border-radius: 17px;
+	}
+
+	.actions button {
+		min-height: 44px;
+	}
+}

@@ -8,6 +8,7 @@
 	background: rgba(2, 5, 10, .82);
 	backdrop-filter: blur(12px);
 	overflow-y: auto;
+	overscroll-behavior: contain;
 }
 
 .dialog {
@@ -294,16 +295,41 @@
 	to { transform: rotate(360deg); }
 }
 
+@keyframes crop-overlay-enter {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
 @media (max-width: 620px) {
 	.overlay {
 		padding: 10px;
 		place-items: start center;
+		background: rgba(2, 5, 10, .96);
+		backdrop-filter: none;
+		animation: crop-overlay-enter 160ms ease-out both;
 	}
 
 	.dialog {
 		max-height: none;
 		padding: 17px;
 		border-radius: 18px;
+		overflow: visible;
+	}
+
+	.header small {
+		font-size: .86rem;
+	}
+
+	.header h2 {
+		font-size: 1.18rem;
+	}
+
+	.instructions {
+		font-size: 1rem;
+	}
+
+	.loading {
+		font-size: .94rem;
 	}
 
 	.zoom_control {
@@ -312,6 +338,23 @@
 
 	.zoom_control > span {
 		grid-column: 1 / -1;
+		font-size: .96rem;
+	}
+
+	.zoom_control output {
+		font-size: .92rem;
+	}
+
+	.output_info {
+		font-size: .86rem;
+	}
+
+	.error {
+		font-size: .92rem;
+	}
+
+	.actions button {
+		font-size: 1rem;
 	}
 }
 
@@ -328,5 +371,11 @@
 
 	.actions {
 		grid-template-columns: 1fr;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.overlay {
+		animation: none;
 	}
 }

@@ -714,20 +714,26 @@
 
 @media (max-width: 1050px) {
 	.shell { grid-template-columns: 1fr; width: min(1120px, 94vw); gap: 14px; }
-	.sidebar { top: 67px; padding: 8px; }
-	.language_switcher { padding: 3px 6px 8px; }
+	.sidebar { top: 67px; max-width: 100%; padding: 8px; overflow: hidden; }
+	.language_switcher {
+		padding: 3px 6px 8px;
+
+		& > span { font-size: .68rem; }
+		& > div button { min-width: 40px; height: 36px; font-size: .72rem; }
+	}
 
 	.support_nav {
 		display: grid;
-		grid-template-columns: repeat(3, minmax(max-content, 1fr));
+		grid-template-columns: repeat(3, max-content);
 		padding: 0;
 		overflow-x: auto;
 		scrollbar-width: none;
 
 		&::-webkit-scrollbar { display: none; }
-		& a { grid-template-columns: 18px minmax(max-content, 1fr); min-height: 39px; padding: 0 10px; gap: 6px; }
+		& a { grid-template-columns: 18px minmax(max-content, 1fr); min-height: 44px; padding: 0 10px; gap: 6px; font-size: .8rem; }
 		& a::before { left: 9px; right: 9px; top: auto; bottom: -8px; width: auto; height: 2px; }
 		& a > span { display: none; }
+		& a > i { font-size: .88rem; }
 		& a strong { overflow: visible; }
 	}
 
@@ -746,9 +752,47 @@
 
 @media (max-width: 480px) {
 	.sidebar { top: 59px; }
-	.support_nav a { grid-template-columns: minmax(max-content, 1fr); padding: 0 10px; font-size: .63rem; }
+	.back_to_top {
+		left: 50%;
+		right: auto;
+		transform: translate(-50%, 8px);
+
+		&[data-floating="true"] { transform: translate(-50%, 0); }
+		&[data-floating="true"]:hover { transform: translate(-50%, -2px); }
+	}
+	.support_nav a { grid-template-columns: minmax(max-content, 1fr); padding: 0 10px; font-size: .76rem; }
 	.support_nav a > i { display: none; }
-	.lead_card p { font-size: .86rem; }
+	.content {
+		& .section_heading h2 { font-size: 1.6rem; }
+		& .lead_card > span { font-size: .74rem; }
+		& .lead_card h2 { font-size: 1.55rem; }
+		& .lead_card p { font-size: 1.04rem; }
+		& .impact_grid strong { font-size: .9rem; }
+		& .impact_grid p { font-size: .78rem; }
+		& .section_lead { font-size: 1.04rem; }
+		& .comparison_bar button { font-size: .76rem; }
+		& .feature_stage > p { font-size: .87rem; }
+		& .feature_header > span { font-size: .64rem; }
+		& .feature_header h3 { font-size: .93rem; }
+		& .feature_header small { font-size: .64rem; }
+		& .feature_media[data-empty="true"] > span { font-size: .76rem; }
+		& .subscription_grid article strong { font-size: 1.06rem; }
+		& .subscription_grid article p { font-size: .83rem; }
+		& .price_calculator_heading strong { font-size: 1rem; }
+		& .price_calculator_heading p { font-size: .8rem; }
+		& .price_tooltip strong { font-size: 1.24rem; }
+		& .price_tooltip :is(span, small) { font-size: .68rem; }
+		& .price_bar_limits { font-size: .64rem; }
+		& .price_input_row > label { font-size: .74rem; }
+		& .price_input_row > span input { font-size: .86rem; }
+		& .price_input_row > span small { font-size: .72rem; }
+		& .price_input_row > strong { font-size: 1.08rem; }
+		& .price_input_error { font-size: .67rem; }
+		& .cancel_note { font-size: .85rem; }
+		& .cta_card h3 { font-size: 1.25rem; }
+		& .cta_card p { font-size: .88rem; }
+		& .cta_card > a span { font-size: .78rem; }
+	}
 	.comparison_bar { align-items: stretch; flex-direction: column; }
 	.comparison_bar > span { display: none; }
 	.comparison_bar > div { width: 100%; }

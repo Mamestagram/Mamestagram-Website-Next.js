@@ -9,8 +9,12 @@ export default function ArrowChevron() {
 	const [arrowDirection, setArrowDirection] = useState<"up" | "down">("down");
 
 	const clickBody = (e: PointerEvent) => {
-		if (e.target instanceof Node && !arrow.current?.contains(e.target))
-			setArrowDirection("down");
+		if (!(e.target instanceof Node) || arrow.current?.contains(e.target)) return;
+
+		const accountMenuTrigger = navigation.current?.querySelector<HTMLButtonElement>("li.avatar > button");
+		if (accountMenuTrigger?.contains(e.target)) return;
+
+		setArrowDirection("down");
 	}
 
 	const clickArrow = () => {
@@ -27,6 +31,7 @@ export default function ArrowChevron() {
 		return () => {
 			document.removeEventListener("click", clickBody);
 			arrowElement.classList.remove("up");
+			navigationElement.parentElement?.removeAttribute("data-navigation-open");
 		}
 	}, []);
 
@@ -37,6 +42,7 @@ export default function ArrowChevron() {
 		arrowElement.classList.remove("up", "down");
 		arrowElement.classList.add(arrowDirection);
 		navigationElement.classList.toggle("mobile-show", arrowDirection === "up");
+		navigationElement.parentElement?.toggleAttribute("data-navigation-open", arrowDirection === "up");
 	}, [arrowDirection]);
 
 	return (

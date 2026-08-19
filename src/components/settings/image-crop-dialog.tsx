@@ -184,16 +184,20 @@ export default function ImageCropDialog({
 
 	useEffect(() => {
 		if (!isClient) return;
+		const isCompactViewport = window.matchMedia("(max-width: 620px)").matches;
+		const shouldLockBody = !isCompactViewport;
 		const previousOverflow = document.body.style.overflow;
 		const closeOnEscape = (event: globalThis.KeyboardEvent) => {
 			if (event.key === "Escape" && !isProcessingRef.current) onCancelRef.current();
 		};
-		const focusFrame = requestAnimationFrame(() => frameRef.current?.focus());
-		document.body.style.overflow = "hidden";
+		const focusFrame = isCompactViewport
+			? null
+			: requestAnimationFrame(() => frameRef.current?.focus());
+		if (shouldLockBody) document.body.style.overflow = "hidden";
 		document.addEventListener("keydown", closeOnEscape);
 		return () => {
-			cancelAnimationFrame(focusFrame);
-			document.body.style.overflow = previousOverflow;
+			if (focusFrame !== null) cancelAnimationFrame(focusFrame);
+			if (shouldLockBody) document.body.style.overflow = previousOverflow;
 			document.removeEventListener("keydown", closeOnEscape);
 		};
 	}, [isClient]);

@@ -85,15 +85,17 @@ export default async function BeatmapHero({ map, difficulties }: Readonly<{
 
 	return (
 		<section className={styles.hero}>
-			<Image className={styles.hero_image}
-			       src={cover}
-			       alt={`${map.artist} — ${map.title} cover`}
-			       fill
-			       priority
-			       unoptimized
-			       draggable={false}
-			       sizes="100vw"/>
-			<div className={styles.hero_shade}/>
+			<div className={styles.hero_backdrop}>
+				<Image className={styles.hero_image}
+				       src={cover}
+				       alt={`${map.artist} — ${map.title} cover`}
+				       fill
+				       priority
+				       unoptimized
+				       draggable={false}
+				       sizes="100vw"/>
+				<div className={styles.hero_shade}/>
+			</div>
 			<div className={styles.hero_content}>
 				<div className={styles.hero_primary}>
 					<div className={styles.hero_topline}>

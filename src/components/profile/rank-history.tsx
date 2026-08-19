@@ -67,6 +67,20 @@ export default function RankHistoryChart({ history }: { history: RankHistory }) 
 		const ratio = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width));
 		setActiveIndex(Math.round(ratio * (coordinates.length - 1)));
 	};
+	const handleChartPointerDown = (event: PointerEvent<HTMLDivElement>) => {
+		event.currentTarget.setPointerCapture(event.pointerId);
+		activateClosestPoint(event);
+	};
+	const handleChartPointerMove = (event: PointerEvent<HTMLDivElement>) => {
+		if (event.pointerType !== "touch" || event.currentTarget.hasPointerCapture(event.pointerId)) {
+			activateClosestPoint(event);
+		}
+	};
+	const releaseChartPointer = (event: PointerEvent<HTMLDivElement>) => {
+		if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+			event.currentTarget.releasePointerCapture(event.pointerId);
+		}
+	};
 	const handleChartKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
 		if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
 		event.preventDefault();
@@ -96,15 +110,16 @@ export default function RankHistoryChart({ history }: { history: RankHistory }) 
 
 			<div className={styles.rank_chart}
 			     tabIndex={0}
-			     onPointerDown={activateClosestPoint}
-			     onPointerMove={(event) => {
-				     if (event.pointerType !== "touch") activateClosestPoint(event);
-			     }}
+			     onPointerDown={handleChartPointerDown}
+			     onPointerMove={handleChartPointerMove}
+			     onPointerUp={releaseChartPointer}
+			     onPointerCancel={releaseChartPointer}
 			     onPointerLeave={(event) => {
 				     if (event.pointerType !== "touch") setActiveIndex(null);
 			     }}
+			     onContextMenu={(event) => event.preventDefault()}
 			     onKeyDown={handleChartKeyDown}
-			     aria-label="Ranking history chart. Hover, tap, or use the left and right arrow keys to inspect a rank.">
+			     aria-label="Ranking history chart. Hover, tap, press and hold, or use the left and right arrow keys to inspect a rank.">
 				<svg viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
 				     preserveAspectRatio="none"
 				     aria-hidden="true">
@@ -121,14 +136,21 @@ export default function RankHistoryChart({ history }: { history: RankHistory }) 
 						      x2={CHART_WIDTH} y2={CHART_HEIGHT * position}/>)}
 					<path className={styles.rank_chart_area} d={areaPath}/>
 					<path className={styles.rank_chart_line} d={linePath}/>
-					{activePoint && <>
+					{activePoint && (
 						<line className={styles.rank_chart_cursor}
 						      x1={activePoint.x} y1="0"
 						      x2={activePoint.x} y2={CHART_HEIGHT}/>
-						<circle className={styles.rank_chart_active_point}
-						        cx={activePoint.x} cy={activePoint.y} r="5"/>
-					</>}
+					)}
 				</svg>
+				{activePoint && (
+					<span
+						className={styles.rank_chart_active_point}
+						aria-hidden="true"
+						style={{
+							"--rank-point-x": `${activePoint.x / CHART_WIDTH * 100}%`,
+							"--rank-point-y": `${activePoint.y / CHART_HEIGHT * 100}%`
+						} as CSSProperties}/>
+				)}
 				{activePoint && <span
 					className={styles.rank_chart_tooltip}
 					data-align={activePoint.x < CHART_WIDTH * .12 ? "start" : activePoint.x > CHART_WIDTH * .88 ? "end" : "center"}

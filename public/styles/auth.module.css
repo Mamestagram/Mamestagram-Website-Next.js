@@ -420,8 +420,13 @@
 	.card {
 		grid-template-columns: 1fr;
 		width: min(100%, 520px);
+		min-height: 0;
 		border-radius: 24px;
 		transform: translateY(-10px);
+	}
+
+	:global(body.sign-in) .card {
+		transform: translateY(-36px);
 	}
 
 	.visual {
@@ -439,13 +444,14 @@
 	}
 
 	.equalizer {
-		bottom: 18px;
-		left: calc(50% + 103px);
+		top: 18px;
+		bottom: auto;
+		left: 50%;
 		transform: translateX(-50%) scale(.7);
 	}
 
 	.form {
-		min-height: 720px;
+		min-height: 0;
 		padding: 38px 28px 42px;
 	}
 }

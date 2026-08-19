@@ -93,12 +93,12 @@
 	box-shadow: 0 14px 34px rgba(0, 0, 0, .3);
 }
 
-.hero_avatar > img:not(.hero_badge) {
+.hero_avatar > img:first-child {
 	border-radius: inherit;
 	object-fit: cover;
 }
 
-.hero_avatar .hero_badge {
+.hero_badge {
 	object-fit: contain;
 	pointer-events: none;
 	z-index: 2;
@@ -760,6 +760,27 @@
 	object-fit: cover;
 }
 
+.media_preview_badge {
+	display: inline-flex;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	min-height: 26px;
+	padding: 0 9px;
+	align-items: center;
+	gap: 6px;
+	color: #f2f7fc;
+	background: rgba(4, 8, 14, .78);
+	border: 1px solid rgba(255, 255, 255, .18);
+	border-radius: 999px;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, .3);
+	font-size: .56rem;
+	font-weight: 850;
+	backdrop-filter: blur(8px);
+	pointer-events: none;
+	z-index: 2;
+}
+
 .media_preview[data-media="avatar"] {
 	width: 156px;
 	justify-self: center;
@@ -1021,6 +1042,19 @@
 		padding: 22px 14px 90px;
 	}
 
+	.eyebrow {
+		font-size: .9rem;
+	}
+
+	.hero h1 {
+		font-size: 2rem;
+	}
+
+	.hero_identity p {
+		font-size: 1.08rem;
+		line-height: 1.65;
+	}
+
 	.hero {
 		padding: 24px 20px;
 		align-items: flex-start;
@@ -1039,6 +1073,27 @@
 
 	.profile_link {
 		align-self: stretch;
+		font-size: 1rem;
+	}
+
+	.sidebar_heading > i {
+		font-size: 1rem;
+	}
+
+	.sidebar_heading strong {
+		font-size: 1.05rem;
+	}
+
+	.sidebar_heading small {
+		font-size: .86rem;
+	}
+
+	.scope_switch a {
+		font-size: .96rem;
+	}
+
+	.scope_switch a i {
+		font-size: 1rem;
 	}
 
 	.settings_menu {
@@ -1047,10 +1102,43 @@
 
 	.settings_menu a {
 		justify-content: flex-start;
+		min-height: 46px;
+		font-size: 1rem;
+	}
+
+	.settings_menu a .sidebar_external_icon {
+		font-size: .82rem;
 	}
 
 	.section_card {
 		padding: 20px 16px;
+	}
+
+	.section_heading > span {
+		font-size: 1.08rem;
+	}
+
+	.section_heading small {
+		font-size: .86rem;
+	}
+
+	.section_heading h2 {
+		font-size: 1.5rem;
+	}
+
+	.section_heading p {
+		font-size: 1rem;
+		line-height: 1.65;
+	}
+
+	.label_row label {
+		font-size: 1.02rem;
+	}
+
+	.label_row span,
+	.field > small {
+		font-size: .9rem;
+		line-height: 1.55;
 	}
 
 	.form_footer {
@@ -1064,6 +1152,30 @@
 
 	.form_actions button {
 		flex: 1;
+	}
+
+	.input_shell input {
+		font-size: 16px;
+	}
+
+	.toggle_copy strong {
+		font-size: 1rem;
+	}
+
+	.toggle_copy small {
+		font-size: .9rem;
+		line-height: 1.55;
+	}
+
+	.primary_button,
+	.secondary_button,
+	.danger_button {
+		min-height: 44px;
+		font-size: 1rem;
+	}
+
+	.status {
+		font-size: .9rem;
 	}
 
 	.media_card {
@@ -1085,6 +1197,79 @@
 	.media_note {
 		grid-column: 1;
 		margin-top: -8px;
+	}
+
+	.media_heading h3 {
+		font-size: 1.05rem;
+	}
+
+	.media_heading p {
+		font-size: .9rem;
+		line-height: 1.55;
+	}
+
+	.media_placeholder {
+		font-size: .94rem;
+	}
+
+	.media_preview_badge {
+		min-height: 30px;
+		font-size: .88rem;
+	}
+
+	.file_picker {
+		min-height: 48px;
+		font-size: .96rem;
+	}
+
+	.media_note {
+		font-size: .88rem;
+		line-height: 1.5;
+	}
+
+	.badge_summary {
+		font-size: .94rem;
+	}
+
+	.badge_summary strong {
+		font-size: 1.05rem;
+	}
+
+	.badge_copy strong {
+		font-size: .96rem;
+	}
+
+	.badge_copy small {
+		font-size: .84rem;
+	}
+
+	.selected_check {
+		font-size: .84rem;
+	}
+
+	.me_editor_scope textarea {
+		font-size: 16px;
+	}
+
+	.me_editor_scope [role="toolbar"] button,
+	.me_editor_scope [role="toolbar"] a {
+		font-size: 1rem;
+	}
+
+	.me_editor_scope form > div:last-child {
+		font-size: .96rem;
+	}
+
+	.me_editor_scope form > div:last-child button {
+		font-size: 1rem;
+	}
+
+	.me_editor_scope [role="status"] {
+		font-size: .94rem;
+	}
+
+	.me_editor_scope :is(p, li, blockquote, code) {
+		font-size: max(1em, 1rem);
 	}
 
 	.badge_grid {

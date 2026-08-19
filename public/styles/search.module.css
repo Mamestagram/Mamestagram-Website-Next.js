@@ -276,6 +276,7 @@
 	.results { padding: 15px; }
 	.results_heading { align-items: flex-start; flex-direction: column; gap: 8px; }
 	.search_form button { padding-inline: 13px; }
+	.search_form input { font-size: 16px; }
 	.pagination { gap: 4px; }
 	.pagination a { min-width: 32px; height: 32px; }
 }
