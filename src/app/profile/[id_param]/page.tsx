@@ -1,5 +1,8 @@
 import { redirect, notFound } from "next/navigation";
-import { accountExists, getPreferredMode } from "@/database/profile";
+import { getProfileRouteInfo } from "@/database/profile";
+import { ModeNum, OsuMode } from "@/lib/mode";
+import { canViewProfile } from "@/lib/profile-visibility";
+import { getCurrentUser } from "@/lib/session";
 
 export default async function OnlyId({ params, searchParams }: {
 	params: Promise<{ id_param: string }>,
@@ -14,8 +17,16 @@ export default async function OnlyId({ params, searchParams }: {
 
 	if (conds.every((cond) => cond)) {
 		const id = Number(id_param), isClan = clan !== undefined;
-		if (id >= (!isClan ? 3 : 1) && await accountExists(id, isClan)) {
-			const preferredMode = await getPreferredMode(id, isClan);
+		if (id >= (!isClan ? 3 : 1)) {
+			const [profile, currentUser] = await Promise.all([
+				getProfileRouteInfo(id, isClan),
+				getCurrentUser()
+			]);
+			if (!profile) notFound();
+
+			const preferredMode = canViewProfile(id, isClan, profile, currentUser)
+				? ModeNum[profile.preferredMode] as OsuMode
+				: OsuMode.std;
 			redirect(`${id}/${preferredMode}${isClan ? "?clan" : ""}`);
 		}
 		else {

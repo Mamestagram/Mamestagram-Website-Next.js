@@ -6,18 +6,26 @@ import FontAwesome from "@/components/font-awesome";
 import { readMutationResponse } from "@/lib/mutation-response";
 import styles from "@s/settings.module.css";
 
-export default function ProfileSettingsForm({ username: initialUsername, showPastNames: initialShowPastNames }: Readonly<{
+export default function ProfileSettingsForm({
+	username: initialUsername,
+	showPastNames: initialShowPastNames,
+	isPrivate: initialIsPrivate
+}: Readonly<{
 	username: string,
-	showPastNames: boolean
+	showPastNames: boolean,
+	isPrivate: boolean
 }>) {
 	const router = useRouter();
 	const [username, setUsername] = useState(initialUsername);
 	const [showPastNames, setShowPastNames] = useState(initialShowPastNames);
+	const [isPrivate, setIsPrivate] = useState(initialIsPrivate);
 	const [savedUsername, setSavedUsername] = useState(initialUsername);
 	const [savedShowPastNames, setSavedShowPastNames] = useState(initialShowPastNames);
+	const [savedIsPrivate, setSavedIsPrivate] = useState(initialIsPrivate);
 	const [status, setStatus] = useState<{ success: boolean, message: string } | null>(null);
 	const [isPending, startTransition] = useTransition();
-	const hasChanges = username.trim() !== savedUsername || showPastNames !== savedShowPastNames;
+	const hasChanges = username.trim() !== savedUsername || showPastNames !== savedShowPastNames ||
+		isPrivate !== savedIsPrivate;
 
 	const submit = (event: SubmitEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -28,7 +36,7 @@ export default function ProfileSettingsForm({ username: initialUsername, showPas
 				const response = await fetch("/api/settings/profile", {
 					method: "PATCH",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ username: normalizedUsername, showPastNames })
+					body: JSON.stringify({ username: normalizedUsername, showPastNames, isPrivate })
 				});
 				const result = await readMutationResponse(response);
 				setStatus(result);
@@ -37,6 +45,7 @@ export default function ProfileSettingsForm({ username: initialUsername, showPas
 				setUsername(normalizedUsername);
 				setSavedUsername(normalizedUsername);
 				setSavedShowPastNames(showPastNames);
+				setSavedIsPrivate(isPrivate);
 				router.refresh();
 			}
 			catch {
@@ -88,6 +97,24 @@ export default function ProfileSettingsForm({ username: initialUsername, showPas
 				<span className={styles.toggle} aria-hidden="true"><span/></span>
 			</label>
 
+			<label className={styles.toggle_row}>
+				<span className={styles.toggle_copy}>
+					<span className={styles.toggle_icon}><FontAwesome prefix="fad" name="lock"/></span>
+					<span>
+						<strong>Private profile</strong>
+						<small>Only you and moderators can view your profile when this is enabled.</small>
+					</span>
+				</span>
+				<input type="checkbox"
+				       checked={isPrivate}
+				       disabled={isPending}
+				       onChange={(event) => {
+					       setIsPrivate(event.target.checked);
+					       setStatus(null);
+				       }}/>
+				<span className={styles.toggle} aria-hidden="true"><span/></span>
+			</label>
+
 			<div className={styles.form_footer}>
 				<span className={styles.status} data-success={status?.success} role="status">
 					{status?.message}
@@ -99,6 +126,7 @@ export default function ProfileSettingsForm({ username: initialUsername, showPas
 					        onClick={() => {
 						        setUsername(savedUsername);
 						        setShowPastNames(savedShowPastNames);
+						        setIsPrivate(savedIsPrivate);
 						        setStatus(null);
 					        }}>
 						<FontAwesome prefix="fas" name="rotate-left"/>

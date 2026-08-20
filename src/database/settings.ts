@@ -25,7 +25,8 @@ type UserSettingsRow = RowDataPacket & {
 	name: string,
 	past_name: string | null,
 	userpage_content: string | null,
-	show_past_names: 0 | 1
+	show_past_names: 0 | 1,
+	is_private: 0 | 1
 };
 
 type BadgeStateRow = RowDataPacket & {
@@ -55,7 +56,8 @@ type OwnedClanSettingsRow = RowDataPacket & {
 	tag: string,
 	past_tag: string | null,
 	userpage_content: string | null,
-	show_past_tags: 0 | 1
+	show_past_tags: 0 | 1,
+	is_public: 0 | 1
 };
 
 type ClanSettingsLockRow = RowDataPacket & {
@@ -80,6 +82,7 @@ export type UserSettings = {
 	pastNames: string | null,
 	aboutMe: string,
 	showPastNames: boolean,
+	isPrivate: boolean,
 	selectedBadge: number,
 	badges: SettingsBadge[],
 	canManageBadges: boolean
@@ -90,7 +93,8 @@ export type OwnedClanSettings = {
 	tag: string,
 	pastTags: string | null,
 	aboutMe: string,
-	showPastTags: boolean
+	showPastTags: boolean,
+	isPrivate: boolean
 };
 
 export type ProfileSettingsUpdateResult =
@@ -166,6 +170,7 @@ export const getUserSettings = async (userId: number): Promise<UserSettings | nu
 		pastNames: user.past_name,
 		aboutMe: user.userpage_content ?? "",
 		showPastNames: user.show_past_names === 1,
+		isPrivate: user.is_private === 1,
 		selectedBadge,
 		canManageBadges: schema.canManageBadges,
 		badges: badgeCatalog.map((badge) => ({
@@ -184,14 +189,16 @@ export const getOwnedClanSettings = async (ownerId: number): Promise<OwnedClanSe
 		tag: clan.tag,
 		pastTags: clan.past_tag,
 		aboutMe: clan.userpage_content ?? "",
-		showPastTags: clan.show_past_tags === 1
+		showPastTags: clan.show_past_tags === 1,
+		isPrivate: clan.is_public !== 1
 	} : null;
 };
 
 export const updateProfileSettings = async (
 	userId: number,
 	username: string,
-	showPastNames: boolean
+	showPastNames: boolean,
+	isPrivate: boolean
 ): Promise<ProfileSettingsUpdateResult> => {
 	const schema = await getSettingsSchema();
 	return withTransaction(async (connection) => {
@@ -208,12 +215,19 @@ export const updateProfileSettings = async (
 
 		const pastNames = appendPastName(currentUser.past_name, currentUser.name, username);
 		if (schema.visibility === "none")
-			await connection.query(updateDefaultProfileSettingsQuery, [username, safeName, pastNames, userId]);
+			await connection.query(updateDefaultProfileSettingsQuery, [username, safeName, pastNames, isPrivate ? 1 : 0, userId]);
 		else {
 			const updateQuery = schema.visibility === "legacy"
 				? updateLegacyProfileSettingsQuery
 				: updateModernProfileSettingsQuery;
-			await connection.query(updateQuery, [username, safeName, pastNames, showPastNames ? 1 : 0, userId]);
+			await connection.query(updateQuery, [
+				username,
+				safeName,
+				pastNames,
+				showPastNames ? 1 : 0,
+				isPrivate ? 1 : 0,
+				userId
+			]);
 		}
 		return { success: true, username };
 	});
@@ -222,7 +236,8 @@ export const updateProfileSettings = async (
 export const updateClanSettings = async (
 	ownerId: number,
 	tag: string,
-	showPastTags: boolean
+	showPastTags: boolean,
+	isPrivate: boolean
 ): Promise<ClanSettingsUpdateResult> => withTransaction(async (connection) => {
 	const [clans] = await connection.query<ClanSettingsLockRow[]>(clanSettingsForUpdateQuery, [ownerId]);
 	const clan = clans.at(0);
@@ -232,7 +247,14 @@ export const updateClanSettings = async (
 	if (conflicts.length > 0) return { success: false, reason: "conflict" };
 
 	const pastTags = appendPastName(clan.past_tag, clan.tag, tag);
-	await connection.query(updateClanSettingsQuery, [tag, pastTags, showPastTags ? 1 : 0, clan.id, ownerId]);
+	await connection.query(updateClanSettingsQuery, [
+		tag,
+		pastTags,
+		showPastTags ? 1 : 0,
+		isPrivate ? 0 : 1,
+		clan.id,
+		ownerId
+	]);
 	return { success: true, clanId: clan.id, tag };
 });
 

@@ -24,7 +24,8 @@ export const PATCH = async (request: NextRequest): Promise<NextResponse<Mutation
 	catch {
 		return NextResponse.json({ success: false, message: "The settings request is invalid." }, { status: 400 });
 	}
-	if (!isRecord(body) || typeof body.username !== "string" || typeof body.showPastNames !== "boolean")
+	if (!isRecord(body) || typeof body.username !== "string" || typeof body.showPastNames !== "boolean" ||
+		typeof body.isPrivate !== "boolean")
 		return NextResponse.json({ success: false, message: "The settings request is invalid." }, { status: 400 });
 
 	const username = body.username.trim();
@@ -34,7 +35,7 @@ export const PATCH = async (request: NextRequest): Promise<NextResponse<Mutation
 		return NextResponse.json({ success: false, message: "Username contains unsupported characters." }, { status: 400 });
 
 	try {
-		const result = await updateProfileSettings(currentUser.id, username, body.showPastNames);
+		const result = await updateProfileSettings(currentUser.id, username, body.showPastNames, body.isPrivate);
 		if (!result.success) {
 			if (result.reason === "conflict")
 				return NextResponse.json({ success: false, message: "This username is already in use." }, { status: 409 });
@@ -42,7 +43,7 @@ export const PATCH = async (request: NextRequest): Promise<NextResponse<Mutation
 		}
 
 		revalidatePath("/", "layout");
-		revalidatePath(`/profile/${currentUser.id}`);
+		revalidatePath(`/profile/${currentUser.id}`, "layout");
 		return NextResponse.json({ success: true, message: "Profile settings updated." });
 	}
 	catch (error: unknown) {

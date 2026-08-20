@@ -269,7 +269,9 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 								</div>
 							</div>
 							{!isClanScope && activeSection === "rename" &&
-								<ProfileSettingsForm username={settings.username} showPastNames={settings.showPastNames}/>}
+								<ProfileSettingsForm username={settings.username}
+								                     showPastNames={settings.showPastNames}
+								                     isPrivate={settings.isPrivate}/>}
 							{!isClanScope && activeSection === "images" &&
 								<div className={styles.media_settings}>
 									<MediaSettingCard type="avatar"
@@ -291,7 +293,9 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 								                   selectedBadge={settings.selectedBadge}
 								                   baseDomain={baseDomain}/>}
 							{activeClan && activeSection === "rename" &&
-								<ClanSettingsForm tag={activeClan.tag} showPastTags={activeClan.showPastTags}/>}
+								<ClanSettingsForm tag={activeClan.tag}
+								                  showPastTags={activeClan.showPastTags}
+								                  isPrivate={activeClan.isPrivate}/>}
 							{activeClan && activeSection === "images" &&
 								<div className={styles.media_settings}>
 									<MediaSettingCard type="avatar"

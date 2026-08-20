@@ -1,12 +1,12 @@
 import classNames from "classnames";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { cache, Suspense } from "react";
 import {
 	accountExists,
 	getClanProfile,
 	getClanStatistics,
-	getName,
+	getProfileRouteInfo,
 	getUserInfo,
 	ScoreScope,
 	type ClanMember,
@@ -19,6 +19,7 @@ import { resolveProfileBackgroundUrl, resolveProfileBannerUrl } from "@/lib/prof
 import { getCurrentUser } from "@/lib/session";
 import { ModeNum, OsuMode } from "@/lib/mode";
 import { getProfileCosmetics } from "@/lib/profile-cosmetics";
+import { canViewProfile } from "@/lib/profile-visibility";
 import { isProfileRival } from "@/lib/rivals";
 import UserInfo from "@/components/profile/user-info";
 import AboutMe from "@/components/profile/me";
@@ -29,31 +30,63 @@ import ProfileBanner from "@/components/profile/profile-banner";
 import Statistics from "@/components/profile/statistics";
 import Achievements from "@/components/profile/achievements";
 import { PlayerScoresLoading, StatisticsLoading } from "@/components/profile/suspense-loading";
+import PrivateProfile from "@/components/profile/private-profile";
 import styles from "@s/profile.module.css";
 
+type ProfileData =
+	| { type: "user", info: ProfileInfo }
+	| { type: "clan", info: ProfileInfo, members: ClanMember[], statistics: ReturnType<typeof getClanStatistics> };
+
+const getProfileData = cache(async (
+	id: number,
+	isClan: boolean,
+	mode: ModeNum,
+	isDans: boolean
+): Promise<ProfileData | null> => {
+	if (!await accountExists(id, isClan)) return null;
+	if (!isClan) return { type: "user", info: await getUserInfo(id) };
+
+	const clanProfile = await getClanProfile(id);
+	if (!clanProfile) return null;
+	return {
+		type: "clan",
+		info: clanProfile.info,
+		members: clanProfile.members,
+		statistics: getClanStatistics(clanProfile, mode, isDans)
+	};
+});
+
 export async function generateMetadata({ params, searchParams }: {
-	params: Promise<{ id_param: string }>,
-	searchParams: Promise<{ clan?: string }>
+	params: Promise<{ id_param: string, mode_name: string }>,
+	searchParams: Promise<{ clan?: string, dans?: string }>
 }): Promise<Metadata> {
-	const { id_param } = await params;
-	const { clan } = await searchParams;
+	const { id_param, mode_name } = await params;
+	const { clan, dans } = await searchParams;
 	const conds = [
 		!isNaN(Number(id_param)) && Number(id_param) > 0,
+		Object.values(OsuMode).includes(mode_name as OsuMode),
 		clan === undefined || clan === "",
+		dans === undefined || (dans === "" &&
+			[OsuMode.std, OsuMode.taiko, OsuMode.ctb, OsuMode.mania].includes(mode_name as OsuMode))
 	];
 
-	let metadata: Metadata;
-	if (conds.every((cond) => cond)) {
-		const id = Number(id_param), isClan = clan !== undefined;
-		if (await accountExists(id, isClan))
-			metadata = { title: `${await getName(id, isClan)}・Profile` };
-		else
-			metadata = { title: "Unknown user" };
-	}
-	else {
-		metadata = { title: "Unknown user" };
-	}
-	return metadata;
+	if (!conds.every((cond) => cond)) return { title: "Unknown user" };
+
+	const id = Number(id_param), isClan = clan !== undefined, isDans = dans !== undefined;
+	if (id < (!isClan ? 3 : 1)) return { title: "Unknown user" };
+	const mode = ModeNum[mode_name as OsuMode];
+	const [profileRouteInfo, currentUser] = await Promise.all([
+		getProfileRouteInfo(id, isClan),
+		getCurrentUser()
+	]);
+	if (!profileRouteInfo) return { title: "Unknown user" };
+	if (!canViewProfile(id, isClan, profileRouteInfo, currentUser))
+		return { title: "Private profile", robots: { index: false, follow: false } };
+
+	const profileData = await getProfileData(id, isClan, mode, isDans);
+	if (!profileData) return { title: "Unknown user" };
+
+	return { title: `${profileData.info.name}・Profile` };
 }
 
 export default async function Profile({ params, searchParams }: {
@@ -81,36 +114,33 @@ export default async function Profile({ params, searchParams }: {
 	if (conds.every((cond) => cond)) {
 		const id = Number(id_param), mode = ModeNum[mode_name as OsuMode],
 			isClan = clan !== undefined, isDans = dans !== undefined;
-		if (id >= (!isClan ? 3 : 1) && await accountExists(id, isClan)) {
+		if (id >= (!isClan ? 3 : 1)) {
+			const [profileRouteInfo, currentUser] = await Promise.all([
+				getProfileRouteInfo(id, isClan),
+				getCurrentUser()
+			]);
+			if (!profileRouteInfo) notFound();
+			if (!canViewProfile(id, isClan, profileRouteInfo, currentUser)) return <PrivateProfile/>;
+
+			const profileData = await getProfileData(id, isClan, mode, isDans);
+			if (!profileData) notFound();
+
 			const baseDomain = process.env.BASE_DOMAIN;
 			if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
-			const profileDataPromise = isClan
-				? getClanProfile(id).then((clanProfile) => ({ type: "clan" as const, clanProfile }))
-				: getUserInfo(id).then((info) => ({ type: "user" as const, info }));
-			const currentUserPromise = getCurrentUser();
-			const rivalStatusPromise = currentUserPromise.then((currentUser) => {
-				if (isClan || !currentUser.isLoggedIn || currentUser.id === undefined || currentUser.id === id) return false;
-				return isProfileRival(currentUser.id, id);
-			});
-			const [profileData, currentUser, rankHistory, bannerUrl, backgroundUrl, cosmetics, isRival] = await Promise.all([
-				profileDataPromise,
-				currentUserPromise,
+			const [rankHistory, bannerUrl, backgroundUrl, cosmetics, isRival] = await Promise.all([
 				!isClan ? getRankHistory(id, mode) : null,
 				resolveProfileBannerUrl(id, isClan, baseDomain),
 				resolveProfileBackgroundUrl(id, isClan, baseDomain),
 				!isClan ? getProfileCosmetics(id) : null,
-				rivalStatusPromise
+				!isClan && currentUser.isLoggedIn && currentUser.id !== undefined && currentUser.id !== id
+					? isProfileRival(currentUser.id, id)
+					: false
 			]);
-			let info: ProfileInfo;
-			let clanMembers: ClanMember[] = [];
-			let clanStatistics: PlayerStatistics | undefined;
-			if (profileData.type === "clan") {
-				if (!profileData.clanProfile) notFound();
-				info = profileData.clanProfile.info;
-				clanMembers = profileData.clanProfile.members;
-				clanStatistics = getClanStatistics(profileData.clanProfile, mode, isDans);
-			}
-			else info = profileData.info;
+			const info = profileData.info;
+			const clanMembers = profileData.type === "clan" ? profileData.members : [];
+			const clanStatistics: PlayerStatistics | undefined = profileData.type === "clan"
+				? profileData.statistics
+				: undefined;
 			const canManageProfile = currentUser.isLoggedIn && currentUser.id === (isClan ? info.ownerId : id);
 			const followsCurrentUser = !isClan
 				&& currentUser.isLoggedIn

@@ -25,7 +25,8 @@ export const legacyUserSettingsQuery = `
 	SELECT name,
 	       past_name,
 	       userpage_content,
-	       COALESCE(show_pName, 1) AS show_past_names
+	       COALESCE(show_pName, 1) AS show_past_names,
+	       COALESCE(\`private\`, 0) AS is_private
 		FROM users
 	WHERE id = ?
 	LIMIT 1
@@ -35,7 +36,8 @@ export const modernUserSettingsQuery = `
 	SELECT name,
 	       past_name,
 	       userpage_content,
-	       COALESCE(show_past_name, 1) AS show_past_names
+	       COALESCE(show_past_name, 1) AS show_past_names,
+	       COALESCE(\`private\`, 0) AS is_private
 		FROM users
 	WHERE id = ?
 	LIMIT 1
@@ -45,7 +47,8 @@ export const defaultUserSettingsQuery = `
 	SELECT name,
 	       past_name,
 	       userpage_content,
-	       1 AS show_past_names
+	       1 AS show_past_names,
+	       COALESCE(\`private\`, 0) AS is_private
 		FROM users
 	WHERE id = ?
 	LIMIT 1
@@ -56,7 +59,8 @@ export const ownedClanSettingsQuery = `
 	       tag,
 	       past_tag,
 	       userpage_content,
-	       COALESCE(show_past_tag, 1) AS show_past_tags
+	       COALESCE(show_past_tag, 1) AS show_past_tags,
+	       COALESCE(\`public\`, 1) AS is_public
 		FROM clans
 	WHERE owner = ?
 	LIMIT 1
@@ -112,7 +116,8 @@ export const updateLegacyProfileSettingsQuery = `
 		SET name = ?,
 		    safe_name = ?,
 		    past_name = ?,
-		    show_pName = ?
+		    show_pName = ?,
+		    \`private\` = ?
 	WHERE id = ?
 	LIMIT 1
 `;
@@ -122,7 +127,8 @@ export const updateModernProfileSettingsQuery = `
 		SET name = ?,
 		    safe_name = ?,
 		    past_name = ?,
-		    show_past_name = ?
+		    show_past_name = ?,
+		    \`private\` = ?
 	WHERE id = ?
 	LIMIT 1
 `;
@@ -131,7 +137,8 @@ export const updateDefaultProfileSettingsQuery = `
 	UPDATE users
 		SET name = ?,
 		    safe_name = ?,
-		    past_name = ?
+		    past_name = ?,
+		    \`private\` = ?
 	WHERE id = ?
 	LIMIT 1
 `;
@@ -140,7 +147,8 @@ export const updateClanSettingsQuery = `
 	UPDATE clans
 		SET tag = ?,
 		    past_tag = ?,
-		    show_past_tag = ?
+		    show_past_tag = ?,
+		    \`public\` = ?
 	WHERE id = ?
 		AND owner = ?
 	LIMIT 1

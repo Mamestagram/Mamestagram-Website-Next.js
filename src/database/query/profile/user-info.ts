@@ -18,6 +18,23 @@ export const userPreferredModeQuery = `
 	WHERE id = ?
 `;
 
+export const userProfileRouteInfoQuery = `
+	SELECT preferred_mode,
+	       COALESCE(\`private\`, 0) AS is_private
+		FROM users
+	WHERE id = ?
+	LIMIT 1
+`;
+
+export const clanProfileRouteInfoQuery = `
+	SELECT preferred_mode,
+	       owner,
+	       COALESCE(\`public\`, 1) AS is_public
+		FROM clans
+	WHERE id = ?
+	LIMIT 1
+`;
+
 export const updateUserpageContentQuery = `
 	UPDATE users
 		SET userpage_content = ?

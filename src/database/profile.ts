@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { executeQuery } from "./connection";
 import {
+	clanProfileRouteInfoQuery,
 	clanOwnerQuery,
 	followingQuery,
 	followersQuery,
@@ -14,7 +15,8 @@ import {
 	userExistsQuery,
 	userJoinedClanQuery,
 	userNameQuery,
-	userPreferredModeQuery
+	userPreferredModeQuery,
+	userProfileRouteInfoQuery
 } from "./query/profile/user-info";
 import {
 	dansBestPPQuery,
@@ -219,6 +221,34 @@ export type ProfileConnection = {
 	user: number,
 	name: string,
 	country: string
+};
+
+export const getProfileRouteInfo = async (id: number, isClan: boolean): Promise<Pick<
+	Profile,
+	"preferredMode" | "isPrivate" | "ownerId"
+> | null> => {
+	if (isClan) {
+		const clan = (await executeQuery<{
+			preferred_mode: ModeNum,
+			owner: number,
+			is_public: 0 | 1
+		}>(clanProfileRouteInfoQuery, [id])).at(0);
+		return clan ? {
+			preferredMode: clan.preferred_mode,
+			isPrivate: clan.is_public !== 1,
+			ownerId: clan.owner
+		} : null;
+	}
+
+	const user = (await executeQuery<{
+		preferred_mode: ModeNum,
+		is_private: 0 | 1
+	}>(userProfileRouteInfoQuery, [id])).at(0);
+	return user ? {
+		preferredMode: user.preferred_mode,
+		isPrivate: user.is_private === 1,
+		ownerId: null
+	} : null;
 };
 
 type PlayerStatusApi = {
