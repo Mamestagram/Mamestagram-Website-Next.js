@@ -1,0 +1,50 @@
+.container {
+	--avatar-image-size: 100%;
+	--avatar-frame-size: 120%;
+
+	position: relative;
+	display: block;
+	container-type: inline-size;
+	overflow: visible;
+	isolation: isolate;
+}
+
+.container[data-image-size="compact"] {
+	--avatar-image-size: 88%;
+	--avatar-frame-size: 105.6%;
+}
+
+.avatar_surface,
+.avatar,
+.frame {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	display: block;
+	transform: translate(-50%, -50%);
+	pointer-events: none;
+}
+
+.avatar_surface {
+	width: var(--avatar-image-size);
+	height: var(--avatar-image-size);
+	overflow: hidden;
+	border-radius: inherit;
+	z-index: 0;
+}
+
+.avatar {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: inherit;
+	z-index: 0;
+}
+
+.frame {
+	width: var(--avatar-frame-size);
+	height: var(--avatar-frame-size);
+	max-width: none;
+	object-fit: fill;
+	z-index: 1;
+}

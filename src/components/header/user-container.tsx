@@ -1,17 +1,16 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState, useTransition } from "react";
 import { signout } from "@/actions/auth";
 import ConfirmationDialog from "@/components/confirmation-dialog";
 import { useUserContext } from "@/components/context/user-provider";
-import EquippedBadge from "@/components/equipped-badge";
 import FontAwesome from "@/components/font-awesome";
+import PlayerAvatar from "@/components/player-avatar";
 import styles from "@s/user-container.module.css";
 
 export default function UserContainer() {
-	const { serverInfo, userInfo } = useUserContext();
+	const { serverInfo, userInfo, userCosmetics } = useUserContext();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isSignOutConfirmationOpen, setIsSignOutConfirmationOpen] = useState(false);
 	const [, startSignOutTransition] = useTransition();
@@ -61,20 +60,14 @@ export default function UserContainer() {
 					        if (isMenuOpen) setIsSignOutConfirmationOpen(false);
 					        setIsMenuOpen((isOpen) => !isOpen);
 				        }}>
-					<span className={styles.account_avatar}>
-						<Image className="avatar-img"
-						       src={`https://a.${serverInfo.baseDomain}/${userInfo.id}`}
-						       alt={`${userInfo.username ?? "User"} avatar`}
-						       fill
-						       draggable={false}
-						       sizes="44px"
-						       priority/>
-						<EquippedBadge badgeId={userInfo.badge ?? 0}
-						               baseDomain={serverInfo.baseDomain}
-						               className={styles.account_badge}
-						               sizes="18px"
-						               priority/>
-					</span>
+					<PlayerAvatar userId={userInfo.id ?? 0}
+					              name={userInfo.username ?? "User"}
+					              baseDomain={serverInfo.baseDomain}
+					              cosmetics={userCosmetics}
+					              className={styles.account_avatar}
+					              sizes="44px"
+					              imageSize="compact"
+					              priority/>
 					<span className={styles.username}>{userInfo.username}</span>
 				</button>
 

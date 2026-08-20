@@ -1,9 +1,12 @@
+import type { ProfileCosmetics } from "@/lib/profile-cosmetics";
+
 export type SearchUser = {
 	id: number,
 	name: string,
 	country: string,
 	preferredMode: number,
-	privileges: number[]
+	privileges: number[],
+	cosmetics: ProfileCosmetics
 };
 
 export type SearchBeatmapDifficulty = {

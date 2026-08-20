@@ -46,6 +46,8 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 		makePageOrder(currentPage - 1, displayAmount, totalPage));
 	const pageTranslateX = -1 * (buttonSize + buttonGap) * (pageOrder.at(0) ?? 0);
 	const pageListWidth = buttonSize * pageOrder.length + buttonGap * Math.max(pageOrder.length - 1, 0);
+	const isFirstPageWindow = (pageOrder.at(0) ?? 0) === 0;
+	const isLastPageWindow = (pageOrder.at(-1) ?? totalPage - 1) >= totalPage - 1;
 	const pageListStyle = {
 		"--translate-x": `${pageTranslateX}px`,
 		"--page-list-width": `${pageListWidth}px`
@@ -167,13 +169,14 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 	return (
 		<div ref={pageWrapperRef}
 		     className={classNames(styles.page_wrapper, { [styles.over_ranking]: isOverRanking })}>
-			{currentPage > 1 ?
-				<Link href={`/leaderboard/${mode}/${sortBy}?page=${currentPage - 1}${queryStr}`}
-				      aria-label="previous page">
-					<FontAwesome prefix="fas" name="chevrons-left"/>
-				</Link> :
-				<span className={styles.page_placeholder} aria-hidden="true"/>
-			}
+			<button className={styles.page_endpoint}
+			        type="button"
+			        aria-label="show first pages"
+			        title="Show first pages"
+			        disabled={isFirstPageWindow}
+			        onClick={() => setPageOrder(makePageOrder(0, displayAmount, totalPage))}>
+				<FontAwesome prefix="fad" name="chevrons-left"/>
+			</button>
 			<button className={classNames(styles.shift_arrow, "left")}
 			        type="button"
 			        aria-label="shift-left"
@@ -210,13 +213,14 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 					onContextMenu={(e) => e.preventDefault()}>
 				<FontAwesome prefix="fas" name="chevron-right"/>
 			</button>
-			{currentPage < totalPage ?
-				<Link href={`/leaderboard/${mode}/${sortBy}?page=${currentPage + 1}${queryStr}`}
-				      aria-label="next page">
-					<FontAwesome prefix="fas" name="chevrons-right"/>
-				</Link> :
-				<span className={styles.page_placeholder} aria-hidden="true"/>
-			}
+			<button className={styles.page_endpoint}
+			        type="button"
+			        aria-label="show last pages"
+			        title="Show last pages"
+			        disabled={isLastPageWindow}
+			        onClick={() => setPageOrder(makePageOrder(totalPage - 1, displayAmount, totalPage))}>
+				<FontAwesome prefix="fad" name="chevrons-right"/>
+			</button>
 		</div>
 	);
 }

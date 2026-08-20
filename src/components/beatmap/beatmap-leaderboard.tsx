@@ -1,9 +1,9 @@
 import classNames from "classnames";
-import Image from "next/image";
 import Link from "next/link";
 import CountryFlag from "@/components/country-flag";
 import FontAwesome from "@/components/font-awesome";
 import ModeIcon from "@/components/mode-icon";
+import PlayerAvatar from "@/components/player-avatar";
 import ReplayViewer from "@/components/replay-viewer";
 import {
 	getBeatmapScores,
@@ -13,6 +13,8 @@ import {
 } from "@/database/beatmap";
 import { getVanillaMode, ModeNum, OsuMode } from "@/lib/mode";
 import { ModNum, Mods } from "@/lib/mods";
+import { getProfileCosmeticsMap } from "@/lib/profile-cosmetics";
+import type { ProfileCosmetics } from "@/lib/profile-cosmetics";
 import { getCurrentUser } from "@/lib/session";
 import styles from "@s/beatmap.module.css";
 
@@ -244,13 +246,15 @@ function ModsList({ mods }: Readonly<{ mods: number }>) {
 	);
 }
 
-function FeaturedScoreCard({ score, rank, mode, mapMaxCombo, replayLabel, replayUrl, personal = false }: Readonly<{
+function FeaturedScoreCard({ score, cosmetics, rank, mode, mapMaxCombo, replayLabel, replayUrl, baseDomain, personal = false }: Readonly<{
 	score: BeatmapScore,
+	cosmetics: ProfileCosmetics | null,
 	rank: number,
 	mode: OsuMode,
 	mapMaxCombo: number,
 	replayLabel: string,
 	replayUrl: string,
+	baseDomain: string,
 	personal?: boolean
 }>) {
 	return (
@@ -260,11 +264,12 @@ function FeaturedScoreCard({ score, rank, mode, mapMaxCombo, replayLabel, replay
 				{score.grade.replace(/H$/, "")}
 			</span>
 			<Link className={styles.top_avatar} href={`/profile/${score.userId}/${mode}`}>
-				<Image src={`https://a.${process.env.BASE_DOMAIN}/${score.userId}`}
-				       alt={`${score.name} avatar`}
-				       fill
-				       draggable={false}
-				       sizes="64px"/>
+				<PlayerAvatar userId={score.userId}
+				              name={score.name}
+				              baseDomain={baseDomain}
+				              cosmetics={cosmetics}
+				              className={styles.top_avatar_image}
+				              sizes="64px"/>
 			</Link>
 			<span className={styles.top_player}>
 				<small>{personal ? "Your score" : "Top score"}</small>
@@ -409,6 +414,10 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 		if (personalScore && (!matchesSelectedMods(personalScore.score) || topScore?.userId === currentUser.id))
 			personalScore = null;
 	}
+	const featuredCosmetics = await getProfileCosmeticsMap([
+		...(topScore ? [topScore.userId] : []),
+		...(personalScore ? [personalScore.score.userId] : [])
+	]);
 
 	return (
 		<div className={styles.container}>
@@ -483,17 +492,21 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 				</nav>
 
 				{topScore && <FeaturedScoreCard score={topScore}
+				                                cosmetics={featuredCosmetics.get(topScore.userId) ?? null}
 				                                rank={1}
 				                                mode={selectedScoreMode.route}
 				                                mapMaxCombo={map.maxCombo}
 				                                replayLabel={`${topScore.name} — ${map.artist} — ${map.title}`}
-				                                replayUrl={`https://render.${baseDomain}/embed/${topScore.id}`}/>}
+				                                replayUrl={`https://render.${baseDomain}/embed/${topScore.id}`}
+				                                baseDomain={baseDomain}/>}
 				{personalScore && <FeaturedScoreCard score={personalScore.score}
+				                                     cosmetics={featuredCosmetics.get(personalScore.score.userId) ?? null}
 				                                     rank={personalScore.rank}
 				                                     mode={selectedScoreMode.route}
 				                                     mapMaxCombo={map.maxCombo}
 				                                     replayLabel={`${personalScore.score.name} — ${map.artist} — ${map.title}`}
 				                                     replayUrl={`https://render.${baseDomain}/embed/${personalScore.score.id}`}
+				                                     baseDomain={baseDomain}
 				                                     personal/>}
 
 				{scores.length > 0 ? <div className={styles.score_table_scroller}>

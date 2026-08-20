@@ -12,6 +12,7 @@ import type { ServerInfo, UserInfo } from "@/components/context/user-provider";
 import { UserProvider } from "@/components/context/user-provider";
 import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
+import { getProfileCosmetics } from "@/lib/profile-cosmetics";
 import { getCurrentUser } from "@/lib/session";
 import "flag-icons/css/flag-icons.min.css";
 import "@s/global/reset.css";
@@ -87,11 +88,12 @@ export default async function RootLayout({
     baseDomain: process.env.BASE_DOMAIN!,
   };
   const userInfo: UserInfo = await getCurrentUser();
+  const userCosmetics = userInfo.id ? await getProfileCosmetics(userInfo.id) : null;
 
   return (
     <html className={fontVariables} lang="en">
       <body>
-        <UserProvider serverInfo={serverInfo} userInfo={userInfo}>
+        <UserProvider serverInfo={serverInfo} userInfo={userInfo} userCosmetics={userCosmetics}>
           <Header />
           <main>{children}</main>
           <Footer />

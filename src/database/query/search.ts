@@ -1,18 +1,22 @@
 import { Priv } from "@/lib/priv";
 
 export const userSearchQuery = `
-	SELECT id, name, country, preferred_mode, priv
+	SELECT users.id,
+	       users.name,
+	       users.country,
+	       users.preferred_mode,
+	       users.priv
 		FROM users
-	WHERE id >= 3
-		AND (priv & ${Priv.unrestricted}) > 0
-		AND (id = ? OR safe_name LIKE ?)
+	WHERE users.id >= 3
+		AND (users.priv & ${Priv.unrestricted}) > 0
+		AND (users.id = ? OR users.safe_name LIKE ?)
 	ORDER BY CASE
-		WHEN id = ? THEN 0
-		WHEN safe_name = ? THEN 1
-		WHEN safe_name LIKE ? THEN 2
+		WHEN users.id = ? THEN 0
+		WHEN users.safe_name = ? THEN 1
+		WHEN users.safe_name LIKE ? THEN 2
 		ELSE 3
 	END,
-	id
+	users.id
 	LIMIT ? OFFSET ?
 `;
 

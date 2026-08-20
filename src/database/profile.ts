@@ -7,7 +7,6 @@ import {
 	mutualQuery,
 	removableClanMemberQuery,
 	removeClanMemberQuery,
-	setBadgeQuery,
 	updateClanPreferredModeQuery,
 	updateClanUserpageContentQuery,
 	updateUserPreferredModeQuery,
@@ -41,6 +40,9 @@ import { ModeNum, OsuMode } from "@/lib/mode";
 import { getPrivs, Priv } from "@/lib/priv";
 import { BeatmapStatus } from "@/lib/beatmap-status";
 import { writeError } from "@/lib/log";
+import { getProfileCosmeticsMap } from "@/lib/profile-cosmetics";
+import type { ProfileCosmetics } from "@/lib/profile-cosmetics";
+import { isPlayerAction, type PlayerAction } from "@/lib/player-action";
 
 const fetchProfileResponse = async (url: string, label: string, init?: RequestInit) => {
 	try {
@@ -184,7 +186,6 @@ export type Profile = {
 	name: string,
 	pastNames: string | null,
 	showPastName: boolean,
-	setBadge: number, // unused for clan pf
 	country: string, // unused for clan pf
 	creationTime: Date,
 	latestActivity: Date, // unused for clan pf
@@ -196,7 +197,22 @@ export type Profile = {
 	userpageContent: string | null,
 	ownerId: number | null,
 	isOnline: boolean, // unused for clan pf
+	activity: PlayerActivity | null, // unused for clan pf
 	isPrivate: boolean
+};
+
+export type PlayerActivityBeatmap = {
+	id: number,
+	setId: number,
+	artist: string,
+	title: string,
+	version: string
+};
+
+export type PlayerActivity = {
+	action: PlayerAction,
+	infoText: string | null,
+	beatmap: PlayerActivityBeatmap | null
 };
 
 export type ProfileConnection = {
@@ -207,7 +223,18 @@ export type ProfileConnection = {
 
 type PlayerStatusApi = {
 	player_status: {
-		online: boolean
+		online: false,
+		last_seen: number
+	} | {
+		online: true,
+		login_time: number,
+		status: {
+			action: unknown,
+			info_text: string,
+			mode: number,
+			mods: number,
+			beatmap: unknown
+		}
 	}
 };
 
@@ -228,6 +255,25 @@ type PlayerInfoApi = {
 		}
 	}
 };
+
+function parsePlayerActivityBeatmap(value: unknown): PlayerActivityBeatmap | null {
+	if (typeof value !== "object" || value === null) return null;
+
+	const beatmap = value as Record<string, unknown>;
+	if (!Number.isInteger(beatmap.id)
+		|| !Number.isInteger(beatmap.set_id)
+		|| typeof beatmap.artist !== "string"
+		|| typeof beatmap.title !== "string"
+		|| typeof beatmap.version !== "string") return null;
+
+	return {
+		id: beatmap.id as number,
+		setId: beatmap.set_id as number,
+		artist: beatmap.artist,
+		title: beatmap.title,
+		version: beatmap.version
+	};
+}
 
 export const getUserInfo = async (id: number): Promise<Profile> => {
 	const apiUrl = !Boolean(Number(process.env.LOCAL_ONLY)) ? [
@@ -255,11 +301,17 @@ export const getUserInfo = async (id: number): Promise<Profile> => {
 		mamesosuApi[1].json()
 	]);
 	const playerStatus = playerStatusApi.player_status;
+	const playerActivity = playerStatus.online && isPlayerAction(playerStatus.status.action)
+		? {
+			action: playerStatus.status.action,
+			infoText: playerStatus.status.info_text.trim() || null,
+			beatmap: parsePlayerActivityBeatmap(playerStatus.status.beatmap)
+		}
+		: null;
 	const playerInfo = playerInfoApi.player.info;
 	try {
-		const [joinedClan, setBadge, mutual, following, followers] = await Promise.all([
+		const [joinedClan, mutual, following, followers] = await Promise.all([
 			executeQuery<{ tag: string }>(userJoinedClanQuery, [playerInfo.clan_id]),
-			executeQuery<{ badge_id: number }>(setBadgeQuery, [id]),
 			executeQuery<ProfileConnection>(mutualQuery, [id]),
 			executeQuery<ProfileConnection>(followingQuery, [id]),
 			executeQuery<ProfileConnection>(followersQuery, [id])
@@ -269,7 +321,6 @@ export const getUserInfo = async (id: number): Promise<Profile> => {
 			name: playerInfo.name,
 			pastNames: playerInfo.past_name,
 			showPastName: playerInfo.show_past_name === 1,
-			setBadge: setBadge.at(0)?.badge_id ?? 0,
 			country: playerInfo.country,
 			creationTime: new Date(playerInfo.creation_time * 1000),
 			latestActivity: new Date(playerInfo.latest_activity * 1000),
@@ -281,6 +332,7 @@ export const getUserInfo = async (id: number): Promise<Profile> => {
 			userpageContent: playerInfo.userpage_content,
 			ownerId: null,
 			isOnline: playerStatus.online,
+			activity: playerActivity,
 			isPrivate: playerInfo.private === 1
 		};
 	}
@@ -336,7 +388,10 @@ type ClanApiResponse = {
 	stats: Record<string, ClanApiStatistics>
 };
 
-export type ClanMember = ClanApiMember & { isOwner: boolean };
+export type ClanMember = ClanApiMember & {
+	cosmetics: ProfileCosmetics,
+	isOwner: boolean
+};
 
 export type ClanProfile = {
 	info: Profile,
@@ -374,13 +429,13 @@ export const getClanProfile = cache(async (id: number): Promise<ClanProfile | nu
 		void writeError(error);
 		throw new Error("Couldn't read clan info", { cause: error });
 	}
+	const memberCosmetics = await getProfileCosmeticsMap(clan.members.map(({ id: memberId }) => memberId));
 	return {
 			info: {
 				tag: null,
 				name: clan.tag,
 				pastNames: clan.past_tag,
 				showPastName: clan.show_past_tag,
-				setBadge: 0,
 				country: "",
 				creationTime,
 				latestActivity: creationTime,
@@ -392,10 +447,12 @@ export const getClanProfile = cache(async (id: number): Promise<ClanProfile | nu
 				userpageContent: clan.userpage_content,
 				ownerId: clan.owner.id,
 				isOnline: false,
+				activity: null,
 				isPrivate: !clan.public
 			},
 			members: clan.members.map((member) => ({
 				...member,
+				cosmetics: memberCosmetics.get(member.id) ?? { userId: member.id, badge: null, frame: null },
 				isOwner: member.id === clan.owner.id || member.rank.toLowerCase() === "owner"
 			})),
 			stats: clan.stats

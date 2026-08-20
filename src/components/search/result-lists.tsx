@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import FontAwesome from "@/components/font-awesome";
+import PlayerAvatar from "@/components/player-avatar";
 import { BeatmapStatus } from "@/lib/beatmap-status";
 import { modeAbbreviation, type ModeNum } from "@/lib/mode";
 import { Priv } from "@/lib/priv";
@@ -52,13 +53,12 @@ export function SearchUserList({ items: users, baseDomain, onSelect }: ResultLis
 				return (
 					<li key={user.id}>
 						<Link href={`/profile/${user.id}`} onClick={onSelect}>
-							<span className={styles.avatar}>
-								<Image src={`https://a.${baseDomain}/${user.id}`}
-								       alt={`${user.name} avatar`}
-								       fill
-								       sizes="48px"
-								       draggable={false}/>
-							</span>
+							<PlayerAvatar userId={user.id}
+							              name={user.name}
+							              baseDomain={baseDomain}
+							              cosmetics={user.cosmetics}
+							              className={styles.avatar}
+							              sizes="48px"/>
 							<span className={styles.identity}>
 								<span className={styles.name_with_tooltip}>
 									<strong>{user.name}</strong>

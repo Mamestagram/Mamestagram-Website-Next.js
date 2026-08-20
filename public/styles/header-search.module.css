@@ -601,14 +601,15 @@
 }
 
 .avatar {
+	--avatar-badge-size: 42%;
+
 	position: relative;
 	width: 48px;
 	height: 48px;
 	border: 1px solid rgba(255, 255, 255, .14);
 	border-radius: 14px;
-	overflow: hidden;
+	overflow: visible;
 
-	& img { object-fit: cover; }
 }
 
 .avatar_fallback {
@@ -618,6 +619,7 @@
 	place-items: center;
 	color: var(--search-accent, #6eb9f7);
 	background: hsla(var(--user-hue, 205), 45%, 45%, .14);
+	border-radius: inherit;
 	font-size: 1.05rem;
 }
 

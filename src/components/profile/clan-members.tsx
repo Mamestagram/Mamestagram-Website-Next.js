@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { ClanMember } from "@/database/profile";
 import type { OsuMode } from "@/lib/mode";
 import CountryFlag from "@/components/country-flag";
 import FontAwesome from "@/components/font-awesome";
+import PlayerAvatar from "@/components/player-avatar";
 import KickClanMemberButton from "@/components/profile/kick-clan-member-button";
 import styles from "@s/profile.module.css";
 
@@ -13,12 +13,13 @@ const getRoleMeta = (member: ClanMember) => {
 	return { label: member.rank || "Member", icon: "user" };
 };
 
-export default function ClanMembers({ clanId, members, mode, isDans, canManage }: {
+export default function ClanMembers({ clanId, members, mode, isDans, canManage, baseDomain }: {
 	clanId: number,
 	members: ClanMember[],
 	mode: OsuMode,
 	isDans: boolean,
-	canManage: boolean
+	canManage: boolean,
+	baseDomain: string
 }) {
 	const profileQuery = isDans ? "?dans" : "";
 
@@ -41,13 +42,12 @@ export default function ClanMembers({ clanId, members, mode, isDans, canManage }
 								<li key={member.id} className={styles.clan_member_grid_item}>
 									<Link className={styles.clan_member_card}
 									      href={`/profile/${member.id}/${mode}${profileQuery}`}>
-										<span className={styles.clan_member_grid_avatar}>
-											<Image src={`https://a.${process.env.BASE_DOMAIN}/${member.id}`}
-											       alt={`${member.name} avatar`}
-											       fill
-											       sizes="38px"
-											       draggable={false}/>
-										</span>
+										<PlayerAvatar userId={member.id}
+										              name={member.name}
+										              baseDomain={baseDomain}
+										              cosmetics={member.cosmetics}
+										              className={styles.clan_member_grid_avatar}
+										              sizes="38px"/>
 										<span className={styles.clan_member_grid_copy}>
 											<span className={styles.clan_member_grid_name}>
 								{hasCountry

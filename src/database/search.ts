@@ -9,6 +9,8 @@ import {
 	userSearchQuery
 } from "@/database/query/search";
 import { getPrivs, Priv } from "@/lib/priv";
+import { getProfileCosmeticsMap } from "@/lib/profile-cosmetics";
+import type { ProfileCosmetics } from "@/lib/profile-cosmetics";
 import type { SearchBeatmap, SearchClan, SearchPage } from "@/lib/search";
 
 export type UserSearchResult = {
@@ -16,7 +18,8 @@ export type UserSearchResult = {
 	name: string,
 	country: string,
 	preferredMode: number,
-	privileges: Priv[]
+	privileges: Priv[],
+	cosmetics: ProfileCosmetics
 };
 
 type UserSearchRow = {
@@ -86,12 +89,14 @@ export const searchUsers = async (query: string, page = 1, pageSize = 12): Promi
 	});
 	const uniqueRows = [...rowsById.values()];
 
+	const cosmetics = await getProfileCosmeticsMap(uniqueRows.map(({ id }) => id));
 	return uniqueRows.map(({ id, name, country, preferred_mode, priv }) => ({
 		id,
 		name,
 		country,
 		preferredMode: preferred_mode,
-		privileges: getPrivs(priv)
+		privileges: getPrivs(priv),
+		cosmetics: cosmetics.get(id) ?? { userId: id, badge: null, frame: null }
 	}));
 };
 

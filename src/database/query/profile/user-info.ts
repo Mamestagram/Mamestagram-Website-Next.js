@@ -90,14 +90,10 @@ export const userJoinedClanQuery = `
     WHERE id = ? -- number
 `;
 
-export const setBadgeQuery = `
-	SELECT badge_id
-	    FROM market_badge_equipment
-	WHERE owner_id = ? -- number
-`;
-
 export const mutualQuery = `
-	SELECT following.user2 AS user, users.name, users.country
+	SELECT following.user2 AS user,
+	       users.name,
+	       users.country
 	    FROM relationships following
 	JOIN relationships followers
 		ON followers.type = 'friend'
@@ -112,7 +108,9 @@ export const mutualQuery = `
 `;
 
 export const followingQuery = `
-	SELECT following.user2 AS user, users.name, users.country
+	SELECT following.user2 AS user,
+	       users.name,
+	       users.country
 	    FROM relationships following
 	JOIN users
 		ON users.id = following.user2
@@ -130,7 +128,9 @@ export const followingQuery = `
 `;
 
 export const followersQuery = `
-	SELECT followers.user1 AS user, users.name, users.country
+	SELECT followers.user1 AS user,
+	       users.name,
+	       users.country
 	    FROM relationships followers
 	JOIN users
 		ON users.id = followers.user1

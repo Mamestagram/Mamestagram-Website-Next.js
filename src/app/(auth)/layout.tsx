@@ -3,8 +3,9 @@ import type { ReactNode } from "react";
 import styles from "@s/auth.module.css";
 
 export default function AuthLayout({ children }: Readonly<{ children: ReactNode }>) {
-	// const authImage = `https://img.${process.env.BASE_DOMAIN}/2`;
-	const authImage = `https://img.mamesosu.net/2`;
+	const baseDomain = process.env.BASE_DOMAIN;
+	if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
+	const authImage = `https://img.${baseDomain}/2`;
 
 	return (
 		<div className={styles.page}>

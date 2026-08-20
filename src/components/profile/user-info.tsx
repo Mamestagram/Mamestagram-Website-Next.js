@@ -6,14 +6,16 @@ import type { Profile } from "@/database/profile";
 import { ModeNum, OsuMode, type VnMode } from "@/lib/mode";
 import { Priv } from "@/lib/priv";
 import CountryFlag from "@/components/country-flag";
-import EquippedBadge from "@/components/equipped-badge";
 import FontAwesome from "@/components/font-awesome";
 import ModeIcon from "@/components/mode-icon";
 import ProfileModeSelection from "@/components/profile/mode-selection";
 import SetMainModeButton from "@/components/profile/set-main-mode-button";
 import RankHistoryChart from "@/components/profile/rank-history";
 import SocialConnections from "@/components/profile/social-connections";
+import PlayerAvatar from "@/components/player-avatar";
 import type { RankHistory } from "@/database/rank-history";
+import type { ProfileCosmetics } from "@/lib/profile-cosmetics";
+import { PlayerAction } from "@/lib/player-action";
 import styles from "@s/profile.module.css";
 
 const privilegeMeta: Partial<Record<Priv, {
@@ -30,6 +32,23 @@ const privilegeMeta: Partial<Record<Priv, {
 	[Priv.moderator]: { label: "Moderator", icon: "shield-halved", className: styles.priv_moderator },
 	[Priv.administrator]: { label: "Administrator", icon: "user-shield", className: styles.priv_administrator },
 	[Priv.developer]: { label: "Developer", icon: "code", className: styles.priv_developer }
+};
+
+const playerActionLabels: Record<PlayerAction, string> = {
+	[PlayerAction.Idle]: "Idle",
+	[PlayerAction.Afk]: "AFK",
+	[PlayerAction.Playing]: "Playing",
+	[PlayerAction.Editing]: "Editing",
+	[PlayerAction.Modding]: "Modding",
+	[PlayerAction.Multiplayer]: "Multiplayer",
+	[PlayerAction.Watching]: "Watching",
+	[PlayerAction.Unknown]: "Unknown",
+	[PlayerAction.Testing]: "Testing",
+	[PlayerAction.Submitting]: "Submitting",
+	[PlayerAction.Paused]: "Paused",
+	[PlayerAction.Lobby]: "Lobby",
+	[PlayerAction.Multiplaying]: "Multiplaying",
+	[PlayerAction.OsuDirect]: "osu!direct"
 };
 
 type PreferredModeMeta = {
@@ -87,14 +106,17 @@ function formatRelativeTime(date: Date) {
 	return relativeTime.format(-Math.floor(elapsedSeconds / (365 * 24 * 60 * 60)), "year");
 }
 
-export default function UserInfo({ id, info, mode, isClan, isDans, canManageProfile, rankHistory, children }: {
+export default function UserInfo({ id, info, mode, isClan, isDans, canManageProfile, isRival, followsYou, rankHistory, cosmetics, children }: {
 	id: number,
 	info: Profile,
 	mode: OsuMode,
 	isClan: boolean,
 	isDans: boolean,
 	canManageProfile: boolean,
+	isRival: boolean,
+	followsYou: boolean,
 	rankHistory: RankHistory | null,
+	cosmetics: ProfileCosmetics | null,
 	children?: ReactNode
 }) {
 	const baseDomain = process.env.BASE_DOMAIN;
@@ -109,7 +131,6 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 	});
 	const hiddenPrivilegeLabels = privileges.slice(3).map(({ label }) => label).join(", ");
 	const profileQuery = isClan ? "?clan" : "";
-	const avatarSubdomain = isClan ? "clan-a" : "a";
 	const countrySort = isDans ? "dans" : "performance";
 	const displayName = `${info.tag ?? ""}${info.name}`;
 	const nameTooltipId = `profile-name-tooltip-${isClan ? "clan" : "user"}-${id}`;
@@ -127,24 +148,31 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 		timeZoneName: "short"
 	});
 	const lastOnlineRelative = formatRelativeTime(info.latestActivity);
+	const onlineAction = info.activity === null ? "Online now" : playerActionLabels[info.activity.action];
+	const activityBeatmap = info.activity?.beatmap ?? null;
+	const activityMapText = activityBeatmap
+		? `${activityBeatmap.artist} — ${activityBeatmap.title} [${activityBeatmap.version}]`
+		: info.activity?.action === PlayerAction.Playing ? info.activity.infoText : null;
 
 	return (
 		<div className={classNames(styles.section_box, styles.user_info)} data-page-enter="box">
 			<div className={styles.top}>
-				<span className={styles.avatar}>
-					<Image src={`https://${avatarSubdomain}.${baseDomain}/${id}`}
-					       alt="avatar"
-					       fill
-					       sizes="(max-width: 768px) 100vw, 50vw"
-					       draggable={false}
-					       priority/>
-					{!isClan &&
-						<EquippedBadge badgeId={info.setBadge}
-						               baseDomain={baseDomain}
-						               className={styles.avatar_badge}
-						               sizes="36px"
-						               priority/>}
-				</span>
+				{isClan
+					? <span className={classNames(styles.avatar, styles.clan_avatar)}>
+						<Image src={`https://clan-a.${baseDomain}/${id}`}
+						       alt={`${info.name} clan avatar`}
+						       fill
+						       sizes="112px"
+						       draggable={false}
+						       priority/>
+					</span>
+					: <PlayerAvatar userId={id}
+					                name={info.name}
+					                baseDomain={baseDomain}
+					                cosmetics={cosmetics}
+					                className={styles.avatar}
+					                sizes="(max-width: 768px) 112px, 112px"
+					                priority/>}
 				<div className={styles.name_container}>
 					<div className={styles.name_row}>
 						<div className={styles.name_with_tooltip}>
@@ -163,6 +191,15 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 					</div>
 					{info.showPastName && info.pastNames !== null &&
 						<p className={styles.past_names}>aka: {info.pastNames}</p>}
+					{(isRival || followsYou) &&
+						<div className={styles.relationship_markers}>
+							{isRival &&
+								<span className={styles.rival_marker}>
+									<FontAwesome prefix="fad" name="swords"/>
+									<span>Rival</span>
+								</span>}
+							{followsYou && <span className={styles.follows_you_marker}>Follows you</span>}
+						</div>}
 				</div>
 			</div>
 
@@ -226,7 +263,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 					followers: info.followers
 				}}
 				mode={mode}
-				avatarBaseUrl={`https://a.${baseDomain}`}/>}
+				baseDomain={baseDomain}/>}
 
 			{!isClan && <div className={styles.last_online} data-online={info.isOnline}>
 				<span className={styles.activity_identity}>
@@ -234,11 +271,23 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 						<FontAwesome prefix="fad" name={info.isOnline ? "signal-stream" : "clock"}/>
 					</span>
 					<span className={styles.activity_copy}>
-						<small>Presence</small>
+						<small>{info.isOnline ? "Online now" : "Presence"}</small>
 						<strong>
-							{info.isOnline ? "Online now" : "Last online"}
+							{info.isOnline ? onlineAction : "Last online"}
 							{!info.isOnline && <span className={styles.activity_relative}>{lastOnlineRelative}</span>}
 						</strong>
+						{activityMapText && (activityBeatmap
+							? <Link className={styles.activity_map}
+							        href={`/beatmaps/${activityBeatmap.setId}/${activityBeatmap.id}`}
+							        title={activityMapText}>
+								<FontAwesome prefix="fas" name="music-note"/>
+								<span>{activityMapText}</span>
+								<FontAwesome prefix="fas" name="arrow-up-right"/>
+							</Link>
+							: <span className={styles.activity_map} title={activityMapText}>
+								<FontAwesome prefix="fas" name="music-note"/>
+								<span>{activityMapText}</span>
+							</span>)}
 					</span>
 				</span>
 				<time className={styles.activity_time} dateTime={info.latestActivity.toISOString()}>

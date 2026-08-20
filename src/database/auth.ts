@@ -21,8 +21,7 @@ export type AuthUser = {
 	priv: number,
 	username: string,
 	country: string,
-	passwordHash: string,
-	badge: number
+	passwordHash: string
 };
 
 type AuthUserRow = RowDataPacket & {
@@ -31,8 +30,7 @@ type AuthUserRow = RowDataPacket & {
 	priv: number,
 	name: string,
 	country: string,
-	pw_bcrypt: string,
-	badge_id: number | null
+	pw_bcrypt: string
 };
 
 export const makeSafeName = (username: string) => username.trim().toLowerCase().replaceAll(" ", "_");
@@ -43,8 +41,7 @@ const toAuthUser = (row: AuthUserRow): AuthUser => ({
 	priv: row.priv,
 	username: row.name,
 	country: row.country,
-	passwordHash: row.pw_bcrypt,
-	badge: row.badge_id ?? 0
+	passwordHash: row.pw_bcrypt
 });
 
 export const getUserByLogin = async (login: string) => {
@@ -112,8 +109,7 @@ export const createUser = async ({ username, email, password, country }: {
 			priv: 1,
 			username,
 			country,
-			passwordHash,
-			badge: 0
+			passwordHash
 		} satisfies AuthUser;
 	});
 }

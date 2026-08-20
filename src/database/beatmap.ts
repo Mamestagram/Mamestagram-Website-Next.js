@@ -56,6 +56,7 @@ export type BeatmapScore = {
 };
 
 export type RankedBeatmapScore = BeatmapScore & { rank: number };
+type BeatmapScoreRow = BeatmapScore;
 
 type BeatmapApiMap = {
 	id: number,
@@ -253,7 +254,7 @@ export const getBeatmapUserScore = async (
 	mode: ModeNum,
 	userId: number
 ): Promise<RankedBeatmapScore | null> => {
-	const scores = await executeQuery<BeatmapScore>(
+	const scores = await executeQuery<BeatmapScoreRow>(
 		beatmapUserScoreQuery,
 		[mapMd5, mode, userId]
 	);
@@ -265,5 +266,8 @@ export const getBeatmapUserScore = async (
 		[mapMd5, mode, score.score]
 	);
 
-	return { ...score, rank: Number(rankRows[0]?.higherScores ?? 0) + 1 };
+	return {
+		...score,
+		rank: Number(rankRows[0]?.higherScores ?? 0) + 1
+	};
 };

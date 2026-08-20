@@ -266,7 +266,7 @@ body {
 			transition: grid-template-rows 300ms, grid-gap 300ms;
 			
 			[data-site-header].scrolled & {
-				grid-gap: 0 30px;
+				grid-gap: 0 20px;
 				
 				@media (max-width: 872px) {
 					grid-gap: 0;

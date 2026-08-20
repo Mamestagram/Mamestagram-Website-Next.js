@@ -18,6 +18,8 @@ import { writeLog } from "@/lib/log";
 import { resolveProfileBackgroundUrl, resolveProfileBannerUrl } from "@/lib/profile-banner";
 import { getCurrentUser } from "@/lib/session";
 import { ModeNum, OsuMode } from "@/lib/mode";
+import { getProfileCosmetics } from "@/lib/profile-cosmetics";
+import { isProfileRival } from "@/lib/rivals";
 import UserInfo from "@/components/profile/user-info";
 import AboutMe from "@/components/profile/me";
 import ClanMembers from "@/components/profile/clan-members";
@@ -85,12 +87,19 @@ export default async function Profile({ params, searchParams }: {
 			const profileDataPromise = isClan
 				? getClanProfile(id).then((clanProfile) => ({ type: "clan" as const, clanProfile }))
 				: getUserInfo(id).then((info) => ({ type: "user" as const, info }));
-			const [profileData, currentUser, rankHistory, bannerUrl, backgroundUrl] = await Promise.all([
+			const currentUserPromise = getCurrentUser();
+			const rivalStatusPromise = currentUserPromise.then((currentUser) => {
+				if (isClan || !currentUser.isLoggedIn || currentUser.id === undefined || currentUser.id === id) return false;
+				return isProfileRival(currentUser.id, id);
+			});
+			const [profileData, currentUser, rankHistory, bannerUrl, backgroundUrl, cosmetics, isRival] = await Promise.all([
 				profileDataPromise,
-				getCurrentUser(),
+				currentUserPromise,
 				!isClan ? getRankHistory(id, mode) : null,
 				resolveProfileBannerUrl(id, isClan, baseDomain),
-				resolveProfileBackgroundUrl(id, isClan, baseDomain)
+				resolveProfileBackgroundUrl(id, isClan, baseDomain),
+				!isClan ? getProfileCosmetics(id) : null,
+				rivalStatusPromise
 			]);
 			let info: ProfileInfo;
 			let clanMembers: ClanMember[] = [];
@@ -103,6 +112,12 @@ export default async function Profile({ params, searchParams }: {
 			}
 			else info = profileData.info;
 			const canManageProfile = currentUser.isLoggedIn && currentUser.id === (isClan ? info.ownerId : id);
+			const followsCurrentUser = !isClan
+				&& currentUser.isLoggedIn
+				&& currentUser.id !== undefined
+				&& currentUser.id !== id
+				&& (info.following.some(({ user }) => user === currentUser.id)
+					|| info.mutual.some(({ user }) => user === currentUser.id));
 
 			return (
 				<div className={classNames(styles.profile_page, {
@@ -118,13 +133,17 @@ export default async function Profile({ params, searchParams }: {
 							          isClan={isClan}
 							          isDans={isDans}
 							          canManageProfile={canManageProfile}
-							          rankHistory={rankHistory}>
+							          isRival={isRival}
+							          followsYou={followsCurrentUser}
+							          rankHistory={rankHistory}
+							          cosmetics={cosmetics}>
 								{isClan &&
 									<ClanMembers clanId={id}
 									             members={clanMembers}
 									             mode={mode_name as OsuMode}
 									             isDans={isDans}
-									             canManage={canManageProfile}/>}
+									             canManage={canManageProfile}
+									             baseDomain={baseDomain}/>}
 							</UserInfo>
 							<div className={classNames(styles.section_box, styles.statistics)} data-page-enter="box">
 								<Suspense fallback={<StatisticsLoading/>}>

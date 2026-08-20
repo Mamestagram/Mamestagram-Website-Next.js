@@ -170,34 +170,21 @@
           align-items: center;
 
           & .avatar {
+            --avatar-badge-size: 38%;
+
             display: block;
             position: relative;
             height: 112px;
             width: 112px;
             border-radius: 28px;
 
-            & > img {
+            &.clan_avatar > img {
               height: inherit;
               width: inherit;
               border-radius: inherit;
               object-fit: cover;
             }
 
-            & .avatar_badge {
-              display: block;
-              position: absolute;
-              right: -7px;
-              bottom: -7px;
-              width: 36px;
-              height: 36px;
-              filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.8));
-              pointer-events: none;
-              z-index: 1;
-
-              & img {
-                object-fit: contain;
-              }
-            }
           }
 
           & .name_container {
@@ -294,6 +281,46 @@
               color: #cbd5e1;
               line-height: 1.7;
               margin-top: 8px;
+            }
+
+            & .relationship_markers {
+              display: flex;
+              flex-wrap: wrap;
+              margin-top: 10px;
+              align-items: center;
+              gap: 7px;
+            }
+
+            & .rival_marker,
+            & .follows_you_marker {
+              display: inline-flex;
+              min-height: 30px;
+              padding: 0 11px;
+              align-items: center;
+              border-radius: 9px;
+              box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
+              font-size: 0.7rem;
+              font-weight: 800;
+              line-height: 1;
+              white-space: nowrap;
+            }
+
+            & .rival_marker {
+              gap: 7px;
+              color: #ffb8bd;
+              background: rgba(198, 52, 66, 0.13);
+              border: 1px solid rgba(255, 118, 131, 0.28);
+
+              & i {
+                color: #ff8792;
+                font-size: 0.82rem;
+              }
+            }
+
+            & .follows_you_marker {
+              color: #c7c8d0;
+              background: rgba(255, 255, 255, 0.08);
+              border: 1px solid rgba(255, 255, 255, 0.1);
             }
           }
 
@@ -433,8 +460,8 @@
                 }
 
                 & .profile_playstyles {
-                  display: flex;
-                  flex-wrap: wrap;
+                  display: grid;
+                  grid-template-columns: repeat(2, minmax(0, 1fr));
                   gap: 5px;
 
                   & a {
@@ -442,6 +469,7 @@
                     min-height: 25px;
                     padding: 0 8px;
                     align-items: center;
+                    justify-content: center;
                     color: #9eabbc;
                     background: rgba(255, 255, 255, 0.045);
                     border: 1px solid rgba(255, 255, 255, 0.065);
@@ -538,12 +566,6 @@
               width: 82px;
               border-radius: 22px;
 
-              & .avatar_badge {
-                right: -5px;
-                bottom: -5px;
-                width: 30px;
-                height: 30px;
-              }
             }
 
             & .name_container .name {
@@ -1116,6 +1138,48 @@
           }
         }
 
+        & .activity_map {
+          display: flex;
+          width: fit-content;
+          max-width: min(100%, 460px);
+          min-width: 0;
+          padding: 3px 6px;
+          align-items: center;
+          gap: 5px;
+          overflow: hidden;
+          color: hsl(var(--user-hue), 55%, 75%);
+          background: hsla(var(--user-hue), 45%, 48%, 0.11);
+          border: 1px solid hsla(var(--user-hue), 55%, 70%, 0.13);
+          border-radius: 7px;
+          font-size: 0.66rem;
+          font-weight: 750;
+          line-height: 1.15;
+
+          & > span {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          & > i {
+            flex: 0 0 auto;
+            font-size: 0.56rem;
+          }
+        }
+
+        & a.activity_map {
+          transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+
+          &:hover,
+          &:focus-visible {
+            color: #fff;
+            background: hsla(var(--user-hue), 55%, 55%, 0.17);
+            border-color: hsla(var(--user-hue), 62%, 72%, 0.25);
+            outline: none;
+          }
+        }
+
         & .activity_time {
           display: flex;
           min-width: 134px;
@@ -1300,18 +1364,17 @@
         }
 
         & .clan_member_grid_avatar {
+          --avatar-badge-size: 45%;
+
           display: block;
           position: relative;
           width: 38px;
           height: 38px;
-          overflow: hidden;
+          overflow: visible;
           background: rgba(255, 255, 255, 0.055);
           border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 9px;
 
-          & img {
-            object-fit: cover;
-          }
         }
 
         & .clan_member_grid_copy {
@@ -4215,18 +4278,17 @@
 }
 
 .connection_avatar {
+  --avatar-badge-size: 41%;
+
   display: block;
   position: relative;
   width: 44px;
   height: 44px;
-  overflow: hidden;
+  overflow: visible;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 11px;
 
-  & img {
-    object-fit: cover;
-  }
 }
 
 .connection_identity {

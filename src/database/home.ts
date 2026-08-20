@@ -4,6 +4,8 @@ import { executeQuery } from "@/database/connection";
 import { homeRecentActivityQuery, homeTopPlayersQuery } from "@/database/query/home";
 import { writeError } from "@/lib/log";
 import type { ModeNum } from "@/lib/mode";
+import { getProfileCosmeticsMap } from "@/lib/profile-cosmetics";
+import type { ProfileCosmetics } from "@/lib/profile-cosmetics";
 
 export type HomePlayerCounts = {
 	online: number,
@@ -17,8 +19,11 @@ export type HomeTopPlayer = {
 	name: string,
 	country: string,
 	pp: number,
-	mode: ModeNum
+	mode: ModeNum,
+	cosmetics: ProfileCosmetics
 };
+
+type HomeTopPlayerRow = Omit<HomeTopPlayer, "cosmetics">;
 
 export type HomeRecentActivity = {
 	id: number,
@@ -70,7 +75,12 @@ const getPlayerCounts = async (): Promise<HomePlayerCounts | null> => {
 
 const getTopPlayers = async (): Promise<HomeTopPlayer[]> => {
 	try {
-		const players = await executeQuery<HomeTopPlayer>(homeTopPlayersQuery);
+		const rows = await executeQuery<HomeTopPlayerRow>(homeTopPlayersQuery);
+		const cosmetics = await getProfileCosmeticsMap(rows.map(({ id }) => id));
+		const players = rows.map((player) => ({
+			...player,
+			cosmetics: cosmetics.get(player.id) ?? { userId: player.id, badge: null, frame: null }
+		}));
 		globalHomeData.topPlayers = players;
 		return players;
 	}

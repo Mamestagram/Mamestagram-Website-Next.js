@@ -4,11 +4,8 @@ export const userByLoginQuery = `
 	       users.priv,
 	       users.name,
 	       users.country,
-	       users.pw_bcrypt,
-	       market_badge_equipment.badge_id
+	       users.pw_bcrypt
 		FROM users
-	LEFT JOIN market_badge_equipment
-		ON market_badge_equipment.owner_id = users.id
 	WHERE users.safe_name = ?
 		OR LOWER(users.email) = ?
 	LIMIT 1
@@ -20,11 +17,8 @@ export const userByIdQuery = `
 	       users.priv,
 	       users.name,
 	       users.country,
-	       users.pw_bcrypt,
-	       market_badge_equipment.badge_id
+	       users.pw_bcrypt
 		FROM users
-	LEFT JOIN market_badge_equipment
-		ON market_badge_equipment.owner_id = users.id
 	WHERE users.id = ?
 	LIMIT 1
 `;

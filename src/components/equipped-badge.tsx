@@ -1,19 +1,19 @@
 import Image from "next/image";
-import { getBadgeImageUrl } from "@/lib/badge";
+import type { ProfileBadge } from "@/lib/profile-cosmetics";
+import styles from "@s/equipped-badge.module.css";
 
-export default function EquippedBadge({ badgeId, baseDomain, className, sizes, priority = false }: Readonly<{
-	badgeId: number,
-	baseDomain: string,
-	className: string,
+export default function EquippedBadge({ badge, sizes, priority = false }: Readonly<{
+	badge: ProfileBadge | null,
 	sizes: string,
 	priority?: boolean
 }>) {
-	if (!Number.isSafeInteger(badgeId) || badgeId < 1) return null;
+	if (!badge) return null;
 
 	return (
-		<span className={className} data-avatar-badge={badgeId} aria-hidden="true">
-			<Image src={getBadgeImageUrl(badgeId, baseDomain)}
-			       alt={`Badge ${badgeId}`}
+		<span className={styles.badge} data-avatar-badge={badge.id} aria-hidden="true">
+			<Image src={badge.iconUrl}
+			       className={styles.image}
+			       alt={badge.name}
 			       fill
 			       sizes={sizes}
 			       crossOrigin="anonymous"

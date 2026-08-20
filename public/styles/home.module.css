@@ -543,19 +543,18 @@
 }
 
 .player_avatar {
+  --avatar-badge-size: 42%;
+
   display: block;
   position: relative;
   width: 110px;
   height: 110px;
   align-self: center;
   flex: 0 0 auto;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid rgba(255, 255, 255, 0.085);
   border-radius: 9px;
 
-  & > img {
-    object-fit: cover;
-  }
 }
 
 .player_identity {
@@ -1076,7 +1075,7 @@
       color: var(--home-accent-light);
       background: hsla(var(--user-hue), 48%, 50%, 0.12);
       border-radius: 10px;
-      font-size: 0.76rem;
+      font-size: 0.9rem;
     }
 
     & > span:nth-child(2) {
@@ -1087,30 +1086,30 @@
 
       & > strong {
         color: #dfe7ef;
-        font-size: 0.68rem;
+        font-size: 0.88rem;
         font-weight: 830;
 
         @media (max-width: 560px) {
-          font-size: 0.95rem;
+          font-size: 1.02rem;
         }
       }
 
       & > small {
         overflow: hidden;
         color: #6c7a8c;
-        font-size: 0.52rem;
+        font-size: 0.68rem;
         line-height: 1.4;
         text-overflow: ellipsis;
 
         @media (max-width: 560px) {
-          font-size: 0.78rem;
+          font-size: 0.84rem;
         }
       }
     }
 
     & > i {
       color: #4f5e70;
-      font-size: 0.5rem;
+      font-size: 0.68rem;
     }
   }
 }

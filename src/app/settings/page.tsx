@@ -4,15 +4,16 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import FontAwesome from "@/components/font-awesome";
 import NameBodyHeader from "@/components/name-body-header";
+import PlayerAvatar from "@/components/player-avatar";
 import AboutMeSettingsEditor from "@/components/settings/about-me-settings-editor";
 import BadgeSettingsForm from "@/components/settings/badge-settings-form";
 import ClanSettingsForm from "@/components/settings/clan-settings-form";
 import MediaSettingCard from "@/components/settings/media-setting-card";
 import ProfileSettingsForm from "@/components/settings/profile-settings-form";
 import { getOwnedClanSettings, getUserSettings } from "@/database/settings";
-import { getBadgeImageUrl } from "@/lib/badge";
 import { resolveProfileBackgroundUrl, resolveProfileBannerUrl } from "@/lib/profile-banner";
 import { profileMediaExists } from "@/lib/profile-media";
+import { getProfileCosmetics } from "@/lib/profile-cosmetics";
 import { getCurrentUser } from "@/lib/session";
 import styles from "@s/settings.module.css";
 
@@ -97,9 +98,10 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 	const currentUser = await getCurrentUser();
 	if (!currentUser.isLoggedIn || !currentUser.id || !currentUser.username) redirect("/signin");
 
-	const [settings, ownedClan] = await Promise.all([
+	const [settings, ownedClan, cosmetics] = await Promise.all([
 		getUserSettings(currentUser.id),
-		getOwnedClanSettings(currentUser.id)
+		getOwnedClanSettings(currentUser.id),
+		getProfileCosmetics(currentUser.id)
 	]);
 	if (!settings) redirect("/signin");
 	const params = await searchParams;
@@ -150,23 +152,22 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 				<section className={styles.hero}>
 					<div className={styles.hero_glow}/>
 					<div className={styles.hero_identity}>
-						<span className={styles.hero_avatar}>
-							<Image src={heroAvatarUrl}
-							       alt={`${activeClan?.tag ?? settings.username} avatar`}
-							       fill
-							       sizes="88px"
-							       draggable={false}
-							       priority/>
-							{!isClanScope && settings.selectedBadge !== 0 &&
-								<Image className={styles.hero_badge}
-								       src={getBadgeImageUrl(settings.selectedBadge, baseDomain)}
-								       alt={`${settings.username} equipped badge`}
+						{isClanScope
+							? <span className={`${styles.hero_avatar} ${styles.clan_hero_avatar}`}>
+								<Image src={heroAvatarUrl}
+								       alt={`${activeClan?.tag ?? "Clan"} clan avatar`}
 								       fill
 								       sizes="88px"
-								       crossOrigin="anonymous"
 								       draggable={false}
-								       priority/>}
-						</span>
+								       priority/>
+							</span>
+							: <PlayerAvatar userId={currentUser.id}
+							                name={settings.username}
+							                baseDomain={baseDomain}
+							                cosmetics={cosmetics}
+							                className={styles.hero_avatar}
+							                sizes="88px"
+							                priority/>}
 						<div>
 							<span className={styles.eyebrow}>{isClanScope ? "MAMESTAGRAM CLAN" : "MAMESTAGRAM ACCOUNT"}</span>
 							<h1>{isClanScope ? "Clan settings" : "Account settings"}</h1>

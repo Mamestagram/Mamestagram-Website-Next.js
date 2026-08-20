@@ -201,8 +201,8 @@
 				}
 
 				& .leaderboard_playstyles {
-					display: flex;
-					flex-wrap: wrap;
+					display: grid;
+					grid-template-columns: repeat(2, minmax(0, 1fr));
 					gap: 5px;
 
 					& a {
@@ -210,6 +210,7 @@
 						min-height: 25px;
 						padding: 0 8px;
 						align-items: center;
+						justify-content: center;
 						color: #9eabbc;
 						background: rgba(255, 255, 255, .045);
 						border: 1px solid rgba(255, 255, 255, .065);
@@ -314,9 +315,9 @@
 
 		& .ranking_sort_control .ranking_sort_menu {
 			grid-template-columns: minmax(0, 1fr);
-			width: 238px;
+			width: 280px;
 
-			& .leaderboard_playstyles {
+			& .leaderboard_mode_group .leaderboard_playstyles {
 				display: grid;
 				grid-template-columns: repeat(2, minmax(0, 1fr));
 
@@ -594,6 +595,7 @@
 		position: sticky;
 		top: 72px;
 		width: max-content;
+		overflow: hidden;
 		padding: 8px 12px;
 		background: rgba(9, 11, 17, .86);
 		border: 1px solid var(--glass-border-dark);
@@ -665,6 +667,15 @@
 		& .shift_arrow {
 			@media (max-width: 346px) {
 				display: none;
+			}
+		}
+
+		& .page_endpoint:disabled {
+			cursor: default;
+			opacity: .35;
+
+			&::after {
+				opacity: 0;
 			}
 		}
 		

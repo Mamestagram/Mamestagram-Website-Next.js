@@ -82,6 +82,8 @@
 }
 
 .hero_avatar {
+	--avatar-badge-size: 39%;
+
 	display: block;
 	position: relative;
 	width: 88px;
@@ -93,15 +95,9 @@
 	box-shadow: 0 14px 34px rgba(0, 0, 0, .3);
 }
 
-.hero_avatar > img:first-child {
+.clan_hero_avatar > img {
 	border-radius: inherit;
 	object-fit: cover;
-}
-
-.hero_badge {
-	object-fit: contain;
-	pointer-events: none;
-	z-index: 2;
 }
 
 .eyebrow {

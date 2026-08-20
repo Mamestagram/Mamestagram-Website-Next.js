@@ -10,6 +10,7 @@ import type {
   HomeTopPlayer,
 } from "@/database/home";
 import HomeRecentActivityCard from "@/components/home/home-recent-activity-card";
+import PlayerAvatar from "@/components/player-avatar";
 import { ModeNum, OsuMode, type VnMode } from "@/lib/mode";
 import styles from "@s/home.module.css";
 
@@ -294,15 +295,14 @@ export default function HomeDashboard({
                       data-page-enter="box"
                     >
                       <Link className={styles.player_card} href={profileHref}>
-                        <span className={styles.player_avatar}>
-                          <Image
-                            src={`https://a.${baseDomain}/${player.id}`}
-                            alt={`${player.name} avatar`}
-                            fill
-                            sizes="110px"
-                            draggable={false}
-                          />
-                        </span>
+                        <PlayerAvatar
+                          userId={player.id}
+                          name={player.name}
+                          baseDomain={baseDomain}
+                          cosmetics={player.cosmetics}
+                          className={styles.player_avatar}
+                          sizes="110px"
+                        />
                         <span className={styles.player_identity}>
                           <strong>{player.name}</strong>
                           <small>

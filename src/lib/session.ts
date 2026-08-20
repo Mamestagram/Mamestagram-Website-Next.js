@@ -71,7 +71,6 @@ export const getCurrentUser = async (): Promise<UserInfo> => {
 			priv: user.priv,
 			username: user.username,
 			country: user.country,
-			badge: user.badge,
 			isLoggedIn: true
 		};
 	}

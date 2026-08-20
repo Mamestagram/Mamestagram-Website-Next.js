@@ -7,10 +7,7 @@ export default function Footer() {
 			<nav className="navigation">
 				<div className="section mamestagram">
 					<h2>Mamestagram</h2>
-					<p>
-						The next-generation rhythm game experience.<br/>
-						Click circles, to the beat!
-					</p>
+					<p>A community-driven osu! private server with leaderboards, player profiles, and custom features.</p>
 				</div>
 				<div className="section explore">
 					<h2>Explore</h2>
@@ -46,14 +43,21 @@ export default function Footer() {
 							<a href="https://discord.com/channels/944248031136587796/1117062398596108298"
 							   target="_blank"
 							   rel="noopener noreferrer">
-								Report a bug
+								Report bug
+							</a>
+						</li>
+						<li className="player-report">
+							<a href={`https://report.${process.env.BASE_DOMAIN}`}
+							   target="_blank"
+							   rel="noopener noreferrer">
+								Report player
 							</a>
 						</li>
 						<li className="ticket">
 							<a href="https://discord.com/channels/944248031136587796/1171728223407710208"
 							   target="_blank"
 							   rel="noopener noreferrer">
-								Open a ticket
+								Open ticket
 							</a>
 						</li>
 					</ul>

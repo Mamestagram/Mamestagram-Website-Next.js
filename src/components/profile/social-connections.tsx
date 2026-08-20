@@ -2,14 +2,16 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import Image from "next/image";
 import Link from "next/link";
 import type { ProfileConnection } from "@/database/profile";
 import CountryFlag from "@/components/country-flag";
 import FontAwesome from "@/components/font-awesome";
+import PlayerAvatar from "@/components/player-avatar";
+import type { ProfileCosmetics } from "@/lib/profile-cosmetics";
 import styles from "@s/profile.module.css";
 
 type ConnectionType = "mutual" | "following" | "followers";
+type ProfileCosmeticsResponse = { cosmetics: ProfileCosmetics[] };
 
 const socialMeta: Record<ConnectionType, {
 	label: string,
@@ -33,13 +35,14 @@ const socialMeta: Record<ConnectionType, {
 	}
 };
 
-export default function SocialConnections({ connections, mode, avatarBaseUrl }: {
+export default function SocialConnections({ connections, mode, baseDomain }: {
 	connections: Record<ConnectionType, ProfileConnection[]>,
 	mode: string,
-	avatarBaseUrl: string
+	baseDomain: string
 }) {
 	const [activeType, setActiveType] = useState<ConnectionType | null>(null);
 	const [query, setQuery] = useState("");
+	const [cosmeticsByUser, setCosmeticsByUser] = useState<Record<number, ProfileCosmetics>>({});
 	const closeButtonRef = useRef<HTMLButtonElement>(null);
 	const modalRef = useRef<HTMLElement>(null);
 	const returnFocusRef = useRef<HTMLElement | null>(null);
@@ -54,6 +57,34 @@ export default function SocialConnections({ connections, mode, avatarBaseUrl }: 
 			name.toLocaleLowerCase().includes(normalizedQuery) || String(user).includes(normalizedQuery)
 		);
 	}, [activeConnections, query]);
+
+	useEffect(() => {
+		if (!activeType) return;
+		const missingIds = activeConnections
+			.map(({ user }) => user)
+			.filter((userId) => cosmeticsByUser[userId] === undefined);
+		if (missingIds.length === 0) return;
+		const controller = new AbortController();
+		const batchSize = 80;
+		const requests = Array.from({ length: Math.ceil(missingIds.length / batchSize) }, (_, index) => {
+			const ids = missingIds.slice(index * batchSize, (index + 1) * batchSize).join(",");
+			return fetch(`/api/profile-cosmetics?ids=${encodeURIComponent(ids)}`, { signal: controller.signal })
+				.then((response) => response.json() as Promise<ProfileCosmeticsResponse>);
+		});
+		void Promise.all(requests).then((responses) => {
+			setCosmeticsByUser((current) => {
+				const next = { ...current };
+				responses.flatMap(({ cosmetics }) => cosmetics).forEach((cosmetics) => {
+					next[cosmetics.userId] = cosmetics;
+				});
+				return next;
+			});
+		}).catch((error: unknown) => {
+			if (!(error instanceof DOMException && error.name === "AbortError"))
+				console.error("Failed to load connection cosmetics.", error);
+		});
+		return () => controller.abort();
+	}, [activeConnections, activeType, cosmeticsByUser]);
 
 	useEffect(() => {
 		if (!activeType) return;
@@ -180,13 +211,12 @@ export default function SocialConnections({ connections, mode, avatarBaseUrl }: 
 										<li key={connection.user}>
 											<Link href={`/profile/${connection.user}/${mode}`}
 											      onClick={closeConnections}>
-												<span className={styles.connection_avatar}>
-													<Image src={`${avatarBaseUrl}/${connection.user}`}
-													       alt={`${connection.name} avatar`}
-													       fill
-													       sizes="44px"
-													       draggable={false}/>
-												</span>
+												<PlayerAvatar userId={connection.user}
+												              name={connection.name}
+												              baseDomain={baseDomain}
+											              cosmetics={cosmeticsByUser[connection.user] ?? null}
+												              className={styles.connection_avatar}
+												              sizes="44px"/>
 												<span className={styles.connection_identity}>
 													<strong>{connection.name}</strong>
 													<small>Player #{connection.user.toLocaleString("en-US")}</small>

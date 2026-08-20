@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
+import type { ProfileCosmetics } from "@/lib/profile-cosmetics";
 
 export type ServerInfo = {
 	baseDomain: string
@@ -13,21 +14,22 @@ export type UserInfo = {
 	priv?: number,
 	username?: string,
 	country?: string,
-	badge?: number,
 	isLoggedIn: boolean
 };
 
 type UserContextType = {
 	datetime: string,
 	serverInfo: ServerInfo,
-	userInfo: UserInfo
+	userInfo: UserInfo,
+	userCosmetics: ProfileCosmetics | null
 };
 
 const UserContext = createContext<UserContextType | null>(null);
 
-export const UserProvider = ({ serverInfo, userInfo, children }: Readonly<{
+export const UserProvider = ({ serverInfo, userInfo, userCosmetics, children }: Readonly<{
 	serverInfo: ServerInfo,
 	userInfo: UserInfo,
+	userCosmetics: ProfileCosmetics | null,
 	children: ReactNode
 }>) => {
 	const datetime = new Date().toLocaleString("ja-JP", {
@@ -39,7 +41,7 @@ export const UserProvider = ({ serverInfo, userInfo, children }: Readonly<{
 		second: "2-digit"
 	}).replace(/[\/\s:]/g, "");
 	return (
-		<UserContext.Provider value={{ datetime, serverInfo, userInfo }}>
+		<UserContext.Provider value={{ datetime, serverInfo, userInfo, userCosmetics }}>
 			{children}
 		</UserContext.Provider>
 	);
