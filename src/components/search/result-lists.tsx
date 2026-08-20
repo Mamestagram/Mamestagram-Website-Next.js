@@ -52,13 +52,15 @@ export function SearchUserList({ items: users, baseDomain, onSelect }: ResultLis
 				const primaryPrivilege = privileges.at(-1);
 				return (
 					<li key={user.id}>
-						<Link href={`/profile/${user.id}`} onClick={onSelect}>
+						<Link className={styles.player_result}
+						      href={`/profile/${user.id}`}
+						      onClick={onSelect}>
 							<PlayerAvatar userId={user.id}
 							              name={user.name}
 							              baseDomain={baseDomain}
 							              cosmetics={user.cosmetics}
 							              className={styles.avatar}
-							              sizes="48px"/>
+							              sizes="(max-width: 600px) 44px, 48px"/>
 							<span className={styles.identity}>
 								<span className={styles.name_with_tooltip}>
 									<strong>{user.name}</strong>

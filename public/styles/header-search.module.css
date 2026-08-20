@@ -358,6 +358,12 @@
 	}
 }
 
+.result_list .player_result {
+	min-height: 70px;
+	padding: 10px;
+	gap: 8px;
+}
+
 .beatmap_result_list {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -830,6 +836,11 @@
 	.skeleton_list { grid-template-columns: minmax(0, 1fr); }
 	.skeleton_list li:nth-child(n + 4) { display: none; }
 	.result_list a { grid-template-columns: 44px minmax(0, 1fr) auto auto; gap: 5px; }
+	.result_list .player_result {
+		min-height: 66px;
+		padding: 9px;
+		gap: 7px;
+	}
 	.identity strong { font-size: 1.02rem; }
 	.identity small { font-size: .78rem; }
 	.meta small { font-size: .72rem; }
