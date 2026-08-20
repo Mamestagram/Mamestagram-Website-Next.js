@@ -28,6 +28,13 @@ export default function Footer() {
 								Community Server
 							</a>
 						</li>
+						<li className="status">
+							<a href={`https://c.${process.env.BASE_DOMAIN}`}
+							   target="_blank"
+							   rel="noopener noreferrer">
+								Status
+							</a>
+						</li>
 					</ul>
 				</div>
 				<div className="section support-legal">
@@ -39,25 +46,11 @@ export default function Footer() {
 						<li className="rules">
 							<Link href="/documents#rules">Rules</Link>
 						</li>
-						<li className="bug-report">
-							<a href="https://discord.com/channels/944248031136587796/1117062398596108298"
-							   target="_blank"
-							   rel="noopener noreferrer">
-								Report bug
-							</a>
-						</li>
 						<li className="player-report">
 							<a href={`https://report.${process.env.BASE_DOMAIN}`}
 							   target="_blank"
 							   rel="noopener noreferrer">
 								Report player
-							</a>
-						</li>
-						<li className="ticket">
-							<a href="https://discord.com/channels/944248031136587796/1171728223407710208"
-							   target="_blank"
-							   rel="noopener noreferrer">
-								Open ticket
 							</a>
 						</li>
 					</ul>
