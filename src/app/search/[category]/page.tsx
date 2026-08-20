@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import FontAwesome from "@/components/font-awesome";
 import { SearchBeatmapList, SearchClanList, SearchUserList } from "@/components/search/result-lists";
 import { searchBeatmapsPage, searchClansPage, searchUsersPage } from "@/database/search";
+import { writeLog } from "@/lib/log";
 import styles from "@s/search.module.css";
 
 type SearchCategory = "players" | "clans" | "beatmaps";
@@ -51,6 +52,7 @@ export default async function SearchResultsPage({ params, searchParams }: {
 }) {
 	const { category } = await params;
 	const { q = "", page: pageParam = "1" } = await searchParams;
+	void writeLog("GET", `/search/${category} (q: ${q}, page: ${pageParam})`);
 	if (!isSearchCategory(category)) notFound();
 
 	const query = q.trim();

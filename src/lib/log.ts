@@ -4,6 +4,12 @@ import { fetchInternalJson } from "@/lib/fetch-json";
 
 const UNKNOWN_IP = "Unknown IP address";
 
+const escapeLogValue = (value: string) => Array.from(value, (character) => {
+	const codePoint = character.codePointAt(0);
+	if (codePoint === undefined || (codePoint > 31 && codePoint !== 127)) return character;
+	return `\\u${codePoint.toString(16).padStart(4, "0")}`;
+}).join("");
+
 const getDate = () => {
 	const datetime = new Date();
 	return {
@@ -61,7 +67,7 @@ export const writeLog = async (method: "GET" | "POST", pathname: string) => {
 	}
 
 	const ip = await getIpAddress();
-	await writeFile(paths.directory, paths.file, `[${date.datetime}] ${method} ${pathname} (${ip})\n`);
+	await writeFile(paths.directory, paths.file, `[${date.datetime}] ${method} ${escapeLogValue(pathname)} (${ip})\n`);
 };
 
 export const writeError = async (err: unknown) => {
@@ -73,6 +79,6 @@ export const writeError = async (err: unknown) => {
 	}
 
 	const ip = await getIpAddress();
-	const message = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+	const message = escapeLogValue(err instanceof Error ? `${err.name}: ${err.message}` : String(err));
 	await writeFile(paths.directory, paths.file, `[${date.datetime}] ERROR ${message} (${ip})\n`);
 };

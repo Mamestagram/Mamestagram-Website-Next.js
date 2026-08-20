@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import NameBodyHeader from "@/components/name-body-header";
 import SupportContent, { type SupportLocale } from "@/components/support/support-content";
+import { writeLog } from "@/lib/log";
 
 export const metadata: Metadata = {
 	title: "Support",
@@ -13,6 +14,7 @@ type SupportPageProps = {
 
 export default async function SupportPage({ searchParams }: SupportPageProps) {
 	const { lang } = await searchParams;
+	void writeLog("GET", `/support (lang: ${lang})`);
 	const locale: SupportLocale = lang === "ja" ? "ja" : "en";
 
 	return (

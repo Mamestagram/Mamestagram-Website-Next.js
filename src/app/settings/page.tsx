@@ -14,6 +14,7 @@ import { getOwnedClanSettings, getUserSettings } from "@/database/settings";
 import { resolveProfileBackgroundUrl, resolveProfileBannerUrl } from "@/lib/profile-banner";
 import { profileMediaExists } from "@/lib/profile-media";
 import { getProfileCosmetics } from "@/lib/profile-cosmetics";
+import { writeLog } from "@/lib/log";
 import { getCurrentUser } from "@/lib/session";
 import styles from "@s/settings.module.css";
 
@@ -95,6 +96,9 @@ const getSectionMeta = (scope: SettingsScope, section: SettingsSection): Section
 export default async function SettingsPage({ searchParams }: Readonly<{
 	searchParams: Promise<{ scope?: string | string[], section?: string | string[] }>
 }>) {
+	const params = await searchParams;
+	void writeLog("GET", `/settings (scope: ${params.scope}, section: ${params.section})`);
+
 	const currentUser = await getCurrentUser();
 	if (!currentUser.isLoggedIn || !currentUser.id || !currentUser.username) redirect("/signin");
 
@@ -104,7 +108,6 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 		getProfileCosmetics(currentUser.id)
 	]);
 	if (!settings) redirect("/signin");
-	const params = await searchParams;
 	const legacyClanSection = params.section === "clan";
 	const requestedClanScope = params.scope === "clan" || legacyClanSection;
 	const cannotAccessRequestedScope = requestedClanScope && !ownedClan;

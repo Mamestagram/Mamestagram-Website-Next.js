@@ -5,6 +5,7 @@ import BeatmapLeaderboard, {
 	type BeatmapLeaderboardSearchParams
 } from "@/components/beatmap/beatmap-leaderboard";
 import { getBeatmap, getBeatmapDifficulties } from "@/database/beatmap";
+import { writeLog } from "@/lib/log";
 import styles from "@s/beatmap.module.css";
 
 type PageParams = { set_id: string, map_id: string };
@@ -30,6 +31,9 @@ export default async function BeatmapPage({ params, searchParams }: Readonly<{
 	searchParams: Promise<BeatmapLeaderboardSearchParams>
 }>) {
 	const [{ set_id, map_id }, query] = await Promise.all([params, searchParams]);
+	const queries = `(mode: ${query.mode}, mods: ${query.mods})`;
+	void writeLog("GET", `/beatmaps/${set_id}/${map_id} ${queries}`);
+
 	const setId = parseId(set_id), mapId = parseId(map_id);
 	if (setId === null || mapId === null) notFound();
 

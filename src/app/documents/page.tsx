@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { Locale } from "@/app/api/documents/route";
 import NameBodyHeader from "@/components/name-body-header";
 import DocumentsContent from "@/components/documents/documents-content";
+import { writeLog } from "@/lib/log";
 
 export const metadata: Metadata = {
 	title: "Documents",
@@ -14,6 +15,7 @@ type DocumentsPageProps = {
 
 export default async function DocumentsPage({ searchParams }: DocumentsPageProps) {
 	const { lang } = await searchParams;
+	void writeLog("GET", `/documents (lang: ${lang})`);
 	const locale: Locale = lang === "ja" ? "ja" : "en";
 
 	return (
