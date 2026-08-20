@@ -1,6 +1,6 @@
 import "server-only";
 import { appendFile, mkdir } from "node:fs/promises";
-import { fetchInternalJson } from "@/lib/fetch-json";
+import { headers } from "next/headers";
 
 const UNKNOWN_IP = "Unknown IP address";
 const PRODUCTION_BUILD_PHASE = "phase-production-build";
@@ -51,14 +51,13 @@ const getDate = () => {
 
 const getIpAddress = async () => {
 	if (isProductionBuild()) return UNKNOWN_IP;
-	if (!process.env.BASE_URL) return UNKNOWN_IP;
 
 	try {
-		const data = await fetchInternalJson<{ ip: string }>("/api/get_client_ip");
-		return data.ip;
+		const requestHeaders = await headers();
+		const forwardedFor = requestHeaders.get("x-forwarded-for")?.split(",").at(0)?.trim();
+		return forwardedFor || requestHeaders.get("x-real-ip")?.trim() || UNKNOWN_IP;
 	}
-	catch (error: unknown) {
-		console.error("Failed to resolve the request IP for logging.", error);
+	catch {
 		return UNKNOWN_IP;
 	}
 };

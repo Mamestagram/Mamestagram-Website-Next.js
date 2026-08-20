@@ -12,6 +12,7 @@ import type { ServerInfo, UserInfo } from "@/components/context/user-provider";
 import { UserProvider } from "@/components/context/user-provider";
 import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
+import { getLoadingScreenEmbedUrl } from "@/lib/loading-screen";
 import { getProfileCosmetics } from "@/lib/profile-cosmetics";
 import { getCurrentUser } from "@/lib/session";
 import "flag-icons/css/flag-icons.min.css";
@@ -88,12 +89,20 @@ export default async function RootLayout({
     baseDomain: process.env.BASE_DOMAIN!,
   };
   const userInfo: UserInfo = await getCurrentUser();
-  const userCosmetics = userInfo.id ? await getProfileCosmetics(userInfo.id) : null;
+  const [userCosmetics, loadingScreenEmbedUrl] = await Promise.all([
+    userInfo.id ? getProfileCosmetics(userInfo.id) : Promise.resolve(null),
+    userInfo.id ? getLoadingScreenEmbedUrl(userInfo.id) : Promise.resolve(null),
+  ]);
 
   return (
     <html className={fontVariables} lang="en">
       <body>
-        <UserProvider serverInfo={serverInfo} userInfo={userInfo} userCosmetics={userCosmetics}>
+        <UserProvider
+          serverInfo={serverInfo}
+          userInfo={userInfo}
+          userCosmetics={userCosmetics}
+          loadingScreenEmbedUrl={loadingScreenEmbedUrl}
+        >
           <Header />
           <main>{children}</main>
           <Footer />
