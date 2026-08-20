@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -96,6 +97,13 @@ export default async function SearchResultsPage({ params, searchParams }: {
 	return (
 		<div className={styles.page}>
 			<section className={styles.hero}>
+				<Image className={styles.hero_image}
+				       src="/images/banner/search.jpg"
+				       alt="Search observatory hero"
+				       fill
+				       sizes="100vw"
+				       priority
+				       draggable={false}/>
 				<div className={styles.hero_glow}></div>
 				<div className={styles.hero_content}>
 					<span className={styles.hero_icon}><FontAwesome prefix="fad" name={meta.icon}/></span>

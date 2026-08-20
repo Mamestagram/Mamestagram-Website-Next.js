@@ -151,18 +151,11 @@ export default function HeaderSearch() {
 	const hasResults = users.length > 0 || clans.length > 0 || beatmaps.length > 0;
 	const hasManyResults = phase === "ready" && visibleResultCount > 6;
 
-	const visitFirstResult = () => {
-		const firstUser = users[0];
-		const firstClan = clans[0];
-		const firstBeatmap = beatmaps[0];
-		if (!firstUser && !firstClan && !firstBeatmap) return;
+	const visitSearchPage = () => {
+		const trimmed = query.trim();
+		if (!trimmed) return;
 		closeSearch();
-		if (firstUser) router.push(`/profile/${firstUser.id}`);
-		else if (firstClan) router.push(`/profile/${firstClan.id}?clan`);
-		else if (firstBeatmap) {
-			const firstDifficulty = firstBeatmap.difficulties.at(0);
-			if (firstDifficulty) router.push(`/beatmaps/${firstBeatmap.setId}/${firstDifficulty.id}`);
-		}
+		router.push(`/search/players?q=${encodeURIComponent(trimmed)}`);
 	};
 
 	const dialog = (
@@ -199,7 +192,7 @@ export default function HeaderSearch() {
 
 				<form className={styles.search_form} onSubmit={(event) => {
 					event.preventDefault();
-					visitFirstResult();
+					visitSearchPage();
 				}}>
 					<FontAwesome prefix="fas" name="magnifying-glass"/>
 					<input ref={inputRef}
@@ -209,7 +202,7 @@ export default function HeaderSearch() {
 					       autoComplete="off"
 					       placeholder="Search players, clans, or beatmaps"
 					       aria-label="Search players, clans, or beatmaps"
-				       onChange={(event) => updateQuery(event.target.value)}/>
+					       onChange={(event) => updateQuery(event.target.value)}/>
 					{phase === "loading" && <FontAwesome className={styles.spinner} prefix="fas" name="spinner"/>}
 					{query && phase !== "loading" &&
 						<button type="button" aria-label="Clear search" onClick={() => {
@@ -252,7 +245,7 @@ export default function HeaderSearch() {
 				</div>
 
 				<div className={styles.hint}>
-					<span><kbd>Enter</kbd> Open first result</span>
+					<span><kbd>Enter</kbd> Open search results</span>
 					<span><kbd>Esc</kbd> Close</span>
 				</div>
 			</section>

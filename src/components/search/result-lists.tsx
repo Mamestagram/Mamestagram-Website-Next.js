@@ -5,7 +5,7 @@ import Link from "next/link";
 import FontAwesome from "@/components/font-awesome";
 import PlayerAvatar from "@/components/player-avatar";
 import { BeatmapStatus } from "@/lib/beatmap-status";
-import { modeAbbreviation, type ModeNum } from "@/lib/mode";
+import { getVanillaMode, modeAbbreviation, type ModeNum } from "@/lib/mode";
 import { Priv } from "@/lib/priv";
 import type { SearchBeatmap, SearchClan, SearchUser } from "@/lib/search";
 import styles from "@s/header-search.module.css";
@@ -169,6 +169,7 @@ export function SearchBeatmapList({ items: beatmaps, onSelect }: ResultListProps
 							     aria-label={`${beatmap.title} difficulties`}>
 								{beatmap.difficulties.map((difficulty) => {
 									const status = beatmapStatusLabels[difficulty.status] ?? "Unknown";
+									const mode = difficulty.mode as ModeNum;
 									return (
 										<Link key={difficulty.id}
 										      className={styles.beatmap_difficulty}
@@ -176,7 +177,12 @@ export function SearchBeatmapList({ items: beatmaps, onSelect }: ResultListProps
 										      title={`${difficulty.version} · ${difficulty.difficulty.toFixed(2)}★ · ${status}`}
 										      onClick={onSelect}>
 											<span>{difficulty.version}</span>
-											<small>{modeAbbreviation(difficulty.mode as ModeNum)}</small>
+											<span className={styles.beatmap_mode}
+											      role="img"
+											      aria-label={modeAbbreviation(mode)}
+											      title={modeAbbreviation(mode)}>
+												<i className={`mode-icon mode-${getVanillaMode(mode)}`} aria-hidden="true"></i>
+											</span>
 											<strong>{difficulty.difficulty.toFixed(2)}★</strong>
 										</Link>
 									);

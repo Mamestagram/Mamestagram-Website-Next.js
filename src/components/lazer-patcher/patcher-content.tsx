@@ -28,7 +28,7 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 		<div className={styles.page} lang={locale}>
 			<PageHero
 				description={text.heroDescription}
-				imageSrc="/images/banner/documents.jpg"
+				imageSrc="/images/banner/lazer.jpg"
 				title="Lazer Patcher"
 				variant="patcher"
 			/>

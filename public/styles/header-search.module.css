@@ -477,22 +477,21 @@
 }
 
 .beatmap_difficulties {
-	display: flex;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr));
 	min-width: 0;
 	margin-top: 6px;
 	padding-top: 6px;
-	flex-wrap: wrap;
 	gap: 4px;
 	border-top: 1px solid rgba(255, 255, 255, .065);
 }
 
 .beatmap_difficulty {
 	display: grid;
-	min-width: min(150px, 100%);
+	min-width: 0;
 	padding: 6px 7px;
-	grid-template-columns: minmax(0, 1fr) auto auto;
+	grid-template-columns: minmax(0, 1fr) 22px auto;
 	align-items: center;
-	flex: 1 1 150px;
 	gap: 6px;
 	color: #c9cad3;
 	background: rgba(0, 0, 0, .14);
@@ -516,10 +515,16 @@
 		white-space: nowrap;
 	}
 
-	& small {
+	& .beatmap_mode {
+		display: grid;
+		width: 22px;
+		height: 22px;
+		place-items: center;
+		overflow: visible;
 		color: #858897;
-		font-size: .53rem;
-		font-weight: 750;
+		font-size: .9rem;
+
+		& i { line-height: 1; }
 	}
 
 	& strong {
@@ -812,12 +817,30 @@
 	.search_form input { font-size: 16px; }
 	.results { min-height: 210px; padding-inline: 16px; }
 	.message { min-height: 190px; }
+	.result_group_heading > span { font-size: .84rem; }
+	.result_group_heading > .result_group_actions > small { font-size: .68rem; }
+	.result_group_heading > .result_group_actions > a {
+		padding: 6px 9px;
+		font-size: .76rem;
+	}
+	.result_group_heading > .result_group_actions > a i { font-size: .68rem; }
 	.result_list { grid-template-columns: minmax(0, 1fr); }
 	.beatmap_primary { grid-template-columns: 68px minmax(0, 1fr) max-content auto; }
 	.beatmap_cover { width: 68px; height: 52px; }
 	.skeleton_list { grid-template-columns: minmax(0, 1fr); }
 	.skeleton_list li:nth-child(n + 4) { display: none; }
 	.result_list a { grid-template-columns: 44px minmax(0, 1fr) auto auto; gap: 5px; }
+	.identity strong { font-size: 1.02rem; }
+	.identity small { font-size: .78rem; }
+	.meta small { font-size: .72rem; }
+	.open_icon { font-size: .88rem; }
+	.beatmap_identity strong { font-size: .94rem; }
+	.beatmap_identity small { font-size: .72rem; }
+	.beatmap_identity > span { font-size: .7rem; }
+	.beatmap_meta small { font-size: .65rem; }
+	.beatmap_difficulty span { font-size: .72rem; }
+	.beatmap_difficulty .beatmap_mode { font-size: 1rem; }
+	.beatmap_difficulty strong { font-size: .67rem; }
 	.skeleton_list li { grid-template-columns: 44px minmax(0, 1fr) auto; gap: 10px; }
 	.avatar { width: 44px; height: 44px; }
 	.skeleton_avatar { width: 44px; height: 44px; }
