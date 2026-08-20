@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import CountryFlag from "@/components/country-flag";
 import FontAwesome from "@/components/font-awesome";
 import ModeIcon from "@/components/mode-icon";
@@ -323,6 +324,9 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 		? scoreModeOptions.filter(({ mode }) => [ModeNum.std, ModeNum.rxstd, ModeNum.apstd].includes(mode))
 		: scoreModeOptions;
 	const requestedMode = Array.isArray(searchParams.mode) ? searchParams.mode[0] : searchParams.mode;
+	if (map.mode !== ModeNum.std
+		&& requestedMode
+		&& !scoreModeOptions.some(({ route }) => route === requestedMode)) notFound();
 	const selectedScoreMode = scoreModeOptions.find(({ route }) => route === requestedMode) ?? scoreModeOptions[0];
 	const selectedBaseScoreMode = getBaseScoreMode(selectedScoreMode.mode);
 	const modFilterOptions = getModFilterOptions(selectedBaseScoreMode);
