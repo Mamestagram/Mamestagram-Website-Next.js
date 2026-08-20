@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { removeClanMember, updateClanUserpageContent, updatePreferredMode, updateUserpageContent } from "@/database/profile";
 import { getAboutMeValidationMessage, normalizeAboutMe } from "@/lib/about-me";
+import { writeError } from "@/lib/log";
 import { getCurrentUser } from "@/lib/session";
 import { bbCodeParser } from "@/lib/bb-code/bb-tags";
 import { ModeNum, OsuMode } from "@/lib/mode";
@@ -64,7 +65,8 @@ export async function setMainMode(profileId: number, mode: OsuMode, isClan: bool
 		revalidatePath(`/profile/${profileId}/${mode}`);
 		return { success: true, message: "Main mode updated." };
 	}
-	catch {
+	catch (error: unknown) {
+		void writeError(error);
 		return { success: false, message: "The main mode could not be updated." };
 	}
 }
@@ -87,7 +89,8 @@ export async function kickClanMember(clanId: number, memberId: number, mode: Osu
 		revalidatePath(`/profile/${clanId}/${mode}`);
 		return { success: true, message: "Member kicked." };
 	}
-	catch {
+	catch (error: unknown) {
+		void writeError(error);
 		return { success: false, message: "This member could not be removed." };
 	}
 }
@@ -127,7 +130,8 @@ export async function updateAboutMe(formData: FormData): Promise<AboutMeUpdateRe
 			html: bbCodeParser.parseToHtml(content)
 		};
 	}
-	catch {
+	catch (error: unknown) {
+		void writeError(error);
 		return { success: false, message: "About Me could not be updated. Please try again later." };
 	}
 }

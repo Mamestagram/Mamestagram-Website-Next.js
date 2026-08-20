@@ -3,9 +3,9 @@ import { createHash } from "crypto";
 import type { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { executeQuery, withTransaction } from "./connection";
 import {
-	createGachaStatsQuery,
 	createStatsQuery,
 	createUserQuery,
+	deleteOrphanedStatsQuery,
 	registrationConflictQuery,
 	userByIdQuery,
 	userByLoginQuery
@@ -98,11 +98,11 @@ export const createUser = async ({ username, email, password, country }: {
 		const id = userResult.insertId;
 		const statsArgs = modes.flatMap((mode) => [id, mode]);
 
+		await connection.query(deleteOrphanedStatsQuery, [id]);
 		await connection.query(
 			createStatsQuery(modes.length),
 			statsArgs
 		);
-		await connection.query(createGachaStatsQuery, [id]);
 
 		return {
 			id,

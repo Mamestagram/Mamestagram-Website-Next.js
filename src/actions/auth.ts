@@ -1,9 +1,11 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createUser, findRegistrationConflict, getUserByLogin, verifyPassword } from "@/database/auth";
-import { createSession, destroySession } from "@/lib/session";
+import { writeError } from "@/lib/log";
+import { createRegistrationSuccessFlash, createSession, destroySession } from "@/lib/session";
 
 export type AuthField = "username" | "email" | "password" | "confirmPassword" | "login" | "recaptcha";
 export type AuthState = {
@@ -31,7 +33,8 @@ const verifyRecaptcha = async (token: string) => {
 		const result = await response.json() as { success?: boolean, score?: number };
 		return result.success === true && (result.score === undefined || result.score >= 0.5);
 	}
-	catch {
+	catch (error: unknown) {
+		void writeError(error);
 		return false;
 	}
 }
@@ -77,11 +80,14 @@ export const register = async (_prevState: AuthState, formData: FormData): Promi
 
 		const user = await createUser({ username, email, password, country: await getCountry() });
 		await createSession(user);
+		await createRegistrationSuccessFlash();
 	}
-	catch {
+	catch (error: unknown) {
+		await writeError(error);
 		return { errors: {}, message: "Registration could not be completed. Please try again later." };
 	}
 
+	revalidatePath("/", "layout");
 	redirect("/");
 }
 
@@ -100,14 +106,17 @@ export const signin = async (_prevState: AuthState, formData: FormData): Promise
 			return { errors: {}, message: "The username/email address or password is incorrect." };
 		await createSession(user);
 	}
-	catch {
+	catch (error: unknown) {
+		await writeError(error);
 		return { errors: {}, message: "Sign in is temporarily unavailable. Please try again later." };
 	}
 
+	revalidatePath("/", "layout");
 	redirect("/?signin=success");
 }
 
 export const signout = async () => {
 	await destroySession();
+	revalidatePath("/", "layout");
 	redirect("/");
 }

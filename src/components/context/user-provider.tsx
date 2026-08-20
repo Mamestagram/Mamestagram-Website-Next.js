@@ -21,15 +21,17 @@ type UserContextType = {
 	datetime: string,
 	serverInfo: ServerInfo,
 	userInfo: UserInfo,
-	userCosmetics: ProfileCosmetics | null
+	userCosmetics: ProfileCosmetics | null,
+	loadingScreenEmbedUrl: string | null
 };
 
 const UserContext = createContext<UserContextType | null>(null);
 
-export const UserProvider = ({ serverInfo, userInfo, userCosmetics, children }: Readonly<{
+export const UserProvider = ({ serverInfo, userInfo, userCosmetics, loadingScreenEmbedUrl, children }: Readonly<{
 	serverInfo: ServerInfo,
 	userInfo: UserInfo,
 	userCosmetics: ProfileCosmetics | null,
+	loadingScreenEmbedUrl: string | null,
 	children: ReactNode
 }>) => {
 	const datetime = new Date().toLocaleString("ja-JP", {
@@ -41,7 +43,7 @@ export const UserProvider = ({ serverInfo, userInfo, userCosmetics, children }: 
 		second: "2-digit"
 	}).replace(/[\/\s:]/g, "");
 	return (
-		<UserContext.Provider value={{ datetime, serverInfo, userInfo, userCosmetics }}>
+		<UserContext.Provider value={{ datetime, serverInfo, userInfo, userCosmetics, loadingScreenEmbedUrl }}>
 			{children}
 		</UserContext.Provider>
 	);

@@ -1,4 +1,5 @@
 import "server-only";
+import { writeError } from "@/lib/log";
 
 const MINIMUM_BACKGROUND_BYTES = 512;
 
@@ -53,7 +54,8 @@ const getProfileVisualVersion = async (imageUrl: string, minimumBytes: number) =
 			contentLength ??
 			Date.now().toString();
 	}
-	catch {
+	catch (error: unknown) {
+		void writeError(error);
 		return null;
 	}
 };

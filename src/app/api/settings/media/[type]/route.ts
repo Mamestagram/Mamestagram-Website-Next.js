@@ -67,8 +67,10 @@ const getRequestContext = async (
 };
 
 const mediaErrorResponse = (error: unknown) => {
-	if (error instanceof ProfileMediaError)
+	if (error instanceof ProfileMediaError) {
+		if (error.status >= 500) void writeError(error);
 		return NextResponse.json<MutationResponse>({ success: false, message: error.message }, { status: error.status });
+	}
 	void writeError(error);
 	return NextResponse.json<MutationResponse>(
 		{ success: false, message: "The profile image could not be updated." },

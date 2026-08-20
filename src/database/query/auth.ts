@@ -36,9 +36,9 @@ export const createUserQuery = `
 	VALUES (?, ?, ?, ?, ?, ?, ?)
 `;
 
+export const deleteOrphanedStatsQuery = "DELETE FROM stats WHERE id = ?";
+
 export const createStatsQuery = (modeCount: number) => {
 	const placeholders = Array.from({ length: modeCount }, () => "(?, ?)").join(", ");
 	return `INSERT INTO stats (id, mode) VALUES ${placeholders}`;
 };
-
-export const createGachaStatsQuery = "INSERT INTO gacha_stats (id) VALUES (?)";

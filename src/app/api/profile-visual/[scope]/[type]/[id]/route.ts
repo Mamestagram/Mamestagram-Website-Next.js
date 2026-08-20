@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { writeError } from "@/lib/log";
 
 type ProfileVisualRouteContext = {
 	params: Promise<{
@@ -54,7 +55,8 @@ export const GET = async (
 		}
 		return new NextResponse(response.body, { headers });
 	}
-	catch {
+	catch (error: unknown) {
+		void writeError(error);
 		return new NextResponse(null, { status: 502 });
 	}
 };

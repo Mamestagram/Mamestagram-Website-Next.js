@@ -1,5 +1,6 @@
 import "server-only";
 import { getRedisClient } from "@/database/redis";
+import { writeError } from "@/lib/log";
 import { ModeNum } from "@/lib/mode";
 
 const RANK_HISTORY_DAYS = 90;
@@ -76,6 +77,7 @@ export async function getRankHistory(
 
     return { points, hasData: true };
   } catch (error: unknown) {
+	void writeError(error);
     const reason =
       error instanceof Error
         ? `${error.name}: ${error.message}`

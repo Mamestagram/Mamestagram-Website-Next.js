@@ -1,5 +1,6 @@
 import "server-only";
 import { createClient } from "redis";
+import { writeError } from "@/lib/log";
 
 const createRedisConnection = () => {
   const port = Number(process.env.REDIS_PORT);
@@ -16,8 +17,8 @@ const createRedisConnection = () => {
     database: Number.isInteger(database) && database >= 0 ? database : 0,
   });
 
-  redis.on("error", () => {
-    // Rank history is optional UI data. Callers handle connection failures.
+  redis.on("error", (error: unknown) => {
+	void writeError(error);
   });
 
   return redis;

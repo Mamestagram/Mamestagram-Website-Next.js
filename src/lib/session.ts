@@ -1,11 +1,25 @@
 import { createHmac, timingSafeEqual } from "crypto";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import type { UserInfo } from "@/components/context/user-provider";
 import type { AuthUser } from "@/database/auth";
 import { getUserById } from "@/database/auth";
+import { writeError } from "@/lib/log";
 
 const COOKIE_NAME = "mamestagram-session";
+const REGISTRATION_SUCCESS_COOKIE_NAME = "mamestagram-registration-success";
 const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 30;
+
+const isLocalHost = (host: string | null) => {
+	const normalizedHost = host?.trim().toLowerCase() ?? "";
+	return normalizedHost === "localhost" || normalizedHost.startsWith("localhost:")
+		|| normalizedHost === "127.0.0.1" || normalizedHost.startsWith("127.0.0.1:")
+		|| normalizedHost === "[::1]" || normalizedHost.startsWith("[::1]:");
+};
+
+const shouldUseSecureCookie = async () => {
+	if (process.env.NODE_ENV !== "production") return false;
+	return !isLocalHost((await headers()).get("host"));
+};
 
 const sign = (payload: string, passwordHash: string) =>
 	createHmac("sha256", passwordHash).update(payload).digest("base64url");
@@ -31,7 +45,7 @@ export const createSession = async (user: AuthUser) => {
 	const cookieStore = await cookies();
 	cookieStore.set(COOKIE_NAME, serializeSession(user), {
 		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
+		secure: await shouldUseSecureCookie(),
 		sameSite: "lax",
 		path: "/",
 		maxAge: SESSION_DURATION_SECONDS
@@ -42,12 +56,26 @@ export const destroySession = async () => {
 	const cookieStore = await cookies();
 	cookieStore.set(COOKIE_NAME, "", {
 		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
+		secure: await shouldUseSecureCookie(),
 		sameSite: "lax",
 		path: "/",
 		maxAge: 0
 	});
 }
+
+export const createRegistrationSuccessFlash = async () => {
+	const cookieStore = await cookies();
+	cookieStore.set(REGISTRATION_SUCCESS_COOKIE_NAME, "1", {
+		httpOnly: false,
+		secure: await shouldUseSecureCookie(),
+		sameSite: "lax",
+		path: "/",
+		maxAge: 60
+	});
+}
+
+export const hasRegistrationSuccessFlash = async () =>
+	(await cookies()).get(REGISTRATION_SUCCESS_COOKIE_NAME)?.value === "1";
 
 export const getCurrentUser = async (): Promise<UserInfo> => {
 	try {
@@ -74,7 +102,8 @@ export const getCurrentUser = async (): Promise<UserInfo> => {
 			isLoggedIn: true
 		};
 	}
-	catch {
+	catch (error: unknown) {
+		void writeError(error);
 		return { isLoggedIn: false };
 	}
 }
