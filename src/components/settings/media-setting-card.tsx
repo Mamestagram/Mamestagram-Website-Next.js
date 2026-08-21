@@ -225,6 +225,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 						       unoptimized
 						       draggable={false}
 						       sizes={type === "avatar" ? "180px" : "(max-width: 760px) 100vw, 520px"}
+						       loading={type === "banner" ? "eager" : undefined}
 						       onError={() => setIsImageUnavailable(true)}/>
 						{previewUrl && <span className={styles.media_preview_badge}>
 							<FontAwesome prefix="fas" name="eye"/>

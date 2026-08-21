@@ -8,6 +8,7 @@ export default function PlayerAvatar({
 	userId,
 	name,
 	baseDomain,
+	imageUrl,
 	cosmetics = null,
 	className,
 	sizes,
@@ -17,6 +18,7 @@ export default function PlayerAvatar({
 	userId: number,
 	name: string,
 	baseDomain: string,
+	imageUrl?: string,
 	cosmetics?: ProfileCosmetics | null,
 	className?: string,
 	sizes: string,
@@ -26,7 +28,7 @@ export default function PlayerAvatar({
 	return (
 		<span className={classNames(styles.container, className)} data-image-size={imageSize}>
 			<span className={styles.avatar_surface}>
-				<Image src={`https://a.${baseDomain}/${userId}`}
+				<Image src={imageUrl ?? `https://a.${baseDomain}/${userId}`}
 				       className={styles.avatar}
 				       alt={`${name}'s avatar`}
 				       width={256}

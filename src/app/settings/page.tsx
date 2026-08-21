@@ -10,7 +10,7 @@ import ClanSettingsForm from "@/components/settings/clan-settings-form";
 import MediaSettingCard from "@/components/settings/media-setting-card";
 import ProfileSettingsForm from "@/components/settings/profile-settings-form";
 import { getOwnedClanSettings, getUserSettings } from "@/database/settings";
-import { resolveProfileBackgroundUrl, resolveProfileBannerUrl } from "@/lib/profile-banner";
+import { resolveProfileAvatarUrl, resolveProfileBackgroundUrl, resolveProfileBannerUrl } from "@/lib/profile-banner";
 import { profileMediaExists } from "@/lib/profile-media";
 import { getProfileCosmetics } from "@/lib/profile-cosmetics";
 import { writeLog } from "@/lib/log";
@@ -127,14 +127,14 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 			])
 			: Promise.resolve([false, false, false] as const)
 	]);
-	const [profileBannerUrl, profileBackgroundUrl, clanBannerUrl, clanBackgroundUrl] = await Promise.all([
+	const [avatarUrl, profileBannerUrl, profileBackgroundUrl, clanAvatarUrl, clanBannerUrl, clanBackgroundUrl] = await Promise.all([
+		resolveProfileAvatarUrl(currentUser.id, false, baseDomain),
 		resolveProfileBannerUrl(currentUser.id, false, baseDomain),
 		resolveProfileBackgroundUrl(currentUser.id, false, baseDomain),
+		ownedClan ? resolveProfileAvatarUrl(ownedClan.id, true, baseDomain) : Promise.resolve(""),
 		ownedClan ? resolveProfileBannerUrl(ownedClan.id, true, baseDomain) : Promise.resolve(null),
 		ownedClan ? resolveProfileBackgroundUrl(ownedClan.id, true, baseDomain) : Promise.resolve(null)
 	]);
-	const avatarUrl = `https://a.${baseDomain}/${currentUser.id}`;
-	const clanAvatarUrl = ownedClan ? `https://clan-a.${baseDomain}/${ownedClan.id}` : "";
 	const activeClan = activeScope === "clan" ? ownedClan : null;
 	const isClanScope = activeClan !== null;
 	const heroAvatarUrl = isClanScope ? clanAvatarUrl : avatarUrl;
@@ -158,6 +158,7 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 							: <PlayerAvatar userId={currentUser.id}
 							                name={settings.username}
 							                baseDomain={baseDomain}
+							                imageUrl={avatarUrl}
 							                cosmetics={cosmetics}
 							                className={styles.hero_avatar}
 							                sizes="88px"

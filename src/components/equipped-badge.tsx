@@ -11,12 +11,11 @@ export default function EquippedBadge({ badge, sizes, priority = false }: Readon
 
 	return (
 		<span className={styles.badge} data-avatar-badge={badge.id} aria-hidden="true">
-			<Image src={badge.iconUrl}
+			<Image src={`/api/profile-visual/profile/badge/${badge.id}`}
 			       className={styles.image}
-			       alt={badge.name}
+			       alt=""
 			       fill
 			       sizes={sizes}
-			       crossOrigin="anonymous"
 			       draggable={false}
 			       priority={priority}/>
 		</span>

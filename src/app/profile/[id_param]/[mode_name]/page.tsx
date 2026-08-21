@@ -14,7 +14,7 @@ import {
 } from "@/database/profile";
 import { getRankHistory } from "@/database/rank-history";
 import { writeLog } from "@/lib/log";
-import { resolveProfileBackgroundUrl, resolveProfileBannerUrl } from "@/lib/profile-banner";
+import { resolveProfileAvatarUrl, resolveProfileBackgroundUrl, resolveProfileBannerUrl } from "@/lib/profile-banner";
 import { getCurrentUser } from "@/lib/session";
 import { ModeNum, OsuMode } from "@/lib/mode";
 import { getProfileCosmetics } from "@/lib/profile-cosmetics";
@@ -125,8 +125,9 @@ export default async function Profile({ params, searchParams }: {
 
 			const baseDomain = process.env.BASE_DOMAIN;
 			if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
-			const [rankHistory, bannerUrl, backgroundUrl, cosmetics, isRival] = await Promise.all([
+			const [rankHistory, avatarUrl, bannerUrl, backgroundUrl, cosmetics, isRival] = await Promise.all([
 				!isClan ? getRankHistory(id, mode) : null,
+				resolveProfileAvatarUrl(id, isClan, baseDomain),
 				resolveProfileBannerUrl(id, isClan, baseDomain),
 				resolveProfileBackgroundUrl(id, isClan, baseDomain),
 				!isClan ? getProfileCosmetics(id) : null,
@@ -164,6 +165,7 @@ export default async function Profile({ params, searchParams }: {
 							          isRival={isRival}
 							          followsYou={followsCurrentUser}
 							          rankHistory={rankHistory}
+							          avatarUrl={avatarUrl}
 							          cosmetics={cosmetics}>
 								{isClan &&
 									<ClanMembers clanId={id}

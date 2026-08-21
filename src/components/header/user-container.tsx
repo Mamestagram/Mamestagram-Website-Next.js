@@ -10,7 +10,7 @@ import PlayerAvatar from "@/components/player-avatar";
 import styles from "@s/user-container.module.css";
 
 export default function UserContainer() {
-	const { serverInfo, userInfo, userCosmetics } = useUserContext();
+	const { serverInfo, userInfo, userAvatarUrl, userCosmetics } = useUserContext();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isSignOutConfirmationOpen, setIsSignOutConfirmationOpen] = useState(false);
 	const [, startSignOutTransition] = useTransition();
@@ -63,6 +63,7 @@ export default function UserContainer() {
 					<PlayerAvatar userId={userInfo.id ?? 0}
 					              name={userInfo.username ?? "User"}
 					              baseDomain={serverInfo.baseDomain}
+					              imageUrl={userAvatarUrl ?? undefined}
 					              cosmetics={userCosmetics}
 					              className={styles.account_avatar}
 					              sizes="44px"

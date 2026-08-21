@@ -1,11 +1,12 @@
 import bcrypt from "bcrypt";
 import { createHash } from "crypto";
-import type { ResultSetHeader, RowDataPacket } from "mysql2/promise";
+import type { RowDataPacket } from "mysql2/promise";
 import { executeQuery, withTransaction } from "./connection";
 import {
 	createStatsQuery,
 	createUserQuery,
 	deleteOrphanedStatsQuery,
+	latestUserIdForUpdateQuery,
 	registrationConflictQuery,
 	userByIdQuery,
 	userByLoginQuery
@@ -31,6 +32,10 @@ type AuthUserRow = RowDataPacket & {
 	name: string,
 	country: string,
 	pw_bcrypt: string
+};
+
+type LatestUserIdRow = RowDataPacket & {
+	id: number
 };
 
 export const makeSafeName = (username: string) => username.trim().toLowerCase().replaceAll(" ", "_");
@@ -91,11 +96,15 @@ export const createUser = async ({ username, email, password, country }: {
 	const modes = [0, 1, 2, 3, 4, 5, 6, 8] as const;
 
 	return await withTransaction(async (connection) => {
-		const [userResult] = await connection.query<ResultSetHeader>(
+		const [latestUsers] = await connection.query<LatestUserIdRow[]>(latestUserIdForUpdateQuery);
+		const id = (latestUsers.at(0)?.id ?? 0) + 1;
+		if (!Number.isSafeInteger(id) || id < 1)
+			throw new Error("A valid user ID could not be assigned.");
+
+		await connection.query(
 			createUserQuery,
-			[username, safeName, email.toLowerCase(), passwordHash, country, now, now]
+			[id, username, safeName, email.toLowerCase(), passwordHash, country, now, now]
 		);
-		const id = userResult.insertId;
 		const statsArgs = modes.flatMap((mode) => [id, mode]);
 
 		await connection.query(deleteOrphanedStatsQuery, [id]);

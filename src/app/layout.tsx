@@ -14,6 +14,7 @@ import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
 import RenderingPerformanceMode from "@/components/rendering-performance-mode";
 import { getLoadingScreenEmbedUrl } from "@/lib/loading-screen";
+import { resolveProfileAvatarUrl } from "@/lib/profile-banner";
 import { getProfileCosmetics } from "@/lib/profile-cosmetics";
 import { getCurrentUser } from "@/lib/session";
 import "flag-icons/css/flag-icons.min.css";
@@ -91,7 +92,10 @@ export default async function RootLayout({
     baseDomain: process.env.BASE_DOMAIN!,
   };
   const userInfo: UserInfo = await getCurrentUser();
-  const [userCosmetics, loadingScreenEmbedUrl] = await Promise.all([
+  const [userAvatarUrl, userCosmetics, loadingScreenEmbedUrl] = await Promise.all([
+    userInfo.id
+      ? resolveProfileAvatarUrl(userInfo.id, false, serverInfo.baseDomain)
+      : Promise.resolve(null),
     userInfo.id ? getProfileCosmetics(userInfo.id) : Promise.resolve(null),
     userInfo.id ? getLoadingScreenEmbedUrl(userInfo.id) : Promise.resolve(null),
   ]);
@@ -103,6 +107,7 @@ export default async function RootLayout({
         <UserProvider
           serverInfo={serverInfo}
           userInfo={userInfo}
+          userAvatarUrl={userAvatarUrl}
           userCosmetics={userCosmetics}
           loadingScreenEmbedUrl={loadingScreenEmbedUrl}
         >

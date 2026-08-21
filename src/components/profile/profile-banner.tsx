@@ -8,10 +8,10 @@ export default function ProfileBanner({ imageUrl }: Readonly<{ imageUrl: string 
 				? <Image className={styles.profile_cover_image}
 				         src={imageUrl}
 				         alt="Profile banner"
-				         fill
-				         sizes="100vw"
-				         draggable={false}
-				         priority/>
+					         fill
+					         sizes="100vw"
+					         draggable={false}
+					         loading="eager"/>
 				: <div className={styles.profile_cover_fallback}/>}
 			<div className={styles.profile_cover_overlay}/>
 		</div>

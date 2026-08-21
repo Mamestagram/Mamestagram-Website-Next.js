@@ -15,6 +15,9 @@ const getUpstreamUrl = (
 	type: string,
 	baseDomain: string
 ) => {
+	if (scope === "profile" && type === "badge")
+		return `https://market.${baseDomain}/media/badges/${id}`;
+
 	const isClan = scope === "clan";
 	const subdomain = type === "cover"
 		? isClan ? "clan-banner" : "banner"
@@ -22,15 +25,18 @@ const getUpstreamUrl = (
 	return `https://${subdomain}.${baseDomain}/${id}`;
 };
 
+const isSupportedVisual = (scope: string, type: string) =>
+	(scope === "profile" && type === "badge")
+	|| ((scope === "profile" || scope === "clan")
+		&& (type === "cover" || type === "background"));
+
 export const GET = async (
 	_request: Request,
 	context: ProfileVisualRouteContext
 ) => {
 	const { id: idParam, scope, type } = await context.params;
 	const id = Number(idParam);
-	if (!Number.isSafeInteger(id) || id <= 0 ||
-		(scope !== "profile" && scope !== "clan") ||
-		(type !== "cover" && type !== "background"))
+	if (!Number.isSafeInteger(id) || id <= 0 || !isSupportedVisual(scope, type))
 		return new NextResponse(null, { status: 404 });
 
 	const baseDomain = process.env.BASE_DOMAIN;

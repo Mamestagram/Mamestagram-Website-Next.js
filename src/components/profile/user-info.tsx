@@ -106,7 +106,7 @@ function formatRelativeTime(date: Date) {
 	return relativeTime.format(-Math.floor(elapsedSeconds / (365 * 24 * 60 * 60)), "year");
 }
 
-export default function UserInfo({ id, info, mode, isClan, isDans, canManageProfile, isRival, followsYou, rankHistory, cosmetics, children }: {
+export default function UserInfo({ id, info, mode, isClan, isDans, canManageProfile, isRival, followsYou, rankHistory, avatarUrl, cosmetics, children }: {
 	id: number,
 	info: Profile,
 	mode: OsuMode,
@@ -116,6 +116,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 	isRival: boolean,
 	followsYou: boolean,
 	rankHistory: RankHistory | null,
+	avatarUrl: string,
 	cosmetics: ProfileCosmetics | null,
 	children?: ReactNode
 }) {
@@ -159,7 +160,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 			<div className={styles.top}>
 				{isClan
 					? <span className={classNames(styles.avatar, styles.clan_avatar)}>
-						<Image src={`https://clan-a.${baseDomain}/${id}`}
+						<Image src={avatarUrl}
 						       alt={`${info.name} clan avatar`}
 						       fill
 						       sizes="112px"
@@ -169,6 +170,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 					: <PlayerAvatar userId={id}
 					                name={info.name}
 					                baseDomain={baseDomain}
+					                imageUrl={avatarUrl}
 					                cosmetics={cosmetics}
 					                className={styles.avatar}
 					                sizes="(max-width: 768px) 112px, 112px"

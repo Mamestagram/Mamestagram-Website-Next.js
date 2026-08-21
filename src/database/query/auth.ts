@@ -31,9 +31,17 @@ export const registrationConflictQuery = `
 	LIMIT 1
 `;
 
+export const latestUserIdForUpdateQuery = `
+	SELECT id
+		FROM users
+	ORDER BY id DESC
+	LIMIT 1
+	FOR UPDATE
+`;
+
 export const createUserQuery = `
-	INSERT INTO users (name, safe_name, email, pw_bcrypt, country, creation_time, latest_activity)
-	VALUES (?, ?, ?, ?, ?, ?, ?)
+	INSERT INTO users (id, name, safe_name, email, pw_bcrypt, country, creation_time, latest_activity)
+	VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `;
 
 export const deleteOrphanedStatsQuery = "DELETE FROM stats WHERE id = ?";

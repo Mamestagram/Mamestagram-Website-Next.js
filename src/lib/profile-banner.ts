@@ -1,9 +1,11 @@
 import "server-only";
+import { cache } from "react";
 import { writeError } from "@/lib/log";
 
 const MINIMUM_BACKGROUND_BYTES = 512;
 
-type ProfileVisualType = "banner" | "background";
+type ProfileVisualType = "avatar" | "banner" | "background";
+type ProxiedProfileVisualType = Exclude<ProfileVisualType, "avatar">;
 
 const getProfileVisualUrl = (
 	type: ProfileVisualType,
@@ -11,14 +13,16 @@ const getProfileVisualUrl = (
 	isClan: boolean,
 	baseDomain: string
 ) => {
-	const subdomain = type === "banner"
+	const subdomain = type === "avatar"
+		? isClan ? "clan-a" : "a"
+		: type === "banner"
 		? isClan ? "clan-banner" : "banner"
 		: isClan ? "clan-bg" : "bg";
 	return `https://${subdomain}.${baseDomain}/${id}`;
 };
 
 const getProfileVisualProxyUrl = (
-	type: ProfileVisualType,
+	type: ProxiedProfileVisualType,
 	id: number,
 	isClan: boolean,
 	version: string
@@ -31,6 +35,12 @@ const getProfileVisualProxyUrl = (
 	);
 	proxyUrl.searchParams.set("v", version);
 	return `${proxyUrl.pathname}${proxyUrl.search}`;
+};
+
+const getVersionedImageUrl = (imageUrl: string, version: string) => {
+	const url = new URL(imageUrl);
+	url.searchParams.set("v", version);
+	return url.toString();
 };
 
 const getProfileVisualVersion = async (imageUrl: string, minimumBytes: number) => {
@@ -61,7 +71,7 @@ const getProfileVisualVersion = async (imageUrl: string, minimumBytes: number) =
 };
 
 const resolveProfileVisualUrl = async (
-	type: ProfileVisualType,
+	type: ProxiedProfileVisualType,
 	id: number,
 	isClan: boolean,
 	baseDomain: string,
@@ -78,3 +88,9 @@ export const resolveProfileBannerUrl = (id: number, isClan: boolean, baseDomain:
 
 export const resolveProfileBackgroundUrl = (id: number, isClan: boolean, baseDomain: string) =>
 	resolveProfileVisualUrl("background", id, isClan, baseDomain, MINIMUM_BACKGROUND_BYTES);
+
+export const resolveProfileAvatarUrl = cache(async (id: number, isClan: boolean, baseDomain: string) => {
+	const imageUrl = getProfileVisualUrl("avatar", id, isClan, baseDomain);
+	const version = await getProfileVisualVersion(imageUrl, 0);
+	return version === null ? imageUrl : getVersionedImageUrl(imageUrl, version);
+});
