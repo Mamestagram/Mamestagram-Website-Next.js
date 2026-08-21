@@ -6,7 +6,6 @@ import FontAwesome from "@/components/font-awesome";
 import NameBodyHeader from "@/components/name-body-header";
 import PlayerAvatar from "@/components/player-avatar";
 import AboutMeSettingsEditor from "@/components/settings/about-me-settings-editor";
-import BadgeSettingsForm from "@/components/settings/badge-settings-form";
 import ClanSettingsForm from "@/components/settings/clan-settings-form";
 import MediaSettingCard from "@/components/settings/media-setting-card";
 import ProfileSettingsForm from "@/components/settings/profile-settings-form";
@@ -24,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 type SettingsScope = "profile" | "clan";
-type SettingsSection = "rename" | "images" | "me" | "badge";
+type SettingsSection = "rename" | "images" | "me";
 type SectionMeta = {
 	eyebrow: string,
 	title: string,
@@ -50,16 +49,10 @@ const profileSectionMeta: Record<SettingsSection, SectionMeta> = {
 		title: "Me!",
 		description: "Write and preview the BBCode description shown on your profile.",
 		icon: "id-badge"
-	},
-	badge: {
-		eyebrow: "COLLECTION",
-		title: "Showcase badge",
-		description: "Choose one of your unlocked badges to display over your avatar.",
-		icon: "badge"
 	}
 };
 
-const clanSectionMeta: Record<Exclude<SettingsSection, "badge">, SectionMeta> = {
+const clanSectionMeta: Record<SettingsSection, SectionMeta> = {
 	rename: {
 		eyebrow: "CLAN OWNER",
 		title: "Rename clan",
@@ -81,7 +74,7 @@ const clanSectionMeta: Record<Exclude<SettingsSection, "badge">, SectionMeta> = 
 };
 
 const isSettingsSection = (value: unknown): value is SettingsSection =>
-	value === "rename" || value === "images" || value === "me" || value === "badge";
+	value === "rename" || value === "images" || value === "me";
 
 const normalizeSettingsSection = (value: unknown): SettingsSection => {
 	if (value === "avatar" || value === "banner" || value === "background") return "images";
@@ -89,7 +82,7 @@ const normalizeSettingsSection = (value: unknown): SettingsSection => {
 };
 
 const getSectionMeta = (scope: SettingsScope, section: SettingsSection): SectionMeta => {
-	if (scope === "clan") return clanSectionMeta[section === "badge" ? "rename" : section];
+	if (scope === "clan") return clanSectionMeta[section];
 	return profileSectionMeta[section];
 };
 
@@ -113,9 +106,7 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 	const cannotAccessRequestedScope = requestedClanScope && !ownedClan;
 	const activeScope: SettingsScope = requestedClanScope && ownedClan ? "clan" : "profile";
 	const validSection = legacyClanSection ? "rename" : normalizeSettingsSection(params.section);
-	const cannotAccessRequestedSection =
-		validSection === "badge" && (activeScope === "clan" || !settings.canManageBadges);
-	const activeSection: SettingsSection = cannotAccessRequestedScope || cannotAccessRequestedSection
+	const activeSection: SettingsSection = cannotAccessRequestedScope
 		? "rename"
 		: validSection;
 	const activeMeta = getSectionMeta(activeScope, activeSection);
@@ -237,14 +228,6 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 								<FontAwesome prefix="fad" name="id-badge"/>
 								Me!
 							</Link>
-							{!isClanScope && settings.canManageBadges &&
-								<Link href="/settings?section=badge"
-								      scroll={false}
-								      data-active={activeSection === "badge"}
-								      aria-current={activeSection === "badge" ? "page" : undefined}>
-									<FontAwesome prefix="fad" name="badge"/>
-									Badge
-								</Link>}
 							{!isClanScope &&
 								<a href={`https://market.${baseDomain}`}
 								   target="_blank"
@@ -291,10 +274,6 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 								<AboutMeSettingsEditor initialBBCode={activeClan?.aboutMe ?? settings.aboutMe}
 								                       profileId={activeClan?.id ?? currentUser.id}
 								                       isClan={isClanScope}/>}
-							{!isClanScope && activeSection === "badge" &&
-								<BadgeSettingsForm badges={settings.badges}
-								                   selectedBadge={settings.selectedBadge}
-								                   baseDomain={baseDomain}/>}
 							{activeClan && activeSection === "rename" &&
 								<ClanSettingsForm tag={activeClan.tag}
 								                  showPastTags={activeClan.showPastTags}
