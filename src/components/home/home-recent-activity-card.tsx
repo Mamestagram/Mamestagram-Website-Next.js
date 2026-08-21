@@ -36,7 +36,12 @@ export default function HomeRecentActivityCard({
   };
 
   return (
-    <li style={style} data-expanded={isExpanded} data-page-enter="box">
+    <li
+      style={style}
+      data-expanded={isExpanded}
+      data-page-enter="box"
+      data-rendering-item="medium"
+    >
       <div
         className={styles.activity_card}
         role="button"

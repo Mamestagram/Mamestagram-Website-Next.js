@@ -48,7 +48,10 @@ import { isPlayerAction, type PlayerAction } from "@/lib/player-action";
 
 const fetchProfileResponse = async (url: string, label: string, init?: RequestInit) => {
 	try {
-		return await fetch(url, init);
+		return await fetch(url, {
+			...init,
+			signal: init?.signal ?? AbortSignal.timeout(5000)
+		});
 	}
 	catch (error: unknown) {
 		void writeError(error);
@@ -223,7 +226,7 @@ export type ProfileConnection = {
 	country: string
 };
 
-export const getProfileRouteInfo = async (id: number, isClan: boolean): Promise<Pick<
+export const getProfileRouteInfo = cache(async (id: number, isClan: boolean): Promise<Pick<
 	Profile,
 	"preferredMode" | "isPrivate" | "ownerId"
 > | null> => {
@@ -249,7 +252,7 @@ export const getProfileRouteInfo = async (id: number, isClan: boolean): Promise<
 		isPrivate: user.is_private === 1,
 		ownerId: null
 	} : null;
-};
+});
 
 type PlayerStatusApi = {
 	player_status: {

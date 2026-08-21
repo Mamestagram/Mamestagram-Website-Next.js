@@ -5,7 +5,6 @@ import type { RankingList } from "@/database/leaderboard";
 import { SortBy } from "@/database/leaderboard";
 import { OsuMode } from "@/lib/mode";
 import CountryFlag from "@/components/country-flag";
-import ClickableRankingRow from "@/components/leaderboard/clickable-ranking-row";
 import styles from "@s/leaderboard.module.css";
 
 const topRankStyles = [styles.top_1, styles.top_2, styles.top_3] as const;
@@ -22,7 +21,9 @@ export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 	const profileHref = `/profile/${listRow.id}/${mode}${queries.length > 0 ? `?${queries.join("&")}` : ""}`;
 
 	return (
-		<ClickableRankingRow className={styles.ranking_row} href={profileHref}>
+		<tr className={styles.ranking_row}
+		    data-href={profileHref}
+		    data-rendering-item="compact">
 			<td className={classNames(styles.rank, topRankStyles[listRow.rank - 1])}>
 				<span className={styles.numeric_value}>#{listRow.rank.toLocaleString()}</span>
 			</td>
@@ -30,11 +31,10 @@ export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 				{!isClan
 					? <CountryFlag code={listRow.country}/>
 					: <Image src={`https://clan-a.${process.env.BASE_DOMAIN}/${listRow.id}`}
-					         alt="clan-avatar"
-					         fill
-					         draggable={false}
-					         sizes="(max-width: 768px) 100vw, 50vw"
-					         priority/>
+						         alt="clan-avatar"
+						         fill
+						         draggable={false}
+						         sizes="(max-width: 768px) 100vw, 50vw"/>
 				}
 			</td>
 			<td className={styles.name}>
@@ -61,6 +61,6 @@ export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 					<td className={styles.a_count}><span className={styles.numeric_value}>{Math.floor(listRow.aCount).toLocaleString()}</span></td>
 				</>
 			}
-		</ClickableRankingRow>
+		</tr>
 	);
 }

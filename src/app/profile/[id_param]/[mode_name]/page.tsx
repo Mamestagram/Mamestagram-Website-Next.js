@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
 import {
-	accountExists,
 	getClanProfile,
 	getClanStatistics,
 	getProfileRouteInfo,
@@ -43,7 +42,6 @@ const getProfileData = cache(async (
 	mode: ModeNum,
 	isDans: boolean
 ): Promise<ProfileData | null> => {
-	if (!await accountExists(id, isClan)) return null;
 	if (!isClan) return { type: "user", info: await getUserInfo(id) };
 
 	const clanProfile = await getClanProfile(id);

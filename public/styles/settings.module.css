@@ -1322,3 +1322,13 @@
 		animation: none;
 	}
 }
+
+:global(html[data-rendering-mode="software"]) .hero_glow {
+	filter: none;
+}
+
+:global(html[data-rendering-mode="software"]) .hero,
+:global(html[data-rendering-mode="software"]) .sidebar,
+:global(html[data-rendering-mode="software"]) .section_card {
+	box-shadow: 0 7px 20px rgba(0, 0, 0, .2), inset 0 1px 0 rgba(255, 255, 255, .04);
+}

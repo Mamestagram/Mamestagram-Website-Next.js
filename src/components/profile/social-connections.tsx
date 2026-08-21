@@ -208,7 +208,7 @@ export default function SocialConnections({ connections, mode, baseDomain }: {
 							{filteredConnections.length > 0 ? (
 								<ul className={styles.connection_list}>
 									{filteredConnections.map((connection) =>
-										<li key={connection.user}>
+										<li key={connection.user} data-rendering-item="compact">
 											<Link href={`/profile/${connection.user}/${mode}`}
 											      onClick={closeConnections}>
 												<PlayerAvatar userId={connection.user}

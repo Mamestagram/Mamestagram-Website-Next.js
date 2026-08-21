@@ -73,7 +73,6 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 							       src={`https://assets.ppy.sh/beatmaps/${map.set_id}/covers/cover.jpg?`}
 							       alt="map bg"
 							       fill
-							       loading="eager"
 							       unoptimized
 							       draggable={false}
 							       sizes="(max-width: 768px) 100vw, 50vw"/>}
@@ -101,10 +100,13 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 						</p>
 					</>;
 					if (map.set_id <= 0 || map.id <= 0)
-						return <div key={`${map.set_id}-${map.id}-${i}`} className={className}>{content}</div>;
+						return <div key={`${map.set_id}-${map.id}-${i}`}
+						            className={className}
+						            data-rendering-item="medium">{content}</div>;
 					if (scope === ScoreScope.mostPlayed)
 						return <Link key={`${map.set_id}-${map.id}-${i}`}
 						             className={className}
+						             data-rendering-item="medium"
 						             aria-label={`${map.artist} — ${map.title}`}
 						             href={`/beatmaps/${map.set_id}/${map.id}`}>
 							{content}

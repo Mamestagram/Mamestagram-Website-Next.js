@@ -58,7 +58,8 @@ const getPlayerCounts = async (): Promise<HomePlayerCounts | null> => {
 	try {
 		const response = await fetch(`https://api.${baseDomain}/v1/get_player_count`, {
 			cache: "no-store",
-			headers: { Accept: "application/json" }
+			headers: { Accept: "application/json" },
+			signal: AbortSignal.timeout(5000)
 		});
 		if (!response.ok) {
 			void writeError(new Error(`Player count API request failed (${response.status})`));

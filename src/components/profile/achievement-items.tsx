@@ -31,6 +31,7 @@ export default function AchievementItems({ medals, canRevealSecretConditions }: 
 
 				return (
 					<li key={medal.id}
+					    data-rendering-item="square"
 					    className={classNames({ [styles.unachieved]: !medal.isCollected })}>
 						<Tooltip className={styles.achv_img} bubble description={medalInfoCmp}>
 							<Image src={imgSrc}

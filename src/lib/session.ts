@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "crypto";
 import { cookies, headers } from "next/headers";
+import { cache } from "react";
 import type { UserInfo } from "@/components/context/user-provider";
 import type { AuthUser } from "@/database/auth";
 import { getUserById } from "@/database/auth";
@@ -77,7 +78,7 @@ export const createRegistrationSuccessFlash = async () => {
 export const hasRegistrationSuccessFlash = async () =>
 	(await cookies()).get(REGISTRATION_SUCCESS_COOKIE_NAME)?.value === "1";
 
-export const getCurrentUser = async (): Promise<UserInfo> => {
+export const getCurrentUser = cache(async (): Promise<UserInfo> => {
 	try {
 		const token = (await cookies()).get(COOKIE_NAME)?.value;
 		if (!token) return { isLoggedIn: false };
@@ -106,4 +107,4 @@ export const getCurrentUser = async (): Promise<UserInfo> => {
 		void writeError(error);
 		return { isLoggedIn: false };
 	}
-}
+});

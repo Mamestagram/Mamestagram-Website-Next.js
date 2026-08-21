@@ -256,7 +256,8 @@ body {
 		width: 100%;
 		
 		& ul {
-			display: grid;
+			display: flex;
+			height: var(--header-height);
 			grid-template-rows: var(--header-height);
 			grid-template-columns: repeat(6, max-content) 1fr repeat(2, max-content);
 			grid-gap: 0 10px;
@@ -406,6 +407,7 @@ body {
 				
 				&.donation {
 					display: inline-flex;
+					margin-left: 0;
 					align-items: center;
 					padding: 5px;
 					
@@ -482,6 +484,8 @@ body {
 			}
 			
 			@media (max-width: 872px) {
+				display: grid;
+				height: auto;
 				grid-template-rows: repeat(7, var(--mobile-height));
 				grid-template-columns: 1fr;
 				grid-gap: 0;

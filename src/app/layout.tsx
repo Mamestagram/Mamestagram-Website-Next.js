@@ -12,6 +12,7 @@ import type { ServerInfo, UserInfo } from "@/components/context/user-provider";
 import { UserProvider } from "@/components/context/user-provider";
 import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
+import RenderingPerformanceMode from "@/components/rendering-performance-mode";
 import { getLoadingScreenEmbedUrl } from "@/lib/loading-screen";
 import { getProfileCosmetics } from "@/lib/profile-cosmetics";
 import { getCurrentUser } from "@/lib/session";
@@ -22,6 +23,7 @@ import "@s/global/fonts.css";
 import "@s/global/mode-icon.css";
 import "@s/global/flag-icon.css";
 import "@s/global/tooltip.css";
+import "@s/global/performance.css";
 
 const jetBrainsMono = JetBrains_Mono({
   display: "swap",
@@ -97,6 +99,7 @@ export default async function RootLayout({
   return (
     <html className={fontVariables} lang="en">
       <body>
+        <RenderingPerformanceMode />
         <UserProvider
           serverInfo={serverInfo}
           userInfo={userInfo}

@@ -19,6 +19,40 @@ const emptyResults: SearchResponse = {
 	beatmaps: [],
 	totals: { users: 0, clans: 0, beatmaps: 0 }
 };
+const SEARCH_CACHE_TTL_MS = 30_000;
+const SEARCH_CACHE_LIMIT = 20;
+const searchResultCache = new Map<string, { data: SearchResponse, expiresAt: number }>();
+
+const normalizeSearchResponse = (data: SearchResponse): SearchResponse => ({
+	users: data.users ?? [],
+	clans: data.clans ?? [],
+	beatmaps: data.beatmaps ?? [],
+	totals: data.totals ?? {
+		users: data.users?.length ?? 0,
+		clans: data.clans?.length ?? 0,
+		beatmaps: data.beatmaps?.length ?? 0
+	}
+});
+
+const getCachedSearch = (query: string) => {
+	const cached = searchResultCache.get(query);
+	if (!cached) return null;
+	if (cached.expiresAt <= Date.now()) {
+		searchResultCache.delete(query);
+		return null;
+	}
+	return cached.data;
+};
+
+const cacheSearch = (query: string, data: SearchResponse) => {
+	searchResultCache.delete(query);
+	searchResultCache.set(query, { data, expiresAt: Date.now() + SEARCH_CACHE_TTL_MS });
+	while (searchResultCache.size > SEARCH_CACHE_LIMIT) {
+		const oldestKey = searchResultCache.keys().next().value;
+		if (oldestKey === undefined) break;
+		searchResultCache.delete(oldestKey);
+	}
+};
 
 const subscribeToClient = () => () => undefined;
 const getClientSnapshot = () => true;
@@ -100,6 +134,16 @@ export default function HeaderSearch() {
 	useEffect(() => {
 		const trimmed = query.trim();
 		if (!trimmed) return;
+		const cacheKey = trimmed.toLocaleLowerCase();
+		const cached = getCachedSearch(cacheKey);
+		if (cached) {
+			const cacheFrame = window.requestAnimationFrame(() => {
+				setResults(cached);
+				setPhase("ready");
+				setMessage("");
+			});
+			return () => window.cancelAnimationFrame(cacheFrame);
+		}
 
 		const controller = new AbortController();
 		const timeout = window.setTimeout(async () => {
@@ -116,16 +160,9 @@ export default function HeaderSearch() {
 					setMessage(data.error || "Search is temporarily unavailable.");
 					return;
 				}
-				setResults({
-					users: data.users ?? [],
-					clans: data.clans ?? [],
-					beatmaps: data.beatmaps ?? [],
-					totals: data.totals ?? {
-						users: data.users?.length ?? 0,
-						clans: data.clans?.length ?? 0,
-						beatmaps: data.beatmaps?.length ?? 0
-					}
-				});
+				const normalizedResults = normalizeSearchResponse(data);
+				cacheSearch(cacheKey, normalizedResults);
+				setResults(normalizedResults);
 				setPhase("ready");
 			}
 			catch (error) {

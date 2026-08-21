@@ -293,6 +293,7 @@ export default function HomeDashboard({
                     <li
                       key={`${player.mode}-${player.id}`}
                       data-page-enter="box"
+                      data-rendering-item="large"
                     >
                       <Link className={styles.player_card} href={profileHref}>
                         <PlayerAvatar
@@ -369,6 +370,7 @@ export default function HomeDashboard({
                       target="_blank"
                       rel="noopener noreferrer"
                       data-page-enter="box"
+                      data-rendering-item="medium"
                     >
                       {content}
                     </a>
@@ -379,6 +381,7 @@ export default function HomeDashboard({
                     className={styles.news_card}
                     href={news.href}
                     data-page-enter="box"
+                    data-rendering-item="medium"
                   >
                     {content}
                   </Link>

@@ -1272,3 +1272,12 @@
 		scale: 1;
 	}
 }
+
+:global(html[data-rendering-mode="software"]) .leaderboard_mode_menu,
+:global(html[data-rendering-mode="software"]) .country_ranking_menu {
+	box-shadow: 0 7px 20px rgba(0, 0, 0, .3);
+}
+
+:global(html[data-rendering-mode="software"]) .page_wrapper {
+	will-change: auto;
+}

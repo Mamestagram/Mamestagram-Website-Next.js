@@ -96,7 +96,8 @@ const getApiUrl = (endpoint: "get_map_info" | "get_map_scores", params: Record<s
 const getApiJson = async <T>(url: URL): Promise<T | null> => {
 	const response = await fetch(url, {
 		cache: "no-store",
-		headers: { Accept: "application/json" }
+		headers: { Accept: "application/json" },
+		signal: AbortSignal.timeout(5000)
 	});
 	if (!response.ok) {
 		if (response.status >= 400 && response.status < 500) return null;

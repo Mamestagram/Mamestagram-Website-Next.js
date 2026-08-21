@@ -10,7 +10,8 @@ const getAuthImage = async (baseDomain: string) => {
 	try {
 		const response = await fetch(imageUrl, {
 			method: "HEAD",
-			next: { revalidate: 300 }
+			next: { revalidate: 300 },
+			signal: AbortSignal.timeout(3000)
 		});
 		return response.ok && response.headers.get("content-type")?.startsWith("image/")
 			? imageUrl
@@ -49,7 +50,6 @@ export default async function AuthLayout({ children }: Readonly<{ children: Reac
 						       src={authImage}
 						       alt="Mamestagram authentication artwork"
 						       fill
-						       priority
 						       sizes="(max-width: 760px) 100vw, 35vw"
 						       draggable={false}/>}
 					<div className={styles.visual_shade}/>

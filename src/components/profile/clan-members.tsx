@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ClanMember } from "@/database/profile";
 import type { OsuMode } from "@/lib/mode";
-import CountryFlag from "@/components/country-flag";
+import FloatingCountryFlag from "@/components/floating-country-flag";
 import FontAwesome from "@/components/font-awesome";
 import PlayerAvatar from "@/components/player-avatar";
 import KickClanMemberButton from "@/components/profile/kick-clan-member-button";
@@ -39,7 +39,9 @@ export default function ClanMembers({ clanId, members, mode, isDans, canManage, 
 							const hasCountry = /^[a-z]{2}$/.test(countryCode);
 							const role = getRoleMeta(member);
 							return (
-								<li key={member.id} className={styles.clan_member_grid_item}>
+								<li key={member.id}
+								    className={styles.clan_member_grid_item}
+								    data-rendering-item="compact">
 									<Link className={styles.clan_member_card}
 									      href={`/profile/${member.id}/${mode}${profileQuery}`}>
 										<PlayerAvatar userId={member.id}
@@ -51,7 +53,7 @@ export default function ClanMembers({ clanId, members, mode, isDans, canManage, 
 										<span className={styles.clan_member_grid_copy}>
 											<span className={styles.clan_member_grid_name}>
 								{hasCountry
-									? <CountryFlag code={countryCode} escapeOverflow/>
+									? <FloatingCountryFlag code={countryCode}/>
 									: <FontAwesome prefix="fas" name="globe"/>}
 												<strong>{member.name}</strong>
 											</span>

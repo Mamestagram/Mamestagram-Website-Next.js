@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import CountryFlag from "@/components/country-flag";
+import FloatingCountryFlag from "@/components/floating-country-flag";
 import FontAwesome from "@/components/font-awesome";
 import ModeIcon from "@/components/mode-icon";
 import PlayerAvatar from "@/components/player-avatar";
@@ -275,7 +275,7 @@ function FeaturedScoreCard({ score, cosmetics, rank, mode, mapMaxCombo, replayLa
 			<span className={styles.top_player}>
 				<small>{personal ? "Your score" : "Top score"}</small>
 				<Link href={`/profile/${score.userId}/${mode}`}>{score.name}</Link>
-				<span><CountryFlag code={score.country} escapeOverflow/> achieved {formatRelativeTime(score.playTime)} ago</span>
+				<span><FloatingCountryFlag code={score.country}/> achieved {formatRelativeTime(score.playTime)} ago</span>
 			</span>
 			<span className={styles.top_metric}>
 				<small>Total score</small>
@@ -524,7 +524,7 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 						</thead>
 						<tbody>
 							{scores.map((score, index) =>
-								<tr key={score.id}>
+								<tr key={score.id} data-rendering-item="compact">
 									<td className={styles.rank_cell} data-rank={index + 1}>#{index + 1}</td>
 									<td>
 										<span className={styles.grade_icon} data-grade={score.grade.toLowerCase()}>
@@ -537,7 +537,7 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 									})}>{score.accuracy.toFixed(2)}%</td>
 									<td className={styles.player_cell}>
 										<span className={styles.player_content}>
-											<CountryFlag code={score.country} escapeOverflow/>
+											<FloatingCountryFlag code={score.country}/>
 											<Link href={`/profile/${score.userId}/${selectedScoreMode.route}`}>{score.name}</Link>
 										</span>
 									</td>

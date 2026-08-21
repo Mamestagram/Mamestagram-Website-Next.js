@@ -50,7 +50,7 @@ export default function Footer() {
 							<a href={`https://report.${process.env.BASE_DOMAIN}`}
 							   target="_blank"
 							   rel="noopener noreferrer">
-								Report player
+								Report a player
 							</a>
 						</li>
 					</ul>

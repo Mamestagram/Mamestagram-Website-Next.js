@@ -25,7 +25,9 @@ export default function PlayerScoreCard({ className, label, beatmapHref, replayU
 
 	return (
 		<>
-			<article className={styles.score_entry} data-expanded={isExpanded}>
+			<article className={styles.score_entry}
+			         data-expanded={isExpanded}
+			         data-rendering-item="medium">
 				<div className={className}
 				     role="button"
 				     tabIndex={0}

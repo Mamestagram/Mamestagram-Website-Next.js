@@ -475,3 +475,16 @@
 		text-align: left;
 	}
 }
+
+:global(html[data-rendering-mode="software"]) .page_image {
+	position: absolute;
+	filter: saturate(.78);
+}
+
+:global(html[data-rendering-mode="software"]) .glow {
+	filter: none;
+}
+
+:global(html[data-rendering-mode="software"]) .card {
+	box-shadow: 0 10px 28px rgba(0, 0, 0, .34), inset 0 1px 0 rgba(255, 255, 255, .08);
+}

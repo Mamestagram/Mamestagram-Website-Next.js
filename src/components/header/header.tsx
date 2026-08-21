@@ -31,6 +31,14 @@ export default function Header() {
 						<span className="pipe"></span>
 						<Link href="/leaderboard/std/performance">Leaderboard</Link>
 					</li>
+					<li className="market">
+						<span className="pipe"></span>
+						<a href={`https://market.${process.env.BASE_DOMAIN}`}
+						   target="_blank"
+						   rel="noopener noreferrer">
+							Market
+						</a>
+					</li>
 					<li className="documents">
 						<span className="pipe"></span>
 						<Link href="/documents">Documents</Link>
@@ -43,13 +51,6 @@ export default function Header() {
 						   target="_blank"
 						   rel="noopener noreferrer">
 							Community
-						</a>
-					</li>
-					<li className="report">
-						<a href={`https://report.${process.env.BASE_DOMAIN}/`}
-						   target="_blank"
-						   rel="noopener noreferrer">
-							Report
 						</a>
 					</li>
 					<li className="donation">

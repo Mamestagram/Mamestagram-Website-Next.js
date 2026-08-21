@@ -26,7 +26,8 @@ export const isProfileRival = cache(async (userId: number, profileId: number): P
 		url.searchParams.set("userid", userId.toString());
 		const response = await fetch(url, {
 			cache: "no-store",
-			headers: { Accept: "application/json" }
+			headers: { Accept: "application/json" },
+			signal: AbortSignal.timeout(5000)
 		});
 		if (!response.ok) {
 			void writeError(new Error(`Rivals API request failed (${response.status})`));

@@ -4541,3 +4541,12 @@
     transform: translateY(-3px);
   }
 }
+
+:global(html[data-rendering-mode="software"]) .profile_background_image {
+	filter: saturate(.78) brightness(.52);
+	transform: none;
+}
+
+:global(html[data-rendering-mode="software"]) .section_box {
+	box-shadow: 0 7px 20px rgba(0, 0, 0, .2);
+}

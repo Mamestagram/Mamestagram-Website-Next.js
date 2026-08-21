@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { SortBy, getLeaderboard } from "@/database/leaderboard";
 import { OsuMode, ModeNum } from "@/lib/mode";
 import PageList from "./page-list";
+import ClickableRankingTable from "./clickable-ranking-table";
 import RankingHeader from "./ranking-header";
 import RankingRow from "./ranking-row";
 import styles from "@s/leaderboard.module.css";
@@ -27,7 +28,7 @@ export default async function RankingList({ mode, sortBy, page, country, isClan 
 				          country={country}/>
 				<div className={styles.table_wrapper}>
 					{ranking.length > 0 &&
-						<table>
+						<ClickableRankingTable>
 							<thead>
 							<RankingHeader sortBy={sortBy} isClan={isClan}/>
 							</thead>
@@ -35,7 +36,7 @@ export default async function RankingList({ mode, sortBy, page, country, isClan 
 							{ranking.map((row) =>
 								<RankingRow key={row.id} listRow={row} mode={mode} sortBy={sortBy} isClan={isClan}/>)}
 							</tbody>
-						</table>
+						</ClickableRankingTable>
 					}
 				</div>
 			</>

@@ -305,3 +305,8 @@
 	.categories a,
 	.pagination a { transition-duration: 1ms; }
 }
+
+:global(html[data-rendering-mode="software"]) .search_form,
+:global(html[data-rendering-mode="software"]) .results {
+	box-shadow: 0 7px 20px rgba(0, 0, 0, .22);
+}

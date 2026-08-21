@@ -51,7 +51,7 @@ export function SearchUserList({ items: users, baseDomain, onSelect }: ResultLis
 				const privileges = getPrivilegeMeta(user.privileges);
 				const primaryPrivilege = privileges.at(-1);
 				return (
-					<li key={user.id}>
+					<li key={user.id} data-rendering-item="compact">
 						<Link className={styles.player_result}
 						      href={`/profile/${user.id}`}
 						      onClick={onSelect}>
@@ -98,7 +98,7 @@ export function SearchClanList({ items: clans, baseDomain, onSelect }: ResultLis
 	return (
 		<ul className={styles.result_list}>
 			{clans.map((clan) =>
-				<li key={clan.id}>
+				<li key={clan.id} data-rendering-item="compact">
 					<Link href={`/profile/${clan.id}?clan`} onClick={onSelect}>
 						<span className={styles.avatar}>
 							<FontAwesome className={styles.avatar_fallback} prefix="fad" name="people-group"/>
@@ -142,7 +142,7 @@ export function SearchBeatmapList({ items: beatmaps, onSelect }: ResultListProps
 					: `${beatmap.difficulties.length} difficulties`;
 
 				return (
-					<li key={beatmap.setId}>
+					<li key={beatmap.setId} data-rendering-item="large">
 						<article className={styles.beatmap_result_card}>
 							<Link className={styles.beatmap_primary}
 							      href={`/beatmaps/${beatmap.setId}/${primaryDifficulty.id}`}
