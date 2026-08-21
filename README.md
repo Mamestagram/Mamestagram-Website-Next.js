@@ -1,4 +1,4 @@
-# Mamestagram Web
+# Mamestagram-Website
 
 [English](#english) | [日本語](#日本語)
 
