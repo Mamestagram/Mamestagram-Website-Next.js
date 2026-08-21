@@ -1,27 +1,63 @@
-import fs from "fs";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
+
+const PUBLIC_ASSET_PATTERN = /\.(?:avif|css|gif|ico|jpe?g|png|svg|webp)$/i;
+const NO_STORE = "private, no-cache, no-store, max-age=0, must-revalidate";
+const REVALIDATE = "public, no-cache, max-age=0, must-revalidate";
+
+const isLocalHostname = (hostname: string) =>
+	hostname === "localhost" || hostname === "127.0.0.1" || hostname === "[::1]";
+
+const getRequestHostname = (request: NextRequest) => {
+	const host = request.headers.get("host")?.trim();
+	if (!host) return request.nextUrl.hostname;
+	try {
+		return new URL(`http://${host}`).hostname;
+	}
+	catch {
+		return request.nextUrl.hostname;
+	}
+};
+
+const getRequestProtocol = (request: NextRequest) =>
+	request.headers.get("x-forwarded-proto")?.split(",").at(0)?.trim().toLowerCase()
+	?? request.nextUrl.protocol.replace(":", "").toLowerCase();
+
+const shouldRedirectToHttps = (request: NextRequest) =>
+	process.env.NODE_ENV === "production"
+	&& Boolean(process.env.BASE_URL)
+	&& !isLocalHostname(getRequestHostname(request))
+	&& getRequestProtocol(request) !== "https";
+
+const getSecureUrl = (request: NextRequest) => {
+	const secureUrl = new URL(`${request.nextUrl.pathname}${request.nextUrl.search}`, process.env.BASE_URL);
+	secureUrl.protocol = "https:";
+	return secureUrl;
+};
+
+const setLegacyNoCacheHeaders = (response: NextResponse) => {
+	response.headers.set("Expires", "0");
+	response.headers.set("Pragma", "no-cache");
+};
 
 // noinspection JSUnusedGlobalSymbols
-export const proxy = async (req: NextRequest) => {
-	const datetime = new Date();
-	const logDirPath = `./logs/${datetime.getFullYear()}${datetime.getMonth() + 1}`,
-		logFilePath = `${logDirPath}/${String(datetime.getMonth() + 1).padStart(2, "0")}_${String(datetime.getDate()).padStart(2, "0")}.log`;
-	const ip = req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? "Unknown IP address";
-	if (!fs.existsSync(logDirPath)) fs.mkdirSync(logDirPath);
-	if (!req.nextUrl.pathname.startsWith("/favicon"))
-		fs.appendFileSync(logFilePath, `[${datetime.toLocaleString("en-US", {
-			year: "numeric",
-			month: "2-digit",
-			day: "2-digit",
-			hour: "2-digit",
-			minute: "2-digit",
-			second: "2-digit",
-			hour12: false,
-			timeZoneName: "longOffset"
-		})}] ${req.method} ${req.nextUrl.pathname} (${ip})\n`);
-	
-	return NextResponse.next();
-}
+export const proxy = async (request: NextRequest) => {
+	if (shouldRedirectToHttps(request)) {
+		return NextResponse.redirect(getSecureUrl(request), 308);
+	}
+
+	const response = NextResponse.next();
+	const { pathname } = request.nextUrl;
+	if (pathname.startsWith("/api/profile-visual/")) return response;
+
+	const cacheControl = PUBLIC_ASSET_PATTERN.test(pathname) ? REVALIDATE : NO_STORE;
+	response.headers.set(
+		"Cache-Control",
+		cacheControl
+	);
+	response.headers.set("CDN-Cache-Control", cacheControl);
+	setLegacyNoCacheHeaders(response);
+	return response;
+};
 
 // noinspection JSUnusedGlobalSymbols
 export const config = {

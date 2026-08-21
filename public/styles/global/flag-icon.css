@@ -1,38 +1,73 @@
 .country-flag {
-	cursor: default;
+	cursor: default !important;
 	position: relative;
-	font-family: "Noto_Sans";
+	font-family: "Noto_Sans", sans-serif;
+	height: fit-content;
+	width: fit-content;
+	
+	& i {
+		border-radius: 15%;
+		transition: transform 300ms;
+		
+		.country-flag:hover & {
+			transform: scale(1.1);
+		}
+	}
+	
+	& .tooltip {
+		position: absolute;
+		left: 50%;
+		bottom: 60%;
+		background-color: #17171c;
+		color: #fdfdfd;
+		font-size: 0.7em;
+		line-height: 10px;
+		width: auto;
+		padding: 8px;
+		border-radius: 10px;
+		margin-bottom: 8px;
+		text-align: center;
+		opacity: 0;
+		z-index: 1;
+		transform: translateX(-50%);
+		transition: bottom 300ms, opacity 300ms;
+		
+		.country-flag:hover & {
+			bottom: 105% !important;
+			opacity: 1;
+		}
+	}
 }
 
-.country-flag i {
-	border-radius: 15%;
-	transition: transform 300ms;
-}
-
-.country-flag:hover i {
-	transform: scale(1.1);
-}
-
-.country-flag:hover .tooltip {
-	bottom: 80%;
-	opacity: 1;
-}
-
-.country-flag .tooltip {
-	line-height: 10px;
-	width: auto;
-	position: absolute;
-	left: 50%;
-	bottom: 60%;
-	transform: translateX(-50%);
-	margin-bottom: 8px;
+.country-flag-floating-tooltip {
+	position: fixed;
+	z-index: 10000;
 	padding: 8px;
-	border-radius: 10px;
-	background-color: #17171c;
-	font-size: 0.7em;
+	pointer-events: none;
 	color: #fdfdfd;
-	text-align: center;
+	background-color: #17171c;
+	border-radius: 10px;
+	box-shadow: var(--glass-box-shadow-dark);
+	font-family: "Noto_Sans", sans-serif;
+	font-size: .7rem;
+	line-height: 10px;
+	white-space: nowrap;
 	opacity: 0;
-	z-index: 1;
-	transition: bottom 300ms, opacity 300ms;
+	transform: translate(-50%, calc(-100% + 5px));
+	transition: opacity 180ms ease, transform 180ms ease;
+
+	&[data-visible="true"] {
+		opacity: 1;
+		transform: translate(-50%, -100%);
+	}
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: calc(100% - 1px);
+		left: 50%;
+		border: 7px solid transparent;
+		border-top-color: #17171c;
+		transform: translateX(-50%);
+	}
 }

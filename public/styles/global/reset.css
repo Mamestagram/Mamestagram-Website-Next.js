@@ -21,9 +21,12 @@
  */
 
 html {
+	max-width: 100%;
+	overflow-x: clip;
+	font-size: clamp(13px, calc(12px + .28vw), 18px);
 	line-height: 1.15; /* 1 */
 	-webkit-text-size-adjust: 100%; /* 2 */
-	-webkit-tap-highlight-color: transparent; /* 3*/
+	-webkit-tap-highlight-color: transparent; /* 3 */
 }
 
 /* Sections */
@@ -34,8 +37,13 @@ html {
  */
 
 body {
+	min-width: 0;
+	max-width: 100%;
+	overflow-x: clip;
 	background-color: #000;
-	font-family: "Noto_Sans";
+	font-family: var(--font-share-tech-mono), sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 	color: #fdfdfd;
 	margin: 0;
 	scroll-behavior: smooth;
@@ -51,7 +59,6 @@ body::-webkit-scrollbar-track {
 }
 
 body::-webkit-scrollbar-thumb {
-	background-color: #2e293d;
 	border-radius: 4px;
 }
 
@@ -61,6 +68,7 @@ body::-webkit-scrollbar-thumb {
 
 main {
 	display: block;
+	min-width: 0;
 	min-height: 100vh;
 	height: 100%;
 	width: 100%;
@@ -229,10 +237,21 @@ sup {
 
 svg,
 img,
+video,
+canvas,
 embed,
 object,
 iframe {
+	max-width: 100%;
 	vertical-align: bottom;
+}
+
+@media (max-width: 760px) {
+	input,
+	select,
+	textarea {
+		font-size: 16px;
+	}
 }
 
 /* Forms */
