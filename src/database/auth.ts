@@ -112,6 +112,7 @@ export const createUser = async ({ username, email, password, country }: {
 			createStatsQuery(modes.length),
 			statsArgs
 		);
+		// await createEmptyUserLog(id);
 
 		return {
 			id,

@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "crypto";
 import { cookies, headers } from "next/headers";
+import { unstable_rethrow } from "next/navigation";
 import { cache } from "react";
 import type { UserInfo } from "@/components/context/user-provider";
 import type { AuthUser } from "@/database/auth";
@@ -104,6 +105,7 @@ export const getCurrentUser = cache(async (): Promise<UserInfo> => {
 		};
 	}
 	catch (error: unknown) {
+		unstable_rethrow(error);
 		void writeError(error);
 		return { isLoggedIn: false };
 	}

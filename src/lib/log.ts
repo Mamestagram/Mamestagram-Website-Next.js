@@ -109,7 +109,9 @@ export const writeLog = async (method: "GET" | "POST", pathname: string) => {
 	}
 
 	const ip = await getIpAddress();
-	await writeFile(paths.directory, paths.file, `[${date.datetime}] ${method} ${escapeLogValue(pathname)} (${ip})\n`);
+	const entry = `[${date.datetime}] ${method} ${escapeLogValue(pathname)} (${ip})`;
+	console.log(entry);
+	await writeFile(paths.directory, paths.file, `${entry}\n`);
 };
 
 export const writeError = async (error: unknown, context: ErrorLogContext = {}) => {
@@ -134,5 +136,7 @@ export const writeError = async (error: unknown, context: ErrorLogContext = {}) 
 
 	const ip = context.ipAddress ?? await getIpAddress();
 	const message = escapeLogValue(contextualDetails);
-	await writeFile(paths.directory, paths.file, `[${date.datetime}] ERROR ${message} (${escapeLogValue(ip)})\n`);
+	const entry = `[${date.datetime}] ERROR ${message} (${escapeLogValue(ip)})`;
+	console.error(entry);
+	await writeFile(paths.directory, paths.file, `${entry}\n`);
 };
