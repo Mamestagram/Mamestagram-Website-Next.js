@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Fragment } from "react";
 import type { LazerData, LazerTextPart } from "@/app/api/lazer/route";
 import FontAwesome from "@/components/font-awesome";
@@ -95,12 +96,15 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 								<h3>Mamestagram Lazer Patcher</h3>
 								<p>{text.packageBody}</p>
 							</div>
-							<span className={styles.download_button} aria-disabled="true">
-								<FontAwesome prefix="fas" name="clock"/>{text.comingSoon}
-							</span>
+							<a className={styles.download_button}
+							   href={links.releases}
+							   target="_blank"
+							   rel="noopener noreferrer">
+								<FontAwesome prefix="fab" name="github"/>{text.viewRelease}
+							</a>
 						</div>
 						<div className={styles.download_footer}>
-							<p><FontAwesome prefix="fad" name="clock"/>{text.downloadNotice}</p>
+							<p><FontAwesome prefix="fad" name="shield-check"/>{text.downloadNotice}</p>
 						</div>
 					</section>
 
@@ -111,7 +115,9 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 						<PatcherSectionHeading icon="windows" title={text.windowsTitle} prefix="fab"/>
 						<p className={styles.section_lead}>{text.windowsLead}</p>
 						<div className={styles.guide_actions}>
-							<span aria-disabled="true"><FontAwesome prefix="fas" name="clock"/>{text.comingSoon}</span>
+							<a href={links.windowsDownload} target="_blank" rel="noopener noreferrer">
+								<FontAwesome prefix="fas" name="download"/>{text.downloadWindows}
+							</a>
 						</div>
 						<ol className={styles.steps}>
 							{text.windowsSteps.map(([icon, title, body], index) =>
@@ -133,14 +139,34 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 							<a href={links.osuDownload} target="_blank" rel="noopener noreferrer">
 								<FontAwesome prefix="fas" name="download"/>{text.downloadOsu}
 							</a>
-							<span aria-disabled="true"><FontAwesome prefix="fas" name="clock"/>{text.comingSoon}</span>
+							<a href={links.macOSDownload} target="_blank" rel="noopener noreferrer">
+								<FontAwesome prefix="fas" name="download"/>{text.downloadMacOS}
+							</a>
 						</div>
 						<ol className={styles.steps}>
 							{text.macOSSteps.map(([icon, title, body], index) =>
 								<li key={title} data-page-enter="box">
 									<span className={styles.step_number}>{String(index + 1).padStart(2, "0")}</span>
 									<i><FontAwesome prefix="fad" name={icon}/></i>
-									<div><h3>{title}</h3><p>{renderTextParts(body)}</p></div>
+									<div>
+										<h3>{title}</h3>
+										<p>{renderTextParts(body)}</p>
+										{index === 3 &&
+											<div className={styles.step_visuals}>
+												<Image src="/images/lazer-patcher/1.png"
+												       alt={text.macOSSecurityImageAlts[0]}
+												       width={1670}
+												       height={1474}
+												       sizes="(max-width: 760px) 84vw, 620px"
+												       draggable={false}/>
+												<Image src="/images/lazer-patcher/2.png"
+												       alt={text.macOSSecurityImageAlts[1]}
+												       width={744}
+												       height={924}
+												       sizes="(max-width: 760px) 84vw, 280px"
+												       draggable={false}/>
+											</div>}
+									</div>
 								</li>)}
 						</ol>
 					</section>

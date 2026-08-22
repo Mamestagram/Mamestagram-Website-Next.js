@@ -555,6 +555,23 @@
 	text-align: center;
 }
 
+.step_visuals {
+	display: grid;
+	grid-template-columns: minmax(0, 1.8fr) minmax(180px, .8fr);
+	margin-top: 14px;
+	align-items: start;
+	gap: 10px;
+
+	& img {
+		display: block;
+		width: 100%;
+		height: auto;
+		background: #000;
+		border: 1px solid rgba(255, 255, 255, .09);
+		border-radius: 12px;
+	}
+}
+
 .faq_list {
 	display: flex;
 	flex-direction: column;
@@ -707,6 +724,7 @@
 	.download_icon { width: 54px; height: 54px; }
 	.download_button { grid-column: 1 / -1; }
 	.download_footer { align-items: flex-start; flex-direction: column; }
+	.step_visuals { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {

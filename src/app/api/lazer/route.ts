@@ -24,7 +24,9 @@ type LazerCopy = Readonly<{
 	downloadTitle: string,
 	releaseStatus: string,
 	packageBody: string,
-	comingSoon: string,
+	viewRelease: string,
+	downloadWindows: string,
+	downloadMacOS: string,
 	downloadNotice: string,
 	windowsTitle: string,
 	windowsLead: string,
@@ -32,19 +34,23 @@ type LazerCopy = Readonly<{
 	macOSTitle: string,
 	macOSLead: string,
 	downloadOsu: string,
-	macOSSteps: ReadonlyArray<LazerStep>
+	macOSSteps: ReadonlyArray<LazerStep>,
+	macOSSecurityImageAlts: readonly [string, string]
 }>;
 
 const lazerData = {
 	showSetupGuides: true,
 	version: "v1.0.0",
 	links: {
+		releases: "https://github.com/Mamestagram/Mamestagram-Lazer-Patcher/releases",
+		windowsDownload: "https://github.com/Mamestagram/Mamestagram-Lazer-Patcher/releases/download/v.1.0.0/windows.exe",
+		macOSDownload: "https://github.com/Mamestagram/Mamestagram-Lazer-Patcher/releases/download/v.1.0.0/macos.zip",
 		osuDownload: "https://osu.ppy.sh/home/download"
 	},
 	copy: {
 		en: {
 			language: "Language",
-			heroDescription: "The Lazer Patcher for connecting to Mamestagram from osu!lazer on Windows and macOS is in preparation and will be released at a later date.",
+			heroDescription: "Connect osu!lazer to Mamestagram on Windows and macOS with the official Lazer Patcher.",
 			nav: {
 				overview: "Overview",
 				platforms: "Platforms",
@@ -54,27 +60,29 @@ const lazerData = {
 			},
 			overviewTitle: "Overview",
 			leadBadge: "osu!lazer patcher",
-			leadBody: "The upcoming patcher will connect osu!lazer to Mamestagram on macOS and Windows while keeping your current environment and settings.",
+			leadBody: "The official patcher connects osu!lazer to Mamestagram on macOS and Windows while keeping your environment and settings.",
 			summaries: [
-				["display", "Windows & macOS", "Support for both desktop platforms is planned for the upcoming release."],
-				["sliders", "Keep your setup", "The patcher is designed to preserve your existing osu!lazer environment and settings."],
-				["server", "Mamestagram access", "After release, select Mamestagram in the patcher, launch, and sign in with your account."]
+				["display", "Windows & macOS", "Version 1.0.0 is available for both desktop platforms."],
+				["sliders", "Keep your setup", "The patcher is designed to preserve your osu!lazer environment and settings."],
+				["server", "Mamestagram access", "Select Mamestagram in the patcher, launch, and sign in with your account."]
 			],
 			platformsTitle: "Supported Platforms",
-			platformsLead: "The upcoming version 1.0.0 is planned for Windows and macOS, with a different setup flow for each platform.",
-			windowsPlatformBody: "The Windows version will use your existing osu!lazer installation and settings.",
-			windowsPlatformDetails: ["Existing installation support planned", "Tested on Windows 11"],
-			macOSPlatformBody: "The macOS version will require a separate, freshly downloaded osu! client.",
-			macOSPlatformDetails: ["Fresh client will be required", "Tested on Apple M4 Mac"],
+			platformsLead: "Version 1.0.0 supports Windows and macOS, with a different setup flow for each platform.",
+			windowsPlatformBody: "The Windows version uses your existing osu!lazer installation and settings.",
+			windowsPlatformDetails: ["Existing installation supported", "Tested on Windows 11"],
+			macOSPlatformBody: "The macOS version requires a separate, freshly downloaded osu! client.",
+			macOSPlatformDetails: ["Fresh client required", "Tested on Apple M4 Mac"],
 			downloadTitle: "Release",
-			releaseStatus: "In preparation",
-			packageBody: "The Windows and macOS packages are being prepared and will be released at a later date.",
-			comingSoon: "Coming soon",
-			downloadNotice: "Download links will be available here when the release is ready.",
+			releaseStatus: "Released",
+			packageBody: "Version 1.0.0 is available for Windows and macOS from the official GitHub release.",
+			viewRelease: "View release",
+			downloadWindows: "Download windows.exe",
+			downloadMacOS: "Download macos.zip",
+			downloadNotice: "Use only the packages published on the official Mamestagram GitHub repository.",
 			windowsTitle: "Windows Setup",
-			windowsLead: "After the patcher is released, you will be able to use the osu!lazer installation already configured on your Windows PC.",
+			windowsLead: "Use the osu!lazer installation already configured on your Windows PC.",
 			windowsSteps: [
-				["file-arrow-down", "Download the Windows package", [{ text: "Once v1.0.0 is released, download patcher from the official release." }]],
+				["file-arrow-down", "Download the Windows package", [{ text: "Download windows.exe from the official v1.0.0 release." }]],
 				["folder-open", "Select your osu!lazer target", [
 					{ text: "In the Target field, choose the " },
 					{ text: "current", style: "code" },
@@ -90,64 +98,67 @@ const lazerData = {
 				["right-to-bracket", "Log in and play", [{ text: "Sign in with your Mamestagram account and enjoy osu!lazer." }]]
 			],
 			macOSTitle: "macOS Setup",
-			macOSLead: "After the patcher is released, macOS will require a freshly downloaded osu! client instead of your existing installation.",
+			macOSLead: "On macOS, use a freshly downloaded osu! client instead of your existing installation.",
 			downloadOsu: "Download osu!",
 			macOSSteps: [
 				["download", "Download a fresh osu! client", [{ text: "Get a new copy of osu! from the official download page instead of reusing your existing client." }]],
-				["file-arrow-down", "Download the patcher", [{ text: "Once v1.0.0 is released, download the macOS patcher files from the official release." }]],
-				["terminal", "Run the command file", [
+				["file-arrow-down", "Download the patcher", [{ text: "Download macos.zip from the official v1.0.0 release, then extract the archive." }]],
+				["play", "Run Mamestagram Lazer", [
 					{ text: "Launch " },
-					{ text: "Run this.command", style: "code" },
+					{ text: "Mamestagram Lazer", style: "code" },
 					{ text: "." }
 				]],
-				["shield-check", "Allow it when required", [{ text: "If macOS blocks it, allow the app from System Settings and start it again." }]],
-				["folder-open", "Select the new client", [
-					{ text: "Choose the downloaded " },
-					{ text: "osu!.app", style: "code" },
-					{ text: " in the Target field." }
-				]],
+				["shield-check", "Allow it when required", [{ text: "If macOS blocks the app, open Privacy & Security in System Settings, select Open Anyway, then confirm Open Anyway in the dialog." }]],
 				["play", "Start Mamestagram", [
 					{ text: "Select " },
 					{ text: "Mamestagram", style: "strong" },
 					{ text: ", click " },
 					{ text: "PLAY", style: "strong" },
-					{ text: ", then sign in and enjoy." }
-				]]
+					{ text: "." }
+				]],
+				["right-to-bracket", "Log in", [{ text: "Sign in with your Mamestagram account." }]],
+				["gamepad-modern", "Enjoy osu!lazer", [{ text: "You can now play osu!lazer on Mamestagram." }]]
+			],
+			macOSSecurityImageAlts: [
+				"Privacy & Security settings showing the Open Anyway button for Mamestagram Lazer",
+				"macOS confirmation dialog showing the Open Anyway button for Mamestagram Lazer"
 			]
 		},
 		ja: {
 			language: "言語",
-			heroDescription: "WindowsとmacOSのosu!lazerからMamestagramへ接続するLazer Patcherは現在準備中で、後日公開予定です。",
+			heroDescription: "公式Lazer Patcherを使って、WindowsとmacOSのosu!lazerからMamestagramへ接続できます。",
 			nav: {
 				overview: "概要",
 				platforms: "対応環境",
-				download: "公開予定",
+				download: "リリース",
 				windows: "Windows",
 				macos: "macOS"
 			},
 			overviewTitle: "概要",
 			leadBadge: "osu!lazerパッチャー",
-			leadBody: "現在のosu!lazer環境や設定を維持したままMamestagramへ接続できるパッチャーを、macOS版とWindows版で後日公開予定です。",
+			leadBody: "osu!lazer環境や設定を維持したままMamestagramへ接続できる公式パッチャーを、macOS版とWindows版で公開しています。",
 			summaries: [
-				["display", "WindowsとmacOS", "両方のデスクトップ環境に対応したバージョンを公開予定です。"],
-				["sliders", "設定を引き継ぐ", "既存のosu!lazer環境と設定を維持できる仕様で準備しています。"],
-				["server", "Mamestagramへ接続", "公開後はパッチャーでMamestagramを選択し、アカウントへログインできます。"]
+				["display", "WindowsとmacOS", "両方のデスクトップ環境に対応したバージョン1.0.0を公開しています。"],
+				["sliders", "設定を引き継ぐ", "osu!lazer環境と設定を維持できる仕様です。"],
+				["server", "Mamestagramへ接続", "パッチャーでMamestagramを選択し、アカウントへログインできます。"]
 			],
 			platformsTitle: "対応環境",
-			platformsLead: "後日公開予定のバージョン1.0.0はWindowsとmacOSに対応し、OSごとに導入方法が異なります。",
-			windowsPlatformBody: "Windows版では既存のosu!lazerとその設定を利用できる予定です。",
-			windowsPlatformDetails: ["既存のインストールに対応予定", "Windows 11で動作確認済み"],
-			macOSPlatformBody: "macOS版では新しくダウンロードした別のosu!クライアントが必要になる予定です。",
-			macOSPlatformDetails: ["新規クライアントが必要になる予定", "Apple M4 Macで動作確認済み"],
-			downloadTitle: "公開予定",
-			releaseStatus: "公開準備中",
-			packageBody: "Windows版とmacOS版を準備中です。完成後、後日公開予定です。",
-			comingSoon: "後日公開予定",
-			downloadNotice: "公開準備が整い次第、このページでダウンロードリンクをご案内します。",
+			platformsLead: "バージョン1.0.0はWindowsとmacOSに対応し、OSごとに導入方法が異なります。",
+			windowsPlatformBody: "Windows版では既存のosu!lazerとその設定を利用できます。",
+			windowsPlatformDetails: ["既存のインストールに対応", "Windows 11で動作確認済み"],
+			macOSPlatformBody: "macOS版では新しくダウンロードした別のosu!クライアントが必要です。",
+			macOSPlatformDetails: ["新規クライアントが必要", "Apple M4 Macで動作確認済み"],
+			downloadTitle: "リリース",
+			releaseStatus: "公開中",
+			packageBody: "Windows版とmacOS版のバージョン1.0.0を、公式GitHubリリースで公開しています。",
+			viewRelease: "リリースを見る",
+			downloadWindows: "windows.exeをダウンロード",
+			downloadMacOS: "macos.zipをダウンロード",
+			downloadNotice: "Mamestagram公式GitHubリポジトリで公開されているファイルのみを使用してください。",
 			windowsTitle: "Windowsでの接続方法",
-			windowsLead: "パッチャーの公開後、Windows PCに設定済みのosu!lazerをそのまま利用できます。",
+			windowsLead: "Windows PCに設定済みのosu!lazerをそのまま利用できます。",
 			windowsSteps: [
-				["file-arrow-down", "Windows版をダウンロード", [{ text: "v1.0.0の公開後、公式リリースからパッチャーをダウンロードします。" }]],
+				["file-arrow-down", "Windows版をダウンロード", [{ text: "公式v1.0.0リリースからwindows.exeをダウンロードします。" }]],
 				["folder-open", "osu!lazerの対象を選択", [
 					{ text: "Target欄で、既存のosu!lazerインストール先にある" },
 					{ text: "current", style: "code" },
@@ -163,29 +174,30 @@ const lazerData = {
 				["right-to-bracket", "ログインしてプレイ", [{ text: "Mamestagramアカウントでログインし、osu!lazerをお楽しみください。" }]]
 			],
 			macOSTitle: "macOSでの接続方法",
-			macOSLead: "パッチャーの公開後、macOSでは既存のクライアントではなく、新しくダウンロードしたosu!クライアントが必要です。",
+			macOSLead: "macOSでは既存のクライアントではなく、新しくダウンロードしたosu!クライアントを使用します。",
 			downloadOsu: "osu!をダウンロード",
 			macOSSteps: [
 				["download", "新しいosu!クライアントをダウンロード", [{ text: "公式ダウンロードページから新しいosu!を取得します。既存のクライアントは使用しません。" }]],
-				["file-arrow-down", "パッチャーをダウンロード", [{ text: "v1.0.0の公開後、公式リリースからmacOS用のパッチャーファイルをダウンロードします。" }]],
-				["terminal", "コマンドファイルを実行", [
+				["file-arrow-down", "パッチャーをダウンロード", [{ text: "公式v1.0.0リリースからmacos.zipをダウンロードし、展開します。" }]],
+				["play", "Mamestagram Lazerを実行", [
 					{ text: "" },
-					{ text: "Run this.command", style: "code" },
+					{ text: "Mamestagram Lazer", style: "code" },
 					{ text: "を起動します。" }
 				]],
-				["shield-check", "必要に応じて実行を許可", [{ text: "macOSにブロックされた場合は、システム設定からアプリの実行を許可して再度起動します。" }]],
-				["folder-open", "新しいクライアントを選択", [
-					{ text: "Target欄で、ダウンロードした" },
-					{ text: "osu!.app", style: "code" },
-					{ text: "を選択します。" }
-				]],
+				["shield-check", "必要に応じて実行を許可", [{ text: "macOSにブロックされた場合は、システム設定の「プライバシーとセキュリティ」で「このまま開く」を選択し、確認画面でも「このまま開く」を選択します。" }]],
 				["play", "Mamestagramを起動", [
 					{ text: "" },
 					{ text: "Mamestagram", style: "strong" },
 					{ text: "を選択して" },
 					{ text: "PLAY", style: "strong" },
-					{ text: "をクリックし、ログインしてお楽しみください。" }
-				]]
+					{ text: "をクリックします。" }
+				]],
+				["right-to-bracket", "ログイン", [{ text: "Mamestagramアカウントでログインします。" }]],
+				["gamepad-modern", "osu!lazerをプレイ", [{ text: "Mamestagramでosu!lazerをお楽しみください。" }]]
+			],
+			macOSSecurityImageAlts: [
+				"Mamestagram Lazerの「このまま開く」ボタンを表示したプライバシーとセキュリティ設定",
+				"Mamestagram Lazerの「このまま開く」ボタンを表示したmacOS確認画面"
 			]
 		}
 	} satisfies Record<LazerLocale, LazerCopy>
