@@ -36,7 +36,7 @@ type LazerCopy = Readonly<{
 }>;
 
 const lazerData = {
-	showSetupGuides: false,
+	showSetupGuides: true,
 	version: "v1.0.0",
 	links: {
 		osuDownload: "https://osu.ppy.sh/home/download"

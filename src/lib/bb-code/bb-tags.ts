@@ -16,38 +16,10 @@ function sanitizeUrl(url: string) {
 	}
 }
 
-function isAllowedImageUrl(url: string) {
-	const baseDomain = process.env.BASE_DOMAIN;
-	const allowedHosts = new Set([
-		baseDomain ? `a.${baseDomain}` : null,
-		baseDomain ? `clan-a.${baseDomain}` : null,
-		baseDomain ? `assets.${baseDomain}` : null,
-		"assets.mamesosu.net",
-		"assets.ppy.sh",
-		"i.ppy.sh",
-		"i.imgur.com",
-		"cdn.discordapp.com",
-		"media.discordapp.net",
-		"images-ext-1.discordapp.net",
-		"images-ext-2.discordapp.net",
-		"raw.githubusercontent.com",
-		"user-images.githubusercontent.com",
-		"avatars.githubusercontent.com",
-		"upload.wikimedia.org",
-		"pbs.twimg.com",
-		"abs.twimg.com",
-		"cdn.bsky.app",
-		"media.tenor.com",
-		"c.tenor.com",
-		"media.giphy.com",
-		"i.giphy.com",
-		"static-cdn.jtvnw.net",
-		"images.unsplash.com"
-	].filter((host): host is string => host !== null));
-
+function isSecureImageUrl(url: string) {
 	try {
 		const parsed = new URL(url);
-		return parsed.protocol === "https:" && allowedHosts.has(parsed.hostname);
+		return parsed.protocol === "https:";
 	}
 	catch {
 		return false;
@@ -187,7 +159,7 @@ bbTags["url"] = new BBTag((content, attr) => {
 bbTags["img"] = new BBTag((content) => {
 	const imageUrl = sanitizeUrl(textFromHtml(content));
 	if (!imageUrl) return renderImageMessage("Image URL is invalid");
-	if (!isAllowedImageUrl(imageUrl)) return renderImageMessage("Image domain is not allowed");
+	if (!isSecureImageUrl(imageUrl)) return renderImageMessage("Image URL must use HTTPS");
 	return renderImage(imageUrl);
 }, true, false);
 // [profile=7]content[/profile]
