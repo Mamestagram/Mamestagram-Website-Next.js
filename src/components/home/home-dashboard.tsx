@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import FontAwesome from "@/components/font-awesome";
+import FormattedNumber from "@/components/formatted-number";
 import DashboardSectionHeading from "@/components/home/dashboard-section-heading";
 import ModeIcon from "@/components/mode-icon";
 import type {
@@ -63,66 +64,25 @@ const statCards = (counts: HomePlayerCounts | null) =>
     },
   ] as const;
 
-const newsItems = [
-  {
-    icon: "palette",
-    label: "Renewal",
-    title: "Website Renewal",
-    description:
-      "Mamestagram Web has been renewed with a new design and features.",
-    href: "/",
-    external: false,
-  },
-  {
-    icon: "bolt",
-    label: "Major update",
-    title: "New Features & Major Updates",
-    description: "New features and major updates are coming to Mamestagram.",
-    href: "/documents",
-    external: false,
-  },
-  {
-    icon: "bag-shopping",
-    label: "Now available",
-    title: "Badge Market Now Available",
-    description:
-      "Collect badges from the Badge Market and equip them on your profile.",
-    href: "market",
-    external: true,
-  },
-  {
-    icon: "rocket-launch",
-    label: "Coming soon",
-    title: "osu!lazer Support Planned",
-    description: "Support for osu!lazer is currently in development.",
-    href: "/lazer",
-    external: false,
-  },
-] as const;
-
 const quickLinks = [
   {
     icon: "trophy",
     title: "Leaderboard",
-    description: "See who is leading the server",
     href: "/leaderboard/std/performance",
   },
   {
     icon: "book-open",
     title: "Documents",
-    description: "Connect, learn commands, and read the rules",
     href: "/documents",
   },
   {
     icon: "rocket-launch",
     title: "Lazer",
-    description: "Explore the upcoming lazer connection",
     href: "/lazer",
   },
   {
     icon: "heart",
     title: "Support",
-    description: "Support server development",
     href: "/support",
   },
 ] as const;
@@ -203,10 +163,6 @@ export default function HomeDashboard({
             <h1>
               Mamestagram <span>Dashboard</span>
             </h1>
-            <p className={styles.hero_lead}>
-              Your starting point for live server activity, rankings, community
-              updates, and everything osu!.
-            </p>
             <div className={styles.hero_actions}>
               <Link
                 className={styles.primary_action}
@@ -241,8 +197,7 @@ export default function HomeDashboard({
               <span>
                 <i></i>Online
               </span>
-              <strong>{playerCounts?.online.toLocaleString() ?? "—"}</strong>
-              <small>players connected now</small>
+              <strong>{playerCounts ? <FormattedNumber value={playerCounts.online} /> : "—"}</strong>
             </div>
           </div>
         </div>
@@ -251,7 +206,6 @@ export default function HomeDashboard({
         <section className={styles.dashboard_section} data-page-enter="section">
           <DashboardSectionHeading
             icon="chart-mixed"
-            eyebrow="Server overview"
             title="Live Stats"
           />
           <div className={styles.stats_grid}>
@@ -267,7 +221,9 @@ export default function HomeDashboard({
                 </span>
                 <span className={styles.stat_copy}>
                   <small>{stat.label}</small>
-                  <strong>{stat.value?.toLocaleString() ?? "—"}</strong>
+                  <strong>{stat.value === undefined || stat.value === null
+                    ? "—"
+                    : <FormattedNumber value={stat.value} />}</strong>
                 </span>
                 <span className={styles.stat_signal}></span>
               </article>
@@ -279,7 +235,6 @@ export default function HomeDashboard({
           <section className={styles.dashboard_panel} data-page-enter="section">
             <DashboardSectionHeading
               icon="crown"
-              eyebrow="Mode champions · All rulesets"
               title="Top Players"
               href="/leaderboard/std/performance"
               action="Full ranking"
@@ -312,7 +267,7 @@ export default function HomeDashboard({
                           </small>
                         </span>
                         <strong className={styles.player_pp}>
-                          {Math.round(player.pp).toLocaleString()}
+                          <FormattedNumber value={Math.round(player.pp)} />
                           <small>pp</small>
                         </strong>
                         <FontAwesome
@@ -337,56 +292,51 @@ export default function HomeDashboard({
           </section>
 
           <section className={styles.dashboard_panel} data-page-enter="section">
-            <DashboardSectionHeading
-              icon="newspaper"
-              eyebrow="From Mamestagram"
-              title="News"
-            />
-            <div className={styles.news_grid}>
-              {newsItems.map((news) => {
-                const content = (
-                  <>
-                    <span className={styles.news_icon}>
-                      <FontAwesome prefix="fad" name={news.icon} />
-                    </span>
-                    <span className={styles.news_copy}>
-                      <small>{news.label}</small>
-                      <strong>{news.title}</strong>
-                      <p>{news.description}</p>
-                    </span>
-                    <FontAwesome
-                      className={styles.news_arrow}
-                      prefix="fas"
-                      name="arrow-up-right"
-                    />
-                  </>
-                );
-                if (news.external)
-                  return (
-                    <a
-                      key={news.title}
-                      className={styles.news_card}
-                      href={`https://market.${baseDomain}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      data-page-enter="box"
-                      data-rendering-item="medium"
-                    >
-                      {content}
-                    </a>
-                  );
-                return (
-                  <Link
-                    key={news.title}
-                    className={styles.news_card}
-                    href={news.href}
-                    data-page-enter="box"
-                    data-rendering-item="medium"
-                  >
-                    {content}
-                  </Link>
-                );
-              })}
+            <DashboardSectionHeading icon="link" title="Quick Links" />
+            <div className={styles.quick_links}>
+              {quickLinks.map((quickLink) => (
+                <Link
+                  key={quickLink.title}
+                  href={quickLink.href}
+                  data-page-enter="box"
+                >
+                  <span>
+                    <FontAwesome prefix="fad" name={quickLink.icon} />
+                  </span>
+                  <span>
+                    <strong>{quickLink.title}</strong>
+                  </span>
+                  <FontAwesome prefix="fas" name="chevron-right" />
+                </Link>
+              ))}
+              <a
+                href="https://discord.com/invite/xqncGVrHSf"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-page-enter="box"
+              >
+                <span>
+                  <FontAwesome prefix="fab" name="discord" />
+                </span>
+                <span>
+                  <strong>Community</strong>
+                </span>
+                <FontAwesome prefix="fas" name="arrow-up-right" />
+              </a>
+              <a
+                href={`https://market.${baseDomain}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-page-enter="box"
+              >
+                <span>
+                  <FontAwesome prefix="fad" name="bag-shopping" />
+                </span>
+                <span>
+                  <strong>Badge Market</strong>
+                </span>
+                <FontAwesome prefix="fas" name="arrow-up-right" />
+              </a>
             </div>
           </section>
         </div>
@@ -394,7 +344,6 @@ export default function HomeDashboard({
         <section className={styles.dashboard_panel} data-page-enter="section">
           <DashboardSectionHeading
             icon="bolt"
-            eyebrow="Happening now"
             title="Recent Activity"
           />
           {recentActivity.length > 0 ? (
@@ -426,15 +375,18 @@ export default function HomeDashboard({
                       <span className={styles.activity_map}>
                         {activityLabel}
                       </span>
-                      <small>
-                        <span>{activity.accuracy.toFixed(2)}%</span>
-                        <span>
-                          {Math.round(activity.pp).toLocaleString()}pp
-                        </span>
-                        <time dateTime={activity.playTime.toISOString()}>
-                          {formatRelativeTime(activity.playTime)}
-                        </time>
-                      </small>
+                    </span>
+                    <span className={styles.activity_value}>
+                      <strong className={styles.activity_pp}>
+                        <span><FormattedNumber value={Math.round(activity.pp)} /></span>
+                        <small>pp</small>
+                      </strong>
+                      <time
+                        className={styles.activity_time}
+                        dateTime={activity.playTime.toISOString()}
+                      >
+                        {formatRelativeTime(activity.playTime)}
+                      </time>
                     </span>
                   </HomeRecentActivityCard>
                 );
@@ -451,61 +403,6 @@ export default function HomeDashboard({
           )}
         </section>
 
-        <section className={styles.dashboard_panel} data-page-enter="section">
-          <DashboardSectionHeading
-            icon="link"
-            eyebrow="Start exploring"
-            title="Quick Links"
-          />
-          <div className={styles.quick_links}>
-            {quickLinks.map((quickLink) => (
-              <Link
-                key={quickLink.title}
-                href={quickLink.href}
-                data-page-enter="box"
-              >
-                <span>
-                  <FontAwesome prefix="fad" name={quickLink.icon} />
-                </span>
-                <span>
-                  <strong>{quickLink.title}</strong>
-                  <small>{quickLink.description}</small>
-                </span>
-                <FontAwesome prefix="fas" name="chevron-right" />
-              </Link>
-            ))}
-            <a
-              href="https://discord.com/invite/xqncGVrHSf"
-              target="_blank"
-              rel="noopener noreferrer"
-              data-page-enter="box"
-            >
-              <span>
-                <FontAwesome prefix="fab" name="discord" />
-              </span>
-              <span>
-                <strong>Community</strong>
-                <small>Join the Mamestagram Discord</small>
-              </span>
-              <FontAwesome prefix="fas" name="arrow-up-right" />
-            </a>
-            <a
-              href={`https://market.${baseDomain}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-page-enter="box"
-            >
-              <span>
-                <FontAwesome prefix="fad" name="bag-shopping" />
-              </span>
-              <span>
-                <strong>Badge Market</strong>
-                <small>Discover and equip profile badges</small>
-              </span>
-              <FontAwesome prefix="fas" name="arrow-up-right" />
-            </a>
-          </div>
-        </section>
       </div>
     </div>
   );

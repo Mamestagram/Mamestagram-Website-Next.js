@@ -1,10 +1,12 @@
 import classNames from "classnames";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import FeaturedScoreCard from "@/components/beatmap/featured-score-card";
+import ScoreMods, { getScoreMods, isKnownMod, type ModTone } from "@/components/beatmap/score-mods";
 import FloatingCountryFlag from "@/components/floating-country-flag";
 import FontAwesome from "@/components/font-awesome";
+import FormattedNumber from "@/components/formatted-number";
 import ModeIcon from "@/components/mode-icon";
-import PlayerAvatar from "@/components/player-avatar";
 import ReplayViewer from "@/components/replay-viewer";
 import {
 	getBeatmapScores,
@@ -15,7 +17,6 @@ import {
 import { getVanillaMode, ModeNum, OsuMode } from "@/lib/mode";
 import { ModNum, Mods } from "@/lib/mods";
 import { getProfileCosmeticsMap } from "@/lib/profile-cosmetics";
-import type { ProfileCosmetics } from "@/lib/profile-cosmetics";
 import { getCurrentUser } from "@/lib/session";
 import styles from "@s/beatmap.module.css";
 
@@ -35,48 +36,11 @@ type HitColumn = {
 	getValue: (score: BeatmapScore) => string
 };
 
-type ModTone = "easy" | "hard" | "other";
-
 type ModFilterOption = {
 	mod: Mods,
 	label?: string,
 	tone: ModTone
 };
-
-const modEntries: ReadonlyArray<{ mod: Mods, value: ModNum }> = [
-	{ mod: Mods.nm, value: ModNum.nm },
-	{ mod: Mods.nf, value: ModNum.nf },
-	{ mod: Mods.ez, value: ModNum.ez },
-	{ mod: Mods.ts, value: ModNum.ts },
-	{ mod: Mods.hd, value: ModNum.hd },
-	{ mod: Mods.hr, value: ModNum.hr },
-	{ mod: Mods.sd, value: ModNum.sd },
-	{ mod: Mods.dt, value: ModNum.dt },
-	{ mod: Mods.rx, value: ModNum.rx },
-	{ mod: Mods.ht, value: ModNum.ht },
-	{ mod: Mods.nc, value: ModNum.nc },
-	{ mod: Mods.fl, value: ModNum.fl },
-	{ mod: Mods.at, value: ModNum.at },
-	{ mod: Mods.so, value: ModNum.so },
-	{ mod: Mods.ap, value: ModNum.ap },
-	{ mod: Mods.pf, value: ModNum.pf },
-	{ mod: Mods.k4, value: ModNum.k4 },
-	{ mod: Mods.k5, value: ModNum.k5 },
-	{ mod: Mods.k6, value: ModNum.k6 },
-	{ mod: Mods.k7, value: ModNum.k7 },
-	{ mod: Mods.k8, value: ModNum.k8 },
-	{ mod: Mods.fi, value: ModNum.fi },
-	{ mod: Mods.rd, value: ModNum.rd },
-	{ mod: Mods.cm, value: ModNum.cm },
-	{ mod: Mods.tr, value: ModNum.tr },
-	{ mod: Mods.k9, value: ModNum.k9 },
-	{ mod: Mods.kc, value: ModNum.kc },
-	{ mod: Mods.k1, value: ModNum.k1 },
-	{ mod: Mods.k3, value: ModNum.k3 },
-	{ mod: Mods.k2, value: ModNum.k2 },
-	{ mod: Mods.v2, value: ModNum.v2 },
-	{ mod: Mods.mr, value: ModNum.mr }
-];
 
 const getScoreModeOptions = (mode: ModeNum): ScoreModeOption[] => {
 	switch (mode) {
@@ -197,27 +161,12 @@ const getHitColumns = (mode: ModeNum): HitColumn[] => {
 			];
 		default:
 			return [
-				{ label: "300+Geki", getValue: (score) => (score.n300 + score.nGeki).toLocaleString() },
-				{ label: "100+Katu", getValue: (score) => (score.n100 + score.nKatu).toLocaleString() },
+				{ label: "300", getValue: (score) => (score.n300 + score.nGeki).toLocaleString() },
+				{ label: "100", getValue: (score) => (score.n100 + score.nKatu).toLocaleString() },
 				{ label: "50", getValue: (score) => score.n50.toLocaleString() },
 				{ label: "Miss", getValue: (score) => score.nMiss.toLocaleString() }
 			];
 	}
-};
-
-const getMods = (mods: number) => modEntries.filter(({ value }) => {
-	if ((mods & value) === 0) return false;
-	if (value === ModNum.dt && (mods & ModNum.nc) > 0) return false;
-	return !(value === ModNum.sd && (mods & ModNum.pf) > 0);
-});
-
-const isKnownMod = (mod: string): mod is Mods => modEntries.some((entry) => entry.mod === mod);
-
-const getModTone = (mod: Mods): ModTone => {
-	if ([Mods.ez, Mods.nf, Mods.ht].includes(mod)) return "easy";
-	if ([Mods.hr, Mods.sd, Mods.pf, Mods.dt, Mods.nc, Mods.fi, Mods.hd, Mods.fl].includes(mod))
-		return "hard";
-	return "other";
 };
 
 const formatRelativeTime = (date: Date) => {
@@ -233,82 +182,6 @@ const formatRelativeTime = (date: Date) => {
 	if (months < 12) return `${months}mo`;
 	return `${Math.floor(days / 365)}y`;
 };
-
-function ModsList({ mods }: Readonly<{ mods: number }>) {
-	const scoreMods = getMods(mods);
-	if (scoreMods.length === 0) return <span className={styles.no_mod} data-tone="other">NM</span>;
-	return (
-		<span className={styles.mod_list}>
-			{scoreMods.map(({ mod }) =>
-				<span key={mod} className={styles.mod_badge} data-tone={getModTone(mod)}>
-					{mod.toUpperCase()}
-				</span>)}
-		</span>
-	);
-}
-
-function FeaturedScoreCard({ score, cosmetics, rank, mode, mapMaxCombo, replayLabel, replayUrl, baseDomain, personal = false }: Readonly<{
-	score: BeatmapScore,
-	cosmetics: ProfileCosmetics | null,
-	rank: number,
-	mode: OsuMode,
-	mapMaxCombo: number,
-	replayLabel: string,
-	replayUrl: string,
-	baseDomain: string,
-	personal?: boolean
-}>) {
-	return (
-		<div className={classNames(styles.top_score, { [styles.personal_score]: personal })}>
-			<span className={classNames(styles.top_rank, { [styles.personal_rank]: personal })}>#{rank}</span>
-			<span className={styles.top_grade} data-grade={score.grade.toLowerCase()}>
-				{score.grade.replace(/H$/, "")}
-			</span>
-			<Link className={styles.top_avatar} href={`/profile/${score.userId}/${mode}`}>
-				<PlayerAvatar userId={score.userId}
-				              name={score.name}
-				              baseDomain={baseDomain}
-				              cosmetics={cosmetics}
-				              className={styles.top_avatar_image}
-				              sizes="64px"/>
-			</Link>
-			<span className={styles.top_player}>
-				<small>{personal ? "Your score" : "Top score"}</small>
-				<Link href={`/profile/${score.userId}/${mode}`}>{score.name}</Link>
-				<span><FloatingCountryFlag code={score.country}/> achieved {formatRelativeTime(score.playTime)} ago</span>
-			</span>
-			<span className={styles.top_metric}>
-				<small>Total score</small>
-				<strong><span className={styles.top_metric_value}>{score.score.toLocaleString()}</span></strong>
-			</span>
-			<span className={styles.top_metric}>
-				<small>Accuracy</small>
-				<strong className={classNames({ [styles.perfect_value]: score.accuracy === 100 })}>
-					<span className={styles.top_metric_value}>{score.accuracy.toFixed(2)}%</span>
-				</strong>
-			</span>
-			<span className={styles.top_metric}>
-				<small>Max combo</small>
-				<strong className={classNames({ [styles.perfect_value]: score.maxCombo === mapMaxCombo })}>
-					<span className={styles.top_metric_value}>{score.maxCombo.toLocaleString()}x</span>
-				</strong>
-			</span>
-			<span className={classNames(styles.top_metric, styles.top_pp)}>
-				<small>Performance</small>
-				<strong><span className={styles.top_metric_value}>{Math.round(score.pp).toLocaleString()}<small>pp</small></span></strong>
-			</span>
-			<ModsList mods={score.mods}/>
-			{score.id > 0
-				? <ReplayViewer className={styles.featured_replay_button}
-				                label={replayLabel}
-				                replayUrl={replayUrl}
-				                buttonLabel={`Watch ${score.name}'s replay`}>
-					<FontAwesome prefix="fas" name="circle-play"/>
-				</ReplayViewer>
-				: <span className={styles.replay_unavailable}>—</span>}
-		</div>
-	);
-}
 
 export default async function BeatmapLeaderboard({ map, searchParams }: Readonly<{
 	map: Beatmap,
@@ -366,7 +239,7 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 	const matchesSelectedMods = (score: BeatmapScore) => {
 		if (selectedMods.length === 0) return true;
 		if (selectedMods.includes(Mods.nm)) return (score.mods & ~scoreModeMod) === ModNum.nm;
-		const mods = getMods(score.mods).map(({ mod }) => mod);
+		const mods = getScoreMods(score.mods).map(({ mod }) => mod);
 		return selectedMods.every((selectedMod) => mods.includes(selectedMod));
 	};
 	const scores = allScores.filter(matchesSelectedMods);
@@ -429,7 +302,7 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 				<div className={styles.ranking_header}>
 					<span className={styles.section_heading}>
 						<FontAwesome prefix="fad" name="trophy"/>
-						<span><small>Leaderboard</small><strong>Score Ranking</strong></span>
+						<span><strong>Score Ranking</strong></span>
 					</span>
 					<div className={styles.score_mode_controls}>
 						{convertScoreModeOptions.length > 0 &&
@@ -500,6 +373,7 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 				                                rank={1}
 				                                mode={selectedScoreMode.route}
 				                                mapMaxCombo={map.maxCombo}
+				                                achievedTime={formatRelativeTime(topScore.playTime)}
 				                                replayLabel={`${topScore.name} — ${map.artist} — ${map.title}`}
 				                                replayUrl={`https://render.${baseDomain}/embed/${topScore.id}`}
 				                                baseDomain={baseDomain}/>}
@@ -508,6 +382,7 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 				                                     rank={personalScore.rank}
 				                                     mode={selectedScoreMode.route}
 				                                     mapMaxCombo={map.maxCombo}
+				                                     achievedTime={formatRelativeTime(personalScore.score.playTime)}
 				                                     replayLabel={`${personalScore.score.name} — ${map.artist} — ${map.title}`}
 				                                     replayUrl={`https://render.${baseDomain}/embed/${personalScore.score.id}`}
 				                                     baseDomain={baseDomain}
@@ -531,23 +406,25 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 											{score.grade.replace(/H$/, "")}
 										</span>
 									</td>
-									<td className={classNames(styles.score_cell, styles.score_data_cell)}>{score.score.toLocaleString()}</td>
-									<td className={classNames(styles.accuracy_cell, styles.score_data_cell, {
+									<td className={styles.score_cell}><FormattedNumber value={score.score}/></td>
+									<td className={classNames(styles.accuracy_cell, {
 										[styles.perfect_value]: score.accuracy === 100
 									})}>{score.accuracy.toFixed(2)}%</td>
 									<td className={styles.player_cell}>
 										<span className={styles.player_content}>
-											<FloatingCountryFlag code={score.country}/>
+											<FloatingCountryFlag className={styles.score_country_flag}
+											                     code={score.country}/>
 											<Link href={`/profile/${score.userId}/${selectedScoreMode.route}`}>{score.name}</Link>
 										</span>
 									</td>
-									<td className={classNames(styles.score_data_cell, {
+									<td className={classNames({
 										[styles.perfect_value]: score.maxCombo === map.maxCombo
-									})}>{score.maxCombo.toLocaleString()}x</td>
-									{hitColumns.map(({ label, getValue }) => <td className={styles.score_data_cell} key={label}>{getValue(score)}</td>)}
-									<td className={classNames(styles.pp_cell, styles.score_data_cell)}>{Math.round(score.pp).toLocaleString()}<small>pp</small></td>
-									<td className={styles.score_data_cell}><time dateTime={score.playTime.toISOString()} title={score.playTime.toLocaleString("en-US")}>{formatRelativeTime(score.playTime)}</time></td>
-									<td className={styles.mods_cell}><ModsList mods={score.mods}/></td>
+									})}><FormattedNumber value={score.maxCombo}/>x</td>
+									{hitColumns.map(({ label, getValue }) =>
+										<td key={label}><FormattedNumber value={getValue(score)}/></td>)}
+									<td className={styles.pp_cell}><FormattedNumber value={Math.round(score.pp)}/><small>pp</small></td>
+									<td><time dateTime={score.playTime.toISOString()} title={score.playTime.toLocaleString("en-US")}>{formatRelativeTime(score.playTime)}</time></td>
+									<td className={styles.mods_cell}><ScoreMods mods={score.mods}/></td>
 									<td className={styles.replay_cell}>
 										{score.id > 0
 											? <ReplayViewer className={styles.table_replay_button}

@@ -29,6 +29,7 @@ Mamestagram Web
 ### Components
 - コンポーネントは責務ごとに分割する
 - 共通化できるものは components に配置
+- JSX.Elementを返すfunctionは別ファイルにする
 
 ### Styles
 - cssファイルはpublic/stylesの中に入れる

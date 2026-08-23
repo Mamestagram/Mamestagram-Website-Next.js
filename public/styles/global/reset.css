@@ -41,7 +41,7 @@ body {
 	max-width: 100%;
 	overflow-x: clip;
 	background-color: #000;
-	font-family: var(--font-share-tech-mono), sans-serif;
+	font-family: var(--font-fragment-mono), sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	color: #fdfdfd;

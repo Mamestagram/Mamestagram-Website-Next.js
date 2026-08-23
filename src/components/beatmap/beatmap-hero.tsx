@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import AudioPreview from "@/components/beatmap/audio-preview";
 import FontAwesome from "@/components/font-awesome";
+import FormattedNumber from "@/components/formatted-number";
 import ModeIcon from "@/components/mode-icon";
 import type { Beatmap, BeatmapDifficulty } from "@/database/beatmap";
 import { BeatmapStatus } from "@/lib/beatmap-status";
@@ -138,7 +139,8 @@ export default async function BeatmapHero({ map, difficulties }: Readonly<{
 							<span className={styles.key_count}>{Math.round(map.cs)}K</span>}
 						<span className={styles.star_rating}
 						      style={{ "--difficulty-color": difficultyColor(map.difficulty) } as CSSProperties}>
-							★ {map.difficulty.toFixed(2)}
+							<FontAwesome prefix="fas" name="star"/>
+							<span>{map.difficulty.toFixed(2)}</span>
 						</span>
 						<span className={styles.mapper}>mapped by <a href={`https://osu.ppy.sh/users/${encodeURIComponent(map.creator)}`}
 						                                                   target="_blank"
@@ -167,38 +169,37 @@ export default async function BeatmapHero({ map, difficulties }: Readonly<{
 						</span>
 						<span className={styles.play_count}>
 							<FontAwesome prefix="fas" name="circle-play"/>
-							{map.plays.toLocaleString()} plays
+							<FormattedNumber value={map.plays}/> plays
 						</span>
 					</div>
 					<div className={styles.hero_overview}>
 						<div className={styles.quick_stats}>
-							<span><FontAwesome prefix="fad" name="clock"/><small>Total length</small><strong>{formatDuration(map.totalLength)}</strong></span>
-							<span><FontAwesome prefix="fad" name="gauge-high"/><small>BPM</small><strong>{Math.round(map.bpm).toLocaleString()}</strong></span>
-							<span><FontAwesome prefix="fad" name="link"/><small>Max combo</small><strong>{map.maxCombo.toLocaleString()}<small>x</small></strong></span>
+							<span><FontAwesome prefix="fad" name="clock"/><small>Length</small><strong>{formatDuration(map.totalLength)}</strong></span>
+							<span><FontAwesome prefix="fad" name="gauge-high"/><small>BPM</small><strong><FormattedNumber value={Math.round(map.bpm)}/></strong></span>
+							<span><FontAwesome prefix="fad" name="link"/><small>Max combo</small><strong><FormattedNumber value={map.maxCombo}/><small>x</small></strong></span>
 						</div>
 						<div className={styles.attribute_grid}>
 							{[
 								{
 									label: map.mode === ModeNum.mania ? "Key count" : "Circle size",
-									short: map.mode === ModeNum.mania ? "KEYS" : "CS",
 									value: map.cs,
 									display: map.mode === ModeNum.mania ? `${Math.round(map.cs)}K` : undefined
 								},
-								{ label: "HP drain", short: "HP", value: map.hp },
-								{ label: "Accuracy", short: "OD", value: map.od },
-								{ label: "Approach rate", short: "AR", value: map.ar }
+								{ label: "HP drain", value: map.hp },
+								{ label: "Accuracy", value: map.od },
+								{ label: "Approach rate", value: map.ar }
 							].map((attribute) =>
-								<div key={attribute.short} className={styles.attribute}>
-									<span><small>{attribute.short}</small><strong>{attribute.label}</strong><b>{attribute.display ?? attribute.value.toFixed(1)}</b></span>
+								<div key={attribute.label} className={styles.attribute}>
+									<span><strong>{attribute.label}</strong><b>{attribute.display ?? attribute.value.toFixed(1)}</b></span>
 									<i><span style={{ width: getStatWidth(attribute.value) }}/></i>
 								</div>)}
 							<div className={classNames(styles.attribute, styles.success_rate)}
 							     tabIndex={0}
 							     aria-label={`Success rate ${successRate.toFixed(1)}%, ${map.passes.toLocaleString()} of ${map.plays.toLocaleString()} plays`}>
-								<span><small>PASS</small><strong>Success rate</strong><b>{successRate.toFixed(1)}%</b></span>
+								<span><strong>Success rate</strong><b>{successRate.toFixed(1)}%</b></span>
 								<i><span style={{ width: `${successRate}%` }}/></i>
 								<div className={styles.success_tooltip} aria-hidden="true">
-									{map.passes.toLocaleString()} of {map.plays.toLocaleString()} plays
+									<FormattedNumber value={map.passes}/> of <FormattedNumber value={map.plays}/> plays
 								</div>
 							</div>
 						</div>

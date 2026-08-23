@@ -1,9 +1,7 @@
 :root {
+	--font-fragment-mono: "Fragment Mono", "M PLUS 1 Code", "Noto_Sans";
 	--font-jetbrains-mono: "JetBrains Mono", monospace;
-	--font-nova-mono: "Nova Mono", "M PLUS 1 Code", "Noto_Sans";
-	--font-share-tech-mono: "Share Tech Mono", "M PLUS 1 Code", "Noto_Sans";
-	--font-kode-mono: "Kode Mono", "M PLUS 1 Code", "Noto_Sans";
-	--font-space-mono: "Space Mono", "M PLUS 1 Code", "Noto_Sans";
+	--font-space-mono: "Space Mono";
 }
 
 @font-face {

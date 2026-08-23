@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import CommandSentence from "@/components/documents/command-sentence";
 import FontAwesome from "@/components/font-awesome";
 import type { DocumentsData, Locale } from "@/app/api/documents/route";
 import styles from "@s/documents.module.css";
@@ -99,24 +100,4 @@ export default function ConnectGuide({ text, images, launchOption }: {
 			</div>
 		</>
 	);
-}
-
-function CommandSentence({ text, command, copied, copyLabel, onCopy }: {
-	text: string,
-	command: string,
-	copied: boolean,
-	copyLabel: string,
-	onCopy: () => Promise<void>
-}) {
-	const [before, after = ""] = text.split(command);
-	return <>{before}<button type="button"
-	                         className={styles.inline_command}
-	                         data-copied={copied}
-	                         aria-label={`${copyLabel}: ${command}`}
-	                         title={copyLabel}
-	                         onClick={onCopy}>
-		<code>{command}</code>
-		<FontAwesome prefix="fad" name={copied ? "check" : "copy"}/>
-		<span className={styles.inline_copy_feedback} aria-live="polite">{copied ? copyLabel : ""}</span>
-	</button>{after}</>;
 }

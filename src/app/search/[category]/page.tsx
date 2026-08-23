@@ -4,46 +4,24 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import FontAwesome from "@/components/font-awesome";
-import { SearchBeatmapList, SearchClanList, SearchUserList } from "@/components/search/result-lists";
+import FormattedNumber from "@/components/formatted-number";
+import SearchBeatmapList from "@/components/search/search-beatmap-list";
+import SearchClanList from "@/components/search/search-clan-list";
+import SearchPageMessage from "@/components/search/search-page-message";
+import SearchPagination from "@/components/search/search-pagination";
+import SearchUserList from "@/components/search/search-user-list";
 import { searchBeatmapsPage, searchClansPage, searchUsersPage } from "@/database/search";
 import { writeLog } from "@/lib/log";
+import { getSearchHref, isSearchCategory, searchCategoryMeta, type SearchCategory } from "@/lib/search-route";
 import styles from "@s/search.module.css";
 
-type SearchCategory = "players" | "clans" | "beatmaps";
-
 const PAGE_SIZE = 48;
-const categoryMeta: Record<SearchCategory, { label: string, icon: string, description: string }> = {
-	players: {
-		label: "Players",
-		icon: "users",
-		description: "Browse every player matching a name or player ID."
-	},
-	clans: {
-		label: "Clans",
-		icon: "people-group",
-		description: "Browse every clan matching a clan name, tag, or clan ID."
-	},
-	beatmaps: {
-		label: "Beatmaps",
-		icon: "compact-disc",
-		description: "Browse every beatmap matching a title, artist, creator, difficulty, map ID, or set ID."
-	}
-};
-
-const isSearchCategory = (value: string): value is SearchCategory => value in categoryMeta;
-const getSearchHref = (category: SearchCategory, query: string, page?: number) => {
-	const params = new URLSearchParams();
-	if (query) params.set("q", query);
-	if (page && page > 1) params.set("page", page.toString());
-	const queryString = params.toString();
-	return `/search/${category}${queryString ? `?${queryString}` : ""}`;
-};
 
 export async function generateMetadata({ params }: {
 	params: Promise<{ category: string }>
 }): Promise<Metadata> {
 	const { category } = await params;
-	return { title: isSearchCategory(category) ? `Search ${categoryMeta[category].label}` : "Search" };
+	return { title: isSearchCategory(category) ? `Search ${searchCategoryMeta[category].label}` : "Search" };
 }
 
 export default async function SearchResultsPage({ params, searchParams }: {
@@ -83,7 +61,7 @@ export default async function SearchResultsPage({ params, searchParams }: {
 			}
 			case "beatmaps": {
 				const result = await searchBeatmapsPage(query, page, PAGE_SIZE);
-				resultList = <SearchBeatmapList items={result.items}/>;
+				resultList = <SearchBeatmapList items={result.items} columns={2}/>;
 				total = result.total;
 				totalPages = result.totalPages;
 				break;
@@ -92,7 +70,7 @@ export default async function SearchResultsPage({ params, searchParams }: {
 		if (page > totalPages) notFound();
 	}
 
-	const meta = categoryMeta[category];
+	const meta = searchCategoryMeta[category];
 	const firstResult = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
 	const lastResult = Math.min(page * PAGE_SIZE, total);
 
@@ -112,7 +90,6 @@ export default async function SearchResultsPage({ params, searchParams }: {
 					<div>
 						<small>Search results</small>
 						<h1>{meta.label}</h1>
-						<p>{meta.description}</p>
 					</div>
 				</div>
 			</section>
@@ -131,7 +108,7 @@ export default async function SearchResultsPage({ params, searchParams }: {
 				</form>
 
 				<nav className={styles.categories} aria-label="Search categories">
-					{(Object.entries(categoryMeta) as [SearchCategory, typeof meta][]).map(([key, item]) =>
+					{(Object.entries(searchCategoryMeta) as [SearchCategory, typeof meta][]).map(([key, item]) =>
 						<Link key={key}
 						      href={getSearchHref(key, query)}
 						      aria-current={key === category ? "page" : undefined}>
@@ -143,12 +120,12 @@ export default async function SearchResultsPage({ params, searchParams }: {
 				<section className={styles.results} aria-labelledby="search-results-title" data-page-enter="box">
 					<div className={styles.results_heading}>
 						<div>
-							<small>{query ? `Results for “${query}”` : "Enter a search term"}</small>
+							{!query && <small>Enter a search term</small>}
 							<h2 id="search-results-title">{meta.label}</h2>
 						</div>
 						{query && <p>
-							<strong>{total.toLocaleString("en-US")}</strong> results
-							{total > 0 && <span>{firstResult.toLocaleString("en-US")}–{lastResult.toLocaleString("en-US")}</span>}
+							<strong><FormattedNumber value={total}/></strong> results
+							{total > 0 && <span><FormattedNumber value={firstResult}/>–<FormattedNumber value={lastResult}/></span>}
 						</p>}
 					</div>
 
@@ -164,47 +141,5 @@ export default async function SearchResultsPage({ params, searchParams }: {
 					                  totalPages={totalPages}/>} 
 			</div>
 		</div>
-	);
-}
-
-function SearchPageMessage({ icon, text }: Readonly<{ icon: string, text: string }>) {
-	return (
-		<div className={styles.message}>
-			<FontAwesome prefix="fad" name={icon}/>
-			<p>{text}</p>
-		</div>
-	);
-}
-
-function SearchPagination({ category, query, currentPage, totalPages }: Readonly<{
-	category: SearchCategory,
-	query: string,
-	currentPage: number,
-	totalPages: number
-}>) {
-	const windowSize = Math.min(7, totalPages);
-	const start = Math.min(
-		Math.max(currentPage - Math.floor(windowSize / 2), 1),
-		Math.max(totalPages - windowSize + 1, 1)
-	);
-	const pages = Array.from({ length: windowSize }, (_, index) => start + index);
-
-	return (
-		<nav className={styles.pagination} aria-label="Search result pages">
-			{currentPage > 1 &&
-				<Link href={getSearchHref(category, query, currentPage - 1)} aria-label="Previous page">
-					<FontAwesome prefix="fas" name="chevron-left"/>
-				</Link>}
-			{pages.map((page) =>
-				<Link key={page}
-				      href={getSearchHref(category, query, page)}
-				      aria-current={page === currentPage ? "page" : undefined}>
-					{page}
-				</Link>)}
-			{currentPage < totalPages &&
-				<Link href={getSearchHref(category, query, currentPage + 1)} aria-label="Next page">
-					<FontAwesome prefix="fas" name="chevron-right"/>
-				</Link>}
-		</nav>
 	);
 }

@@ -3,6 +3,7 @@ import type { PlayerScoreMap, PlayerMostPlayedMap } from "@/database/profile";
 import { ScoreScope } from "@/database/profile";
 import { BeatmapStatus } from "@/lib/beatmap-status";
 import FontAwesome from "@/components/font-awesome";
+import FormattedNumber from "@/components/formatted-number";
 import styles from "@s/profile.module.css";
 
 export default function PlayerScoreValue({ i, map, scope, isDans }: {
@@ -20,12 +21,11 @@ export default function PlayerScoreValue({ i, map, scope, isDans }: {
 				<>
 					<span className={classNames(styles.recorded, { [styles.not_taken]: scoreMap.status !== BeatmapStatus.ranked && scoreMap.status !== BeatmapStatus.approved })}>
 						{(scoreMap.status !== BeatmapStatus.ranked && scoreMap.status !== BeatmapStatus.approved && "-") ||
-							<><span className={styles.score_numeric_value}>{Math.round(scoreMap.pp).toLocaleString()}</span><span className={styles.pp_label}>pp</span></>}
+							<><span><FormattedNumber value={Math.round(scoreMap.pp)}/></span><span className={styles.pp_label}>pp</span></>}
 					</span>
 					{!isDans && scope === ScoreScope.bestPP &&
 						<span className={styles.weighted}>
-							<span className={styles.auxiliary_label}>weighted</span>
-							<span className={styles.score_numeric_value}>{Math.round(scoreMap.pp * 0.95 ** i).toLocaleString()}</span><span className={styles.pp_label}>pp</span>
+							(<FormattedNumber value={Math.round(scoreMap.pp * 0.95 ** i)}/>pp)
 						</span>}
 					{scope !== ScoreScope.bestPP && scoreMap.status === BeatmapStatus.loved &&
 						<span className={styles.loved}>Loved</span>}
@@ -36,7 +36,7 @@ export default function PlayerScoreValue({ i, map, scope, isDans }: {
 			return (
 				<span className={classNames(styles.recorded)}>
 					<FontAwesome prefix="fad" name="play"/>
-					<span className={styles.score_numeric_value}>{mostPlayedMap.plays.toLocaleString()}</span>
+					<span><FormattedNumber value={mostPlayedMap.plays}/></span>
 				</span>
 			);
 	}

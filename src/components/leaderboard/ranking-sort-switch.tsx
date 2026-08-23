@@ -74,6 +74,7 @@ export default function RankingSortSwitch({ mode, sortBy, country, isClan }: Rea
 	return (
 		<nav ref={wrapperRef}
 		     className={classNames(styles.selection_wrapper, styles.compact_mode_selection, styles.ranking_sort_control)}
+		     data-sort={selectedOption.value}
 		     aria-label="Ranking category">
 			<button type="button"
 			        className={styles.leaderboard_mode_trigger}
@@ -106,6 +107,7 @@ export default function RankingSortSwitch({ mode, sortBy, country, isClan }: Rea
 								return (
 									<Link key={option.value}
 									      href={`/leaderboard/${mode}/${destinationSort}${queryString}`}
+									      data-sort={option.value}
 									      role="menuitem"
 									      aria-current={isSelected ? "page" : undefined}
 									      className={classNames({ [styles.selected_playstyle]: isSelected })}

@@ -6,7 +6,6 @@
 .mode-icon {
 	position: relative;
 	font-family: "osu-mode", sans-serif;
-	/* font-family: "Font Awesome 7 Pro", sans-serif; */
 	font-style: normal;
 	
 	&::before {

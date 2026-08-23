@@ -1,7 +1,10 @@
 import classNames from "classnames";
 import { getStatistics, type PlayerStatistics } from "@/database/profile";
+import { writeError } from "@/lib/log";
 import { ModeNum } from "@/lib/mode";
 import FontAwesome from "@/components/font-awesome";
+import FormattedNumber from "@/components/formatted-number";
+import StatisticsUnavailable from "@/components/profile/statistics-unavailable";
 import styles from "@s/profile.module.css";
 
 export default async function Statistics({ id, mode, isClan, isDans, statistics: initialStatistics }: {
@@ -11,8 +14,22 @@ export default async function Statistics({ id, mode, isClan, isDans, statistics:
 	isDans: boolean,
 	statistics?: PlayerStatistics
 }) {
-	const statistics = initialStatistics ?? await getStatistics(id, mode, isClan, isDans);
-	const formatAggregate = (value: number) => (isClan ? Math.floor(value) : value).toLocaleString();
+	let statistics = initialStatistics;
+	if (!statistics) {
+		try {
+			statistics = await getStatistics(id, mode, isClan, isDans);
+		}
+		catch (error: unknown) {
+			void writeError(error, {
+				source: "server",
+				method: "GET",
+				pathname: `/profile/${id}`,
+				routeType: "profile-statistics"
+			});
+			return <StatisticsUnavailable/>;
+		}
+	}
+	const formatAggregate = (value: number) => isClan ? Math.floor(value) : value;
 	const isVanillaMode = [ModeNum.std, ModeNum.taiko, ModeNum.ctb, ModeNum.mania].includes(mode);
 
 	return (
@@ -29,7 +46,7 @@ export default async function Statistics({ id, mode, isClan, isDans, statistics:
 							<h3>Global Rank</h3>
 							<p>
 								{statistics.rank.global !== 0
-									? `#${statistics.rank.global.toLocaleString()}`
+									? <>#<FormattedNumber value={statistics.rank.global}/></>
 									: "-"}
 							</p>
 						</li>
@@ -37,7 +54,7 @@ export default async function Statistics({ id, mode, isClan, isDans, statistics:
 							<h3>Country Rank</h3>
 							<p>
 								{statistics.rank.country !== 0
-									? `#${statistics.rank.country.toLocaleString()}`
+									? <>#<FormattedNumber value={statistics.rank.country}/></>
 									: "-"}
 							</p>
 						</li>}
@@ -45,7 +62,7 @@ export default async function Statistics({ id, mode, isClan, isDans, statistics:
 							<h3>Bancho Rank</h3>
 							<p>
 								{statistics.rank.bancho !== 0
-									? `#${statistics.rank.bancho.toLocaleString()}`
+									? <>#<FormattedNumber value={statistics.rank.bancho}/></>
 									: "-"}
 							</p>
 						</li>}
@@ -58,7 +75,7 @@ export default async function Statistics({ id, mode, isClan, isDans, statistics:
 						{Object.entries(statistics.gradeCount).map(([key, value]) =>
 							<li key={key} data-grade={key}>
 								<h3>{key.replace(/h$/, "").toUpperCase()}</h3>
-								<p>{value.toLocaleString()}</p>
+								<p><FormattedNumber value={value}/></p>
 							</li>
 						)}
 					</ul>
@@ -69,25 +86,25 @@ export default async function Statistics({ id, mode, isClan, isDans, statistics:
 					<ul className={styles.pp_area}>
 						<li>
 							<h3>Overall</h3>
-							<p>{formatAggregate(statistics.pp.default)}<span>pp</span></p>
+							<p><FormattedNumber value={formatAggregate(statistics.pp.default)}/><span>pp</span></p>
 						</li>
 						{mode === ModeNum.mania &&
 							<>
 								<li>
 									<h3>4k</h3>
-									<p>{formatAggregate(statistics.pp.k4)}<span>pp</span></p>
+									<p><FormattedNumber value={formatAggregate(statistics.pp.k4)}/><span>pp</span></p>
 								</li>
 								<li>
 									<h3>6k</h3>
-									<p>{formatAggregate(statistics.pp.k6)}<span>pp</span></p>
+									<p><FormattedNumber value={formatAggregate(statistics.pp.k6)}/><span>pp</span></p>
 								</li>
 								<li>
 									<h3>7k</h3>
-									<p>{formatAggregate(statistics.pp.k7)}<span>pp</span></p>
+									<p><FormattedNumber value={formatAggregate(statistics.pp.k7)}/><span>pp</span></p>
 								</li>
 								<li>
 									<h3>10k</h3>
-									<p>{formatAggregate(statistics.pp.k10)}<span>pp</span></p>
+									<p><FormattedNumber value={formatAggregate(statistics.pp.k10)}/><span>pp</span></p>
 								</li>
 							</>}
 					</ul>
@@ -98,11 +115,11 @@ export default async function Statistics({ id, mode, isClan, isDans, statistics:
 					<ul className={styles.score_area}>
 						<li>
 							<h3>Ranked Score</h3>
-							<p>{formatAggregate(statistics.rankedScore)}</p>
+							<p><FormattedNumber value={formatAggregate(statistics.rankedScore)}/></p>
 						</li>
 						<li>
 							<h3>Total Score</h3>
-							<p>{formatAggregate(statistics.totalScore)}</p>
+							<p><FormattedNumber value={formatAggregate(statistics.totalScore)}/></p>
 						</li>
 					</ul>
 				</section>
@@ -116,7 +133,7 @@ export default async function Statistics({ id, mode, isClan, isDans, statistics:
 						</li>
 						<li>
 							<h3>Play Count</h3>
-							<p>{formatAggregate(statistics.plays)}</p>
+							<p><FormattedNumber value={formatAggregate(statistics.plays)}/></p>
 						</li>
 						<li>
 							<h3>Total Play Time</h3>
@@ -128,11 +145,11 @@ export default async function Statistics({ id, mode, isClan, isDans, statistics:
 						</li>
 						<li>
 							<h3>Total Hits</h3>
-							<p>{formatAggregate(statistics.totalHits)}</p>
+							<p><FormattedNumber value={formatAggregate(statistics.totalHits)}/></p>
 						</li>
 						<li>
 							<h3>Max Combo</h3>
-							<p>{statistics.maxCombo.toLocaleString()}</p>
+							<p><FormattedNumber value={statistics.maxCombo}/></p>
 						</li>
 					</ul>
 				</section>

@@ -1,0 +1,21 @@
+.number {
+	display: inline;
+	margin: 0 !important;
+	color: inherit !important;
+	font-family: inherit !important;
+	font-size: inherit !important;
+	font-weight: inherit !important;
+	letter-spacing: inherit !important;
+	line-height: inherit !important;
+}
+
+.separator {
+	margin: 0 !important;
+	color: inherit !important;
+	font-family: inherit !important;
+	font-size: 0.72em !important;
+	font-weight: inherit !important;
+	letter-spacing: inherit !important;
+	line-height: inherit !important;
+	vertical-align: baseline;
+}

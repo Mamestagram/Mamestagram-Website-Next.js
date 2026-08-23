@@ -1,14 +1,17 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { useHeaderSearch } from "@/components/context/header-search-provider";
 import { useUserContext } from "@/components/context/user-provider";
 import FontAwesome from "@/components/font-awesome";
-import { SearchBeatmapList, SearchClanList, SearchUserList } from "@/components/search/result-lists";
-import type { SearchBeatmap, SearchClan, SearchResponse, SearchUser } from "@/lib/search";
+import SearchBeatmapResults from "@/components/header/search-beatmap-results";
+import SearchClanResults from "@/components/header/search-clan-results";
+import SearchMessage from "@/components/header/search-message";
+import SearchSkeleton from "@/components/header/search-skeleton";
+import SearchUserResults from "@/components/header/search-user-results";
+import type { SearchResponse } from "@/lib/search";
 import styles from "@s/header-search.module.css";
 
 type SearchPhase = "idle" | "loading" | "ready" | "error";
@@ -57,22 +60,6 @@ const cacheSearch = (query: string, data: SearchResponse) => {
 const subscribeToClient = () => () => undefined;
 const getClientSnapshot = () => true;
 const getServerSnapshot = () => false;
-
-export function HeaderSearchTrigger({ location }: { location: "top" | "navigation" }) {
-	const { openSearch } = useHeaderSearch();
-	const button = (
-		<button className={location === "navigation" ? styles.navigation_trigger : "search"}
-		        type="button"
-		        title="Search"
-		        aria-label="Open search"
-		        aria-haspopup="dialog"
-		        onClick={(event) => openSearch(event.currentTarget)}>
-			<FontAwesome prefix="fas" name="magnifying-glass"/>
-		</button>
-	);
-
-	return location === "navigation" ? <li className="search">{button}</li> : button;
-}
 
 export default function HeaderSearch() {
 	const router = useRouter();
@@ -212,7 +199,6 @@ export default function HeaderSearch() {
 				<div className={styles.heading}>
 					<span className={styles.heading_icon}><FontAwesome prefix="fad" name="magnifying-glass"/></span>
 					<span>
-						<small>Find what you need</small>
 						<strong id="header-search-title">Search</strong>
 					</span>
 					<button type="button" aria-label="Close search" onClick={closeSearch}>
@@ -224,7 +210,6 @@ export default function HeaderSearch() {
 					<span><FontAwesome prefix="fad" name="users"/>Players</span>
 					<span><FontAwesome prefix="fad" name="people-group"/>Clans</span>
 					<span><FontAwesome prefix="fad" name="compact-disc"/>Beatmaps</span>
-					<small>Search across players, clans, and beatmaps.</small>
 				</div>
 
 				<form className={styles.search_form} onSubmit={(event) => {
@@ -252,8 +237,7 @@ export default function HeaderSearch() {
 
 				<div className={styles.results} aria-live="polite" aria-busy={phase === "loading"}>
 					{phase === "idle" && <SearchMessage icon="magnifying-glass"
-					                                      title="Search Mamestagram"
-					                                      body="Find players and clans by name, tag, or ID, and beatmaps by title, artist, creator, difficulty, or ID."/>}
+					                                      body="Search players, clans, and beatmaps by name, tag, title, or ID."/>}
 					{phase === "loading" && <SearchSkeleton/>}
 					{phase === "error" && <SearchMessage icon="triangle-exclamation" title="Search unavailable" body={message}/>}
 					{phase === "ready" && !hasResults && <SearchMessage icon="magnifying-glass-minus"
@@ -290,105 +274,4 @@ export default function HeaderSearch() {
 	);
 
 	return isClient ? createPortal(dialog, document.body) : null;
-}
-
-function SearchMessage({ icon, title, body }: { icon: string, title: string, body: string }) {
-	return (
-		<div className={styles.message}>
-			<FontAwesome prefix="fad" name={icon}/>
-			<strong>{title}</strong>
-			<p>{body}</p>
-		</div>
-	);
-}
-
-function SearchUserResults({ users, baseDomain, query, total, onSelect }: Readonly<{
-	users: SearchUser[],
-	baseDomain: string,
-	query: string,
-	total: number,
-	onSelect: () => void
-}>) {
-	return (
-		<section className={styles.result_group} aria-labelledby="player-search-results">
-			<h2 id="player-search-results" className={styles.result_group_heading}>
-				<span><FontAwesome prefix="fad" name="users"/>Players</span>
-				<SearchGroupActions category="players" query={query} total={total} onSelect={onSelect}/>
-			</h2>
-			<SearchUserList items={users} baseDomain={baseDomain} onSelect={onSelect}/>
-		</section>
-	);
-}
-
-function SearchClanResults({ clans, baseDomain, query, total, onSelect }: Readonly<{
-	clans: SearchClan[],
-	baseDomain: string,
-	query: string,
-	total: number,
-	onSelect: () => void
-}>) {
-	return (
-		<section className={styles.result_group} aria-labelledby="clan-search-results">
-			<h2 id="clan-search-results" className={styles.result_group_heading}>
-				<span><FontAwesome prefix="fad" name="people-group"/>Clans</span>
-				<SearchGroupActions category="clans" query={query} total={total} onSelect={onSelect}/>
-			</h2>
-			<SearchClanList items={clans} baseDomain={baseDomain} onSelect={onSelect}/>
-		</section>
-	);
-}
-
-function SearchBeatmapResults({ beatmaps, query, total, onSelect }: Readonly<{
-	beatmaps: SearchBeatmap[],
-	query: string,
-	total: number,
-	onSelect: () => void
-}>) {
-	return (
-		<section className={styles.result_group} aria-labelledby="beatmap-search-results">
-			<h2 id="beatmap-search-results" className={styles.result_group_heading}>
-				<span><FontAwesome prefix="fad" name="compact-disc"/>Beatmaps</span>
-				<SearchGroupActions category="beatmaps" query={query} total={total} onSelect={onSelect}/>
-			</h2>
-			<SearchBeatmapList items={beatmaps} onSelect={onSelect}/>
-		</section>
-	);
-}
-
-function SearchGroupActions({ category, query, total, onSelect }: Readonly<{
-	category: "players" | "clans" | "beatmaps",
-	query: string,
-	total: number,
-	onSelect: () => void
-}>) {
-	return (
-		<span className={styles.result_group_actions}>
-			<small>{total.toLocaleString("en-US")}</small>
-			<Link href={`/search/${category}?q=${encodeURIComponent(query)}`} onClick={onSelect}>
-				Show more <FontAwesome prefix="fas" name="arrow-right"/>
-			</Link>
-		</span>
-	);
-}
-
-function SearchSkeleton() {
-	return (
-		<ul className={styles.skeleton_list} aria-hidden="true">
-			{Array.from({ length: 9 }, (_, index) =>
-				<li key={index}>
-					<span className={styles.skeleton_avatar}></span>
-					<span className={styles.skeleton_identity}>
-						<i></i>
-						<i></i>
-					</span>
-					<span className={styles.skeleton_meta}>
-						<span className={styles.skeleton_meta_primary}>
-							<i></i>
-							<i></i>
-						</span>
-						<i></i>
-					</span>
-				</li>)}
-		</ul>
-	);
 }

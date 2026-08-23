@@ -2,9 +2,8 @@ import Link from "next/link";
 import FontAwesome from "@/components/font-awesome";
 import styles from "@s/home.module.css";
 
-export default function DashboardSectionHeading({ icon, eyebrow, title, href, action }: Readonly<{
+export default function DashboardSectionHeading({ icon, title, href, action }: Readonly<{
 	icon: string,
-	eyebrow: string,
 	title: string,
 	href?: string,
 	action?: string
@@ -15,7 +14,6 @@ export default function DashboardSectionHeading({ icon, eyebrow, title, href, ac
 				<FontAwesome prefix="fad" name={icon}/>
 			</span>
 			<span className={styles.section_heading_copy}>
-				<small>{eyebrow}</small>
 				<h2>{title}</h2>
 			</span>
 			{href && action &&

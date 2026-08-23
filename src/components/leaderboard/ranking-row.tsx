@@ -5,6 +5,7 @@ import type { RankingList } from "@/database/leaderboard";
 import { SortBy } from "@/database/leaderboard";
 import { OsuMode } from "@/lib/mode";
 import CountryFlag from "@/components/country-flag";
+import FormattedNumber from "@/components/formatted-number";
 import styles from "@s/leaderboard.module.css";
 
 const topRankStyles = [styles.top_1, styles.top_2, styles.top_3] as const;
@@ -25,7 +26,7 @@ export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 		    data-href={profileHref}
 		    data-rendering-item="compact">
 			<td className={classNames(styles.rank, topRankStyles[listRow.rank - 1])}>
-				<span className={styles.numeric_value}>#{listRow.rank.toLocaleString()}</span>
+				<span>#<FormattedNumber value={listRow.rank}/></span>
 			</td>
 			<td className={!isClan ? styles.country : styles.avatar}>
 				{!isClan
@@ -39,26 +40,26 @@ export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 			</td>
 			<td className={styles.name}>
 				<Link className={styles.row_link} href={profileHref}>
-					<span className={styles.name_text}>{listRow.tag}{listRow.name}</span>
+					<span className={styles.name_text}>{listRow.tag !== null && `[${listRow.tag}] `}{listRow.name}</span>
 				</Link>
 			</td>
 			<td className={classNames(styles.acc, { [styles.sorted]: sortBy === SortBy.accuracy })}>
-				<span className={styles.numeric_value}>{listRow.acc.toFixed(2)}</span><span className={styles.percent_label}>%</span>
+				<span>{listRow.acc.toFixed(2)}</span><span className={styles.percent_label}>%</span>
 			</td>
 			<td className={classNames(styles.playcount, { [styles.sorted]: sortBy === SortBy.playcount })}>
-				<span className={styles.numeric_value}>{Math.floor(listRow.plays).toLocaleString()}</span>
+				<span><FormattedNumber value={Math.floor(listRow.plays)}/></span>
 			</td>
 			<td className={classNames(styles.pp, { [styles.sorted]: sortBy === SortBy.performance || sortBy === SortBy.dans })}>
-				<span className={styles.numeric_value}>{Math.round(listRow.pp).toLocaleString()}</span><span className={styles.pp_label}>pp</span>
+				<span><FormattedNumber value={Math.round(listRow.pp)}/></span><span className={styles.pp_label}>pp</span>
 			</td>
 			{sortBy !== SortBy.dans &&
 				<>
 					<td className={classNames(styles.score, { [styles.sorted]: sortBy === SortBy.score })}>
-						<span className={styles.numeric_value}>{Math.round(listRow.score).toLocaleString()}</span>
+						<span><FormattedNumber value={Math.round(listRow.score)}/></span>
 					</td>
-					<td className={styles.ss_count}><span className={styles.numeric_value}>{Math.floor(listRow.xCount).toLocaleString()}</span></td>
-					<td className={styles.s_count}><span className={styles.numeric_value}>{Math.floor(listRow.sCount).toLocaleString()}</span></td>
-					<td className={styles.a_count}><span className={styles.numeric_value}>{Math.floor(listRow.aCount).toLocaleString()}</span></td>
+					<td className={styles.ss_count}><span><FormattedNumber value={Math.floor(listRow.xCount)}/></span></td>
+					<td className={styles.s_count}><span><FormattedNumber value={Math.floor(listRow.sCount)}/></span></td>
+					<td className={styles.a_count}><span><FormattedNumber value={Math.floor(listRow.aCount)}/></span></td>
 				</>
 			}
 		</tr>

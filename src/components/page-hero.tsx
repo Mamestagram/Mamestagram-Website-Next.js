@@ -4,13 +4,12 @@ import styles from "@s/page-hero.module.css";
 type PageHeroVariant = "documents" | "leaderboard" | "patcher" | "support";
 
 type PageHeroProps = Readonly<{
-	description: string;
 	imageSrc: string;
 	title: string;
 	variant: PageHeroVariant;
 }>;
 
-export default function PageHero({ description, imageSrc, title, variant }: PageHeroProps) {
+export default function PageHero({ imageSrc, title, variant }: PageHeroProps) {
 	return (
 		<section className={styles.hero} data-variant={variant}>
 			<Image
@@ -25,7 +24,6 @@ export default function PageHero({ description, imageSrc, title, variant }: Page
 			<div className={styles.overlay}></div>
 			<div className={styles.content}>
 				<h1>{title}</h1>
-				<p>{description}</p>
 			</div>
 		</section>
 	);

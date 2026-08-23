@@ -46,17 +46,36 @@ import { getProfileCosmeticsMap } from "@/lib/profile-cosmetics";
 import type { ProfileCosmetics } from "@/lib/profile-cosmetics";
 import { isPlayerAction, type PlayerAction } from "@/lib/player-action";
 
-const fetchProfileResponse = async (url: string, label: string, init?: RequestInit) => {
-	try {
-		return await fetch(url, {
-			...init,
-			signal: init?.signal ?? AbortSignal.timeout(5000)
-		});
+type ProfileFetchOptions = {
+	timeoutMs?: number,
+	timeoutRetries?: number,
+	logErrors?: boolean
+};
+
+const isTimeoutError = (error: unknown) => error instanceof Error && error.name === "TimeoutError";
+
+const fetchProfileResponse = async (
+	url: string,
+	label: string,
+	init?: RequestInit,
+	options: ProfileFetchOptions = {}
+) => {
+	const timeoutMs = options.timeoutMs ?? 5000;
+	const timeoutRetries = init?.signal === undefined ? options.timeoutRetries ?? 0 : 0;
+	for (let attempt = 0; attempt <= timeoutRetries; attempt++) {
+		try {
+			return await fetch(url, {
+				...init,
+				signal: init?.signal ?? AbortSignal.timeout(timeoutMs)
+			});
+		}
+		catch (error: unknown) {
+			if (isTimeoutError(error) && attempt < timeoutRetries) continue;
+			if (options.logErrors !== false) void writeError(error);
+			throw new Error(`Couldn't fetch ${label}`, { cause: error });
+		}
 	}
-	catch (error: unknown) {
-		void writeError(error);
-		throw new Error(`Couldn't fetch ${label}`, { cause: error });
-	}
+	throw new Error(`Couldn't fetch ${label}`);
 };
 
 export const accountExists = async (id: number, isClan: boolean) => {
@@ -769,7 +788,12 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 		const apiUrl = !Boolean(Number(process.env.LOCAL_ONLY))
 			? `https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=stats`
 			: `${process.env.BASE_URL}/api/v1/get_player_info?id=${id}&scope=stats`;
-		const mamesosuApi = await fetchProfileResponse(apiUrl, "player statistics");
+		const mamesosuApi = await fetchProfileResponse(
+			apiUrl,
+			"player statistics",
+			{ cache: "no-store" },
+			{ timeoutMs: 10_000, timeoutRetries: 1 }
+		);
 		if (mamesosuApi.ok) {
 			const playerStats = (await mamesosuApi.json() as PlayerStatsApi).player.stats[mode];
 			const playtime = getPlayTimeDHS(playerStats.playtime),
@@ -786,44 +810,50 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 				maxCombo: number;
 			if (!isDans) {
 				const osudailyApiUrl = `https://osudaily.net/api/pp.php?k=${process.env.OSUDAILY_API_KEY}&v=${playerStats.pp}&t=pp&m=${mode}`;
-				let osudailyApi: Response | null = null;
-				if (mode <= ModeNum.mania)
-					osudailyApi = await fetchProfileResponse(osudailyApiUrl, "Bancho rank");
-				if (osudailyApi === null || osudailyApi.ok) {
-					const banchoRank = (await osudailyApi?.json() as { rank: number })?.rank ?? 0;
-					/* rank */
-					rank = {
-						global: playerStats.global_rank_pp,
-						country: playerStats.country_rank_pp,
-						bancho: banchoRank
-					};
-					/* grade count */
-					gradeCount = {
-						xh: playerStats.xh_count,
-						x: playerStats.x_count,
-						sh: playerStats.sh_count,
-						s: playerStats.s_count,
-						a: playerStats.a_count
-					};
-					/* pp */
-					pp = {
-						default: playerStats.pp,
-						k4: playerStats.pp_4k,
-						k6: playerStats.pp_6k,
-						k7: playerStats.pp_7k,
-						k10: playerStats.pp_10k
-					};
-					/* acc */
-					acc = playerStats.acc;
-					/* plays */
-					plays = playerStats.plays;
-					/* max combo */
-					maxCombo = playerStats.max_combo;
+				let banchoRank = 0;
+				if (mode <= ModeNum.mania) {
+					try {
+						const osudailyApi = await fetchProfileResponse(
+							osudailyApiUrl,
+							"Bancho rank",
+							undefined,
+							{ timeoutMs: 3000, logErrors: false }
+						);
+						if (osudailyApi.ok)
+							banchoRank = (await osudailyApi.json() as { rank?: number }).rank ?? 0;
+					}
+					catch {
+						// Bancho rank is optional; Mamestagram statistics remain available.
+					}
 				}
-				else {
-					void writeError(`${osudailyApi.status}: ${osudailyApi.statusText} (url: ${osudailyApiUrl})`);
-					throw new Error(`Couldn't fetch bancho rank (status: ${osudailyApi.status})`);
-				}
+				/* rank */
+				rank = {
+					global: playerStats.global_rank_pp,
+					country: playerStats.country_rank_pp,
+					bancho: banchoRank
+				};
+				/* grade count */
+				gradeCount = {
+					xh: playerStats.xh_count,
+					x: playerStats.x_count,
+					sh: playerStats.sh_count,
+					s: playerStats.s_count,
+					a: playerStats.a_count
+				};
+				/* pp */
+				pp = {
+					default: playerStats.pp,
+					k4: playerStats.pp_4k,
+					k6: playerStats.pp_6k,
+					k7: playerStats.pp_7k,
+					k10: playerStats.pp_10k
+				};
+				/* acc */
+				acc = playerStats.acc;
+				/* plays */
+				plays = playerStats.plays;
+				/* max combo */
+				maxCombo = playerStats.max_combo;
 			}
 			else {
 				/* rank */

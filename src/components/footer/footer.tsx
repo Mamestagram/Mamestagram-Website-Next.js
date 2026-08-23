@@ -70,16 +70,18 @@ export default function Footer() {
 					   target="_blank"
 					   rel="noopener noreferrer">
 						<FontAwesome prefix="fab" name="youtube"/>
-					</a>, designed by basshhii0610
+					</a>
+				</p>
+				<p className="built-with">
+					Designed by basshhii0610
 					<a className="x-twitter"
 					   href="https://x.com/basshhii_0610"
 					   target="_blank"
 					   rel="noopener noreferrer">
 						<FontAwesome prefix="fab" name="x-twitter"/>
-					</a>
-				</p>
-				<p className="built-with">
-					Built with <FontAwesome prefix="fab" name="openai"/>OpenAI Codex
+					</a>, Coded with
+					<FontAwesome prefix="fab" name="openai"/>
+					OpenAI Codex
 				</p>
 			</div>
 		</footer>

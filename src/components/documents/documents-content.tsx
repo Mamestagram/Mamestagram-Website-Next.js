@@ -23,7 +23,6 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 	return (
 		<div className={styles.page} lang={locale}>
 			<PageHero
-				description={text.description}
 				imageSrc="/images/banner/documents.jpg"
 				title={text.title}
 				variant="documents"
@@ -40,9 +39,6 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 							<p>{text.introLead}</p>
 							<p>{text.introBody}</p>
 							<p>{text.introDan}</p>
-							<div className={styles.ruleset_chips} aria-label={text.featuresTitle}>
-								<span>Stable &amp; Lazer</span><span>Vanilla</span><span>Relax</span><span>Autopilot</span><span>Dans</span>
-							</div>
 						</div>
 						<h3 className={styles.subheading}>{text.featuresTitle}</h3>
 						<div className={styles.overview_grid}>
@@ -73,7 +69,7 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 									</span>
 									<span className={styles.feature_copy}>
 										<i><FontAwesome prefix="fad" name={feature.icon}/></i>
-										<span><small>{feature.channel}</small><strong>{feature.title}</strong></span>
+										<span><strong>{feature.channel}</strong></span>
 									</span>
 									<p>{feature.body}</p>
 								</a>)}
@@ -133,7 +129,6 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 					<section id="bbcode" className={styles.document_section} data-page-enter="section">
 						<SectionHeading icon="brackets-square" title={text.nav.bbcode}/>
 						<BbcodeGuide locale={locale}
-						             lead={text.bbcodeLead}
 						             sourceLabel={text.bbcodeSource}
 						             sourceHref={links.bbcodeGuide}
 						             categories={bbcodeCategories}/>
@@ -167,7 +162,6 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 
 					<section id="faq" className={styles.document_section} data-page-enter="section">
 						<SectionHeading icon="circle-question" title={text.nav.faq}/>
-						<p className={styles.section_lead}>{text.faqLead}</p>
 						<FaqList faqs={text.faqs}/>
 					</section>
 

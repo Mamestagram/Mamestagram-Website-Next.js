@@ -20,7 +20,6 @@ export default async function SupportContent({ locale }: Readonly<{ locale: Supp
 	return (
 		<div className={styles.page} lang={locale}>
 			<PageHero
-				description={text.description}
 				imageSrc={`https://img.${process.env.BASE_DOMAIN}/2`}
 				title={text.title}
 				variant="support"

@@ -196,8 +196,7 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 						    [styles.show]: pageOrder.includes(i)
 					    })}
 						onClick={(e) => shiftRefOrder(e.currentTarget, i)}>
-						<Link className={styles.numeric_value}
-						      href={`/leaderboard/${mode}/${sortBy}?page=${i + 1}${queryStr}`}>
+						<Link href={`/leaderboard/${mode}/${sortBy}?page=${i + 1}${queryStr}`}>
 							{i + 1}
 						</Link>
 					</li>

@@ -133,7 +133,6 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 	const hiddenPrivilegeLabels = privileges.slice(3).map(({ label }) => label).join(", ");
 	const profileQuery = isClan ? "?clan" : "";
 	const countrySort = isDans ? "dans" : "performance";
-	const displayName = `${info.tag ?? ""}${info.name}`;
 	const nameTooltipId = `profile-name-tooltip-${isClan ? "clan" : "user"}-${id}`;
 	const lastOnlineDate = info.latestActivity.toLocaleDateString("en-US", {
 		year: "numeric",
@@ -179,10 +178,10 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 					<div className={styles.name_row}>
 						<div className={styles.name_with_tooltip}>
 							<h1 className={styles.name} tabIndex={0} aria-describedby={nameTooltipId}>
-								{displayName}
+								{info.tag !== null && `${info.tag} `}{info.name}
 							</h1>
 							<span id={nameTooltipId} className={styles.name_tooltip} role="tooltip">
-								{displayName}
+								{info.tag !== null && `${info.tag} `}{info.name}
 							</span>
 						</div>
 						<div className={styles.profile_mode_controls}>
@@ -213,11 +212,10 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 							      href={`/leaderboard/${mode}/${countrySort}${country.isValid ? `?country=${encodeURIComponent(country.code)}` : ""}`}>
 								{country.isValid
 									? <CountryFlag className={styles.flag} code={country.code}/>
-									: <FontAwesome className={styles.flag} prefix="fas" name="globe"/>}
-								<span className={styles.meta_copy}>
-									<small>Country</small>
-									<strong>{country.name}</strong>
-								</span>
+										: <FontAwesome className={styles.flag} prefix="fas" name="globe"/>}
+									<span className={styles.meta_copy}>
+										<strong>{country.name}</strong>
+									</span>
 								<FontAwesome className={styles.meta_link_icon} prefix="fas" name="arrow-up-right"/>
 							</Link>
 						</li>}
@@ -271,10 +269,10 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 				<span className={styles.activity_identity}>
 					<span className={styles.activity_icon}>
 						<FontAwesome prefix="fad" name={info.isOnline ? "signal-stream" : "clock"}/>
-					</span>
-					<span className={styles.activity_copy}>
-						<small>{info.isOnline ? "Online now" : "Presence"}</small>
-						<strong>
+						</span>
+						<span className={styles.activity_copy}>
+							{info.isOnline && <small>Online now</small>}
+							<strong>
 							{info.isOnline ? onlineAction : "Last online"}
 							{!info.isOnline && <span className={styles.activity_relative}>{lastOnlineRelative}</span>}
 						</strong>

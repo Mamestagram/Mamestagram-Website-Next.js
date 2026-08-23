@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { ProfileConnection } from "@/database/profile";
 import CountryFlag from "@/components/country-flag";
 import FontAwesome from "@/components/font-awesome";
+import FormattedNumber from "@/components/formatted-number";
 import PlayerAvatar from "@/components/player-avatar";
 import type { ProfileCosmetics } from "@/lib/profile-cosmetics";
 import styles from "@s/profile.module.css";
@@ -15,23 +16,19 @@ type ProfileCosmeticsResponse = { cosmetics: ProfileCosmetics[] };
 
 const socialMeta: Record<ConnectionType, {
 	label: string,
-	icon: string,
-	description: string
+	icon: string
 }> = {
 	mutual: {
 		label: "Mutual",
-		icon: "user-group",
-		description: "Players who follow each other"
+		icon: "user-group"
 	},
 	following: {
 		label: "Following",
-		icon: "user-plus",
-		description: "Players this user follows"
+		icon: "user-plus"
 	},
 	followers: {
 		label: "Followers",
-		icon: "users",
-		description: "Players following this user"
+		icon: "users"
 	}
 };
 
@@ -152,7 +149,7 @@ export default function SocialConnections({ connections, mode, baseDomain }: {
 								<span className={styles.social_copy}>
 									<strong>{label}</strong>
 								</span>
-								<span className={styles.social_value}>{connections[type].length.toLocaleString("en-US")}</span>
+								<span className={styles.social_value}><FormattedNumber value={connections[type].length}/></span>
 								<FontAwesome className={styles.social_open_icon} prefix="fas" name="arrow-up-right"/>
 							</button>
 						</li>
@@ -177,11 +174,10 @@ export default function SocialConnections({ connections, mode, baseDomain }: {
 									<FontAwesome prefix="fad" name={socialMeta[activeType].icon}/>
 								</span>
 								<span>
-									<small>{socialMeta[activeType].description}</small>
 									<strong id="social-connections-title">{socialMeta[activeType].label}</strong>
 								</span>
 							</span>
-							<span className={styles.social_modal_count}>{activeConnections.length.toLocaleString("en-US")}</span>
+							<span className={styles.social_modal_count}><FormattedNumber value={activeConnections.length}/></span>
 							<button ref={closeButtonRef}
 							        className={styles.social_modal_close}
 							        type="button"
@@ -214,12 +210,12 @@ export default function SocialConnections({ connections, mode, baseDomain }: {
 												<PlayerAvatar userId={connection.user}
 												              name={connection.name}
 												              baseDomain={baseDomain}
-											              cosmetics={cosmeticsByUser[connection.user] ?? null}
+												              cosmetics={cosmeticsByUser[connection.user] ?? null}
 												              className={styles.connection_avatar}
 												              sizes="44px"/>
 												<span className={styles.connection_identity}>
 													<strong>{connection.name}</strong>
-													<small>Player #{connection.user.toLocaleString("en-US")}</small>
+													<small>Player #<FormattedNumber value={connection.user}/></small>
 												</span>
 												<CountryFlag className={styles.connection_country} code={connection.country}/>
 												<FontAwesome className={styles.connection_open_icon} prefix="fas" name="chevron-right"/>

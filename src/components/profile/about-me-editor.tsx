@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { previewAboutMe, updateAboutMe, type AboutMeUpdateResult } from "@/actions/profile";
 import ConfirmationDialog from "@/components/confirmation-dialog";
 import FontAwesome from "@/components/font-awesome";
+import FormattedNumber from "@/components/formatted-number";
 import BBCodeImageErrorHandler from "@/components/profile/bbcode-image-error-handler";
 import AboutMeEmptyState from "@/components/profile/about-me-empty-state";
 import Tooltip from "@/components/tooltip";
@@ -252,7 +253,7 @@ export default function AboutMeEditor({
 						</>
 					)}
 					<div className={styles.editor_footer}>
-						<span>{content.length.toLocaleString()} / {MAX_ABOUT_ME_LENGTH.toLocaleString()}</span>
+						<span><FormattedNumber value={content.length}/> / <FormattedNumber value={MAX_ABOUT_ME_LENGTH}/></span>
 						<div className={styles.editor_actions}>
 							<button type="button"
 							        onClick={cancelEditing}

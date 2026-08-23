@@ -163,10 +163,6 @@ const bbcodeCategories = [
 	{
 		icon: "heading",
 		title: { en: "Headings and text formatting", ja: "見出し・文字装飾" },
-		description: {
-			en: "Structure your profile and emphasize important text.",
-			ja: "プロフィールを整理し、重要な文字を強調します。"
-		},
 		items: [
 			{ label: { en: "Heading", ja: "見出し" }, syntax: "[heading]text[/heading]" },
 			{ label: { en: "Bold", ja: "太字" }, syntax: "[b]text[/b]" },
@@ -178,10 +174,6 @@ const bbcodeCategories = [
 	{
 		icon: "quote-left",
 		title: { en: "Quotes and code", ja: "引用・コード" },
-		description: {
-			en: "Quote another user or display inline and block code.",
-			ja: "ユーザーの発言やインライン・ブロック形式のコードを表示します。"
-		},
 		items: [
 			{ label: { en: "Quote", ja: "引用" }, syntax: "[quote=NAME]text[/quote]" },
 			{ label: { en: "Inline code", ja: "インラインコード" }, syntax: "[c]git status[/c]" },
@@ -191,10 +183,6 @@ const bbcodeCategories = [
 	{
 		icon: "palette",
 		title: { en: "Text customization", ja: "文字のカスタマイズ" },
-		description: {
-			en: "Change text color, size, visibility, and alignment.",
-			ja: "文字色、サイズ、表示状態、配置を変更します。"
-		},
 		items: [
 			{ label: { en: "Color", ja: "文字色" }, syntax: "[color=#0969DA]text[/color]" },
 			{ label: { en: "Size", ja: "文字サイズ" }, syntax: "[size=50]text[/size]" },
@@ -205,10 +193,6 @@ const bbcodeCategories = [
 	{
 		icon: "link",
 		title: { en: "Links", ja: "リンク" },
-		description: {
-			en: "Create a masked URL or a direct Mamestagram profile link.",
-			ja: "マスクリンクやMamestagramプロフィールへのリンクを作成します。"
-		},
 		items: [
 			{ label: { en: "Masked link", ja: "マスクリンク" }, syntax: "[url=URL]text[/url]" },
 			{ label: { en: "Profile link", ja: "プロフィールリンク" }, syntax: "[profile=USERID]NAME[/profile]" }
@@ -217,10 +201,6 @@ const bbcodeCategories = [
 	{
 		icon: "list",
 		title: { en: "Lists and dropdowns", ja: "リスト・ドロップダウン" },
-		description: {
-			en: "Group information into lists or expandable boxes.",
-			ja: "情報をリストや展開式のボックスにまとめます。"
-		},
 		items: [
 			{ label: { en: "Basic list", ja: "基本リスト" }, syntax: "[list][*]item[/list]" },
 			{ label: { en: "Styled list", ja: "形式指定リスト" }, syntax: "[list=disc][*]item[/list]" },
@@ -230,10 +210,6 @@ const bbcodeCategories = [
 	{
 		icon: "image",
 		title: { en: "Images", ja: "画像" },
-		description: {
-			en: "Display an image hosted at a public URL.",
-			ja: "公開URLに保存されている画像を表示します。"
-		},
 		items: [
 			{ label: { en: "Image", ja: "画像" }, syntax: "[img]URL[/img]" }
 		]
@@ -293,21 +269,21 @@ const copy = {
 			{
 				icon: "trophy",
 				title: "Live score feed",
-				channel: "# server",
+				channel: "#server",
 				body: "New passes and first-place scores are automatically shared with the community.",
 				image: 1
 			},
 			{
 				icon: "music-note",
 				title: "Map requests",
-				channel: "# nominate / # maplist",
+				channel: "#nominate / #maplist",
 				body: "Request maps to be ranked or deranked. Approved submissions are announced after tester review.",
 				image: 2
 			},
 			{
 				icon: "messages",
 				title: "Player community",
-				channel: "# general-chat / # osu-chat",
+				channel: "#general-chat / #osu-chat",
 				body: "Talk about osu!, share scores, or simply spend time with other players.",
 				image: 3
 			}
@@ -362,15 +338,13 @@ const copy = {
 			{ icon: "gamepad-modern", title: "Permissions", body: "Some commands are available only to Supporters, match hosts, or clan owners. Restricted or silenced accounts may be unable to run commands." }
 		],
 			commandsSource: "Open the current command channel",
-			bbcodeLead: "Use BBCode in your Me! section to format text, add links and images, and build a profile that is uniquely yours. Wrap content with matching opening and closing tags as shown below.",
 			bbcodeSource: "Open the complete BBCode guide",
 			dansLead: "Dan Courses are structured challenges with mode-specific clear requirements. Passing a course raises your player level by the level of that challenge.",
 		downloadAll: "Download all Dan maps",
-		danChannel: "Open # dan",
+		danChannel: "Open #dan",
 		courses: "Featured courses",
 		downloadMode: "Download maps",
 		danHeaders: ["Course", "Level", "Key count", "Acc", "Score", "Mod", "Miss count", "Combo count"],
-		faqLead: "Quick answers to the questions players ask most often.",
 		faqs: [
 			["What is Mamestagram?", "Mamestagram is a Japanese osu! private server for every game mode. It offers a unique way to play with friends that is not available on official osu!."],
 			["What is a private server?", "A private server is an unofficial osu! server with its own systems and rules. Mamestagram includes additional commands, Dan courses, and game modes that provide a different environment from Bancho."],
@@ -438,21 +412,21 @@ const copy = {
 			{
 				icon: "trophy",
 				title: "スコア速報",
-				channel: "# server",
+				channel: "#server",
 				body: "マップのクリアや1位取得時に、スコアとステータスがコミュニティへ自動投稿されます。",
 				image: 1
 			},
 			{
 				icon: "music-note",
 				title: "マップリクエスト",
-				channel: "# nominate / # maplist",
+				channel: "#nominate / #maplist",
 				body: "マップのRanked・DeRanked申請ができます。テスターによる審査後、承認された内容が通知されます。",
 				image: 2
 			},
 			{
 				icon: "messages",
 				title: "プレイヤーコミュニティ",
-				channel: "# general-chat / # osu-chat",
+				channel: "#general-chat / #osu-chat",
 				body: "osu!の話題やスコア共有はもちろん、ほかのプレイヤーとの雑談も楽しめます。",
 				image: 3
 			}
@@ -507,15 +481,13 @@ const copy = {
 			{ icon: "gamepad-modern", title: "利用条件", body: "一部はサポーター、マッチホスト、クランリーダー専用コマンドです。制限中またはサイレンス中のアカウントでは実行できない場合があります。" }
 		],
 			commandsSource: "最新のコマンドチャンネルを開く",
-			bbcodeLead: "Me!欄ではBBCodeを使用して文字を装飾し、リンクや画像を追加できます。以下の例のように、内容を対応する開始タグと終了タグで囲んで使用してください。",
 			bbcodeSource: "完全なBBCodeガイドを開く",
 			dansLead: "段位はモードごとに合格条件が設定されたチャレンジです。クリアすると、挑戦した段位レベルに応じてプレイヤーレベルが上がります。",
 		downloadAll: "段位マップをまとめてダウンロード",
-		danChannel: "# danを開く",
+		danChannel: "#danを開く",
 		courses: "主なコース",
 		downloadMode: "マップをダウンロード",
 		danHeaders: ["コース", "レベル", "キー数", "Acc", "スコア", "Mod", "ミス数", "コンボ数"],
-		faqLead: "プレイヤーからよく寄せられる質問をまとめています。",
 		faqs: [
 			["Mamestagramとは何ですか？", "Mamestagramは全モードを対象とした日本のosu!プライベートサーバーです。通常のosu!では味わえないプレイ体験を、仲間たちと一緒に楽しめます。"],
 			["プライベートサーバーとは何ですか？", "プライベートサーバーとはosu!の非公式サーバーです。接続することで、サーバー独自のシステムを楽しめます。Mamestagramには多くの追加コマンド、段位認定、ゲームモードがあり、Banchoとは異なる環境でosu!をプレイできます。ルールもサーバーごとに異なるため、注意が必要です。"],

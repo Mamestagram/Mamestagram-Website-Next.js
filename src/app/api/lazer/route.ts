@@ -22,8 +22,6 @@ type LazerCopy = Readonly<{
 	macOSPlatformBody: string,
 	macOSPlatformDetails: readonly [string, string],
 	downloadTitle: string,
-	releaseStatus: string,
-	packageBody: string,
 	viewRelease: string,
 	downloadWindows: string,
 	downloadMacOS: string,
@@ -40,7 +38,7 @@ type LazerCopy = Readonly<{
 
 const lazerData = {
 	showSetupGuides: true,
-	version: "v1.0.0",
+	version: "1.0.0",
 	links: {
 		releases: "https://github.com/Mamestagram/Mamestagram-Lazer-Patcher/releases",
 		windowsDownload: "https://github.com/Mamestagram/Mamestagram-Lazer-Patcher/releases/download/v.1.0.0/windows.exe",
@@ -73,8 +71,6 @@ const lazerData = {
 			macOSPlatformBody: "The macOS version requires a separate, freshly downloaded osu! client.",
 			macOSPlatformDetails: ["Fresh client required", "Tested on Apple M4 Mac"],
 			downloadTitle: "Release",
-			releaseStatus: "Released",
-			packageBody: "Version 1.0.0 is available for Windows and macOS from the official GitHub release.",
 			viewRelease: "View release",
 			downloadWindows: "Download windows.exe",
 			downloadMacOS: "Download macos.zip",
@@ -149,8 +145,6 @@ const lazerData = {
 			macOSPlatformBody: "macOS版では新しくダウンロードした別のosu!クライアントが必要です。",
 			macOSPlatformDetails: ["新規クライアントが必要", "Apple M4 Macで動作確認済み"],
 			downloadTitle: "リリース",
-			releaseStatus: "公開中",
-			packageBody: "Windows版とmacOS版のバージョン1.0.0を、公式GitHubリリースで公開しています。",
 			viewRelease: "リリースを見る",
 			downloadWindows: "windows.exeをダウンロード",
 			downloadMacOS: "macos.zipをダウンロード",

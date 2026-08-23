@@ -2,6 +2,7 @@
 
 import type { RankHistory } from "@/database/rank-history";
 import FontAwesome from "@/components/font-awesome";
+import FormattedNumber from "@/components/formatted-number";
 import styles from "@s/profile.module.css";
 import { useState } from "react";
 import type { CSSProperties, KeyboardEvent, PointerEvent } from "react";
@@ -10,7 +11,6 @@ const CHART_WIDTH = 640;
 const CHART_HEIGHT = 142;
 const CHART_PADDING = 9;
 
-const formatRank = (rank: number) => `#${rank.toLocaleString("en-US")}`;
 const formatDate = (date: string) => new Date(`${date}T00:00:00Z`).toLocaleDateString("en-US", {
 	month: "short",
 	day: "numeric",
@@ -99,11 +99,11 @@ export default function RankHistoryChart({ history }: { history: RankHistory }) 
 					<span><strong>Ranking Trend</strong><small>Last 90 days</small></span>
 				</span>
 				<ul className={styles.rank_history_stats}>
-					<li><small>Current</small><strong>{formatRank(currentRank)}</strong></li>
-					<li><small>Best</small><strong>{formatRank(bestRank)}</strong></li>
+					<li><small>Current</small><strong>#<FormattedNumber value={currentRank}/></strong></li>
+					<li><small>Best</small><strong>#<FormattedNumber value={bestRank}/></strong></li>
 					<li className={styles.rank_change} data-direction={changeDirection}>
-						<small>90d change</small>
-						<strong>{change > 0 ? "↑" : change < 0 ? "↓" : "—"}{change !== 0 && Math.abs(change).toLocaleString("en-US")}</strong>
+						<small>Change</small>
+						<strong>{change > 0 ? "↑" : change < 0 ? "↓" : "—"}{change !== 0 && <FormattedNumber value={Math.abs(change)}/>}</strong>
 					</li>
 				</ul>
 			</div>
@@ -160,7 +160,7 @@ export default function RankHistoryChart({ history }: { history: RankHistory }) 
 						"--rank-point-y": `${activePoint.y / CHART_HEIGHT * 100}%`
 					} as CSSProperties}>
 					<small>{formatDate(activePoint.date)}</small>
-					<strong>{formatRank(activePoint.rank)}</strong>
+					<strong>#<FormattedNumber value={activePoint.rank}/></strong>
 				</span>}
 			</div>
 

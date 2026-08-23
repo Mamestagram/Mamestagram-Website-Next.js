@@ -3,6 +3,11 @@
 import { useEffect, useRef, useState, type ChangeEvent, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import FontAwesome from "@/components/font-awesome";
+import {
+	announceMediaPlayback,
+	getMediaPlaybackSource,
+	MEDIA_PLAYBACK_EVENT
+} from "@/lib/media-playback";
 import styles from "@s/beatmap.module.css";
 
 const PREVIEW_VOLUME_STORAGE_KEY = "beatmap-preview-volume";
@@ -51,6 +56,16 @@ export default function AudioPreview({ setId }: Readonly<{ setId: number }>) {
 		if (fadeFrameRef.current !== null) window.cancelAnimationFrame(fadeFrameRef.current);
 	}, []);
 
+	useEffect(() => {
+		const pauseForReplay = (event: Event) => {
+			if (getMediaPlaybackSource(event) !== "replay") return;
+			audioRef.current?.pause();
+		};
+
+		window.addEventListener(MEDIA_PLAYBACK_EVENT, pauseForReplay);
+		return () => window.removeEventListener(MEDIA_PLAYBACK_EVENT, pauseForReplay);
+	}, []);
+
 	const cancelFadeIn = () => {
 		if (fadeFrameRef.current === null) return;
 		window.cancelAnimationFrame(fadeFrameRef.current);
@@ -78,7 +93,7 @@ export default function AudioPreview({ setId }: Readonly<{ setId: number }>) {
 				fadeFrameRef.current = null;
 				return;
 			}
-			const progress = Math.min(1, (now - startedAt) / FADE_IN_DURATION_MS);
+			const progress = Math.min(1, Math.max(0, (now - startedAt) / FADE_IN_DURATION_MS));
 			const easedProgress = 1 - (1 - progress) ** 2;
 			audio.volume = targetVolume * easedProgress;
 			if (progress < 1) fadeFrameRef.current = window.requestAnimationFrame(updateVolume);
@@ -174,6 +189,7 @@ export default function AudioPreview({ setId }: Readonly<{ setId: number }>) {
 			       onPlay={() => {
 				       setIsPlaying(true);
 				       startFadeIn();
+				       announceMediaPlayback("preview");
 			       }}
 			       onPause={() => {
 				       cancelFadeIn();

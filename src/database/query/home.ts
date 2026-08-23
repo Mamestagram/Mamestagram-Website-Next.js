@@ -89,5 +89,5 @@ export const homeRecentActivityQuery = `
 				AND (earlierUser.priv & ${Priv.unrestricted}) > 0
 		)
 	ORDER BY s.id DESC
-	LIMIT 6
+	LIMIT 10
 `;

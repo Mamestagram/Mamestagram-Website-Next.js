@@ -1,24 +1,15 @@
 import Image from "next/image";
-import { Fragment } from "react";
-import type { LazerData, LazerTextPart } from "@/app/api/lazer/route";
+import type { LazerData } from "@/app/api/lazer/route";
 import FontAwesome from "@/components/font-awesome";
 import PageHero from "@/components/page-hero";
 import PatcherSidebar from "@/components/lazer-patcher/patcher-sidebar";
 import PatcherSectionHeading from "@/components/lazer-patcher/patcher-section-heading";
 import PatcherBackToTop from "@/components/lazer-patcher/patcher-back-to-top";
+import PatcherText from "@/components/lazer-patcher/patcher-text";
 import { fetchInternalJson } from "@/lib/fetch-json";
 import styles from "@s/patcher.module.css";
 
 export type LazerLocale = import("@/app/api/lazer/route").LazerLocale;
-
-const renderTextParts = (parts: ReadonlyArray<LazerTextPart>) => {
-	return parts.map((part, index) => {
-		const key = `${index}-${part.text}`;
-		if (part.style === "code") return <code key={key}>{part.text}</code>;
-		if (part.style === "strong") return <strong key={key}>{part.text}</strong>;
-		return <Fragment key={key}>{part.text}</Fragment>;
-	});
-};
 
 export default async function PatcherContent({ locale }: Readonly<{ locale: LazerLocale }>) {
 	const lazer = await fetchInternalJson<LazerData>("/api/lazer");
@@ -28,7 +19,6 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 	return (
 		<div className={styles.page} lang={locale}>
 			<PageHero
-				description={text.heroDescription}
 				imageSrc="/images/banner/lazer.jpg"
 				title="Lazer Patcher"
 				variant="patcher"
@@ -92,9 +82,8 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 						<div className={styles.download_panel} data-page-enter="box">
 							<div className={styles.download_icon}><FontAwesome prefix="fad" name="file-zipper"/></div>
 							<div className={styles.download_copy}>
-								<span>{text.releaseStatus} · {version}</span>
+								<span>Version {version}</span>
 								<h3>Mamestagram Lazer Patcher</h3>
-								<p>{text.packageBody}</p>
 							</div>
 							<a className={styles.download_button}
 							   href={links.releases}
@@ -120,11 +109,13 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 							</a>
 						</div>
 						<ol className={styles.steps}>
-							{text.windowsSteps.map(([icon, title, body], index) =>
+							{text.windowsSteps.map(([, title, body], index) =>
 								<li key={title} data-page-enter="box">
 									<span className={styles.step_number}>{String(index + 1).padStart(2, "0")}</span>
-									<i><FontAwesome prefix="fad" name={icon}/></i>
-									<div><h3>{title}</h3><p>{renderTextParts(body)}</p></div>
+									<div className={styles.step_body}>
+										<h3>{title}</h3>
+										<p><PatcherText parts={body}/></p>
+									</div>
 								</li>)}
 						</ol>
 					</section>
@@ -144,13 +135,12 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 							</a>
 						</div>
 						<ol className={styles.steps}>
-							{text.macOSSteps.map(([icon, title, body], index) =>
+							{text.macOSSteps.map(([, title, body], index) =>
 								<li key={title} data-page-enter="box">
 									<span className={styles.step_number}>{String(index + 1).padStart(2, "0")}</span>
-									<i><FontAwesome prefix="fad" name={icon}/></i>
-									<div>
+									<div className={styles.step_body}>
 										<h3>{title}</h3>
-										<p>{renderTextParts(body)}</p>
+										<p><PatcherText parts={body}/></p>
 										{index === 3 &&
 											<div className={styles.step_visuals}>
 												<Image src="/images/lazer-patcher/1.png"

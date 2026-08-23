@@ -14,6 +14,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import FontAwesome from "@/components/font-awesome";
+import FormattedNumber from "@/components/formatted-number";
 import styles from "@s/profile.module.css";
 
 const COLLAPSED_SCORE_COUNT = 5;
@@ -162,11 +163,10 @@ export default function ScoreList({ children, count, title }: {
 									<FontAwesome prefix="fad" name="rectangle-list"/>
 								</span>
 								<span>
-									<small>Player Scores</small>
 									<strong id={titleId}>{title}</strong>
 								</span>
 							</span>
-							<span className={styles.score_modal_count}>{count.toLocaleString("en-US")}</span>
+							<span className={styles.score_modal_count}><FormattedNumber value={count}/></span>
 							<button ref={closeButtonRef}
 							        className={styles.score_modal_close}
 							        type="button"

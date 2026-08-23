@@ -3,6 +3,7 @@ import type { ClanMember } from "@/database/profile";
 import type { OsuMode } from "@/lib/mode";
 import FloatingCountryFlag from "@/components/floating-country-flag";
 import FontAwesome from "@/components/font-awesome";
+import FormattedNumber from "@/components/formatted-number";
 import PlayerAvatar from "@/components/player-avatar";
 import KickClanMemberButton from "@/components/profile/kick-clan-member-button";
 import styles from "@s/profile.module.css";
@@ -30,7 +31,7 @@ export default function ClanMembers({ clanId, members, mode, isDans, canManage, 
 					<FontAwesome prefix="fad" name="people-group"/>
 					Clan Members
 				</h2>
-				<strong>{members.length.toLocaleString()}</strong>
+				<strong><FormattedNumber value={members.length}/></strong>
 			</div>
 			{members.length > 0
 				? <ul className={styles.clan_member_grid}>

@@ -26,9 +26,10 @@ import ClanMembers from "@/components/profile/clan-members";
 import PlayerScores from "@/components/profile/player-scores";
 import ProfileBackground from "@/components/profile/profile-background";
 import ProfileBanner from "@/components/profile/profile-banner";
+import PlayerScoresLoading from "@/components/profile/player-scores-loading";
 import Statistics from "@/components/profile/statistics";
+import StatisticsLoading from "@/components/profile/statistics-loading";
 import Achievements from "@/components/profile/achievements";
-import { PlayerScoresLoading, StatisticsLoading } from "@/components/profile/suspense-loading";
 import PrivateProfile from "@/components/profile/private-profile";
 import styles from "@s/profile.module.css";
 

@@ -1,10 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import {
+  Fragment_Mono,
   JetBrains_Mono,
-  Kode_Mono,
   M_PLUS_1_Code,
-  Nova_Mono,
-  Share_Tech_Mono,
   Space_Mono,
 } from "next/font/google";
 import type { ReactNode } from "react";
@@ -26,27 +24,16 @@ import "@s/global/flag-icon.css";
 import "@s/global/tooltip.css";
 import "@s/global/performance.css";
 
+const fragmentMono = Fragment_Mono({
+  display: "swap",
+  subsets: ["latin"],
+  variable: "--font-fragment-mono",
+  weight: "400",
+});
 const jetBrainsMono = JetBrains_Mono({
   display: "swap",
   subsets: ["latin"],
   variable: "--font-jetbrains-mono",
-});
-const novaMono = Nova_Mono({
-  display: "swap",
-  subsets: ["latin"],
-  variable: "--font-nova-mono",
-  weight: "400",
-});
-const shareTechMono = Share_Tech_Mono({
-  display: "swap",
-  subsets: ["latin"],
-  variable: "--font-share-tech-mono",
-  weight: "400",
-});
-const kodeMono = Kode_Mono({
-  display: "swap",
-  subsets: ["latin"],
-  variable: "--font-kode-mono",
 });
 const mPlusOneCode = M_PLUS_1_Code({
   display: "swap",
@@ -61,10 +48,8 @@ const spaceMono = Space_Mono({
   weight: ["400", "700"],
 });
 const fontVariables = [
+  fragmentMono.variable,
   jetBrainsMono.variable,
-  novaMono.variable,
-  shareTechMono.variable,
-  kodeMono.variable,
   mPlusOneCode.variable,
   spaceMono.variable,
 ].join(" ");

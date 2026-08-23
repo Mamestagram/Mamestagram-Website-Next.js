@@ -1,7 +1,6 @@
 .country-flag {
 	cursor: default !important;
 	position: relative;
-	font-family: "Noto_Sans", sans-serif;
 	height: fit-content;
 	width: fit-content;
 	
@@ -20,8 +19,8 @@
 		bottom: 60%;
 		background-color: #17171c;
 		color: #fdfdfd;
-		font-size: 0.7em;
-		line-height: 10px;
+		font-size: 0.8em;
+		line-height: 1;
 		width: auto;
 		padding: 8px;
 		border-radius: 10px;
@@ -48,9 +47,8 @@
 	background-color: #17171c;
 	border-radius: 10px;
 	box-shadow: var(--glass-box-shadow-dark);
-	font-family: "Noto_Sans", sans-serif;
-	font-size: .7rem;
-	line-height: 10px;
+	font-size: .8rem;
+	line-height: 1;
 	white-space: nowrap;
 	opacity: 0;
 	transform: translate(-50%, calc(-100% + 5px));

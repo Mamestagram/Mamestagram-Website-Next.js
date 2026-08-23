@@ -6,7 +6,8 @@ import ArrowChevron from "./arrow";
 import UserContainer from "./user-container";
 import ScrollMotion from "./scroll-motion";
 import { HeaderSearchProvider } from "@/components/context/header-search-provider";
-import HeaderSearch, { HeaderSearchTrigger } from "./search";
+import HeaderSearchTrigger from "@/components/header/header-search-trigger";
+import HeaderSearch from "@/components/header/search";
 
 export default function Header() {
 	return (

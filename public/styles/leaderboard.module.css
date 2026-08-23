@@ -1,7 +1,3 @@
-.numeric_value {
-	font-family: var(--font-kode-mono), sans-serif;
-}
-
 .container {
 	position: relative;
 	z-index: 3;
@@ -299,9 +295,13 @@
 			}
 
 			& .leaderboard_mode_trigger {
-				grid-template-columns: 28px minmax(66px, 1fr) max-content;
+				grid-template-columns: 28px minmax(0, 1fr) max-content;
 				width: 100%;
 			}
+		}
+
+		& > .ranking_sort_control {
+			container-type: inline-size;
 		}
 
 		& > .ranking_sort_control .leaderboard_mode_trigger > i:first-child {
@@ -309,13 +309,29 @@
 			font-size: 1.5rem;
 		}
 
-		& > .ranking_sort_control .leaderboard_mode_name strong {
-			white-space: nowrap;
+		& > .ranking_sort_control .leaderboard_mode_trigger {
+			gap: 7px;
+		}
+
+		& > .ranking_sort_control .leaderboard_mode_name {
+			min-width: 0;
+			overflow: hidden;
+
+			& strong {
+				max-width: 100%;
+				font-size: .86rem;
+				white-space: nowrap;
+			}
+		}
+
+		& > .ranking_sort_control:is([data-sort="performance"], [data-sort="playcount"]),
+			.leaderboard_mode_name strong {
+			font-size: clamp(.65rem, 7cqi, .78rem);
 		}
 
 		& .ranking_sort_control .ranking_sort_menu {
 			grid-template-columns: minmax(0, 1fr);
-			width: 280px;
+			width: min(320px, calc(100vw - 32px));
 
 			& .leaderboard_mode_group .leaderboard_playstyles {
 				display: grid;
@@ -325,11 +341,16 @@
 					min-height: 34px;
 					justify-content: flex-start;
 					gap: 7px;
+					white-space: nowrap;
 
 					& i {
 						width: 16px;
 						color: hsl(var(--user-hue), 55%, 70%);
 						text-align: center;
+					}
+
+					&[data-sort="performance"] i {
+						font-size: .9rem;
 					}
 				}
 			}
@@ -504,7 +525,7 @@
 
 				& a {
 					display: grid;
-					grid-template-columns: 22px minmax(0, 1fr) max-content;
+					grid-template-columns: 22px minmax(0, 1fr);
 					min-height: 38px;
 					padding: 6px 9px;
 					align-items: center;
@@ -525,12 +546,6 @@
 						overflow: hidden;
 						text-overflow: ellipsis;
 						white-space: nowrap;
-					}
-
-					& > small {
-						color: #697587;
-						font-size: .56rem;
-						font-weight: 800;
 					}
 
 					&:hover,
