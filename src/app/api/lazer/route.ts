@@ -33,7 +33,8 @@ type LazerCopy = Readonly<{
 	macOSLead: string,
 	downloadOsu: string,
 	macOSSteps: ReadonlyArray<LazerStep>,
-	macOSSecurityImageAlts: readonly [string, string]
+	macOSSecurityImageAlts: readonly [string, string],
+	macOSTargetImageAlts: readonly [string, string]
 }>;
 
 const lazerData = {
@@ -105,6 +106,17 @@ const lazerData = {
 					{ text: "." }
 				]],
 				["shield-check", "Allow it when required", [{ text: "If macOS blocks the app, open Privacy & Security in System Settings, select Open Anyway, then confirm Open Anyway in the dialog." }]],
+				["folder-open", "Select osu!.app", [
+					{ text: "Click " },
+					{ text: "change", style: "code" },
+					{ text: " beside " },
+					{ text: "target", style: "code" },
+					{ text: ", select the freshly downloaded " },
+					{ text: "osu!.app", style: "code" },
+					{ text: ", then click " },
+					{ text: "Choose", style: "strong" },
+					{ text: "." }
+				]],
 				["play", "Start Mamestagram", [
 					{ text: "Select " },
 					{ text: "Mamestagram", style: "strong" },
@@ -118,6 +130,10 @@ const lazerData = {
 			macOSSecurityImageAlts: [
 				"Privacy & Security settings showing the Open Anyway button for Mamestagram Lazer",
 				"macOS confirmation dialog showing the Open Anyway button for Mamestagram Lazer"
+			],
+			macOSTargetImageAlts: [
+				"Mamestagram Lazer showing the change button beside the target setting",
+				"macOS file picker selecting the freshly downloaded osu!.app"
 			]
 		},
 		ja: {
@@ -179,6 +195,17 @@ const lazerData = {
 					{ text: "を起動します。" }
 				]],
 				["shield-check", "必要に応じて実行を許可", [{ text: "macOSにブロックされた場合は、システム設定の「プライバシーとセキュリティ」で「このまま開く」を選択し、確認画面でも「このまま開く」を選択します。" }]],
+				["folder-open", "osu!.appを設定", [
+					{ text: "" },
+					{ text: "target", style: "code" },
+					{ text: "の横にある" },
+					{ text: "change", style: "code" },
+					{ text: "をクリックし、新しくダウンロードした" },
+					{ text: "osu!.app", style: "code" },
+					{ text: "を選択して" },
+					{ text: "選択", style: "strong" },
+					{ text: "をクリックします。" }
+				]],
 				["play", "Mamestagramを起動", [
 					{ text: "" },
 					{ text: "Mamestagram", style: "strong" },
@@ -192,6 +219,10 @@ const lazerData = {
 			macOSSecurityImageAlts: [
 				"Mamestagram Lazerの「このまま開く」ボタンを表示したプライバシーとセキュリティ設定",
 				"Mamestagram Lazerの「このまま開く」ボタンを表示したmacOS確認画面"
+			],
+			macOSTargetImageAlts: [
+				"target設定の横にあるchangeボタンを表示したMamestagram Lazer",
+				"新しくダウンロードしたosu!.appを選択するmacOSのファイル選択画面"
 			]
 		}
 	} satisfies Record<LazerLocale, LazerCopy>

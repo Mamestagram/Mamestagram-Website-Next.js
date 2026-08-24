@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import CommandSentence from "@/components/documents/command-sentence";
+import EnlargeableImage from "@/components/enlargeable-image";
 import FontAwesome from "@/components/font-awesome";
 import type { DocumentsData, Locale } from "@/app/api/documents/route";
 import styles from "@s/documents.module.css";
@@ -86,10 +86,12 @@ export default function ConnectGuide({ text, images, launchOption }: {
 							{images[index].length > 0 &&
 								<div className={styles.step_images} data-count={images[index].length} data-step={index + 1}>
 									{images[index].map((image, imageIndex) =>
-										<Image key={image.src}
-										       {...image}
-										       alt={`Connection step ${index + 1} image ${imageIndex + 1}`}
-										       draggable={false}/>)}
+										<EnlargeableImage key={image.src}
+										                  {...image}
+										                  alt={`Connection step ${index + 1} image ${imageIndex + 1}`}
+										                  sizes={images[index].length === 2
+											                  ? "(max-width: 760px) 84vw, 420px"
+											                  : "(max-width: 760px) 84vw, 850px"}/>)}
 								</div>}
 						</div>
 					</li>)}

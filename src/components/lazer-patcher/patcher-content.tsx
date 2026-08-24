@@ -1,5 +1,5 @@
-import Image from "next/image";
 import type { LazerData } from "@/app/api/lazer/route";
+import EnlargeableImage from "@/components/enlargeable-image";
 import FontAwesome from "@/components/font-awesome";
 import PageHero from "@/components/page-hero";
 import PatcherSidebar from "@/components/lazer-patcher/patcher-sidebar";
@@ -143,18 +143,29 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 										<p><PatcherText parts={body}/></p>
 										{index === 3 &&
 											<div className={styles.step_visuals}>
-												<Image src="/images/lazer-patcher/1.png"
-												       alt={text.macOSSecurityImageAlts[0]}
-												       width={1670}
-												       height={1474}
-												       sizes="(max-width: 760px) 84vw, 620px"
-												       draggable={false}/>
-												<Image src="/images/lazer-patcher/2.png"
-												       alt={text.macOSSecurityImageAlts[1]}
-												       width={744}
-												       height={924}
-												       sizes="(max-width: 760px) 84vw, 280px"
-												       draggable={false}/>
+												<EnlargeableImage src="/images/lazer-patcher/1.png"
+												                   alt={text.macOSSecurityImageAlts[0]}
+												                   width={1670}
+												                   height={1474}
+												                   sizes="(max-width: 760px) 84vw, 620px"/>
+												<EnlargeableImage src="/images/lazer-patcher/2.png"
+												                   alt={text.macOSSecurityImageAlts[1]}
+												                   width={744}
+												                   height={924}
+												                   sizes="(max-width: 760px) 84vw, 280px"/>
+											</div>}
+										{index === 4 &&
+											<div className={`${styles.step_visuals} ${styles.target_visuals}`}>
+												<EnlargeableImage src="/images/lazer-patcher/3.png"
+												                   alt={text.macOSTargetImageAlts[0]}
+												                   width={1364}
+												                   height={1228}
+												                   sizes="(max-width: 760px) 84vw, 400px"/>
+												<EnlargeableImage src="/images/lazer-patcher/4.png"
+												                   alt={text.macOSTargetImageAlts[1]}
+												                   width={1984}
+												                   height={1400}
+												                   sizes="(max-width: 760px) 84vw, 560px"/>
 											</div>}
 									</div>
 								</li>)}

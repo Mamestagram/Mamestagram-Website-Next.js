@@ -324,8 +324,7 @@
 			}
 		}
 
-		& > .ranking_sort_control:is([data-sort="performance"], [data-sort="playcount"]),
-			.leaderboard_mode_name strong {
+		& > .ranking_sort_control:is([data-sort="performance"], [data-sort="playcount"]) .leaderboard_mode_name strong {
 			font-size: clamp(.65rem, 7cqi, .78rem);
 		}
 
@@ -497,20 +496,13 @@
 			& .country_ranking_heading {
 				display: flex;
 				padding: 3px 4px 11px;
-				align-items: baseline;
-				justify-content: space-between;
+				align-items: center;
 				gap: 12px;
 
 				& strong {
 					color: #e5edf7;
 					font-size: .78rem;
 					font-weight: 800;
-				}
-
-				& small {
-					color: #7f8998;
-					font-size: .62rem;
-					font-weight: 700;
 				}
 			}
 
@@ -817,6 +809,10 @@
 			border-collapse: separate;
 			border-spacing: 0 6px;
 			width: 100%;
+
+			& th.playcount {
+				white-space: nowrap;
+			}
 			
 			& tr {
 				& th {

@@ -90,7 +90,6 @@ export default function LeaderboardScopeSwitch({ mode, sortBy, countries, countr
 				<div className={styles.country_ranking_menu} role="menu">
 					<div className={styles.country_ranking_heading}>
 						<strong>Country ranking</strong>
-						<small>Select a country</small>
 					</div>
 					<div className={styles.country_ranking_options}>
 						{countryOptions.map((option) =>
