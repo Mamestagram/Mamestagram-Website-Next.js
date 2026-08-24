@@ -1,5 +1,6 @@
 import "server-only";
 import { cache } from "react";
+import { appendAvatarQueryMarker } from "@/lib/avatar-url";
 import { fetchResponse } from "@/lib/fetch-response";
 import { writeError } from "@/lib/log";
 
@@ -100,5 +101,6 @@ export const resolveProfileBackgroundUrl = (id: number, isClan: boolean, baseDom
 export const resolveProfileAvatarUrl = cache(async (id: number, isClan: boolean, baseDomain: string) => {
 	const imageUrl = getProfileVisualUrl("avatar", id, isClan, baseDomain);
 	const version = await getProfileVisualVersion(imageUrl, 0);
-	return version === null ? imageUrl : getVersionedImageUrl(imageUrl, version);
+	const resolvedImageUrl = version === null ? imageUrl : getVersionedImageUrl(imageUrl, version);
+	return appendAvatarQueryMarker(resolvedImageUrl);
 });

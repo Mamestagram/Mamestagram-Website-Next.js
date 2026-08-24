@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import FontAwesome from "@/components/font-awesome";
 import FormattedNumber from "@/components/formatted-number";
+import { appendAvatarQueryMarker } from "@/lib/avatar-url";
 import { modeAbbreviation, type ModeNum } from "@/lib/mode";
 import type { SearchClan } from "@/lib/search";
 import styles from "@s/header-search.module.css";
@@ -20,7 +21,7 @@ export default function SearchClanList({ items: clans, baseDomain, onSelect }: R
 					<Link href={`/profile/${clan.id}?clan`} onClick={onSelect}>
 						<span className={styles.avatar}>
 							<FontAwesome className={styles.avatar_fallback} prefix="fad" name="people-group"/>
-							<Image src={`https://clan-a.${baseDomain}/${clan.id}`}
+							<Image src={appendAvatarQueryMarker(`https://clan-a.${baseDomain}/${clan.id}`)}
 							       alt={`${clan.name} clan avatar`}
 							       fill
 							       sizes="48px"

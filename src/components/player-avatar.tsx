@@ -1,6 +1,7 @@
 import Image from "next/image";
 import classNames from "classnames";
 import EquippedBadge from "@/components/equipped-badge";
+import { appendAvatarQueryMarker } from "@/lib/avatar-url";
 import type { ProfileCosmetics } from "@/lib/profile-cosmetics";
 import styles from "@s/player-avatar.module.css";
 
@@ -23,12 +24,14 @@ export default function PlayerAvatar({
 	className?: string,
 	sizes: string,
 	imageSize?: "default" | "compact",
-	priority?: boolean
-}>) {
+		priority?: boolean
+	}>) {
+	const avatarUrl = appendAvatarQueryMarker(imageUrl ?? `https://a.${baseDomain}/${userId}`);
+
 	return (
 		<span className={classNames(styles.container, className)} data-image-size={imageSize}>
 			<span className={styles.avatar_surface}>
-				<Image src={imageUrl ?? `https://a.${baseDomain}/${userId}`}
+				<Image src={avatarUrl}
 				       className={styles.avatar}
 				       alt={`${name}'s avatar`}
 				       width={256}

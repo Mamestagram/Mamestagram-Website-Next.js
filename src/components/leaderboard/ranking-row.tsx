@@ -6,6 +6,7 @@ import { SortBy } from "@/database/leaderboard";
 import { OsuMode } from "@/lib/mode";
 import CountryFlag from "@/components/country-flag";
 import FormattedNumber from "@/components/formatted-number";
+import { appendAvatarQueryMarker } from "@/lib/avatar-url";
 import styles from "@s/leaderboard.module.css";
 
 const topRankStyles = [styles.top_1, styles.top_2, styles.top_3] as const;
@@ -31,7 +32,7 @@ export default function RankingRow({ listRow, mode, sortBy, isClan }: Readonly<{
 			<td className={!isClan ? styles.country : styles.avatar}>
 				{!isClan
 					? <CountryFlag code={listRow.country}/>
-					: <Image src={`https://clan-a.${process.env.BASE_DOMAIN}/${listRow.id}`}
+					: <Image src={appendAvatarQueryMarker(`https://clan-a.${process.env.BASE_DOMAIN}/${listRow.id}`)}
 						         alt="clan-avatar"
 						         fill
 						         draggable={false}
