@@ -36,7 +36,6 @@ type DragState = {
 
 type CropConfig = {
 	label: string,
-	ratioLabel: string,
 	output: Size
 };
 
@@ -53,17 +52,14 @@ const MAX_OUTPUT_BYTES = 5 * 1024 * 1024;
 const cropConfig: Record<ImageCropType, CropConfig> = {
 	avatar: {
 		label: "avatar",
-		ratioLabel: "1:1",
 		output: { width: 512, height: 512 }
 	},
 	banner: {
 		label: "banner",
-		ratioLabel: "16:5",
 		output: { width: 1600, height: 500 }
 	},
 	background: {
 		label: "background",
-		ratioLabel: "16:9",
 		output: { width: 1920, height: 1080 }
 	}
 };
@@ -324,10 +320,7 @@ export default function ImageCropDialog({
 			         data-processing={isProcessing}>
 				<div className={styles.header}>
 					<span className={styles.header_icon}><FontAwesome prefix="fad" name="images"/></span>
-					<div>
-						<small>{config.ratioLabel} CROP</small>
-						<h2 id={titleId}>Crop {config.label}</h2>
-					</div>
+					<h2 id={titleId}>Crop {config.label}</h2>
 					<button type="button"
 					        aria-label="Close crop editor"
 					        disabled={isProcessing}
@@ -397,7 +390,7 @@ export default function ImageCropDialog({
 				</div>
 				{error && <p className={styles.error} role="alert">{error}</p>}
 
-				<footer className={styles.actions}>
+				<div className={styles.actions}>
 					<button type="button" disabled={isProcessing} onClick={onCancel}>Cancel</button>
 					<button type="button"
 					        className={styles.apply}
@@ -406,7 +399,7 @@ export default function ImageCropDialog({
 						<FontAwesome prefix="fas" name={isProcessing ? "spinner" : "check"}/>
 						{isProcessing ? "Cropping…" : "Use crop"}
 					</button>
-				</footer>
+				</div>
 			</section>
 		</div>,
 		document.body

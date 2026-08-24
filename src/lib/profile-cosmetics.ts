@@ -1,5 +1,6 @@
 import "server-only";
 import { cache } from "react";
+import { fetchResponse } from "@/lib/fetch-response";
 import { writeError } from "@/lib/log";
 
 export type ProfileBadge = {
@@ -119,10 +120,12 @@ export const getProfileCosmetics = cache(async (userId: number): Promise<Profile
 	try {
 		const url = new URL("/v1/get_profile_cosmetics", `https://api.${baseDomain}`);
 		url.searchParams.set("userid", userId.toString());
-		const response = await fetch(url, {
-			cache: "no-store",
-			headers: { Accept: "application/json" },
-			signal: AbortSignal.timeout(5000)
+		const response = await fetchResponse(url, {
+			init: {
+				cache: "no-store",
+				headers: { Accept: "application/json" }
+			},
+			timeoutMs: 5000
 		});
 		if (!response.ok) {
 			void writeError(new Error(`Profile cosmetics API request failed (${response.status})`));
@@ -134,7 +137,12 @@ export const getProfileCosmetics = cache(async (userId: number): Promise<Profile
 			: emptyCosmetics(userId);
 	}
 	catch (error: unknown) {
-		void writeError(error);
+		void writeError(error, {
+			source: "server",
+			method: "GET",
+			routePath: "/v1/get_profile_cosmetics",
+			routeType: "profile-cosmetics"
+		});
 		return emptyCosmetics(userId);
 	}
 });

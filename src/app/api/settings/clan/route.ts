@@ -24,8 +24,7 @@ export const PATCH = async (request: NextRequest): Promise<NextResponse<Mutation
 	catch {
 		return NextResponse.json({ success: false, message: "The clan settings request is invalid." }, { status: 400 });
 	}
-	if (!isRecord(body) || typeof body.tag !== "string" || typeof body.showPastTags !== "boolean" ||
-		typeof body.isPrivate !== "boolean")
+	if (!isRecord(body) || typeof body.tag !== "string" || typeof body.showPastTags !== "boolean")
 		return NextResponse.json({ success: false, message: "The clan settings request is invalid." }, { status: 400 });
 
 	const tag = body.tag.trim();
@@ -36,7 +35,7 @@ export const PATCH = async (request: NextRequest): Promise<NextResponse<Mutation
 		return NextResponse.json({ success: false, message: "Clan tag cannot contain spaces or control characters." }, { status: 400 });
 
 	try {
-		const result = await updateClanSettings(currentUser.id, tag, body.showPastTags, body.isPrivate);
+		const result = await updateClanSettings(currentUser.id, tag, body.showPastTags);
 		if (!result.success) {
 			if (result.reason === "conflict")
 				return NextResponse.json({ success: false, message: "This clan tag is already in use." }, { status: 409 });

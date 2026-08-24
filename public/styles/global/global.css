@@ -124,7 +124,7 @@ body {
 	display: grid;
 	grid-template-columns: var(--header-height) 1fr;
 	grid-template-rows: 1fr;
-	grid-gap: 0 15px;
+	grid-gap: 0 10px;
 	position: fixed;
 	top: 0;
 	left: 0;

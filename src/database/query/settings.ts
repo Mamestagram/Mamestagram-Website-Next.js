@@ -116,8 +116,7 @@ export const updateLegacyProfileSettingsQuery = `
 		SET name = ?,
 		    safe_name = ?,
 		    past_name = ?,
-		    show_pName = ?,
-		    \`private\` = ?
+		    show_past_name = ?
 	WHERE id = ?
 	LIMIT 1
 `;
@@ -127,8 +126,7 @@ export const updateModernProfileSettingsQuery = `
 		SET name = ?,
 		    safe_name = ?,
 		    past_name = ?,
-		    show_past_name = ?,
-		    \`private\` = ?
+		    show_past_name = ?
 	WHERE id = ?
 	LIMIT 1
 `;
@@ -137,8 +135,7 @@ export const updateDefaultProfileSettingsQuery = `
 	UPDATE users
 		SET name = ?,
 		    safe_name = ?,
-		    past_name = ?,
-		    \`private\` = ?
+		    past_name = ?
 	WHERE id = ?
 	LIMIT 1
 `;
@@ -147,8 +144,22 @@ export const updateClanSettingsQuery = `
 	UPDATE clans
 		SET tag = ?,
 		    past_tag = ?,
-		    show_past_tag = ?,
-		    \`public\` = ?
+		    show_past_tag = ?
+	WHERE id = ?
+		AND owner = ?
+	LIMIT 1
+`;
+
+export const updateProfilePrivacyQuery = `
+	UPDATE users
+		SET \`private\` = ?
+	WHERE id = ?
+	LIMIT 1
+`;
+
+export const updateClanPrivacyQuery = `
+	UPDATE clans
+		SET \`public\` = ?
 	WHERE id = ?
 		AND owner = ?
 	LIMIT 1

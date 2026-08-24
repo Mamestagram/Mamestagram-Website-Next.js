@@ -8,25 +8,20 @@ import styles from "@s/settings.module.css";
 
 export default function ClanSettingsForm({
 	tag: initialTag,
-	showPastTags: initialShowPastTags,
-	isPrivate: initialIsPrivate
+	showPastTags: initialShowPastTags
 }: Readonly<{
 	tag: string,
-	showPastTags: boolean,
-	isPrivate: boolean
+	showPastTags: boolean
 }>) {
 	const router = useRouter();
 	const [tag, setTag] = useState(initialTag);
 	const [showPastTags, setShowPastTags] = useState(initialShowPastTags);
-	const [isPrivate, setIsPrivate] = useState(initialIsPrivate);
 	const [savedTag, setSavedTag] = useState(initialTag);
 	const [savedShowPastTags, setSavedShowPastTags] = useState(initialShowPastTags);
-	const [savedIsPrivate, setSavedIsPrivate] = useState(initialIsPrivate);
 	const [status, setStatus] = useState<{ success: boolean, message: string } | null>(null);
 	const [isPending, startTransition] = useTransition();
 	const normalizedTag = tag.trim();
-	const hasChanges = normalizedTag !== savedTag || showPastTags !== savedShowPastTags ||
-		isPrivate !== savedIsPrivate;
+	const hasChanges = normalizedTag !== savedTag || showPastTags !== savedShowPastTags;
 
 	const submit = (event: SubmitEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -36,7 +31,7 @@ export default function ClanSettingsForm({
 				const response = await fetch("/api/settings/clan", {
 					method: "PATCH",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ tag: normalizedTag, showPastTags, isPrivate })
+					body: JSON.stringify({ tag: normalizedTag, showPastTags })
 				});
 				const result = await readMutationResponse(response);
 				setStatus(result);
@@ -45,7 +40,6 @@ export default function ClanSettingsForm({
 				setTag(normalizedTag);
 				setSavedTag(normalizedTag);
 				setSavedShowPastTags(showPastTags);
-				setSavedIsPrivate(isPrivate);
 				router.refresh();
 			}
 			catch {
@@ -97,24 +91,6 @@ export default function ClanSettingsForm({
 				<span className={styles.toggle} aria-hidden="true"><span/></span>
 			</label>
 
-			<label className={styles.toggle_row}>
-				<span className={styles.toggle_copy}>
-					<span className={styles.toggle_icon}><FontAwesome prefix="fad" name="lock"/></span>
-					<span>
-						<strong>Private clan profile</strong>
-						<small>Only the clan owner and moderators can view the clan profile when this is enabled.</small>
-					</span>
-				</span>
-				<input type="checkbox"
-				       checked={isPrivate}
-				       disabled={isPending}
-				       onChange={(event) => {
-					       setIsPrivate(event.target.checked);
-					       setStatus(null);
-				       }}/>
-				<span className={styles.toggle} aria-hidden="true"><span/></span>
-			</label>
-
 			<div className={styles.form_footer}>
 				<span className={styles.status} data-success={status?.success} role="status">
 					{status?.message}
@@ -126,7 +102,6 @@ export default function ClanSettingsForm({
 					        onClick={() => {
 						        setTag(savedTag);
 						        setShowPastTags(savedShowPastTags);
-						        setIsPrivate(savedIsPrivate);
 						        setStatus(null);
 					        }}>
 						<FontAwesome prefix="fas" name="rotate-left"/>

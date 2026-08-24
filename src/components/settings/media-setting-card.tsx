@@ -31,41 +31,34 @@ const getVersionedImageUrl = (imageUrl: string) => {
 
 const mediaMeta: Record<MediaType, {
 	label: string,
-	description: string,
+	description?: string,
 	icon: string
 }> = {
 	avatar: {
 		label: "Avatar",
-		description: "Shown beside your name across Mamestagram.",
 		icon: "user"
 	},
 	banner: {
 		label: "Profile banner",
-		description: "A wide image displayed at the top of your profile.",
 		icon: "image-landscape"
 	},
 	background: {
 		label: "Profile background",
-		description: "Sets the atmosphere behind your profile content.",
 		icon: "mountains"
 	}
 };
 
 const clanMediaMeta: Record<MediaType, {
-	label: string,
-	description: string
+	label: string
 }> = {
 	avatar: {
-		label: "Clan avatar",
-		description: "Shown beside the clan tag across Mamestagram."
+		label: "Clan avatar"
 	},
 	banner: {
-		label: "Clan banner",
-		description: "A wide image displayed at the top of the clan profile."
+		label: "Clan banner"
 	},
 	background: {
-		label: "Clan background",
-		description: "Sets the atmosphere behind the clan profile content."
+		label: "Clan background"
 	}
 };
 
@@ -212,7 +205,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 				<span><FontAwesome prefix="fad" name={meta.icon}/></span>
 				<div>
 					<h3>{meta.label}</h3>
-					<p>{meta.description}</p>
+					{meta.description && <p>{meta.description}</p>}
 				</div>
 			</div>
 
@@ -234,7 +227,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 					</>
 					: <span className={styles.media_placeholder}>
 						<FontAwesome prefix="fad" name={meta.icon}/>
-						No custom {type}
+						<span>{type === "avatar" ? <>No custom<br/>avatar</> : `No custom ${type}`}</span>
 					</span>}
 			</div>
 

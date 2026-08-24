@@ -46,19 +46,11 @@
 	font-size: 1.05rem;
 }
 
-.header small {
-	display: block;
-	margin-bottom: 3px;
-	color: hsl(var(--user-hue), 62%, 69%);
-	font-size: .58rem;
-	font-weight: 900;
-	letter-spacing: .14em;
-}
-
 .header h2 {
 	font-size: 1rem;
 	font-weight: 900;
 	letter-spacing: -.02em;
+	line-height: 1.2;
 }
 
 .header > button {
@@ -82,7 +74,7 @@
 
 .instructions {
 	color: #96a4b5;
-	font-size: .68rem;
+	font-size: .88rem;
 	line-height: 1.55;
 }
 
@@ -202,7 +194,7 @@
 
 .zoom_control output {
 	color: hsl(var(--user-hue), 64%, 76%);
-	font-size: .64rem;
+	font-size: .86rem;
 	font-weight: 900;
 	text-align: right;
 }
@@ -212,7 +204,7 @@
 	align-items: center;
 	gap: 7px;
 	color: #758397;
-	font-size: .58rem;
+	font-size: .82rem;
 	font-weight: 750;
 }
 
@@ -316,10 +308,6 @@
 		overflow: visible;
 	}
 
-	.header small {
-		font-size: .86rem;
-	}
-
 	.header h2 {
 		font-size: 1.18rem;
 	}
@@ -342,11 +330,11 @@
 	}
 
 	.zoom_control output {
-		font-size: .92rem;
+		font-size: 1.04rem;
 	}
 
 	.output_info {
-		font-size: .86rem;
+		font-size: 1rem;
 	}
 
 	.error {

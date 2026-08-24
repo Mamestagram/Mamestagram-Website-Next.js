@@ -8,6 +8,7 @@ import PlayerAvatar from "@/components/player-avatar";
 import AboutMeSettingsEditor from "@/components/settings/about-me-settings-editor";
 import ClanSettingsForm from "@/components/settings/clan-settings-form";
 import MediaSettingCard from "@/components/settings/media-setting-card";
+import PrivacySettingsForm from "@/components/settings/privacy-settings-form";
 import ProfileSettingsForm from "@/components/settings/profile-settings-form";
 import { getOwnedClanSettings, getUserSettings } from "@/database/settings";
 import { resolveProfileAvatarUrl, resolveProfileBackgroundUrl, resolveProfileBannerUrl } from "@/lib/profile-banner";
@@ -23,58 +24,52 @@ export const metadata: Metadata = {
 };
 
 type SettingsScope = "profile" | "clan";
-type SettingsSection = "rename" | "images" | "me";
+type SettingsSection = "rename" | "images" | "me" | "privacy";
 type SectionMeta = {
-	eyebrow: string,
 	title: string,
-	description: string,
 	icon: string
 };
 
 const profileSectionMeta: Record<SettingsSection, SectionMeta> = {
 	rename: {
-		eyebrow: "PROFILE",
 		title: "Rename",
-		description: "Update your display name and control whether previous names appear publicly.",
 		icon: "pen-to-square"
 	},
 	images: {
-		eyebrow: "PROFILE",
 		title: "Profile images",
-		description: "Manage the avatar, banner, and background used across your profile.",
 		icon: "images"
 	},
 	me: {
-		eyebrow: "PROFILE",
 		title: "Me!",
-		description: "Write and preview the BBCode description shown on your profile.",
 		icon: "id-badge"
+	},
+	privacy: {
+		title: "Privacy",
+		icon: "shield-halved"
 	}
 };
 
 const clanSectionMeta: Record<SettingsSection, SectionMeta> = {
 	rename: {
-		eyebrow: "CLAN OWNER",
-		title: "Rename clan",
-		description: "Update your clan tag and control whether previous tags appear publicly.",
+		title: "Rename",
 		icon: "people-group"
 	},
 	images: {
-		eyebrow: "CLAN OWNER",
-		title: "Clan profile images",
-		description: "Manage the avatar, banner, and background used across your clan profile.",
+		title: "Profile images",
 		icon: "images"
 	},
 	me: {
-		eyebrow: "CLAN OWNER",
-		title: "Clan Me!",
-		description: "Write and preview the BBCode description shown on your clan profile.",
+		title: "Me!",
 		icon: "id-badge"
+	},
+	privacy: {
+		title: "Privacy",
+		icon: "shield-halved"
 	}
 };
 
 const isSettingsSection = (value: unknown): value is SettingsSection =>
-	value === "rename" || value === "images" || value === "me";
+	value === "rename" || value === "images" || value === "me" || value === "privacy";
 
 const normalizeSettingsSection = (value: unknown): SettingsSection => {
 	if (value === "avatar" || value === "banner" || value === "background") return "images";
@@ -129,15 +124,20 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 	]);
 	const [avatarUrl, profileBannerUrl, profileBackgroundUrl, clanAvatarUrl, clanBannerUrl, clanBackgroundUrl] = await Promise.all([
 		resolveProfileAvatarUrl(currentUser.id, false, baseDomain),
-		resolveProfileBannerUrl(currentUser.id, false, baseDomain),
-		resolveProfileBackgroundUrl(currentUser.id, false, baseDomain),
-		ownedClan ? resolveProfileAvatarUrl(ownedClan.id, true, baseDomain) : Promise.resolve(""),
-		ownedClan ? resolveProfileBannerUrl(ownedClan.id, true, baseDomain) : Promise.resolve(null),
-		ownedClan ? resolveProfileBackgroundUrl(ownedClan.id, true, baseDomain) : Promise.resolve(null)
+		hasBanner ? resolveProfileBannerUrl(currentUser.id, false, baseDomain) : Promise.resolve(null),
+		hasBackground ? resolveProfileBackgroundUrl(currentUser.id, false, baseDomain) : Promise.resolve(null),
+		ownedClan && hasClanAvatar
+			? resolveProfileAvatarUrl(ownedClan.id, true, baseDomain)
+			: Promise.resolve(null),
+		ownedClan && hasClanBanner
+			? resolveProfileBannerUrl(ownedClan.id, true, baseDomain)
+			: Promise.resolve(null),
+		ownedClan && hasClanBackground
+			? resolveProfileBackgroundUrl(ownedClan.id, true, baseDomain)
+			: Promise.resolve(null)
 	]);
 	const activeClan = activeScope === "clan" ? ownedClan : null;
 	const isClanScope = activeClan !== null;
-	const heroAvatarUrl = isClanScope ? clanAvatarUrl : avatarUrl;
 	const profileHref = activeClan ? `/profile/${activeClan.id}?clan` : `/profile/${currentUser.id}`;
 
 	return (
@@ -147,13 +147,16 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 					<div className={styles.hero_glow}/>
 					<div className={styles.hero_identity}>
 						{isClanScope
-							? <span className={`${styles.hero_avatar} ${styles.clan_hero_avatar}`}>
-								<Image src={heroAvatarUrl}
-								       alt={`${activeClan?.tag ?? "Clan"} clan avatar`}
-								       fill
-								       sizes="88px"
-								       draggable={false}
-								       priority/>
+							? <span className={`${styles.hero_avatar} ${styles.clan_hero_avatar}`}
+							        data-empty={clanAvatarUrl === null}>
+								{clanAvatarUrl
+									? <Image src={clanAvatarUrl}
+									         alt={`${activeClan?.tag ?? "Clan"} clan avatar`}
+									         fill
+									         sizes="88px"
+									         draggable={false}
+									         priority/>
+									: <FontAwesome prefix="fad" name="people-group"/>}
 							</span>
 							: <PlayerAvatar userId={currentUser.id}
 							                name={settings.username}
@@ -161,15 +164,10 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 							                imageUrl={avatarUrl}
 							                cosmetics={cosmetics}
 							                className={styles.hero_avatar}
-							                sizes="88px"
-							                priority/>}
+								                sizes="88px"
+								                priority/>}
 						<div>
-							<span className={styles.eyebrow}>{isClanScope ? "MAMESTAGRAM CLAN" : "MAMESTAGRAM ACCOUNT"}</span>
 							<h1>{isClanScope ? "Clan settings" : "Account settings"}</h1>
-							<p>
-								Manage how <strong>{activeClan ? activeClan.tag : settings.username}</strong> appears across{" "}
-								{isClanScope ? "the clan profile" : "your profile and the community"}.
-							</p>
 						</div>
 					</div>
 					<Link className={styles.profile_link} href={profileHref}>
@@ -184,7 +182,6 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 							<FontAwesome prefix="fad" name="sliders"/>
 							<span>
 								<strong>Settings</strong>
-								<small>{activeClan ? `Clan ID ${activeClan.id}` : `User ID ${currentUser.id}`}</small>
 							</span>
 						</div>
 						{ownedClan &&
@@ -229,6 +226,13 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 								<FontAwesome prefix="fad" name="id-badge"/>
 								Me!
 							</Link>
+							<Link href={isClanScope ? "/settings?scope=clan&section=privacy" : "/settings?section=privacy"}
+							      scroll={false}
+							      data-active={activeSection === "privacy"}
+							      aria-current={activeSection === "privacy" ? "page" : undefined}>
+								<FontAwesome prefix="fad" name="shield-halved"/>
+								Privacy
+							</Link>
 							{!isClanScope &&
 								<a href={`https://market.${baseDomain}`}
 								   target="_blank"
@@ -238,11 +242,6 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 									<FontAwesome className={styles.sidebar_external_icon} prefix="fas" name="arrow-up-right"/>
 								</a>}
 						</nav>
-						<p>
-							{isClanScope
-								? "Only the clan owner can change these settings."
-								: "Your settings are private. Only the resulting public profile details are visible to others."}
-						</p>
 					</aside>
 
 					<div className={styles.sections}>
@@ -250,15 +249,12 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 							<div className={styles.section_heading}>
 								<span><FontAwesome prefix="fad" name={activeMeta.icon}/></span>
 								<div>
-									<small>{activeMeta.eyebrow}</small>
 									<h2>{activeMeta.title}</h2>
-									<p>{activeMeta.description}</p>
 								</div>
 							</div>
 							{!isClanScope && activeSection === "rename" &&
 								<ProfileSettingsForm username={settings.username}
-								                     showPastNames={settings.showPastNames}
-								                     isPrivate={settings.isPrivate}/>}
+								                     showPastNames={settings.showPastNames}/>}
 							{!isClanScope && activeSection === "images" &&
 								<div className={styles.media_settings}>
 									<MediaSettingCard type="avatar"
@@ -277,12 +273,14 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 								                       isClan={isClanScope}/>}
 							{activeClan && activeSection === "rename" &&
 								<ClanSettingsForm tag={activeClan.tag}
-								                  showPastTags={activeClan.showPastTags}
-								                  isPrivate={activeClan.isPrivate}/>}
+								                  showPastTags={activeClan.showPastTags}/>}
+							{activeSection === "privacy" &&
+								<PrivacySettingsForm scope={activeScope}
+								                     isPrivate={activeClan?.isPrivate ?? settings.isPrivate}/>}
 							{activeClan && activeSection === "images" &&
 								<div className={styles.media_settings}>
 									<MediaSettingCard type="avatar"
-									                  imageUrl={clanAvatarUrl}
+									                  imageUrl={clanAvatarUrl ?? ""}
 									                  hasCustomImage={hasClanAvatar}
 									                  scope="clan"/>
 									<MediaSettingCard type="banner"

@@ -1,5 +1,6 @@
 import "server-only";
 import { cache } from "react";
+import { fetchResponse } from "@/lib/fetch-response";
 import { writeError } from "@/lib/log";
 
 const MINIMUM_BACKGROUND_BYTES = 512;
@@ -45,10 +46,12 @@ const getVersionedImageUrl = (imageUrl: string, version: string) => {
 
 const getProfileVisualVersion = async (imageUrl: string, minimumBytes: number) => {
 	try {
-		const response = await fetch(imageUrl, {
-			method: "HEAD",
-			cache: "no-store",
-			signal: AbortSignal.timeout(3000)
+		const response = await fetchResponse(imageUrl, {
+			init: {
+				method: "HEAD",
+				cache: "no-store"
+			},
+			timeoutMs: 3000
 		});
 		if (!response.ok || response.headers.get("content-type")?.startsWith("image/") !== true)
 			return null;
@@ -65,7 +68,12 @@ const getProfileVisualVersion = async (imageUrl: string, minimumBytes: number) =
 			Date.now().toString();
 	}
 	catch (error: unknown) {
-		void writeError(error);
+		void writeError(error, {
+			source: "server",
+			method: "HEAD",
+			routePath: imageUrl,
+			routeType: "profile-visual"
+		});
 		return null;
 	}
 };
