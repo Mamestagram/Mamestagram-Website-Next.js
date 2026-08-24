@@ -216,13 +216,19 @@ const getScoreCountries = async (scores: BeatmapScoreApiRow[]) => {
 	return new Map(countries.map(({ id, country }) => [id, country]));
 };
 
-export const getBeatmapScores = async (mapId: number, mode: ModeNum): Promise<BeatmapScore[]> => {
-	const response = await getApiJson<BeatmapScoresApi>(getApiUrl("get_map_scores", {
+export const getBeatmapScores = async (
+	mapId: number,
+	mode: ModeNum,
+	mods?: string
+): Promise<BeatmapScore[]> => {
+	const params: Record<string, string | number> = {
 		id: mapId,
 		scope: "best",
 		mode,
 		limit: 100
-	}));
+	};
+	if (mods !== undefined) params.mods = mods;
+	const response = await getApiJson<BeatmapScoresApi>(getApiUrl("get_map_scores", params));
 	if (!response || response.status !== "success") return [];
 	const scores = response.scores ?? [];
 	const [countries, scoreIds] = await Promise.all([

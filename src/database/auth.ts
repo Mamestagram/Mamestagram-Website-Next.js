@@ -3,18 +3,16 @@ import { createHash } from "crypto";
 import type { RowDataPacket } from "mysql2/promise";
 import { executeQuery, withTransaction } from "./connection";
 import {
+	createDanStatsQuery,
 	createStatsQuery,
 	createUserQuery,
+	deleteOrphanedDanStatsQuery,
 	deleteOrphanedStatsQuery,
 	latestUserIdForUpdateQuery,
 	registrationConflictQuery,
 	userByIdQuery,
 	userByLoginQuery
 } from "./query/auth";
-
-//
-// TODO ユーザー情報はmamesosu apiから取ってくるようにする
-//
 
 export type AuthUser = {
 	id: number,
@@ -37,6 +35,29 @@ type AuthUserRow = RowDataPacket & {
 type LatestUserIdRow = RowDataPacket & {
 	id: number
 };
+
+const initialDanStats = [
+	{ mode: 0, type: 0, cs: 0 },
+	{ mode: 0, type: 1, cs: 0 },
+	{ mode: 1, type: 0, cs: 0 },
+	{ mode: 1, type: 1, cs: 0 },
+	{ mode: 1, type: 2, cs: 0 },
+	{ mode: 2, type: 0, cs: 0 },
+	{ mode: 3, type: 0, cs: 4 },
+	{ mode: 3, type: 1, cs: 4 },
+	{ mode: 3, type: 2, cs: 4 },
+	{ mode: 3, type: 3, cs: 4 },
+	{ mode: 3, type: 4, cs: 4 },
+	{ mode: 3, type: 5, cs: 6 },
+	{ mode: 3, type: 6, cs: 6 },
+	{ mode: 3, type: 7, cs: 6 },
+	{ mode: 3, type: 8, cs: 7 },
+	{ mode: 3, type: 9, cs: 7 },
+	{ mode: 3, type: 10, cs: 7 },
+	{ mode: 3, type: 11, cs: 7 },
+	{ mode: 3, type: 12, cs: 10 },
+	{ mode: 3, type: 13, cs: 4 }
+] as const;
 
 export const makeSafeName = (username: string) => username.trim().toLowerCase().replaceAll(" ", "_");
 
@@ -106,11 +127,17 @@ export const createUser = async ({ username, email, password, country }: {
 			[id, username, safeName, email.toLowerCase(), passwordHash, country, now, now]
 		);
 		const statsArgs = modes.flatMap((mode) => [id, mode]);
+		const danStatsArgs = initialDanStats.flatMap(({ mode, type, cs }) => [id, mode, type, cs]);
 
 		await connection.query(deleteOrphanedStatsQuery, [id]);
+		await connection.query(deleteOrphanedDanStatsQuery, [id]);
 		await connection.query(
 			createStatsQuery(modes.length),
 			statsArgs
+		);
+		await connection.query(
+			createDanStatsQuery(initialDanStats.length),
+			danStatsArgs
 		);
 		// await createEmptyUserLog(id);
 

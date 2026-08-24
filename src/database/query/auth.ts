@@ -46,7 +46,14 @@ export const createUserQuery = `
 
 export const deleteOrphanedStatsQuery = "DELETE FROM stats WHERE id = ?";
 
+export const deleteOrphanedDanStatsQuery = "DELETE FROM dan_stats WHERE id = ?";
+
 export const createStatsQuery = (modeCount: number) => {
 	const placeholders = Array.from({ length: modeCount }, () => "(?, ?)").join(", ");
 	return `INSERT INTO stats (id, mode) VALUES ${placeholders}`;
+};
+
+export const createDanStatsQuery = (rowCount: number) => {
+	const placeholders = Array.from({ length: rowCount }, () => "(?, ?, ?, ?)").join(", ");
+	return `INSERT INTO dan_stats (id, mode, type, cs) VALUES ${placeholders}`;
 };

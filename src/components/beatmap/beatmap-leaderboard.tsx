@@ -2,7 +2,7 @@ import classNames from "classnames";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import FeaturedScoreCard from "@/components/beatmap/featured-score-card";
-import ScoreMods, { getScoreMods, isKnownMod, type ModTone } from "@/components/beatmap/score-mods";
+import ScoreMods, { isKnownMod, type ModTone } from "@/components/beatmap/score-mods";
 import FloatingCountryFlag from "@/components/floating-country-flag";
 import FontAwesome from "@/components/font-awesome";
 import FormattedNumber from "@/components/formatted-number";
@@ -15,7 +15,7 @@ import {
 	type BeatmapScore
 } from "@/database/beatmap";
 import { getVanillaMode, ModeNum, OsuMode } from "@/lib/mode";
-import { ModNum, Mods } from "@/lib/mods";
+import { Mods } from "@/lib/mods";
 import { getProfileCosmeticsMap } from "@/lib/profile-cosmetics";
 import { getCurrentUser } from "@/lib/session";
 import styles from "@s/beatmap.module.css";
@@ -205,11 +205,15 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 	const modFilterOptions = getModFilterOptions(selectedBaseScoreMode);
 	const allowedFilterMods = new Set(modFilterOptions.map(({ mod }) => mod));
 	const requestedMods = Array.isArray(searchParams.mods) ? searchParams.mods[0] : searchParams.mods;
-	const parsedSelectedMods = [...new Set((requestedMods ?? "")
-		.split(",")
-		.map((mod) => mod.trim().toLowerCase())
-		.filter(isKnownMod)
-		.filter((mod) => allowedFilterMods.has(mod)))];
+	const requestedModTokens = (requestedMods ?? "")
+		.toLowerCase()
+		.replaceAll(/[^a-z0-9]/g, "")
+		.match(/.{2}/g) ?? [];
+	const parsedSelectedMods: Mods[] = [];
+	requestedModTokens.forEach((mod) => {
+		if (isKnownMod(mod) && allowedFilterMods.has(mod) && !parsedSelectedMods.includes(mod))
+			parsedSelectedMods.push(mod);
+	});
 	const mutuallyExclusiveModGroups: Mods[][] = [
 		[Mods.sd, Mods.pf],
 		[Mods.ez, Mods.hr],
@@ -229,25 +233,20 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 		return [...mods.filter((selectedMod) => selectedMod !== Mods.nm && !exclusiveGroup?.includes(selectedMod)), mod];
 	};
 	const selectedMods = parsedSelectedMods.reduce<Mods[]>((mods, mod) => selectMod(mods, mod), []);
-	const [allScores, currentUser] = await Promise.all([
-		getBeatmapScores(map.id, selectedScoreMode.mode),
+	const selectedModsQuery = selectedMods.map((mod) => mod.toLowerCase()).join("");
+	const [scores, currentUser] = await Promise.all([
+		getBeatmapScores(
+			map.id,
+			selectedScoreMode.mode,
+			selectedMods.length > 0 ? selectedModsQuery : undefined
+		),
 		getCurrentUser()
 	]);
-	const scoreModeMod = [ModeNum.rxstd, ModeNum.rxtaiko, ModeNum.rxctb].includes(selectedScoreMode.mode)
-		? ModNum.rx
-		: selectedScoreMode.mode === ModeNum.apstd ? ModNum.ap : ModNum.nm;
-	const matchesSelectedMods = (score: BeatmapScore) => {
-		if (selectedMods.length === 0) return true;
-		if (selectedMods.includes(Mods.nm)) return (score.mods & ~scoreModeMod) === ModNum.nm;
-		const mods = getScoreMods(score.mods).map(({ mod }) => mod);
-		return selectedMods.every((selectedMod) => mods.includes(selectedMod));
-	};
-	const scores = allScores.filter(matchesSelectedMods);
 	const getScoreHref = (mode: ScoreModeOption, mods: Mods[] = selectedMods) => {
-		const hrefQuery = new URLSearchParams();
-		if (mode !== scoreModeOptions[0]) hrefQuery.set("mode", mode.route);
-		if (mods.length > 0) hrefQuery.set("mods", mods.join(","));
-		const search = hrefQuery.toString();
+		const hrefQuery: string[] = [];
+		if (mode !== scoreModeOptions[0]) hrefQuery.push(`mode=${mode.route}`);
+		if (mods.length > 0) hrefQuery.push(`mods=${mods.join("")}`);
+		const search = hrefQuery.join("&");
 		return `/beatmaps/${map.setId}/${map.id}${search ? `?${search}` : ""}`;
 	};
 	const toggleMod = (mod: Mods) => {
@@ -280,16 +279,15 @@ export default async function BeatmapLeaderboard({ map, searchParams }: Readonly
 	const topScore = scores[0];
 	let personalScore: { score: BeatmapScore, rank: number } | null = null;
 	if (currentUser.isLoggedIn && currentUser.id) {
-		const apiScoreIndex = allScores.findIndex((score) => score.userId === currentUser.id);
+		const apiScoreIndex = scores.findIndex((score) => score.userId === currentUser.id);
 		if (apiScoreIndex >= 0) {
-			personalScore = { score: allScores[apiScoreIndex], rank: apiScoreIndex + 1 };
+			personalScore = { score: scores[apiScoreIndex], rank: apiScoreIndex + 1 };
 		}
-		else {
+		else if (selectedMods.length === 0) {
 			const databaseScore = await getBeatmapUserScore(map.md5, selectedScoreMode.mode, currentUser.id);
 			if (databaseScore) personalScore = { score: databaseScore, rank: databaseScore.rank };
 		}
-		if (personalScore && (!matchesSelectedMods(personalScore.score) || topScore?.userId === currentUser.id))
-			personalScore = null;
+		if (personalScore && topScore?.userId === currentUser.id) personalScore = null;
 	}
 	const featuredCosmetics = await getProfileCosmeticsMap([
 		...(topScore ? [topScore.userId] : []),
