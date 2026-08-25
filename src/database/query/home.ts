@@ -73,7 +73,9 @@ export const homeRecentActivityQuery = `
 		ON u.id = s.userid
 	JOIN maps m
 		ON m.md5 = s.map_md5
-	WHERE (u.priv & ${Priv.unrestricted}) > 0
+	WHERE m.id > 0
+		AND m.set_id > 0
+		AND (u.priv & ${Priv.unrestricted}) > 0
 		AND NOT EXISTS (
 			SELECT 1
 				FROM scores earlierScore

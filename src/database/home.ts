@@ -92,14 +92,15 @@ const getTopPlayers = async (): Promise<HomeTopPlayer[]> => {
 };
 
 const getRecentActivity = async (): Promise<HomeRecentActivity[]> => {
+	const hasPublicBeatmap = ({ mapId, setId }: HomeRecentActivity) => mapId > 0 && setId > 0;
 	try {
-		const activity = await executeQuery<HomeRecentActivity>(homeRecentActivityQuery);
+		const activity = (await executeQuery<HomeRecentActivity>(homeRecentActivityQuery)).filter(hasPublicBeatmap);
 		globalHomeData.recentActivity = activity;
 		return activity;
 	}
 	catch (error: unknown) {
 		void writeError(error);
-		return globalHomeData.recentActivity ?? [];
+		return globalHomeData.recentActivity?.filter(hasPublicBeatmap) ?? [];
 	}
 };
 
