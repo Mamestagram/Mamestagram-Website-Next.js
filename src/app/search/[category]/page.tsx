@@ -32,14 +32,14 @@ export default async function SearchResultsPage({ params, searchParams }: {
 	const { q = "", page: pageParam = "1" } = await searchParams;
 	void writeLog("GET", `/search/${category} (q: ${q}, page: ${pageParam})`);
 	if (!isSearchCategory(category)) notFound();
-
+	
 	const query = q.trim();
 	const page = Number(pageParam);
 	if (query.length > 64 || !Number.isSafeInteger(page) || page < 1) notFound();
-
+	
 	const baseDomain = process.env.BASE_DOMAIN;
 	if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
-
+	
 	let resultList: ReactNode = null;
 	let total = 0;
 	let totalPages = 1;
@@ -69,11 +69,11 @@ export default async function SearchResultsPage({ params, searchParams }: {
 		}
 		if (page > totalPages) notFound();
 	}
-
+	
 	const meta = searchCategoryMeta[category];
 	const firstResult = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
 	const lastResult = Math.min(page * PAGE_SIZE, total);
-
+	
 	return (
 		<div className={styles.page}>
 			<section className={styles.hero}>
@@ -93,7 +93,7 @@ export default async function SearchResultsPage({ params, searchParams }: {
 					</div>
 				</div>
 			</section>
-
+			
 			<div className={styles.container}>
 				<form className={styles.search_form} action={`/search/${category}`} method="get">
 					<FontAwesome prefix="fas" name="magnifying-glass"/>
@@ -106,7 +106,7 @@ export default async function SearchResultsPage({ params, searchParams }: {
 					       aria-label={`Search ${meta.label.toLowerCase()}`}/>
 					<button type="submit">Search</button>
 				</form>
-
+				
 				<nav className={styles.categories} aria-label="Search categories">
 					{(Object.entries(searchCategoryMeta) as [SearchCategory, typeof meta][]).map(([key, item]) =>
 						<Link key={key}
@@ -116,7 +116,7 @@ export default async function SearchResultsPage({ params, searchParams }: {
 							{item.label}
 						</Link>)}
 				</nav>
-
+				
 				<section className={styles.results} aria-labelledby="search-results-title" data-page-enter="box">
 					<div className={styles.results_heading}>
 						<div>
@@ -125,20 +125,23 @@ export default async function SearchResultsPage({ params, searchParams }: {
 						</div>
 						{query && <p>
 							<strong><FormattedNumber value={total}/></strong> results
-							{total > 0 && <span><FormattedNumber value={firstResult}/>–<FormattedNumber value={lastResult}/></span>}
+							{total > 0 && <span><FormattedNumber value={firstResult}/>–<FormattedNumber
+								value={lastResult}/></span>}
 						</p>}
 					</div>
-
-					{!query && <SearchPageMessage icon="magnifying-glass" text={`Search all ${meta.label.toLowerCase()}.`}/>} 
-					{query && total === 0 && <SearchPageMessage icon="magnifying-glass-minus" text={`No ${meta.label.toLowerCase()} found.`}/>} 
+					
+					{!query &&
+						<SearchPageMessage icon="magnifying-glass" text={`Search all ${meta.label.toLowerCase()}.`}/>}
+					{query && total === 0 && <SearchPageMessage icon="magnifying-glass-minus"
+					                                            text={`No ${meta.label.toLowerCase()} found.`}/>}
 					{query && total > 0 && resultList}
 				</section>
-
+				
 				{query && totalPages > 1 &&
 					<SearchPagination category={category}
 					                  query={query}
 					                  currentPage={page}
-					                  totalPages={totalPages}/>} 
+					                  totalPages={totalPages}/>}
 			</div>
 		</div>
 	);

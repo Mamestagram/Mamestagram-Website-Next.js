@@ -53,12 +53,12 @@
 	opacity: 0;
 	transform: translate(-50%, calc(-100% + 5px));
 	transition: opacity 180ms ease, transform 180ms ease;
-
+	
 	&[data-visible="true"] {
 		opacity: 1;
 		transform: translate(-50%, -100%);
 	}
-
+	
 	&::after {
 		content: "";
 		position: absolute;

@@ -24,14 +24,14 @@ export default function EnlargeableImage({
 	const lightboxImageStyle = {
 		"--image-ratio": width / height
 	} as CSSProperties;
-
+	
 	useEffect(() => {
 		if (!isOpen) return;
 		const previousOverflow = document.body.style.overflow;
 		const closeOnEscape = (event: KeyboardEvent) => {
 			if (event.key === "Escape") setIsOpen(false);
 		};
-
+		
 		document.body.style.overflow = "hidden";
 		document.addEventListener("keydown", closeOnEscape);
 		return () => {
@@ -39,7 +39,7 @@ export default function EnlargeableImage({
 			document.removeEventListener("keydown", closeOnEscape);
 		};
 	}, [isOpen]);
-
+	
 	return (
 		<>
 			<button type="button"

@@ -9,7 +9,7 @@ export default function BackToTop({ className, label }: Readonly<{
 }>) {
 	const [visible, setVisible] = useState(false);
 	const [footerOverlap, setFooterOverlap] = useState(0);
-
+	
 	useEffect(() => {
 		let frame = 0;
 		const updatePosition = () => {
@@ -24,7 +24,7 @@ export default function BackToTop({ className, label }: Readonly<{
 				setVisible(window.scrollY > 120);
 			});
 		};
-
+		
 		updatePosition();
 		window.addEventListener("scroll", updatePosition, { passive: true });
 		window.addEventListener("resize", updatePosition);
@@ -34,14 +34,14 @@ export default function BackToTop({ className, label }: Readonly<{
 			window.removeEventListener("resize", updatePosition);
 		};
 	}, []);
-
+	
 	const scrollToTop = (event: MouseEvent<HTMLAnchorElement>) => {
 		event.preventDefault();
 		const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 		window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
 		window.history.pushState(null, "", "#");
 	};
-
+	
 	return (
 		<a className={className}
 		   data-floating={visible}

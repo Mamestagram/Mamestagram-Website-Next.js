@@ -1,9 +1,8 @@
 /* Preserve the glass colors while avoiding repeated backdrop rasterization on software renderers. */
 html[data-rendering-mode="software"] {
 	--glass-shadow: 0 4px 14px rgba(0, 0, 0, .24);
-	--glass-box-shadow-dark:
-		0 5px 16px rgba(0, 0, 0, .28),
-		inset 0 1px 0 rgba(255, 255, 255, .2);
+	--glass-box-shadow-dark: 0 5px 16px rgba(0, 0, 0, .28),
+	inset 0 1px 0 rgba(255, 255, 255, .2);
 	scroll-behavior: auto;
 }
 

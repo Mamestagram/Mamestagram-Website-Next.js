@@ -12,21 +12,20 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 export const PATCH = async (request: NextRequest): Promise<NextResponse<MutationResponse>> => {
 	if (!isSameOriginMutation(request))
 		return NextResponse.json({ success: false, message: "This request was blocked." }, { status: 403 });
-
+	
 	const currentUser = await getCurrentUser();
 	if (!currentUser.isLoggedIn || !currentUser.id)
 		return NextResponse.json({ success: false, message: "You must be signed in." }, { status: 401 });
-
+	
 	let body: unknown;
 	try {
 		body = await request.json();
-	}
-	catch {
+	} catch {
 		return NextResponse.json({ success: false, message: "The privacy request is invalid." }, { status: 400 });
 	}
 	if (!isRecord(body) || typeof body.isPrivate !== "boolean")
 		return NextResponse.json({ success: false, message: "The privacy request is invalid." }, { status: 400 });
-
+	
 	const isClan = request.nextUrl.searchParams.get("scope") === "clan";
 	try {
 		if (isClan) {
@@ -47,14 +46,13 @@ export const PATCH = async (request: NextRequest): Promise<NextResponse<Mutation
 				);
 			revalidatePath(`/profile/${currentUser.id}`, "layout");
 		}
-
+		
 		revalidatePath("/settings");
 		return NextResponse.json({
 			success: true,
 			message: `${isClan ? "Clan" : "Profile"} privacy updated.`
 		});
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error, {
 			source: "server",
 			method: "PATCH",

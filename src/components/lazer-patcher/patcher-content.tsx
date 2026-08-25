@@ -15,7 +15,7 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 	const lazer = await fetchInternalJson<LazerData>("/api/lazer");
 	const { copy, links, showSetupGuides, version } = lazer;
 	const text = copy[locale];
-
+	
 	return (
 		<div className={styles.page} lang={locale}>
 			<PageHero
@@ -23,13 +23,13 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 				title="Lazer Patcher"
 				variant="patcher"
 			/>
-
+			
 			<div className={styles.shell}>
 				<PatcherSidebar locale={locale}
 				                languageLabel={text.language}
 				                nav={text.nav}
 				                showSetupGuides={showSetupGuides}/>
-
+				
 				<article className={styles.content}>
 					<section id="overview" className={styles.patcher_section} data-page-enter="section">
 						<PatcherSectionHeading icon="sparkles" title={text.overviewTitle}/>
@@ -49,7 +49,7 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 								</article>)}
 						</div>
 					</section>
-
+					
 					<section id="platforms" className={styles.patcher_section} data-page-enter="section">
 						<PatcherSectionHeading icon="laptop-mobile" title={text.platformsTitle}/>
 						<p className={styles.section_lead}>{text.platformsLead}</p>
@@ -60,7 +60,8 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 									<span><h3>Windows</h3><p>{text.windowsPlatformBody}</p></span>
 								</div>
 								<ul className={styles.platform_details}>
-									<li><FontAwesome prefix="fad" name="circle-check"/>{text.windowsPlatformDetails[0]}</li>
+									<li><FontAwesome prefix="fad" name="circle-check"/>{text.windowsPlatformDetails[0]}
+									</li>
 									<li><FontAwesome prefix="fad" name="flask"/>{text.windowsPlatformDetails[1]}</li>
 								</ul>
 							</article>
@@ -76,7 +77,7 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 							</article>
 						</div>
 					</section>
-
+					
 					<section id="download" className={styles.patcher_section} data-page-enter="section">
 						<PatcherSectionHeading icon="download" title={text.downloadTitle}/>
 						<div className={styles.download_panel} data-page-enter="box">
@@ -96,7 +97,7 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 							<p><FontAwesome prefix="fad" name="shield-check"/>{text.downloadNotice}</p>
 						</div>
 					</section>
-
+					
 					<section id="windows"
 					         className={styles.patcher_section}
 					         data-page-enter="section"
@@ -119,7 +120,7 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 								</li>)}
 						</ol>
 					</section>
-
+					
 					<section id="macos"
 					         className={styles.patcher_section}
 					         data-page-enter="section"
@@ -144,34 +145,34 @@ export default async function PatcherContent({ locale }: Readonly<{ locale: Laze
 										{index === 3 &&
 											<div className={styles.step_visuals}>
 												<EnlargeableImage src="/images/lazer-patcher/1.png"
-												                   alt={text.macOSSecurityImageAlts[0]}
-												                   width={1670}
-												                   height={1474}
-												                   sizes="(max-width: 760px) 84vw, 620px"/>
+												                  alt={text.macOSSecurityImageAlts[0]}
+												                  width={1670}
+												                  height={1474}
+												                  sizes="(max-width: 760px) 84vw, 620px"/>
 												<EnlargeableImage src="/images/lazer-patcher/2.png"
-												                   alt={text.macOSSecurityImageAlts[1]}
-												                   width={744}
-												                   height={924}
-												                   sizes="(max-width: 760px) 84vw, 280px"/>
+												                  alt={text.macOSSecurityImageAlts[1]}
+												                  width={744}
+												                  height={924}
+												                  sizes="(max-width: 760px) 84vw, 280px"/>
 											</div>}
 										{index === 4 &&
 											<div className={`${styles.step_visuals} ${styles.target_visuals}`}>
 												<EnlargeableImage src="/images/lazer-patcher/3.png"
-												                   alt={text.macOSTargetImageAlts[0]}
-												                   width={1364}
-												                   height={1228}
-												                   sizes="(max-width: 760px) 84vw, 400px"/>
+												                  alt={text.macOSTargetImageAlts[0]}
+												                  width={1364}
+												                  height={1228}
+												                  sizes="(max-width: 760px) 84vw, 400px"/>
 												<EnlargeableImage src="/images/lazer-patcher/4.png"
-												                   alt={text.macOSTargetImageAlts[1]}
-												                   width={1984}
-												                   height={1400}
-												                   sizes="(max-width: 760px) 84vw, 560px"/>
+												                  alt={text.macOSTargetImageAlts[1]}
+												                  width={1984}
+												                  height={1400}
+												                  sizes="(max-width: 760px) 84vw, 560px"/>
 											</div>}
 									</div>
 								</li>)}
 						</ol>
 					</section>
-
+					
 					<PatcherBackToTop/>
 				</article>
 			</div>

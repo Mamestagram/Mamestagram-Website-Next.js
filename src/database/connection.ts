@@ -51,12 +51,10 @@ export const withTransaction = async <T>(callback: (connection: PoolConnection) 
 		const result = await callback(connection);
 		await connection.commit();
 		return result;
-	}
-	catch (err) {
+	} catch (err) {
 		await connection.rollback();
 		throw err;
-	}
-	finally {
+	} finally {
 		connection.release();
 	}
 }
@@ -84,8 +82,7 @@ const executeReadQuery = async <T>(query: string, args?: QueryArgs) => {
 	try {
 		const [result] = await pool.query(query, args);
 		return result as T extends undefined ? QueryResult : T[];
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		if (!isRetryableReadError(error)) throw error;
 		const [result] = await pool.query(query, args);
 		return result as T extends undefined ? QueryResult : T[];
@@ -96,12 +93,11 @@ export const executeQuery = async <T>(query: string, args?: QueryArgs, ignoreArg
 	const questionSymbol = query.match(/\?/g)?.length ?? 0, argsSize = args?.length ?? 0;
 	if (ignoreArgsCheck || questionSymbol === argsSize) {
 		const statMode = getStatMode(query);
-
+		
 		if (statMode === StatMode.select) {
 			try {
 				return await executeReadQuery<T>(query, args);
-			}
-			catch (err) {
+			} catch (err) {
 				console.error(err);
 				throw new Error(getErrorMessage(err), { cause: err });
 			}
@@ -113,13 +109,11 @@ export const executeQuery = async <T>(query: string, args?: QueryArgs, ignoreArg
 				const [result] = await connection.query(query, args);
 				await connection.commit(); // commit
 				return result as T extends undefined ? QueryResult : T[];
-			}
-			catch (err) {
+			} catch (err) {
 				await connection.rollback(); // rollback
 				console.error(err);
 				throw new Error(getErrorMessage(err), { cause: err });
-			}
-			finally {
+			} finally {
 				connection.release();
 			}
 		}

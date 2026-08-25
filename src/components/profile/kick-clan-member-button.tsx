@@ -18,7 +18,7 @@ export default function KickClanMemberButton({ clanId, memberId, memberName, mod
 	const [isOpen, setIsOpen] = useState(false);
 	const [error, setError] = useState("");
 	const [isPending, startTransition] = useTransition();
-
+	
 	const confirmKick = () => {
 		setError("");
 		startTransition(async () => {
@@ -31,7 +31,7 @@ export default function KickClanMemberButton({ clanId, memberId, memberName, mod
 			router.refresh();
 		});
 	};
-
+	
 	return (
 		<>
 			<button type="button"
@@ -44,10 +44,11 @@ export default function KickClanMemberButton({ clanId, memberId, memberName, mod
 			        }}>
 				<FontAwesome prefix="fas" name="user-minus"/>
 			</button>
-
+			
 			<ConfirmationDialog isOpen={isOpen}
 			                    title="Kick clan member?"
-			                    description={<>Are you sure you want to kick <strong>{memberName}</strong> from the clan?</>}
+			                    description={<>Are you sure you want to kick <strong>{memberName}</strong> from the
+				                    clan?</>}
 			                    icon="user-minus"
 			                    pendingLabel="Kicking…"
 			                    isPending={isPending}

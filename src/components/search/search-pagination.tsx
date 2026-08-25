@@ -15,7 +15,7 @@ export default function SearchPagination({ category, query, currentPage, totalPa
 		Math.max(totalPages - windowSize + 1, 1)
 	);
 	const pages = Array.from({ length: windowSize }, (_, index) => start + index);
-
+	
 	return (
 		<nav className={styles.pagination} aria-label="Search result pages">
 			{currentPage > 1 &&

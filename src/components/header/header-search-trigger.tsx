@@ -16,6 +16,6 @@ export default function HeaderSearchTrigger({ location }: { location: "top" | "n
 			<FontAwesome prefix="fas" name="magnifying-glass"/>
 		</button>
 	);
-
+	
 	return location === "navigation" ? <li className="search">{button}</li> : button;
 }

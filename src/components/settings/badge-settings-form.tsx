@@ -29,7 +29,7 @@ export default function BadgeSettingsForm({ badges, selectedBadge, baseDomain }:
 	const [status, setStatus] = useState<BadgeUpdateResponse | null>(null);
 	const [isPending, startTransition] = useTransition();
 	const selectedBadgeName = badges.find((badge) => badge.id === selection)?.name ?? "No badge selected";
-
+	
 	const selectBadge = (badgeId: number) => {
 		if (badgeId === selection || isPending) return;
 		setStatus(null);
@@ -49,13 +49,12 @@ export default function BadgeSettingsForm({ badges, selectedBadge, baseDomain }:
 				if (!body.success) return;
 				setSelection(badgeId);
 				router.refresh();
-			}
-			catch {
+			} catch {
 				setStatus({ success: false, message: "The showcase badge could not be updated." });
 			}
 		});
 	};
-
+	
 	return (
 		<div className={styles.badge_selector}>
 			<div className={styles.badge_summary}>
@@ -74,7 +73,8 @@ export default function BadgeSettingsForm({ badges, selectedBadge, baseDomain }:
 						<strong>Hide badge</strong>
 						<small>None</small>
 					</span>
-					{selection === 0 && <FontAwesome className={styles.selected_check} prefix="fas" name="circle-check"/>}
+					{selection === 0 &&
+						<FontAwesome className={styles.selected_check} prefix="fas" name="circle-check"/>}
 				</button>
 				{badges.map((badge) => {
 					const isSelected = badge.id === selection;
@@ -98,7 +98,8 @@ export default function BadgeSettingsForm({ badges, selectedBadge, baseDomain }:
 								<strong>{badge.name}</strong>
 								<small>{badge.isOwned ? badge.rarity : "Locked"}</small>
 							</span>
-							{isSelected && <FontAwesome className={styles.selected_check} prefix="fas" name="circle-check"/>}
+							{isSelected &&
+								<FontAwesome className={styles.selected_check} prefix="fas" name="circle-check"/>}
 						</button>
 					);
 				})}

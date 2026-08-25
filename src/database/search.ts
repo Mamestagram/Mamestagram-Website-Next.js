@@ -80,7 +80,7 @@ export const searchUsers = async (query: string, page = 1, pageSize = 12): Promi
 		userSearchQuery,
 		[exactId, `%${escaped}%`, exactId, normalized, `${escaped}%`, limit, offset]
 	);
-
+	
 	const rowsById = new Map<number, UserSearchRow>();
 	rows.forEach((row) => {
 		const existing = rowsById.get(row.id);
@@ -88,7 +88,7 @@ export const searchUsers = async (query: string, page = 1, pageSize = 12): Promi
 		else rowsById.set(row.id, { ...row });
 	});
 	const uniqueRows = [...rowsById.values()];
-
+	
 	const cosmetics = await getProfileCosmeticsMap(uniqueRows.map(({ id }) => id));
 	return uniqueRows.map(({ id, name, country, preferred_mode, priv }) => ({
 		id,
@@ -138,7 +138,7 @@ export const searchClans = async (query: string, page = 1, pageSize = 12): Promi
 			offset
 		]
 	);
-
+	
 	return rows.map(({ id, name, tag, preferred_mode, member_count }) => ({
 		id,
 		name,
@@ -188,19 +188,19 @@ export const searchBeatmaps = async (query: string, page = 1, pageSize = 12): Pr
 		offset
 	]);
 	if (setRows.length === 0) return [];
-
+	
 	const setIds = setRows.map(({ set_id }) => set_id);
 	const rows = await executeQuery<BeatmapSearchRow>(
 		getBeatmapSearchDifficultiesQuery(setIds.length),
 		setIds
 	);
 	const rowsBySetId = Map.groupBy(rows, ({ set_id }) => set_id);
-
+	
 	return setRows.flatMap(({ set_id }) => {
 		const setMaps = rowsBySetId.get(set_id) ?? [];
 		const representative = setMaps.at(0);
 		if (!representative) return [];
-
+		
 		return [{
 			setId: set_id,
 			artist: representative.artist,

@@ -7,7 +7,8 @@ export default function Footer() {
 			<nav className="navigation">
 				<div className="section mamestagram">
 					<h2>Mamestagram</h2>
-					<p>A community-driven osu! private server with leaderboards, player profiles, and custom features.</p>
+					<p>A community-driven osu! private server with leaderboards, player profiles, and custom
+						features.</p>
 				</div>
 				<div className="section explore">
 					<h2>Explore</h2>

@@ -54,7 +54,7 @@ const globalHomeData = globalThis as typeof globalThis & {
 const getPlayerCounts = async (): Promise<HomePlayerCounts | null> => {
 	const baseDomain = process.env.BASE_DOMAIN;
 	if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
-
+	
 	try {
 		const response = await fetch(`https://api.${baseDomain}/v1/get_player_count`, {
 			cache: "no-store",
@@ -67,8 +67,7 @@ const getPlayerCounts = async (): Promise<HomePlayerCounts | null> => {
 		}
 		const data = await response.json() as PlayerCountApi;
 		return data.status === "success" && data.counts ? data.counts : null;
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error);
 		return null;
 	}
@@ -84,8 +83,7 @@ const getTopPlayers = async (): Promise<HomeTopPlayer[]> => {
 		}));
 		globalHomeData.topPlayers = players;
 		return players;
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error);
 		return globalHomeData.topPlayers ?? [];
 	}
@@ -97,8 +95,7 @@ const getRecentActivity = async (): Promise<HomeRecentActivity[]> => {
 		const activity = (await executeQuery<HomeRecentActivity>(homeRecentActivityQuery)).filter(hasPublicBeatmap);
 		globalHomeData.recentActivity = activity;
 		return activity;
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error);
 		return globalHomeData.recentActivity?.filter(hasPublicBeatmap) ?? [];
 	}

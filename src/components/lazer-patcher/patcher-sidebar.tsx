@@ -27,7 +27,7 @@ export default function PatcherSidebar({ locale, languageLabel, nav, showSetupGu
 	                       navigationLabel={locale === "ja" ? "Lazerページのセクション" : "Lazer sections"}
 	                       sections={sections}
 	                       header={<LanguageSwitcher className={styles.language_switcher}
-	                                                   current={locale}
-	                                                   label={languageLabel}
-	                                                   ariaLabel={locale === "ja" ? "Lazerページの言語" : "Lazer page language"}/>}/>;
+	                                                 current={locale}
+	                                                 label={languageLabel}
+	                                                 ariaLabel={locale === "ja" ? "Lazerページの言語" : "Lazer page language"}/>}/>;
 }

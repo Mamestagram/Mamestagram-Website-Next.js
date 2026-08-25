@@ -17,9 +17,8 @@
 	flex-direction: column;
 	gap: 11px;
 	color: #dce5ef;
-	background:
-		radial-gradient(circle at 50% 0%, rgba(181, 54, 67, .16), transparent 42%),
-		linear-gradient(145deg, rgba(19, 25, 35, .98), rgba(5, 8, 14, .99));
+	background: radial-gradient(circle at 50% 0%, rgba(181, 54, 67, .16), transparent 42%),
+	linear-gradient(145deg, rgba(19, 25, 35, .98), rgba(5, 8, 14, .99));
 	border: 1px solid rgba(255, 132, 144, .2);
 	border-radius: 20px;
 	box-shadow: 0 24px 70px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .05);
@@ -27,9 +26,8 @@
 }
 
 .dialog[data-tone="success"] {
-	background:
-		radial-gradient(circle at 50% 0%, rgba(47, 180, 126, .18), transparent 42%),
-		linear-gradient(145deg, rgba(19, 29, 32, .98), rgba(5, 10, 12, .99));
+	background: radial-gradient(circle at 50% 0%, rgba(47, 180, 126, .18), transparent 42%),
+	linear-gradient(145deg, rgba(19, 29, 32, .98), rgba(5, 10, 12, .99));
 	border-color: rgba(114, 232, 174, .24);
 }
 
@@ -147,12 +145,12 @@
 	.overlay {
 		padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
 	}
-
+	
 	.dialog {
 		padding: 21px 17px;
 		border-radius: 17px;
 	}
-
+	
 	.actions button {
 		min-height: 44px;
 	}

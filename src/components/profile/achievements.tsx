@@ -12,7 +12,7 @@ export default async function Achievements({ id, mode, canRevealSecretConditions
 	canRevealSecretConditions: boolean
 }>) {
 	const achievements = await getUserAchievements(id, mode);
-
+	
 	return (
 		<div className={classNames(styles.section_box, styles.achievements)} data-page-enter="box">
 			<h1 className={styles.section_title}>

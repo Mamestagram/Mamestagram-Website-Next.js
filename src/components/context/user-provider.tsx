@@ -28,7 +28,14 @@ type UserContextType = {
 
 const UserContext = createContext<UserContextType | null>(null);
 
-export const UserProvider = ({ serverInfo, userInfo, userAvatarUrl, userCosmetics, loadingScreenEmbedUrl, children }: Readonly<{
+export const UserProvider = ({
+	serverInfo,
+	userInfo,
+	userAvatarUrl,
+	userCosmetics,
+	loadingScreenEmbedUrl,
+	children
+}: Readonly<{
 	serverInfo: ServerInfo,
 	userInfo: UserInfo,
 	userAvatarUrl: string | null,
@@ -45,7 +52,8 @@ export const UserProvider = ({ serverInfo, userInfo, userAvatarUrl, userCosmetic
 		second: "2-digit"
 	}).replace(/[\/\s:]/g, "");
 	return (
-		<UserContext.Provider value={{ datetime, serverInfo, userInfo, userAvatarUrl, userCosmetics, loadingScreenEmbedUrl }}>
+		<UserContext.Provider
+			value={{ datetime, serverInfo, userInfo, userAvatarUrl, userCosmetics, loadingScreenEmbedUrl }}>
 			{children}
 		</UserContext.Provider>
 	);

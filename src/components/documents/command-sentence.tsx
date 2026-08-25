@@ -11,14 +11,16 @@ export default function CommandSentence({ text, command, copied, copyLabel, onCo
 	onCopy: () => Promise<void>
 }) {
 	const [before, after = ""] = text.split(command);
-	return <>{before}<button type="button"
-	                         className={styles.inline_command}
-	                         data-copied={copied}
-	                         aria-label={`${copyLabel}: ${command}`}
-	                         title={copyLabel}
-	                         onClick={onCopy}>
-		<code>{command}</code>
-		<FontAwesome prefix="fad" name={copied ? "check" : "copy"}/>
-		<span className={styles.inline_copy_feedback} aria-live="polite">{copied ? copyLabel : ""}</span>
-	</button>{after}</>;
+	return <>{before}
+		<button type="button"
+		        className={styles.inline_command}
+		        data-copied={copied}
+		        aria-label={`${copyLabel}: ${command}`}
+		        title={copyLabel}
+		        onClick={onCopy}>
+			<code>{command}</code>
+			<FontAwesome prefix="fad" name={copied ? "check" : "copy"}/>
+			<span className={styles.inline_copy_feedback} aria-live="polite">{copied ? copyLabel : ""}</span>
+		</button>
+		{after}</>;
 }

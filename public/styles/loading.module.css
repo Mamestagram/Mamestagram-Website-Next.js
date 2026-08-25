@@ -2,11 +2,11 @@
 	& > :not(.screen) {
 		animation: page-fade-in .42s ease-out both;
 	}
-
+	
 	& [data-page-enter="box"] {
 		animation: page-box-slide-down .52s cubic-bezier(.22, 1, .36, 1);
 	}
-
+	
 	& [data-page-enter="section"] {
 		animation: page-section-slide-down .58s cubic-bezier(.22, 1, .36, 1);
 	}
@@ -51,7 +51,7 @@
 	width: 72px;
 	height: 72px;
 	place-items: center;
-
+	
 	&::after {
 		content: "";
 		position: absolute;
@@ -84,7 +84,7 @@
 	overflow: hidden;
 	background: rgba(255, 255, 255, .07);
 	border-radius: 999px;
-
+	
 	& i {
 		display: block;
 		width: 38%;
@@ -105,7 +105,7 @@
 		animation: none;
 		transition: none;
 	}
-
+	
 	.progress i {
 		width: 100%;
 		opacity: .45;
@@ -113,30 +113,52 @@
 }
 
 @keyframes page-fade-in {
-	from { opacity: 0; }
-	to { opacity: 1; }
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 
 @keyframes page-box-slide-down {
-	from { translate: 0 -18px; }
-	to { translate: none; }
+	from {
+		translate: 0 -18px;
+	}
+	to {
+		translate: none;
+	}
 }
 
 @keyframes page-section-slide-down {
-	from { translate: 0 -12px; }
-	to { translate: none; }
+	from {
+		translate: 0 -12px;
+	}
+	to {
+		translate: none;
+	}
 }
 
 @keyframes loading-panel-enter {
-	from { opacity: 0; }
-	to { opacity: 1; }
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 
 @keyframes loading-logo-spin {
-	to { transform: rotate(360deg); }
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 @keyframes loading-progress {
-	from { transform: translateX(-120%); }
-	to { transform: translateX(240%); }
+	from {
+		transform: translateX(-120%);
+	}
+	to {
+		transform: translateX(240%);
+	}
 }

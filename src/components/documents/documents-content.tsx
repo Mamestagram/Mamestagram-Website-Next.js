@@ -19,7 +19,7 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 	const documents = await fetchInternalJson<DocumentsData>("/api/documents");
 	const { links, commandCategories, bbcodeCategories, copy, connectImages, danModes } = documents;
 	const text = copy[locale];
-
+	
 	return (
 		<div className={styles.page} lang={locale}>
 			<PageHero
@@ -27,10 +27,10 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 				title={text.title}
 				variant="documents"
 			/>
-
+			
 			<div className={styles.shell}>
 				<DocumentsSidebar locale={locale} languageLabel={text.language} nav={text.nav}/>
-
+				
 				<article className={styles.content}>
 					<section id="introduction" className={styles.document_section} data-page-enter="section">
 						<SectionHeading icon="sparkles" title={text.nav.introduction}/>
@@ -75,7 +75,7 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 								</a>)}
 						</div>
 					</section>
-
+					
 					<section id="rules" className={styles.document_section} data-page-enter="section">
 						<SectionHeading icon="shield-check" title={text.nav.rules}/>
 						<p className={`${styles.section_lead} ${styles.rules_lead}`}>{text.rulesLead}</p>
@@ -87,16 +87,18 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 							<FontAwesome prefix="fad" name="people-roof"/>
 							<span><strong>{text.clanRulesTitle}</strong><p>{text.clanRulesBody}</p></span>
 						</div>
-						<SupportNotice icon="ticket" title={text.reportTitle} body={text.reportBody} emphasis={text.reportWarning} href={links.ticket}/>
-						<SupportNotice icon="envelope-open-text" title={text.appealTitle} body={text.appealBody} href={links.ticket}/>
+						<SupportNotice icon="ticket" title={text.reportTitle} body={text.reportBody}
+						               emphasis={text.reportWarning} href={links.ticket}/>
+						<SupportNotice icon="envelope-open-text" title={text.appealTitle} body={text.appealBody}
+						               href={links.ticket}/>
 					</section>
-
+					
 					<section id="connect" className={styles.document_section} data-page-enter="section">
 						<SectionHeading icon="plug-circle-bolt" title={text.nav.connect}/>
 						<p className={styles.section_lead}>{text.connectLead}</p>
 						<ConnectGuide text={text} images={connectImages[locale]} launchOption={links.launchOption}/>
 					</section>
-
+					
 					<section id="commands" className={styles.document_section} data-page-enter="section">
 						<SectionHeading icon="terminal" title={text.nav.commands}/>
 						<p className={styles.section_lead}>{text.commandsLead}</p>
@@ -110,22 +112,26 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 						<div className={styles.command_categories}>
 							{commandCategories.map((category) =>
 								<section key={category.title.en} className={styles.command_category}>
-									<h3><i><FontAwesome prefix="fad" name={category.icon}/></i>{category.title[locale]}</h3>
+									<h3><i><FontAwesome prefix="fad" name={category.icon}/></i>{category.title[locale]}
+									</h3>
 									<p>{category.description[locale]}</p>
 									<div className={styles.command_grid}>
 										{category.items.map((item) =>
-											<article key={item.command} className={styles.command_item} data-page-enter="box">
+											<article key={item.command} className={styles.command_item}
+											         data-page-enter="box">
 												<code>{item.command}</code>
 												<p>{item.description[locale]}</p>
 											</article>)}
 									</div>
 								</section>)}
 						</div>
-						<a className={styles.command_source} href={links.commandsChannel} target="_blank" rel="noopener noreferrer">
-							<FontAwesome prefix="fab" name="discord"/>{text.commandsSource}<FontAwesome prefix="fas" name="arrow-up-right"/>
+						<a className={styles.command_source} href={links.commandsChannel} target="_blank"
+						   rel="noopener noreferrer">
+							<FontAwesome prefix="fab" name="discord"/>{text.commandsSource}<FontAwesome prefix="fas"
+							                                                                            name="arrow-up-right"/>
 						</a>
 					</section>
-
+					
 					<section id="bbcode" className={styles.document_section} data-page-enter="section">
 						<SectionHeading icon="brackets-square" title={text.nav.bbcode}/>
 						<BbcodeGuide locale={locale}
@@ -133,7 +139,7 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 						             sourceHref={links.bbcodeGuide}
 						             categories={bbcodeCategories}/>
 					</section>
-
+					
 					<section id="dans" className={styles.document_section} data-page-enter="section">
 						<SectionHeading icon="medal" title={text.nav.dans}/>
 						<p className={styles.section_lead}>{text.dansLead}</p>
@@ -159,12 +165,12 @@ export default async function DocumentsContent({ locale }: Readonly<{ locale: Lo
 								</article>)}
 						</div>
 					</section>
-
+					
 					<section id="faq" className={styles.document_section} data-page-enter="section">
 						<SectionHeading icon="circle-question" title={text.nav.faq}/>
 						<FaqList faqs={text.faqs}/>
 					</section>
-
+					
 					<BackToTop label={text.backToTop}/>
 				</article>
 			</div>

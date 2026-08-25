@@ -26,7 +26,9 @@ export default function SearchClanList({ items: clans, baseDomain, onSelect }: R
 							       fill
 							       sizes="48px"
 							       draggable={false}
-							       onError={(event) => { event.currentTarget.hidden = true; }}/>
+							       onError={(event) => {
+								       event.currentTarget.hidden = true;
+							       }}/>
 						</span>
 						<span className={styles.identity}>
 							<span className={styles.name_with_tooltip}>

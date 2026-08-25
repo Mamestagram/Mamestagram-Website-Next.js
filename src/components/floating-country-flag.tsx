@@ -21,7 +21,7 @@ export default function FloatingCountryFlag({ className, code }: Readonly<{
 			top: rect.top - 8
 		});
 	}, []);
-
+	
 	useEffect(() => {
 		if (!tooltipPosition) return;
 		window.addEventListener("resize", updateTooltipPosition);
@@ -31,12 +31,12 @@ export default function FloatingCountryFlag({ className, code }: Readonly<{
 			document.removeEventListener("scroll", updateTooltipPosition, true);
 		};
 	}, [tooltipPosition, updateTooltipPosition]);
-
+	
 	useEffect(() => () => {
 		if (hideTimerRef.current !== null) window.clearTimeout(hideTimerRef.current);
 		if (showFrameRef.current !== null) window.cancelAnimationFrame(showFrameRef.current);
 	}, []);
-
+	
 	const showTooltip = () => {
 		if (hideTimerRef.current !== null) window.clearTimeout(hideTimerRef.current);
 		if (showFrameRef.current !== null) window.cancelAnimationFrame(showFrameRef.current);
@@ -51,7 +51,7 @@ export default function FloatingCountryFlag({ className, code }: Readonly<{
 		setIsTooltipVisible(false);
 		hideTimerRef.current = window.setTimeout(() => setTooltipPosition(null), 180);
 	};
-
+	
 	return (
 		<span ref={flagRef}
 		      className={classNames("country-flag", className)}

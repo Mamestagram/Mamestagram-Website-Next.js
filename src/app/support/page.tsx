@@ -16,7 +16,7 @@ export default async function SupportPage({ searchParams }: SupportPageProps) {
 	const { lang } = await searchParams;
 	void writeLog("GET", `/support (lang: ${lang})`);
 	const locale: SupportLocale = lang === "ja" ? "ja" : "en";
-
+	
 	return (
 		<>
 			<NameBodyHeader className="support"/>

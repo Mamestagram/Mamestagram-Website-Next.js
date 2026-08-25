@@ -51,19 +51,19 @@ export default function ConfirmationDialog({
 	const cancelButtonRef = useRef<HTMLButtonElement>(null);
 	const confirmButtonRef = useRef<HTMLButtonElement>(null);
 	const onCancelRef = useRef(onCancel);
-
+	
 	useEffect(() => {
 		onCancelRef.current = onCancel;
 	}, [onCancel]);
-
+	
 	useEffect(() => {
 		if (!isOpen) return;
-
+		
 		const previousOverflow = document.body.style.overflow;
 		const closeOnEscape = (event: KeyboardEvent) => {
 			if (event.key === "Escape" && !isPending) onCancelRef.current();
 		};
-
+		
 		document.body.style.overflow = "hidden";
 		document.addEventListener("keydown", closeOnEscape);
 		requestAnimationFrame(() => {
@@ -75,9 +75,9 @@ export default function ConfirmationDialog({
 			document.removeEventListener("keydown", closeOnEscape);
 		};
 	}, [isOpen, isPending, singleAction]);
-
+	
 	if (!isOpen || !isClient) return null;
-
+	
 	const confirmButton = (
 		<button ref={confirmButtonRef}
 		        type={confirmAction ? "submit" : "button"}
@@ -87,7 +87,7 @@ export default function ConfirmationDialog({
 			{isPending && pendingLabel ? pendingLabel : confirmLabel}
 		</button>
 	);
-
+	
 	return createPortal(
 		<div className={styles.overlay}
 		     onMouseDown={(event) => {

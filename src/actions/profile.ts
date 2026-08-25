@@ -1,7 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { removeClanMember, updateClanUserpageContent, updatePreferredMode, updateUserpageContent } from "@/database/profile";
+import {
+	removeClanMember,
+	updateClanUserpageContent,
+	updatePreferredMode,
+	updateUserpageContent
+} from "@/database/profile";
 import { getAboutMeValidationMessage, normalizeAboutMe } from "@/lib/about-me";
 import { writeError } from "@/lib/log";
 import { getCurrentUser } from "@/lib/session";
@@ -34,11 +39,11 @@ export async function previewAboutMe(value: string): Promise<AboutMeUpdateResult
 	const currentUser = await getCurrentUser();
 	if (!currentUser.isLoggedIn || !currentUser.id)
 		return { success: false, message: "You must be signed in to preview your profile." };
-
+	
 	const content = normalizeAboutMe(value);
 	const validationError = validateAboutMe(content);
 	if (validationError) return validationError;
-
+	
 	return {
 		success: true,
 		message: "Preview generated.",
@@ -53,19 +58,21 @@ export async function setMainMode(profileId: number, mode: OsuMode, isClan: bool
 		return { success: false, message: "You must be signed in." };
 	if (!Number.isSafeInteger(profileId) || profileId < 1 || !Object.values(OsuMode).includes(mode))
 		return { success: false, message: "The mode could not be set." };
-
+	
 	const modeNum = ModeNum[mode];
 	if (typeof modeNum !== "number")
 		return { success: false, message: "The mode could not be set." };
-
+	
 	try {
 		const updated = await updatePreferredMode(profileId, modeNum, isClan, currentUser.id);
 		if (!updated)
-			return { success: false, message: isClan ? "Only the clan leader can change this." : "You can only change your own profile." };
+			return {
+				success: false,
+				message: isClan ? "Only the clan leader can change this." : "You can only change your own profile."
+			};
 		revalidatePath(`/profile/${profileId}/${mode}`);
 		return { success: true, message: "Main mode updated." };
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error);
 		return { success: false, message: "The main mode could not be updated." };
 	}
@@ -81,15 +88,14 @@ export async function kickClanMember(clanId: number, memberId: number, mode: Osu
 		return { success: false, message: "This member could not be removed." };
 	if (memberId === currentUser.id)
 		return { success: false, message: "The clan owner cannot be kicked." };
-
+	
 	try {
 		const removed = await removeClanMember(clanId, currentUser.id, memberId);
 		if (!removed)
 			return { success: false, message: "Only the clan owner can kick current members." };
 		revalidatePath(`/profile/${clanId}/${mode}`);
 		return { success: true, message: "Member kicked." };
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error);
 		return { success: false, message: "This member could not be removed." };
 	}
@@ -99,7 +105,7 @@ export async function updateAboutMe(formData: FormData): Promise<AboutMeUpdateRe
 	const currentUser = await getCurrentUser();
 	if (!currentUser.isLoggedIn || !currentUser.id)
 		return { success: false, message: "You must be signed in to edit your profile." };
-
+	
 	const content = normalizeAboutMe(formData.get("content"));
 	const mode = String(formData.get("mode") ?? "");
 	const profileId = Number(formData.get("profileId"));
@@ -110,7 +116,7 @@ export async function updateAboutMe(formData: FormData): Promise<AboutMeUpdateRe
 		return { success: false, message: "The profile is invalid." };
 	const validationError = validateAboutMe(content);
 	if (validationError) return validationError;
-
+	
 	try {
 		if (profileType === "clan") {
 			const updated = await updateClanUserpageContent(profileId, currentUser.id, content);
@@ -129,8 +135,7 @@ export async function updateAboutMe(formData: FormData): Promise<AboutMeUpdateRe
 			content,
 			html: bbCodeParser.parseToHtml(content)
 		};
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error);
 		return { success: false, message: "About Me could not be updated. Please try again later." };
 	}

@@ -13,11 +13,10 @@ export const readMutationResponse = async (response: Response): Promise<Mutation
 	try {
 		const body: unknown = await response.json();
 		if (isMutationResponse(body)) return body;
-	}
-	catch {
+	} catch {
 		// The fallback below is used when the response is not JSON.
 	}
-
+	
 	return {
 		success: false,
 		message: "The server returned an unexpected response."

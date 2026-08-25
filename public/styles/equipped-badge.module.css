@@ -11,19 +11,22 @@
 	background: rgba(7, 12, 20, .96);
 	border: 1px solid rgba(218, 228, 239, .82);
 	border-radius: 28%;
-	box-shadow:
-		0 3px 8px rgba(0, 0, 0, .6),
-		inset 0 0 0 1px rgba(255, 255, 255, .08);
+	box-shadow: 0 3px 8px rgba(0, 0, 0, .6),
+	inset 0 0 0 1px rgba(255, 255, 255, .08);
 	pointer-events: none;
 	isolation: isolate;
 }
 
 @container (min-width: 80px) {
-	.badge { border-width: 2px; }
+	.badge {
+		border-width: 2px;
+	}
 }
 
 @container (min-width: 150px) {
-	.badge { border-width: 3px; }
+	.badge {
+		border-width: 3px;
+	}
 }
 
 .badge > .image {

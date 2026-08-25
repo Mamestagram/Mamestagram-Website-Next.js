@@ -21,8 +21,7 @@ const getSavedPreviewVolume = () => {
 		if (storedVolume === null) return 1;
 		const savedVolume = Number(storedVolume);
 		return Number.isFinite(savedVolume) ? Math.min(1, Math.max(0, savedVolume)) : 1;
-	}
-	catch {
+	} catch {
 		return 1;
 	}
 };
@@ -43,7 +42,7 @@ export default function AudioPreview({ setId }: Readonly<{ setId: number }>) {
 	const [volume, setVolume] = useState(getSavedPreviewVolume);
 	const previousVolumeRef = useRef(volume > 0 ? volume : 1);
 	const [isMuted, setIsMuted] = useState(volume === 0);
-
+	
 	useEffect(() => {
 		const audio = audioRef.current;
 		if (audio) {
@@ -51,27 +50,27 @@ export default function AudioPreview({ setId }: Readonly<{ setId: number }>) {
 			audio.muted = isMuted;
 		}
 	}, [isMuted, volume]);
-
+	
 	useEffect(() => () => {
 		if (fadeFrameRef.current !== null) window.cancelAnimationFrame(fadeFrameRef.current);
 	}, []);
-
+	
 	useEffect(() => {
 		const pauseForReplay = (event: Event) => {
 			if (getMediaPlaybackSource(event) !== "replay") return;
 			audioRef.current?.pause();
 		};
-
+		
 		window.addEventListener(MEDIA_PLAYBACK_EVENT, pauseForReplay);
 		return () => window.removeEventListener(MEDIA_PLAYBACK_EVENT, pauseForReplay);
 	}, []);
-
+	
 	const cancelFadeIn = () => {
 		if (fadeFrameRef.current === null) return;
 		window.cancelAnimationFrame(fadeFrameRef.current);
 		fadeFrameRef.current = null;
 	};
-
+	
 	const startFadeIn = () => {
 		const audio = audioRef.current;
 		if (!audio) return;
@@ -85,7 +84,7 @@ export default function AudioPreview({ setId }: Readonly<{ setId: number }>) {
 			audio.volume = targetVolume;
 			return;
 		}
-
+		
 		audio.volume = 0;
 		const startedAt = window.performance.now();
 		const updateVolume = (now: number) => {
@@ -101,7 +100,7 @@ export default function AudioPreview({ setId }: Readonly<{ setId: number }>) {
 		};
 		fadeFrameRef.current = window.requestAnimationFrame(updateVolume);
 	};
-
+	
 	const togglePreview = async () => {
 		const audio = audioRef.current;
 		if (!audio) return;
@@ -110,8 +109,7 @@ export default function AudioPreview({ setId }: Readonly<{ setId: number }>) {
 			if (!audio.muted && audio.currentTime <= 0.1) audio.volume = 0;
 			try {
 				await audio.play();
-			}
-			catch {
+			} catch {
 				setIsPlaying(false);
 			}
 		}
@@ -120,7 +118,7 @@ export default function AudioPreview({ setId }: Readonly<{ setId: number }>) {
 			audio.pause();
 		}
 	};
-
+	
 	const stopPreview = () => {
 		const audio = audioRef.current;
 		if (!audio) return;
@@ -130,7 +128,7 @@ export default function AudioPreview({ setId }: Readonly<{ setId: number }>) {
 		setCurrentTime(0);
 		setIsPlaying(false);
 	};
-
+	
 	const seekPreview = (event: ChangeEvent<HTMLInputElement>) => {
 		const audio = audioRef.current;
 		if (!audio) return;
@@ -138,7 +136,7 @@ export default function AudioPreview({ setId }: Readonly<{ setId: number }>) {
 		audio.currentTime = nextTime;
 		setCurrentTime(nextTime);
 	};
-
+	
 	const changeVolume = (event: ChangeEvent<HTMLInputElement>) => {
 		const audio = audioRef.current;
 		if (!audio) return;
@@ -151,12 +149,11 @@ export default function AudioPreview({ setId }: Readonly<{ setId: number }>) {
 		if (nextVolume > 0) previousVolumeRef.current = nextVolume;
 		try {
 			window.localStorage.setItem(PREVIEW_VOLUME_STORAGE_KEY, nextVolume.toString());
-		}
-		catch {
+		} catch {
 			// Playback still works when storage is unavailable.
 		}
 	};
-
+	
 	const toggleMute = () => {
 		const audio = audioRef.current;
 		if (!audio) return;
@@ -175,9 +172,9 @@ export default function AudioPreview({ setId }: Readonly<{ setId: number }>) {
 			setIsMuted(true);
 		}
 	};
-
+	
 	const progress = duration > 0 ? currentTime / duration * 100 : 0;
-
+	
 	return (
 		<div className={styles.preview_player}>
 			<audio ref={audioRef}

@@ -14,7 +14,7 @@ export default async function OnlyId({ params, searchParams }: {
 		!isNaN(Number(id_param)) && Number(id_param) > 0,
 		clan === undefined || clan === ""
 	];
-
+	
 	if (conds.every((cond) => cond)) {
 		const id = Number(id_param), isClan = clan !== undefined;
 		if (id >= (!isClan ? 3 : 1)) {
@@ -23,7 +23,7 @@ export default async function OnlyId({ params, searchParams }: {
 				getCurrentUser()
 			]);
 			if (!profile) notFound();
-
+			
 			const preferredMode = canViewProfile(id, isClan, profile, currentUser)
 				? ModeNum[profile.preferredMode] as OsuMode
 				: OsuMode.std;

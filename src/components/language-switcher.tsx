@@ -13,13 +13,13 @@ export default function LanguageSwitcher({ className, current, label, ariaLabel 
 	const pathname = usePathname();
 	const router = useRouter();
 	const searchParams = useSearchParams();
-
+	
 	const changeLanguage = (language: SupportedLocale) => {
 		const params = new URLSearchParams(searchParams.toString());
 		params.set("lang", language);
 		router.replace(`${pathname}?${params.toString()}`, { scroll: false });
 	};
-
+	
 	return (
 		<div className={className}>
 			<span>{label}</span>

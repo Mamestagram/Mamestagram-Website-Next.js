@@ -19,9 +19,11 @@ export default function PlayerScoreValue({ i, map, scope, isDans }: {
 			const scoreMap = map as PlayerScoreMap;
 			return (
 				<>
-					<span className={classNames(styles.recorded, { [styles.not_taken]: scoreMap.status !== BeatmapStatus.ranked && scoreMap.status !== BeatmapStatus.approved })}>
+					<span
+						className={classNames(styles.recorded, { [styles.not_taken]: scoreMap.status !== BeatmapStatus.ranked && scoreMap.status !== BeatmapStatus.approved })}>
 						{(scoreMap.status !== BeatmapStatus.ranked && scoreMap.status !== BeatmapStatus.approved && "-") ||
-							<><span><FormattedNumber value={Math.round(scoreMap.pp)}/></span><span className={styles.pp_label}>pp</span></>}
+							<><span><FormattedNumber value={Math.round(scoreMap.pp)}/></span><span
+								className={styles.pp_label}>pp</span></>}
 					</span>
 					{!isDans && scope === ScoreScope.bestPP &&
 						<span className={styles.weighted}>

@@ -26,7 +26,7 @@ export default function DocumentsSidebar({ locale, languageLabel, nav }: Readonl
 	                       navigationLabel="Document sections"
 	                       sections={sections}
 	                       header={<LanguageSwitcher className={styles.language_switcher}
-	                                                   current={locale}
-	                                                   label={languageLabel}
-	                                                   ariaLabel="Document language"/>}/>;
+	                                                 current={locale}
+	                                                 label={languageLabel}
+	                                                 ariaLabel="Document language"/>}/>;
 }

@@ -5,13 +5,12 @@ function sanitizeUrl(url: string) {
 	const trimmed = url.trim();
 	const withProtocol = /^(https?:)?\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
 	const normalized = withProtocol.startsWith("//") ? `https:${withProtocol}` : withProtocol;
-
+	
 	try {
 		const parsed = new URL(normalized);
 		if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
 		return parsed.toString();
-	}
-	catch {
+	} catch {
 		return null;
 	}
 }
@@ -20,8 +19,7 @@ function isSecureImageUrl(url: string) {
 	try {
 		const parsed = new URL(url);
 		return parsed.protocol === "https:";
-	}
-	catch {
+	} catch {
 		return false;
 	}
 }
@@ -130,7 +128,7 @@ bbTags["list"] = new BBTag((content, attr) => {
 			.trim())
 		.filter(Boolean);
 	if (items.length === 0) return content;
-
+	
 	const tag = ["none", "disc", "circle", "square"].includes(normalizedType) ? "ul" : "ol";
 	return [
 		`<${tag} style="list-style-type: ${listStyle};">`,

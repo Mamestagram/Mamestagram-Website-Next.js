@@ -15,14 +15,14 @@ export default function PlayerScoreCard({ className, label, beatmapHref, replayU
 }) {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const panelId = useId();
-
+	
 	const toggleExpanded = () => setIsExpanded((expanded) => !expanded);
 	const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
 		if (event.key !== "Enter" && event.key !== " ") return;
 		event.preventDefault();
 		toggleExpanded();
 	};
-
+	
 	return (
 		<>
 			<article className={styles.score_entry}

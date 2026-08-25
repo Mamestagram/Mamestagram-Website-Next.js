@@ -22,7 +22,7 @@ export default function PrivacySettingsForm({
 	const [isPending, startTransition] = useTransition();
 	const hasChanges = isPrivate !== savedIsPrivate;
 	const isClan = scope === "clan";
-
+	
 	const submit = (event: SubmitEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		setStatus(null);
@@ -37,11 +37,10 @@ export default function PrivacySettingsForm({
 				const result = await readMutationResponse(response);
 				setStatus(result);
 				if (!result.success) return;
-
+				
 				setSavedIsPrivate(isPrivate);
 				router.refresh();
-			}
-			catch {
+			} catch {
 				setStatus({
 					success: false,
 					message: `${isClan ? "Clan" : "Profile"} privacy could not be updated.`
@@ -49,7 +48,7 @@ export default function PrivacySettingsForm({
 			}
 		});
 	};
-
+	
 	return (
 		<form className={styles.profile_form} onSubmit={submit}>
 			<label className={styles.toggle_row}>
@@ -71,7 +70,7 @@ export default function PrivacySettingsForm({
 				       }}/>
 				<span className={styles.toggle} aria-hidden="true"><span/></span>
 			</label>
-
+			
 			<div className={styles.form_footer}>
 				<span className={styles.status} data-success={status?.success} role="status">
 					{status?.message}

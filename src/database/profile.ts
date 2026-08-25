@@ -68,8 +68,7 @@ const fetchProfileResponse = async (
 				...init,
 				signal: init?.signal ?? AbortSignal.timeout(timeoutMs)
 			});
-		}
-		catch (error: unknown) {
+		} catch (error: unknown) {
 			if (isTimeoutError(error) && attempt < timeoutRetries) continue;
 			if (options.logErrors !== false) void writeError(error);
 			throw new Error(`Couldn't fetch ${label}`, { cause: error });
@@ -91,8 +90,7 @@ export const accountExists = async (id: number, isClan: boolean) => {
 		else {
 			return await getClanProfile(id) !== null;
 		}
-	}
-	catch (err) {
+	} catch (err) {
 		void writeError(err);
 		throw new Error(`Couldn't get ${!isClan ? "user" : "clan"} data`);
 	}
@@ -113,8 +111,7 @@ export const getName = async (id: number, isClan: boolean) => {
 			const clan = await getClanProfile(id);
 			clanName = clan?.info.name ?? null;
 		}
-	}
-	catch (err) {
+	} catch (err) {
 		void writeError(err);
 		throw new Error(`Couldn't get ${!isClan ? "user" : "clan"} data`);
 	}
@@ -138,8 +135,7 @@ export const getPreferredMode = async (id: number, isClan: boolean) => {
 			const clan = await getClanProfile(id);
 			clanMode = clan ? ModeNum[clan.info.preferredMode] as OsuMode : null;
 		}
-	}
-	catch (err) {
+	} catch (err) {
 		void writeError(err);
 		throw new Error(`Couldn't get ${!isClan ? "user" : "clan"}`);
 	}
@@ -156,7 +152,7 @@ export const updateUserpageContent = async (id: number, content: string) => {
 
 export const updateClanUserpageContent = async (clanId: number, ownerId: number, content: string) => {
 	if (!await isClanOwner(clanId, ownerId)) return false;
-
+	
 	await executeQuery(
 		updateClanUserpageContentQuery,
 		[content, clanId, ownerId]
@@ -196,7 +192,7 @@ export const removeClanMember = async (clanId: number, ownerId: number, memberId
 		[clanId, ownerId, memberId]
 	);
 	if (members.length === 0) return false;
-
+	
 	await executeQuery(
 		removeClanMemberQuery,
 		[memberId, clanId, ownerId, clanId, ownerId]
@@ -261,7 +257,7 @@ export const getProfileRouteInfo = cache(async (id: number, isClan: boolean): Pr
 			ownerId: clan.owner
 		} : null;
 	}
-
+	
 	const user = (await executeQuery<{
 		preferred_mode: ModeNum,
 		is_private: 0 | 1
@@ -310,14 +306,14 @@ type PlayerInfoApi = {
 
 function parsePlayerActivityBeatmap(value: unknown): PlayerActivityBeatmap | null {
 	if (typeof value !== "object" || value === null) return null;
-
+	
 	const beatmap = value as Record<string, unknown>;
 	if (!Number.isInteger(beatmap.id)
 		|| !Number.isInteger(beatmap.set_id)
 		|| typeof beatmap.artist !== "string"
 		|| typeof beatmap.title !== "string"
 		|| typeof beatmap.version !== "string") return null;
-
+	
 	return {
 		id: beatmap.id as number,
 		setId: beatmap.set_id as number,
@@ -347,7 +343,7 @@ export const getUserInfo = async (id: number): Promise<Profile> => {
 		});
 		throw new Error(errMsg);
 	}
-
+	
 	const [playerStatusApi, playerInfoApi] = await Promise.all<[Promise<PlayerStatusApi>, Promise<PlayerInfoApi>]>([
 		mamesosuApi[0].json(),
 		mamesosuApi[1].json()
@@ -387,8 +383,7 @@ export const getUserInfo = async (id: number): Promise<Profile> => {
 			activity: playerActivity,
 			isPrivate: playerInfo.private === 1
 		};
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error);
 		throw new Error("Couldn't get user info", { cause: error });
 	}
@@ -461,12 +456,11 @@ export const getClanProfile = cache(async (id: number): Promise<ClanProfile | nu
 		void writeError(`${response.status}: ${response.statusText} (url: ${url})`);
 		throw new Error(`Couldn't fetch clan info (status: ${response.status})`);
 	}
-
+	
 	let clan: ClanApiResponse;
 	try {
 		clan = await response.json() as ClanApiResponse;
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error);
 		throw new Error("Couldn't read clan info", { cause: error });
 	}
@@ -483,31 +477,31 @@ export const getClanProfile = cache(async (id: number): Promise<ClanProfile | nu
 	}
 	const memberCosmetics = await getProfileCosmeticsMap(clan.members.map(({ id: memberId }) => memberId));
 	return {
-			info: {
-				tag: null,
-				name: clan.tag,
-				pastNames: clan.past_tag,
-				showPastName: clan.show_past_tag,
-				country: "",
-				creationTime,
-				latestActivity: creationTime,
-				priv: [],
-				mutual: [],
-				following: [],
-				followers: [],
-				preferredMode: clan.preferred_mode,
-				userpageContent: clan.userpage_content,
-				ownerId: clan.owner.id,
-				isOnline: false,
-				activity: null,
-				isPrivate: !clan.public
-			},
-			members: clan.members.map((member) => ({
-				...member,
-				cosmetics: memberCosmetics.get(member.id) ?? { userId: member.id, badge: null, frame: null },
-				isOwner: member.id === clan.owner.id || member.rank.toLowerCase() === "owner"
-			})),
-			stats: clan.stats
+		info: {
+			tag: null,
+			name: clan.tag,
+			pastNames: clan.past_tag,
+			showPastName: clan.show_past_tag,
+			country: "",
+			creationTime,
+			latestActivity: creationTime,
+			priv: [],
+			mutual: [],
+			following: [],
+			followers: [],
+			preferredMode: clan.preferred_mode,
+			userpageContent: clan.userpage_content,
+			ownerId: clan.owner.id,
+			isOnline: false,
+			activity: null,
+			isPrivate: !clan.public
+		},
+		members: clan.members.map((member) => ({
+			...member,
+			cosmetics: memberCosmetics.get(member.id) ?? { userId: member.id, badge: null, frame: null },
+			isOwner: member.id === clan.owner.id || member.rank.toLowerCase() === "owner"
+		})),
+		stats: clan.stats
 	};
 });
 
@@ -550,25 +544,25 @@ export const getPlayerScores = async (scope: Exclude<ScoreScope, ScoreScope.most
 		switch (scope) {
 			case ScoreScope.bestPP:
 			case ScoreScope.recentPlayed:
-				type PlayerScoresApi = {
-					scores?: {
+			type PlayerScoresApi = {
+				scores?: {
+					id: number,
+					pp: number,
+					acc: number,
+					mods: number,
+					grade: string,
+					beatmap: {
 						id: number,
-						pp: number,
-						acc: number,
-						mods: number,
-						grade: string,
-						beatmap: {
-							id: number,
-							set_id: number,
-							artist: string,
-							title: string,
-							version: string,
-							creator: string,
-							status: number
-						} | null
-					}[]
-				};
-
+						set_id: number,
+						artist: string,
+						title: string,
+						version: string,
+						creator: string,
+						status: number
+					} | null
+				}[]
+			};
+				
 				const apiUrl: { [key in ScoreScope.bestPP | ScoreScope.recentPlayed]: string } = !Boolean(Number(process.env.LOCAL_ONLY)) ? {
 					[ScoreScope.bestPP]: `https://api.${process.env.BASE_DOMAIN}/v1/get_player_scores?id=${id}&scope=best&mode=${mode}&limit=100`,
 					[ScoreScope.recentPlayed]: `https://api.${process.env.BASE_DOMAIN}/v1/get_player_scores?id=${id}&scope=recent&mode=${mode}&limit=100`
@@ -607,8 +601,7 @@ export const getPlayerScores = async (scope: Exclude<ScoreScope, ScoreScope.most
 			case ScoreScope.firstPlace:
 				try {
 					playerScores = await executeQuery<PlayerScoreMap>(firstPlaceMapsQuery, [id, mode]);
-				}
-				catch (err) {
+				} catch (err) {
 					void writeError(err);
 					throw new Error("Couldn't get first place maps");
 				}
@@ -618,12 +611,17 @@ export const getPlayerScores = async (scope: Exclude<ScoreScope, ScoreScope.most
 	else {
 		try {
 			switch (scope) {
-				case ScoreScope.bestPP: playerScores = await executeQuery<PlayerScoreMap>(dansBestPPQuery, [id, mode]); break;
-				case ScoreScope.firstPlace: playerScores = await executeQuery<PlayerScoreMap>(dansFirstPlaceQuery, [id, mode]); break;
-				case ScoreScope.recentPlayed: playerScores = await executeQuery<PlayerScoreMap>(dansRecentPlayedQuery, [id, mode]); break;
+				case ScoreScope.bestPP:
+					playerScores = await executeQuery<PlayerScoreMap>(dansBestPPQuery, [id, mode]);
+					break;
+				case ScoreScope.firstPlace:
+					playerScores = await executeQuery<PlayerScoreMap>(dansFirstPlaceQuery, [id, mode]);
+					break;
+				case ScoreScope.recentPlayed:
+					playerScores = await executeQuery<PlayerScoreMap>(dansRecentPlayedQuery, [id, mode]);
+					break;
 			}
-		}
-		catch (err) {
+		} catch (err) {
 			void writeError(err);
 			throw new Error(`Couldn't get ${scope}`);
 		}
@@ -637,7 +635,7 @@ export const getMostPlayedMaps = async (id: number, mode: ModeNum, isDans: boole
 		type PlayerMostPlayedApi = {
 			maps: PlayerMostPlayedMap[],
 		};
-
+		
 		const apiUrl = !Boolean(Number(process.env.LOCAL_ONLY))
 			? `https://api.${process.env.BASE_DOMAIN}/v1/get_player_most_played?id=${id}&mode=${mode}&limit=100`
 			: `${process.env.BASE_URL}/api/v1/get_player_most_played?id=${id}&mode=${mode}&limit=100`;
@@ -653,8 +651,7 @@ export const getMostPlayedMaps = async (id: number, mode: ModeNum, isDans: boole
 	else {
 		try {
 			maps = await executeQuery<PlayerMostPlayedMap>(dansMostPlayedQuery, [id, mode]);
-		}
-		catch (err) {
+		} catch (err) {
 			void writeError(err);
 			throw new Error("Couldn't get most played maps");
 		}
@@ -719,7 +716,7 @@ export const getClanStatistics = (
 ): PlayerStatistics => {
 	const stats = clanProfile.stats[String(mode)];
 	if (!stats) throw new Error(`Clan statistics are unavailable for mode ${mode}`);
-
+	
 	return {
 		rank: {
 			global: isDans ? stats.rank_dan : stats.rank_pp,
@@ -784,7 +781,7 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 				}
 			}
 		};
-
+		
 		const apiUrl = !Boolean(Number(process.env.LOCAL_ONLY))
 			? `https://api.${process.env.BASE_DOMAIN}/v1/get_player_info?id=${id}&scope=stats`
 			: `${process.env.BASE_URL}/api/v1/get_player_info?id=${id}&scope=stats`;
@@ -821,8 +818,7 @@ export const getStatistics = async (id: number, mode: ModeNum, isClan: boolean, 
 						);
 						if (osudailyApi.ok)
 							banchoRank = (await osudailyApi.json() as { rank?: number }).rank ?? 0;
-					}
-					catch {
+					} catch {
 						// Bancho rank is optional; Mamestagram statistics remain available.
 					}
 				}
@@ -962,15 +958,15 @@ export const getUserAchievements = async (id: number, mode: ModeNum): Promise<Ac
 			executeQuery<Omit<Medal, "isCollected"> & { isCollected: 0 | 1 }>(medalModQuery, [id], true), // modMedals
 			executeQuery<Omit<Medal, "isCollected"> & { isCollected: 0 | 1 }>(medalOthersQuery, [id], true) // otherMedals
 		]);
-
+		
 		return {
 			userId: id,
-			skill: skillMedals.map(({ isCollected, ...rest}) =>
-				({ ...rest, isCollected: Boolean(isCollected)})),
-			mod: modMedals.map(({ isCollected, ...rest}) =>
-				({ ...rest, isCollected: Boolean(isCollected)})),
-			others: otherMedals.map(({ isCollected, ...rest}) =>
-				({ ...rest, isCollected: Boolean(isCollected)}))
+			skill: skillMedals.map(({ isCollected, ...rest }) =>
+				({ ...rest, isCollected: Boolean(isCollected) })),
+			mod: modMedals.map(({ isCollected, ...rest }) =>
+				({ ...rest, isCollected: Boolean(isCollected) })),
+			others: otherMedals.map(({ isCollected, ...rest }) =>
+				({ ...rest, isCollected: Boolean(isCollected) }))
 		}
 	} catch (err) {
 		void writeError(err);

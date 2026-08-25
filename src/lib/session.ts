@@ -35,11 +35,11 @@ const serializeSession = (user: AuthUser) => {
 const parseSession = (token: string) => {
 	const [idValue, expiresValue, signature, ...rest] = token.split(".");
 	if (rest.length > 0 || !idValue || !expiresValue || !signature) return null;
-
+	
 	const id = Number(idValue), expiresAt = Number(expiresValue);
 	if (!Number.isSafeInteger(id) || id < 1 || !Number.isSafeInteger(expiresAt)) return null;
 	if (expiresAt <= Math.floor(Date.now() / 1000)) return null;
-
+	
 	return { id, expiresAt, signature, payload: `${id}.${expiresAt}` };
 }
 
@@ -83,18 +83,18 @@ export const getCurrentUser = cache(async (): Promise<UserInfo> => {
 	try {
 		const token = (await cookies()).get(COOKIE_NAME)?.value;
 		if (!token) return { isLoggedIn: false };
-
+		
 		const session = parseSession(token);
 		if (!session) return { isLoggedIn: false };
-
+		
 		const user = await getUserById(session.id);
 		if (!user) return { isLoggedIn: false };
-
+		
 		const expected = Buffer.from(sign(session.payload, user.passwordHash), "base64url");
 		const received = Buffer.from(session.signature, "base64url");
 		if (expected.length !== received.length || !timingSafeEqual(expected, received))
 			return { isLoggedIn: false };
-
+		
 		return {
 			id: user.id,
 			clanId: user.clanId,
@@ -103,8 +103,7 @@ export const getCurrentUser = cache(async (): Promise<UserInfo> => {
 			country: user.country,
 			isLoggedIn: true
 		};
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		unstable_rethrow(error);
 		void writeError(error);
 		return { isLoggedIn: false };

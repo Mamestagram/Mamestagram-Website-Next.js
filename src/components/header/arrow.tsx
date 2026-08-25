@@ -7,20 +7,20 @@ export default function ArrowChevron() {
 	const arrow = useRef<HTMLButtonElement>(null);
 	const navigation = useRef<HTMLElement>(null);
 	const [arrowDirection, setArrowDirection] = useState<"up" | "down">("down");
-
+	
 	const clickBody = (e: PointerEvent) => {
 		if (!(e.target instanceof Node) || arrow.current?.contains(e.target)) return;
-
+		
 		const accountMenuTrigger = navigation.current?.querySelector<HTMLButtonElement>("li.avatar > button");
 		if (accountMenuTrigger?.contains(e.target)) return;
-
+		
 		setArrowDirection("down");
 	}
-
+	
 	const clickArrow = () => {
 		setArrowDirection((prevState) => prevState === "down" ? "up" : "down");
 	}
-
+	
 	useEffect(() => {
 		const arrowElement = arrow.current;
 		const navigationElement = document.querySelector<HTMLElement>("[data-site-header] .navigation");
@@ -34,7 +34,7 @@ export default function ArrowChevron() {
 			navigationElement.parentElement?.removeAttribute("data-navigation-open");
 		}
 	}, []);
-
+	
 	useEffect(() => {
 		const arrowElement = arrow.current;
 		const navigationElement = navigation.current;
@@ -44,7 +44,7 @@ export default function ArrowChevron() {
 		navigationElement.classList.toggle("mobile-show", arrowDirection === "up");
 		navigationElement.parentElement?.toggleAttribute("data-navigation-open", arrowDirection === "up");
 	}, [arrowDirection]);
-
+	
 	return (
 		<button className="arrow down" type="button" onClick={clickArrow} ref={arrow}>
 			<FontAwesome prefix="fas" name="chevron-down"/>

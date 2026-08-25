@@ -15,7 +15,7 @@ export default function SetMainModeButton({ profileId, mode, isClan }: Readonly<
 	const router = useRouter();
 	const [isPending, startTransition] = useTransition();
 	const [error, setError] = useState("");
-
+	
 	const update = () => {
 		setError("");
 		startTransition(async () => {
@@ -27,7 +27,7 @@ export default function SetMainModeButton({ profileId, mode, isClan }: Readonly<
 			router.refresh();
 		});
 	};
-
+	
 	return (
 		<span className={styles.main_mode_action}>
 			<button type="button"

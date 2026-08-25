@@ -6,6 +6,7 @@ import {
 	beatmapScoreIdsQuery,
 	beatmapUserRankQuery,
 	beatmapUserScoreQuery,
+	privateProfileUserIdsQuery,
 	scoreCountriesQuery
 } from "@/database/query/beatmap";
 import { ModeNum } from "@/lib/mode";
@@ -256,6 +257,16 @@ export const getBeatmapScores = async (
 	}));
 };
 
+export const getPrivateProfileUserIds = async (userIds: number[]) => {
+	const uniqueUserIds = [...new Set(userIds)];
+	if (uniqueUserIds.length === 0) return new Set<number>();
+	const privateUsers = await executeQuery<{ id: number }>(
+		privateProfileUserIdsQuery(uniqueUserIds.length),
+		uniqueUserIds
+	);
+	return new Set(privateUsers.map(({ id }) => id));
+};
+
 export const getBeatmapUserScore = async (
 	mapMd5: string,
 	mode: ModeNum,
@@ -267,12 +278,12 @@ export const getBeatmapUserScore = async (
 	);
 	const score = scores[0];
 	if (!score) return null;
-
+	
 	const rankRows = await executeQuery<{ higherScores: number }>(
 		beatmapUserRankQuery,
 		[mapMd5, mode, score.score]
 	);
-
+	
 	return {
 		...score,
 		rank: Number(rankRows[0]?.higherScores ?? 0) + 1

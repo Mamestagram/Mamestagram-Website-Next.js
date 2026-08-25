@@ -72,7 +72,7 @@ export default function HeaderSearch() {
 	const [message, setMessage] = useState("");
 	const inputRef = useRef<HTMLInputElement>(null);
 	const dialogRef = useRef<HTMLElement>(null);
-
+	
 	const updateQuery = (nextQuery: string) => {
 		setQuery(nextQuery);
 		if (nextQuery.trim()) return;
@@ -80,10 +80,10 @@ export default function HeaderSearch() {
 		setPhase("idle");
 		setMessage("");
 	};
-
+	
 	useEffect(() => {
 		if (!isOpen) return;
-
+		
 		const previousOverflow = document.body.style.overflow;
 		requestAnimationFrame(() => inputRef.current?.focus());
 		const handleKeyDown = (event: KeyboardEvent) => {
@@ -92,14 +92,14 @@ export default function HeaderSearch() {
 				return;
 			}
 			if (event.key !== "Tab" || !dialogRef.current) return;
-
+			
 			const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
 				'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
 			);
 			const first = focusable[0];
 			const last = focusable[focusable.length - 1];
 			if (!first || !last) return;
-
+			
 			if (event.shiftKey && document.activeElement === first) {
 				event.preventDefault();
 				last.focus();
@@ -109,7 +109,7 @@ export default function HeaderSearch() {
 				first.focus();
 			}
 		};
-
+		
 		document.body.style.overflow = "hidden";
 		document.addEventListener("keydown", handleKeyDown);
 		return () => {
@@ -117,7 +117,7 @@ export default function HeaderSearch() {
 			document.removeEventListener("keydown", handleKeyDown);
 		};
 	}, [closeSearch, isOpen]);
-
+	
 	useEffect(() => {
 		const trimmed = query.trim();
 		if (!trimmed) return;
@@ -131,7 +131,7 @@ export default function HeaderSearch() {
 			});
 			return () => window.cancelAnimationFrame(cacheFrame);
 		}
-
+		
 		const controller = new AbortController();
 		const timeout = window.setTimeout(async () => {
 			setPhase("loading");
@@ -151,8 +151,7 @@ export default function HeaderSearch() {
 				cacheSearch(cacheKey, normalizedResults);
 				setResults(normalizedResults);
 				setPhase("ready");
-			}
-			catch (error) {
+			} catch (error) {
 				if (controller.signal.aborted) return;
 				setResults(emptyResults);
 				setPhase("error");
@@ -161,27 +160,27 @@ export default function HeaderSearch() {
 					: "Search is temporarily unavailable.");
 			}
 		}, 220);
-
+		
 		return () => {
 			window.clearTimeout(timeout);
 			controller.abort();
 		};
 	}, [query]);
-
+	
 	const users = results.users ?? [];
 	const clans = results.clans ?? [];
 	const beatmaps = results.beatmaps ?? [];
 	const visibleResultCount = users.length + clans.length + beatmaps.length;
 	const hasResults = users.length > 0 || clans.length > 0 || beatmaps.length > 0;
 	const hasManyResults = phase === "ready" && visibleResultCount > 6;
-
+	
 	const visitSearchPage = () => {
 		const trimmed = query.trim();
 		if (!trimmed) return;
 		closeSearch();
 		router.push(`/search/players?q=${encodeURIComponent(trimmed)}`);
 	};
-
+	
 	const dialog = (
 		<div className={styles.overlay}
 		     data-open={isOpen}
@@ -205,13 +204,13 @@ export default function HeaderSearch() {
 						<FontAwesome prefix="fas" name="xmark"/>
 					</button>
 				</div>
-
+				
 				<div className={styles.category_bar}>
 					<span><FontAwesome prefix="fad" name="users"/>Players</span>
 					<span><FontAwesome prefix="fad" name="people-group"/>Clans</span>
 					<span><FontAwesome prefix="fad" name="compact-disc"/>Beatmaps</span>
 				</div>
-
+				
 				<form className={styles.search_form} onSubmit={(event) => {
 					event.preventDefault();
 					visitSearchPage();
@@ -234,15 +233,16 @@ export default function HeaderSearch() {
 							<FontAwesome prefix="fas" name="circle-xmark"/>
 						</button>}
 				</form>
-
+				
 				<div className={styles.results} aria-live="polite" aria-busy={phase === "loading"}>
 					{phase === "idle" && <SearchMessage icon="magnifying-glass"
-					                                      body="Search players, clans, and beatmaps by name, tag, title, or ID."/>}
+					                                    body="Search players, clans, and beatmaps by name, tag, title, or ID."/>}
 					{phase === "loading" && <SearchSkeleton/>}
-					{phase === "error" && <SearchMessage icon="triangle-exclamation" title="Search unavailable" body={message}/>}
+					{phase === "error" &&
+						<SearchMessage icon="triangle-exclamation" title="Search unavailable" body={message}/>}
 					{phase === "ready" && !hasResults && <SearchMessage icon="magnifying-glass-minus"
-					                                                      title="No results found"
-					                                                      body="Try another player name, clan tag, beatmap title, artist, creator, difficulty, or ID."/>}
+					                                                    title="No results found"
+					                                                    body="Try another player name, clan tag, beatmap title, artist, creator, difficulty, or ID."/>}
 					{phase === "ready" && hasResults &&
 						<div className={styles.result_groups}>
 							{users.length > 0 &&
@@ -264,7 +264,7 @@ export default function HeaderSearch() {
 								                      onSelect={closeSearch}/>}
 						</div>}
 				</div>
-
+				
 				<div className={styles.hint}>
 					<span><kbd>Enter</kbd> Open search results</span>
 					<span><kbd>Esc</kbd> Close</span>
@@ -272,6 +272,6 @@ export default function HeaderSearch() {
 			</section>
 		</div>
 	);
-
+	
 	return isClient ? createPortal(dialog, document.body) : null;
 }

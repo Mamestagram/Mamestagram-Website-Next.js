@@ -88,25 +88,24 @@ const readBody = async (request: NextRequest) => {
 export const POST = async (request: NextRequest) => {
 	if (!request.headers.get("origin") || !isSameOriginMutation(request))
 		return NextResponse.json({ message: "This request was blocked." }, { status: 403 });
-
+	
 	const ipAddress = getIpAddress(request);
 	if (isRateLimited(ipAddress))
 		return NextResponse.json({ message: "Too many error reports." }, { status: 429 });
-
+	
 	const body = await readBody(request);
 	if (!body)
 		return NextResponse.json({ message: "The error report is invalid." }, { status: 413 });
-
+	
 	let payload: unknown;
 	try {
 		payload = JSON.parse(body);
-	}
-	catch {
+	} catch {
 		return NextResponse.json({ message: "The error report is invalid." }, { status: 400 });
 	}
 	if (!isClientErrorPayload(payload))
 		return NextResponse.json({ message: "The error report is invalid." }, { status: 400 });
-
+	
 	const error = new Error(payload.message);
 	error.name = payload.name || "ClientError";
 	if (payload.stack) error.stack = payload.stack;

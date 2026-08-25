@@ -22,7 +22,7 @@ export default function AuthSuccessDialog({ kind }: Readonly<{ kind: AuthSuccess
 	const { userInfo } = useUserContext();
 	const copy = dialogCopy[kind];
 	const [isOpen, setIsOpen] = useState(kind === "registration" || userInfo.isLoggedIn);
-
+	
 	useEffect(() => {
 		if (kind === "registration") {
 			const secure = window.location.protocol === "https:" ? "; Secure" : "";
@@ -33,13 +33,14 @@ export default function AuthSuccessDialog({ kind }: Readonly<{ kind: AuthSuccess
 		url.searchParams.delete(dialogCopy.signin.queryKey);
 		window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
 	}, [kind]);
-
+	
 	const description = userInfo.username
 		? kind === "registration"
-			? <>Welcome, <strong>{userInfo.username}</strong>. Your Mamestagram account has been created successfully.</>
+			? <>Welcome, <strong>{userInfo.username}</strong>. Your Mamestagram account has been created
+				successfully.</>
 			: <>Welcome back, <strong>{userInfo.username}</strong>. You have successfully signed in.</>
 		: copy.fallback;
-
+	
 	return (
 		<ConfirmationDialog isOpen={isOpen}
 		                    title={copy.title}

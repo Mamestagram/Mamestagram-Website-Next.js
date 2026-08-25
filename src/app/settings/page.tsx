@@ -86,10 +86,10 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 }>) {
 	const params = await searchParams;
 	void writeLog("GET", `/settings (scope: ${params.scope}, section: ${params.section})`);
-
+	
 	const currentUser = await getCurrentUser();
 	if (!currentUser.isLoggedIn || !currentUser.id || !currentUser.username) redirect("/signin");
-
+	
 	const [settings, ownedClan, cosmetics] = await Promise.all([
 		getUserSettings(currentUser.id),
 		getOwnedClanSettings(currentUser.id),
@@ -105,7 +105,7 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 		? "rename"
 		: validSection;
 	const activeMeta = getSectionMeta(activeScope, activeSection);
-
+	
 	const baseDomain = process.env.BASE_DOMAIN;
 	if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
 	const [[hasAvatar, hasBanner, hasBackground], [hasClanAvatar, hasClanBanner, hasClanBackground]] = await Promise.all([
@@ -139,7 +139,7 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 	const activeClan = activeScope === "clan" ? ownedClan : null;
 	const isClanScope = activeClan !== null;
 	const profileHref = activeClan ? `/profile/${activeClan.id}?clan` : `/profile/${currentUser.id}`;
-
+	
 	return (
 		<>
 			<div className={styles.page}>
@@ -164,8 +164,8 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 							                imageUrl={avatarUrl}
 							                cosmetics={cosmetics}
 							                className={styles.hero_avatar}
-								                sizes="88px"
-								                priority/>}
+							                sizes="88px"
+							                priority/>}
 						<div>
 							<h1>{isClanScope ? "Clan settings" : "Account settings"}</h1>
 						</div>
@@ -175,7 +175,7 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 						<FontAwesome prefix="fas" name="arrow-up-right"/>
 					</Link>
 				</section>
-
+				
 				<div className={styles.layout}>
 					<aside className={styles.sidebar} data-page-enter="box" aria-label="Settings sections">
 						<div className={styles.sidebar_heading}>
@@ -205,31 +205,34 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 							</nav>}
 						<nav className={styles.settings_menu}
 						     aria-label={isClanScope ? "Clan settings" : "Account settings"}>
-							<Link href={isClanScope ? "/settings?scope=clan&section=rename" : "/settings?section=rename"}
-							      scroll={false}
-							      data-active={activeSection === "rename"}
-							      aria-current={activeSection === "rename" ? "page" : undefined}>
+							<Link
+								href={isClanScope ? "/settings?scope=clan&section=rename" : "/settings?section=rename"}
+								scroll={false}
+								data-active={activeSection === "rename"}
+								aria-current={activeSection === "rename" ? "page" : undefined}>
 								<FontAwesome prefix="fad" name="pen-to-square"/>
 								Rename
 							</Link>
-							<Link href={isClanScope ? "/settings?scope=clan&section=images" : "/settings?section=images"}
-							      scroll={false}
-							      data-active={activeSection === "images"}
-							      aria-current={activeSection === "images" ? "page" : undefined}>
+							<Link
+								href={isClanScope ? "/settings?scope=clan&section=images" : "/settings?section=images"}
+								scroll={false}
+								data-active={activeSection === "images"}
+								aria-current={activeSection === "images" ? "page" : undefined}>
 								<FontAwesome prefix="fad" name="images"/>
 								Profile images
 							</Link>
 							<Link href={isClanScope ? "/settings?scope=clan&section=me" : "/settings?section=me"}
 							      scroll={false}
 							      data-active={activeSection === "me"}
-								      aria-current={activeSection === "me" ? "page" : undefined}>
+							      aria-current={activeSection === "me" ? "page" : undefined}>
 								<FontAwesome prefix="fad" name="id-badge"/>
 								Me!
 							</Link>
-							<Link href={isClanScope ? "/settings?scope=clan&section=privacy" : "/settings?section=privacy"}
-							      scroll={false}
-							      data-active={activeSection === "privacy"}
-							      aria-current={activeSection === "privacy" ? "page" : undefined}>
+							<Link
+								href={isClanScope ? "/settings?scope=clan&section=privacy" : "/settings?section=privacy"}
+								scroll={false}
+								data-active={activeSection === "privacy"}
+								aria-current={activeSection === "privacy" ? "page" : undefined}>
 								<FontAwesome prefix="fad" name="shield-halved"/>
 								Privacy
 							</Link>
@@ -239,11 +242,12 @@ export default async function SettingsPage({ searchParams }: Readonly<{
 								   rel="noopener noreferrer">
 									<FontAwesome prefix="fad" name="store"/>
 									Badge market
-									<FontAwesome className={styles.sidebar_external_icon} prefix="fas" name="arrow-up-right"/>
+									<FontAwesome className={styles.sidebar_external_icon} prefix="fas"
+									             name="arrow-up-right"/>
 								</a>}
 						</nav>
 					</aside>
-
+					
 					<div className={styles.sections}>
 						<section className={styles.section_card} data-page-enter="box">
 							<div className={styles.section_heading}>

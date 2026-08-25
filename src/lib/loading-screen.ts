@@ -17,8 +17,7 @@ const validateEmbedUrl = (value: string, baseDomain: string) => {
 	try {
 		const url = new URL(value);
 		return url.origin === getMarketOrigin(baseDomain) ? url.toString() : null;
-	}
-	catch {
+	} catch {
 		return null;
 	}
 };
@@ -30,7 +29,7 @@ export const getLoadingScreenEmbedUrl = cache(async (userId: number): Promise<st
 		void writeError(new Error("BASE_DOMAIN is not configured"));
 		return null;
 	}
-
+	
 	try {
 		const url = new URL("/v1/get_loading_screen", `https://api.${baseDomain}`);
 		url.searchParams.set("userid", userId.toString());
@@ -43,17 +42,16 @@ export const getLoadingScreenEmbedUrl = cache(async (userId: number): Promise<st
 			void writeError(new Error(`Loading screen API request failed (${response.status})`));
 			return null;
 		}
-
+		
 		const data = await response.json() as LoadingScreenApiResponse;
 		if (data.status !== "success" || data.user_id !== userId || data.is_set !== true) return null;
 		const embedUrl = data.loading_screen?.embed_url;
 		if (!embedUrl) return null;
-
+		
 		const validatedUrl = validateEmbedUrl(embedUrl, baseDomain);
 		if (!validatedUrl) void writeError(new Error("Loading screen API returned an invalid embed URL"));
 		return validatedUrl;
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error);
 		return null;
 	}

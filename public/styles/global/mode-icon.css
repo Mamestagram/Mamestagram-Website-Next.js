@@ -11,7 +11,9 @@
 	&::before {
 		position: relative;
 	}
+	
 	/* standard */
+	
 	&.mode-std::before {
 		content: "\e800";
 	}
@@ -27,6 +29,7 @@
 	&.mode-mania::before {
 		content: "\e802";
 	}
+	
 	/* test */
 	/*
 	&.mode-std {

@@ -115,20 +115,20 @@ export const createUser = async ({ username, email, password, country }: {
 	const safeName = makeSafeName(username);
 	const now = Math.floor(Date.now() / 1000);
 	const modes = [0, 1, 2, 3, 4, 5, 6, 8] as const;
-
+	
 	return await withTransaction(async (connection) => {
 		const [latestUsers] = await connection.query<LatestUserIdRow[]>(latestUserIdForUpdateQuery);
 		const id = (latestUsers.at(0)?.id ?? 0) + 1;
 		if (!Number.isSafeInteger(id) || id < 1)
 			throw new Error("A valid user ID could not be assigned.");
-
+		
 		await connection.query(
 			createUserQuery,
 			[id, username, safeName, email.toLowerCase(), passwordHash, country, now, now]
 		);
 		const statsArgs = modes.flatMap((mode) => [id, mode]);
 		const danStatsArgs = initialDanStats.flatMap(({ mode, type, cs }) => [id, mode, type, cs]);
-
+		
 		await connection.query(deleteOrphanedStatsQuery, [id]);
 		await connection.query(deleteOrphanedDanStatsQuery, [id]);
 		await connection.query(
@@ -140,7 +140,7 @@ export const createUser = async ({ username, email, password, country }: {
 			danStatsArgs
 		);
 		// await createEmptyUserLog(id);
-
+		
 		return {
 			id,
 			priv: 1,

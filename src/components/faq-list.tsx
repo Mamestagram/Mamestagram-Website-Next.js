@@ -16,7 +16,7 @@ export default function FaqList({ items, idPrefix, classNames }: Readonly<{
 	classNames: FaqClassNames
 }>) {
 	const [openItems, setOpenItems] = useState<Set<number>>(() => new Set([0]));
-
+	
 	const toggle = (index: number) => {
 		setOpenItems((current) => {
 			const next = new Set(current);
@@ -25,7 +25,7 @@ export default function FaqList({ items, idPrefix, classNames }: Readonly<{
 			return next;
 		});
 	};
-
+	
 	return (
 		<div className={classNames.list}>
 			{items.map(([question, answer], index) => {

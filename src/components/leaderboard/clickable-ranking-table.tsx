@@ -15,7 +15,7 @@ export default function ClickableRankingTable({ children }: Readonly<{ children:
 		const row = getRankingRow(event);
 		const href = row?.dataset.href;
 		if (!href) return;
-
+		
 		if (event.metaKey || event.ctrlKey || event.shiftKey) {
 			window.open(href, "_blank", "noopener,noreferrer");
 			return;
@@ -27,6 +27,6 @@ export default function ClickableRankingTable({ children }: Readonly<{ children:
 		const href = getRankingRow(event)?.dataset.href;
 		if (href) window.open(href, "_blank", "noopener,noreferrer");
 	};
-
+	
 	return <table onClick={handleClick} onAuxClick={handleAuxClick}>{children}</table>;
 }

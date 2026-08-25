@@ -16,8 +16,7 @@ const getAuthImage = async (baseDomain: string) => {
 		return response.ok && response.headers.get("content-type")?.startsWith("image/")
 			? imageUrl
 			: null;
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error);
 		return null;
 	}
@@ -26,11 +25,11 @@ const getAuthImage = async (baseDomain: string) => {
 export default async function AuthLayout({ children }: Readonly<{ children: ReactNode }>) {
 	const currentUser = await getCurrentUser();
 	if (currentUser.isLoggedIn) redirect("/");
-
+	
 	const baseDomain = process.env.BASE_DOMAIN;
 	if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
 	const authImage = await getAuthImage(baseDomain);
-
+	
 	return (
 		<div className={styles.page}>
 			<div className={styles.page_image} aria-hidden="true">

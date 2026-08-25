@@ -23,7 +23,7 @@
 
 .account_avatar {
 	--avatar-badge-size: 48%;
-
+	
 	position: relative;
 	display: block;
 	width: 44px;
@@ -63,10 +63,9 @@
 	pointer-events: none;
 	z-index: 10;
 	transform: translateX(-50%) translateY(-10px);
-	transition:
-		opacity 180ms ease,
-		transform 180ms ease,
-		visibility 0s linear 180ms;
+	transition: opacity 180ms ease,
+	transform 180ms ease,
+	visibility 0s linear 180ms;
 }
 
 .menu[data-open="true"] {
@@ -129,22 +128,22 @@
 		line-height: normal;
 		grid-column: 1;
 	}
-
+	
 	.trigger {
 		grid-template-columns: 40px minmax(0, 1fr);
 		width: 100%;
 		padding: 5px 12px;
 	}
-
+	
 	.account_avatar {
 		width: 40px;
 		height: 40px;
 	}
-
+	
 	.username {
 		max-width: none;
 	}
-
+	
 	.menu {
 		top: calc(100% + 6px);
 		left: 12px;
@@ -152,7 +151,7 @@
 		width: auto;
 		transform: translateY(-10px);
 	}
-
+	
 	.menu[data-open="true"] {
 		transform: translateY(0);
 	}
@@ -162,17 +161,17 @@
 	:global([data-site-header] .navigation li.avatar).container {
 		height: var(--mobile-height);
 	}
-
+	
 	.trigger {
 		grid-template-columns: 34px minmax(0, 1fr);
 		padding-block: 3px;
 	}
-
+	
 	.account_avatar {
 		width: 34px;
 		height: 34px;
 	}
-
+	
 }
 
 @media (prefers-reduced-motion: reduce) {

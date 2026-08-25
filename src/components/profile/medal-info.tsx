@@ -6,7 +6,7 @@ export default function MedalInfo({ name, description, condDescription, showCond
 	condDescription: string,
 	showCondition?: boolean
 }>) {
-
+	
 	return (
 		<>
 			<span className={styles.medal_name}>{name}</span>

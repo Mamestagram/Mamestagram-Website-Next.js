@@ -28,7 +28,7 @@ export default function AchievementItems({ medals, canRevealSecretConditions }: 
 					imgSrc = "/images/medals/secret.png";
 					medalInfoCmp = null;
 				}
-
+				
 				return (
 					<li key={medal.id}
 					    data-rendering-item="square"

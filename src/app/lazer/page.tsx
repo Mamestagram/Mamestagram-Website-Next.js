@@ -16,7 +16,7 @@ export default async function LazerPage({ searchParams }: LazerPageProps) {
 	const { lang } = await searchParams;
 	void writeLog("GET", `/lazer (lang: ${lang})`);
 	const locale: LazerLocale = lang === "ja" ? "ja" : "en";
-
+	
 	return (
 		<>
 			<NameBodyHeader className="patcher"/>

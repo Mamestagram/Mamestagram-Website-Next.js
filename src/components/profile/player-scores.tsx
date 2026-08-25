@@ -36,16 +36,20 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 	}[scope];
 	const baseDomain = process.env.BASE_DOMAIN;
 	if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
-
+	
 	return (
 		<details className={styles.score_details} open>
 			<summary className={styles.score_summary}>
 				<h1 className={styles.section_title}>
 					<span className={styles.section_title_label}>
-						{(scope === ScoreScope.bestPP && <><FontAwesome prefix="fad" name="chart-bar"/>Best Performance</>) ||
-							(scope === ScoreScope.firstPlace && <><FontAwesome prefix="fad" name="medal"/>First Place Ranks</>) ||
-							(scope === ScoreScope.mostPlayed && <><FontAwesome prefix="fad" name="circle-play"/>Most Played Maps</>) ||
-							(scope === ScoreScope.recentPlayed && <><FontAwesome prefix="fadr" name="calendar-days"/>Recent Played Maps</>)}
+						{(scope === ScoreScope.bestPP && <><FontAwesome prefix="fad" name="chart-bar"/>Best
+								Performance</>) ||
+							(scope === ScoreScope.firstPlace && <><FontAwesome prefix="fad" name="medal"/>First Place
+								Ranks</>) ||
+							(scope === ScoreScope.mostPlayed && <><FontAwesome prefix="fad" name="circle-play"/>Most
+								Played Maps</>) ||
+							(scope === ScoreScope.recentPlayed && <><FontAwesome prefix="fadr" name="calendar-days"/>Recent
+								Played Maps</>)}
 					</span>
 					<FontAwesome className={styles.collapse_icon} prefix="fas" name="chevron-down"/>
 				</h1>
@@ -111,7 +115,7 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 						             href={`/beatmaps/${map.set_id}/${map.id}`}>
 							{content}
 						</Link>;
-
+					
 					const scoreMap = map as PlayerScoreMap;
 					return <PlayerScoreCard key={`${map.set_id}-${map.id}-${scoreMap.score_id}-${i}`}
 					                        className={className}

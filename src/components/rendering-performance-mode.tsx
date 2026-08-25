@@ -14,7 +14,7 @@ const isSoftwareRendering = () => {
 			canvas.getContext("webgl2", contextOptions) ??
 			canvas.getContext("webgl", contextOptions);
 		if (!context) return true;
-
+		
 		const rendererInfo = context.getExtension("WEBGL_debug_renderer_info");
 		if (!rendererInfo) return false;
 		const renderer = String(
@@ -29,12 +29,12 @@ const isSoftwareRendering = () => {
 export default function RenderingPerformanceMode() {
 	useEffect(() => {
 		if (!isSoftwareRendering()) return;
-
+		
 		document.documentElement.dataset.renderingMode = "software";
 		return () => {
 			delete document.documentElement.dataset.renderingMode;
 		};
 	}, []);
-
+	
 	return null;
 }

@@ -54,7 +54,7 @@ export default function SocialConnections({ connections, mode, baseDomain }: {
 			name.toLocaleLowerCase().includes(normalizedQuery) || String(user).includes(normalizedQuery)
 		);
 	}, [activeConnections, query]);
-
+	
 	useEffect(() => {
 		if (!activeType) return;
 		const missingIds = activeConnections
@@ -82,7 +82,7 @@ export default function SocialConnections({ connections, mode, baseDomain }: {
 		});
 		return () => controller.abort();
 	}, [activeConnections, activeType, cosmeticsByUser]);
-
+	
 	useEffect(() => {
 		if (!activeType) return;
 		const previousOverflow = document.body.style.overflow;
@@ -92,14 +92,14 @@ export default function SocialConnections({ connections, mode, baseDomain }: {
 				return;
 			}
 			if (event.key !== "Tab" || !modalRef.current) return;
-
+			
 			const focusable = modalRef.current.querySelectorAll<HTMLElement>(
 				'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
 			);
 			const first = focusable[0];
 			const last = focusable[focusable.length - 1];
 			if (!first || !last) return;
-
+			
 			if (event.shiftKey && document.activeElement === first) {
 				event.preventDefault();
 				last.focus();
@@ -109,29 +109,29 @@ export default function SocialConnections({ connections, mode, baseDomain }: {
 				first.focus();
 			}
 		};
-
+		
 		document.body.style.overflow = "hidden";
 		document.addEventListener("keydown", handleModalKeys);
 		requestAnimationFrame(() => closeButtonRef.current?.focus());
-
+		
 		return () => {
 			document.body.style.overflow = previousOverflow;
 			document.removeEventListener("keydown", handleModalKeys);
 			requestAnimationFrame(() => returnFocusRef.current?.focus());
 		};
 	}, [activeType]);
-
+	
 	const openConnections = (type: ConnectionType) => {
 		returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
 		setQuery("");
 		setActiveType(type);
 	};
-
+	
 	const closeConnections = () => {
 		setActiveType(null);
 		setQuery("");
 	};
-
+	
 	return (
 		<>
 			<ul className={styles.social_strip}>
@@ -149,14 +149,15 @@ export default function SocialConnections({ connections, mode, baseDomain }: {
 								<span className={styles.social_copy}>
 									<strong>{label}</strong>
 								</span>
-								<span className={styles.social_value}><FormattedNumber value={connections[type].length}/></span>
+								<span className={styles.social_value}><FormattedNumber
+									value={connections[type].length}/></span>
 								<FontAwesome className={styles.social_open_icon} prefix="fas" name="arrow-up-right"/>
 							</button>
 						</li>
 					);
 				})}
 			</ul>
-
+			
 			{activeType && createPortal(
 				<div className={styles.social_modal_overlay}
 				     role="presentation"
@@ -177,7 +178,8 @@ export default function SocialConnections({ connections, mode, baseDomain }: {
 									<strong id="social-connections-title">{socialMeta[activeType].label}</strong>
 								</span>
 							</span>
-							<span className={styles.social_modal_count}><FormattedNumber value={activeConnections.length}/></span>
+							<span className={styles.social_modal_count}><FormattedNumber
+								value={activeConnections.length}/></span>
 							<button ref={closeButtonRef}
 							        className={styles.social_modal_close}
 							        type="button"
@@ -186,7 +188,7 @@ export default function SocialConnections({ connections, mode, baseDomain }: {
 								<FontAwesome prefix="fas" name="xmark"/>
 							</button>
 						</div>
-
+						
 						<label className={styles.social_modal_search}>
 							<FontAwesome prefix="fas" name="magnifying-glass"/>
 							<input type="search"
@@ -199,7 +201,7 @@ export default function SocialConnections({ connections, mode, baseDomain }: {
 									<FontAwesome prefix="fas" name="circle-xmark"/>
 								</button>}
 						</label>
-
+						
 						<div className={styles.social_modal_body}>
 							{filteredConnections.length > 0 ? (
 								<ul className={styles.connection_list}>
@@ -217,8 +219,10 @@ export default function SocialConnections({ connections, mode, baseDomain }: {
 													<strong>{connection.name}</strong>
 													<small>Player #<FormattedNumber value={connection.user}/></small>
 												</span>
-												<CountryFlag className={styles.connection_country} code={connection.country}/>
-												<FontAwesome className={styles.connection_open_icon} prefix="fas" name="chevron-right"/>
+												<CountryFlag className={styles.connection_country}
+												             code={connection.country}/>
+												<FontAwesome className={styles.connection_open_icon} prefix="fas"
+												             name="chevron-right"/>
 											</Link>
 										</li>)}
 								</ul>

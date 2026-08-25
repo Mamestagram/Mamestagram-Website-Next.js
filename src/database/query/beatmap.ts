@@ -13,6 +13,11 @@ export const scoreCountriesQuery = (userCount: number) => {
 	return `SELECT id, country FROM users WHERE id IN (${placeholders})`;
 };
 
+export const privateProfileUserIdsQuery = (userCount: number) => {
+	const placeholders = Array.from({ length: userCount }, () => "?").join(", ");
+	return `SELECT id FROM users WHERE id IN (${placeholders}) AND COALESCE(\`private\`, 0) = 1`;
+};
+
 export const beatmapScoreIdsQuery = (scoreCount: number) => {
 	const scoreFilters = Array.from({ length: scoreCount }, () => `(
 		s.userid = ?

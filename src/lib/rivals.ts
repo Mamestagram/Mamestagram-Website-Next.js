@@ -14,13 +14,13 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 export const isProfileRival = cache(async (userId: number, profileId: number): Promise<boolean> => {
 	if (!Number.isSafeInteger(userId) || userId < 1 || !Number.isSafeInteger(profileId) || profileId < 1)
 		return false;
-
+	
 	const baseDomain = process.env.BASE_DOMAIN;
 	if (!baseDomain) {
 		void writeError(new Error("BASE_DOMAIN is not configured"));
 		return false;
 	}
-
+	
 	try {
 		const url = new URL("/v1/get_rivals", `https://api.${baseDomain}`);
 		url.searchParams.set("userid", userId.toString());
@@ -33,12 +33,11 @@ export const isProfileRival = cache(async (userId: number, profileId: number): P
 			void writeError(new Error(`Rivals API request failed (${response.status})`));
 			return false;
 		}
-
+		
 		const data = await response.json() as RivalsApiResponse;
 		if (data.status !== "success" || data.user_id !== userId || !Array.isArray(data.rivals)) return false;
 		return data.rivals.some((rival) => isRecord(rival) && rival.id === profileId);
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error);
 		return false;
 	}

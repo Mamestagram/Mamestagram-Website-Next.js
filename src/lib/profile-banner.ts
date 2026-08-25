@@ -18,8 +18,8 @@ const getProfileVisualUrl = (
 	const subdomain = type === "avatar"
 		? isClan ? "clan-a" : "a"
 		: type === "banner"
-		? isClan ? "clan-banner" : "banner"
-		: isClan ? "clan-bg" : "bg";
+			? isClan ? "clan-banner" : "banner"
+			: isClan ? "clan-bg" : "bg";
 	return `https://${subdomain}.${baseDomain}/${id}`;
 };
 
@@ -56,19 +56,18 @@ const getProfileVisualVersion = async (imageUrl: string, minimumBytes: number) =
 		});
 		if (!response.ok || response.headers.get("content-type")?.startsWith("image/") !== true)
 			return null;
-
+		
 		const contentLength = response.headers.get("content-length");
 		if (contentLength !== null) {
 			const bytes = Number(contentLength);
 			if (Number.isFinite(bytes) && bytes < minimumBytes) return null;
 		}
-
+		
 		return response.headers.get("etag") ??
 			response.headers.get("last-modified") ??
 			contentLength ??
 			Date.now().toString();
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error, {
 			source: "server",
 			method: "HEAD",

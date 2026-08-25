@@ -21,7 +21,7 @@ export default function ProfileSettingsForm({
 	const [status, setStatus] = useState<{ success: boolean, message: string } | null>(null);
 	const [isPending, startTransition] = useTransition();
 	const hasChanges = username.trim() !== savedUsername || showPastNames !== savedShowPastNames;
-
+	
 	const submit = (event: SubmitEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		setStatus(null);
@@ -36,18 +36,17 @@ export default function ProfileSettingsForm({
 				const result = await readMutationResponse(response);
 				setStatus(result);
 				if (!result.success) return;
-
+				
 				setUsername(normalizedUsername);
 				setSavedUsername(normalizedUsername);
 				setSavedShowPastNames(showPastNames);
 				router.refresh();
-			}
-			catch {
+			} catch {
 				setStatus({ success: false, message: "Profile settings could not be updated." });
 			}
 		});
 	};
-
+	
 	return (
 		<form className={styles.profile_form} onSubmit={submit}>
 			<div className={styles.field}>
@@ -72,7 +71,7 @@ export default function ProfileSettingsForm({
 				</div>
 				<small>Use 2–15 letters, numbers, spaces, underscores, hyphens, or brackets.</small>
 			</div>
-
+			
 			<label className={styles.toggle_row}>
 				<span className={styles.toggle_copy}>
 					<span className={styles.toggle_icon}><FontAwesome prefix="fad" name="clock-rotate-left"/></span>
@@ -90,7 +89,7 @@ export default function ProfileSettingsForm({
 				       }}/>
 				<span className={styles.toggle} aria-hidden="true"><span/></span>
 			</label>
-
+			
 			<div className={styles.form_footer}>
 				<span className={styles.status} data-success={status?.success} role="status">
 					{status?.message}

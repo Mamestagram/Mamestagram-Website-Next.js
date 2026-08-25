@@ -23,13 +23,12 @@ export const fetchResponse = async (
 				...options.init,
 				signal: AbortSignal.timeout(options.timeoutMs)
 			});
-		}
-		catch (error: unknown) {
+		} catch (error: unknown) {
 			const canRetry = error instanceof TypeError && attempt < transientRetries;
 			if (!canRetry) throw error;
 			await waitForRetry(attempt + 1);
 		}
 	}
-
+	
 	throw new Error("Fetch retries were exhausted.");
 };

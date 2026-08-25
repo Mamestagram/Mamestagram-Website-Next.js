@@ -19,7 +19,7 @@ const formatDate = (date: string) => new Date(`${date}T00:00:00Z`).toLocaleDateS
 
 export default function RankHistoryChart({ history }: { history: RankHistory }) {
 	const [activeIndex, setActiveIndex] = useState<number | null>(null);
-
+	
 	if (!history.hasData || history.points.length === 0) {
 		return (
 			<section className={styles.rank_history}>
@@ -36,7 +36,7 @@ export default function RankHistoryChart({ history }: { history: RankHistory }) 
 			</section>
 		);
 	}
-
+	
 	const ranks = history.points.map(({ rank }) => rank);
 	const bestRank = Math.min(...ranks);
 	const currentRank = ranks.at(-1)!;
@@ -90,7 +90,7 @@ export default function RankHistoryChart({ history }: { history: RankHistory }) 
 			Math.max(0, (current ?? coordinates.length - 1) + direction)
 		));
 	};
-
+	
 	return (
 		<section className={styles.rank_history}>
 			<div className={styles.rank_history_header}>
@@ -103,11 +103,12 @@ export default function RankHistoryChart({ history }: { history: RankHistory }) 
 					<li><small>Best</small><strong>#<FormattedNumber value={bestRank}/></strong></li>
 					<li className={styles.rank_change} data-direction={changeDirection}>
 						<small>Change</small>
-						<strong>{change > 0 ? "↑" : change < 0 ? "↓" : "—"}{change !== 0 && <FormattedNumber value={Math.abs(change)}/>}</strong>
+						<strong>{change > 0 ? "↑" : change < 0 ? "↓" : "—"}{change !== 0 &&
+							<FormattedNumber value={Math.abs(change)}/>}</strong>
 					</li>
 				</ul>
 			</div>
-
+			
 			<div className={styles.rank_chart}
 			     tabIndex={0}
 			     onPointerDown={handleChartPointerDown}
@@ -163,7 +164,7 @@ export default function RankHistoryChart({ history }: { history: RankHistory }) 
 					<strong>#<FormattedNumber value={activePoint.rank}/></strong>
 				</span>}
 			</div>
-
+			
 			<div className={styles.rank_chart_axis} aria-hidden="true">
 				<span>{formatDate(history.points[0].date)}</span>
 				<span>{formatDate(middlePoint.date)}</span>

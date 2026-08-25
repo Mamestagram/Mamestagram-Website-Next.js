@@ -82,12 +82,11 @@ function getPreferredMode(mode: ModeNum): PreferredModeMeta {
 function getCountryMeta(country: string) {
 	const code = country.trim().toUpperCase();
 	if (!/^[A-Z]{2}$/.test(code)) return { code: "", name: "Unknown", isValid: false };
-
+	
 	try {
 		const name = new Intl.DisplayNames(["en"], { type: "region" }).of(code);
 		return { code: code.toLowerCase(), name: name ?? code, isValid: true };
-	}
-	catch {
+	} catch {
 		return { code: "", name: "Unknown", isValid: false };
 	}
 }
@@ -95,7 +94,7 @@ function getCountryMeta(country: string) {
 function formatRelativeTime(date: Date) {
 	const elapsedSeconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
 	if (elapsedSeconds < 10) return "just now";
-
+	
 	const relativeTime = new Intl.RelativeTimeFormat("en", { numeric: "always" });
 	if (elapsedSeconds < 60) return relativeTime.format(-elapsedSeconds, "second");
 	if (elapsedSeconds < 60 * 60) return relativeTime.format(-Math.floor(elapsedSeconds / 60), "minute");
@@ -106,7 +105,20 @@ function formatRelativeTime(date: Date) {
 	return relativeTime.format(-Math.floor(elapsedSeconds / (365 * 24 * 60 * 60)), "year");
 }
 
-export default function UserInfo({ id, info, mode, isClan, isDans, canManageProfile, isRival, followsYou, rankHistory, avatarUrl, cosmetics, children }: {
+export default function UserInfo({
+	id,
+	info,
+	mode,
+	isClan,
+	isDans,
+	canManageProfile,
+	isRival,
+	followsYou,
+	rankHistory,
+	avatarUrl,
+	cosmetics,
+	children
+}: {
 	id: number,
 	info: Profile,
 	mode: OsuMode,
@@ -122,7 +134,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 }) {
 	const baseDomain = process.env.BASE_DOMAIN;
 	if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
-
+	
 	const preferredMode = getPreferredMode(info.preferredMode);
 	const selectedMode = ModeNum[mode];
 	const country = getCountryMeta(info.country);
@@ -153,7 +165,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 	const activityMapText = activityBeatmap
 		? `${activityBeatmap.artist} — ${activityBeatmap.title} [${activityBeatmap.version}]`
 		: info.activity?.action === PlayerAction.Playing ? info.activity.infoText : null;
-
+	
 	return (
 		<div className={classNames(styles.section_box, styles.user_info)} data-page-enter="box">
 			<div className={styles.top}>
@@ -203,7 +215,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 						</div>}
 				</div>
 			</div>
-
+			
 			<div className={styles.meta}>
 				<ul className={styles.profile_facts}>
 					{!isClan &&
@@ -212,8 +224,8 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 							      href={`/leaderboard/${mode}/${countrySort}${country.isValid ? `?country=${encodeURIComponent(country.code)}` : ""}`}>
 								{country.isValid
 									? <CountryFlag className={styles.flag} code={country.code}/>
-										: <FontAwesome className={styles.flag} prefix="fas" name="globe"/>}
-									<span className={styles.meta_copy}>
+									: <FontAwesome className={styles.flag} prefix="fas" name="globe"/>}
+								<span className={styles.meta_copy}>
 										<strong>{country.name}</strong>
 									</span>
 								<FontAwesome className={styles.meta_link_icon} prefix="fas" name="arrow-up-right"/>
@@ -238,7 +250,7 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 						</Link>
 					</li>
 				</ul>
-
+				
 				{!isClan && privileges.length > 0 &&
 					<div className={styles.privilege_area}>
 						<ul className={styles.privilege_list}>
@@ -255,16 +267,16 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 						</ul>
 					</div>}
 			</div>
-
+			
 			{!isClan &&
 				<SocialConnections connections={{
 					mutual: info.mutual,
 					following: info.following,
 					followers: info.followers
 				}}
-				mode={mode}
-				baseDomain={baseDomain}/>}
-
+				                   mode={mode}
+				                   baseDomain={baseDomain}/>}
+			
 			{!isClan && <div className={styles.last_online} data-online={info.isOnline}>
 				<span className={styles.activity_identity}>
 					<span className={styles.activity_icon}>
@@ -274,17 +286,18 @@ export default function UserInfo({ id, info, mode, isClan, isDans, canManageProf
 							{info.isOnline && <small>Online now</small>}
 							<strong>
 							{info.isOnline ? onlineAction : "Last online"}
-							{!info.isOnline && <span className={styles.activity_relative}>{lastOnlineRelative}</span>}
+								{!info.isOnline &&
+									<span className={styles.activity_relative}>{lastOnlineRelative}</span>}
 						</strong>
-						{activityMapText && (activityBeatmap
-							? <Link className={styles.activity_map}
-							        href={`/beatmaps/${activityBeatmap.setId}/${activityBeatmap.id}`}
-							        title={activityMapText}>
-								<FontAwesome prefix="fas" name="music-note"/>
-								<span>{activityMapText}</span>
-								<FontAwesome prefix="fas" name="arrow-up-right"/>
-							</Link>
-							: <span className={styles.activity_map} title={activityMapText}>
+							{activityMapText && (activityBeatmap
+								? <Link className={styles.activity_map}
+								        href={`/beatmaps/${activityBeatmap.setId}/${activityBeatmap.id}`}
+								        title={activityMapText}>
+									<FontAwesome prefix="fas" name="music-note"/>
+									<span>{activityMapText}</span>
+									<FontAwesome prefix="fas" name="arrow-up-right"/>
+								</Link>
+								: <span className={styles.activity_map} title={activityMapText}>
 								<FontAwesome prefix="fas" name="music-note"/>
 								<span>{activityMapText}</span>
 							</span>)}

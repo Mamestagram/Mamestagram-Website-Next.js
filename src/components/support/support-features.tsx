@@ -34,21 +34,21 @@ export default function SupportFeatures({ features, labels }: {
 	const [transitionPhase, setTransitionPhase] = useState<"idle" | "out" | "in">("idle");
 	const switchTimer = useRef<number | null>(null);
 	const animationFrame = useRef<number | null>(null);
-
+	
 	useEffect(() => () => {
 		if (switchTimer.current !== null) window.clearTimeout(switchTimer.current);
 		if (animationFrame.current !== null) window.cancelAnimationFrame(animationFrame.current);
 	}, []);
-
+	
 	const changeView = (supporter: boolean) => {
 		if (supporter === selectedSupporter || transitionPhase !== "idle") return;
 		setSelectedSupporter(supporter);
-
+		
 		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
 			setDisplaySupporter(supporter);
 			return;
 		}
-
+		
 		setTransitionPhase("out");
 		switchTimer.current = window.setTimeout(() => {
 			setDisplaySupporter(supporter);
@@ -58,7 +58,7 @@ export default function SupportFeatures({ features, labels }: {
 			});
 		}, 240);
 	};
-
+	
 	return (
 		<>
 			<div className={styles.comparison_bar}>
@@ -83,7 +83,8 @@ export default function SupportFeatures({ features, labels }: {
 						: feature.free ?? { body: labels.unavailable, available: false };
 					const isAvailable = view.available !== false;
 					return (
-						<article key={feature.title} className={styles.feature_card} data-supporter={displaySupporter} data-page-enter="box">
+						<article key={feature.title} className={styles.feature_card} data-supporter={displaySupporter}
+						         data-page-enter="box">
 							<div className={styles.feature_header}>
 								<span>{String(index + 1).padStart(2, "0")}</span>
 								<i><FontAwesome prefix="fad" name={feature.icon}/></i>
@@ -95,12 +96,14 @@ export default function SupportFeatures({ features, labels }: {
 								     data-empty={!view.media}
 								     data-blurred={view.media?.blurred ?? false}>
 									{view.media?.type === "image" &&
-										<Image src={view.media.src} alt={view.media.alt} draggable={false} fill sizes="(max-width: 760px) 94vw, 520px"/>}
+										<Image src={view.media.src} alt={view.media.alt} draggable={false} fill
+										       sizes="(max-width: 760px) 94vw, 520px"/>}
 									{view.media?.type === "video" &&
-										<video key={view.media.src} src={view.media.src} aria-label={view.media.alt} autoPlay loop muted playsInline preload="metadata"/>}
-								{!view.media && <span>
+										<video key={view.media.src} src={view.media.src} aria-label={view.media.alt}
+										       autoPlay loop muted playsInline preload="metadata"/>}
+									{!view.media && <span>
 									<FontAwesome prefix="fad" name={isAvailable ? "circle-check" : "lock-keyhole"}/>
-									{isAvailable ? labels.available : labels.unavailable}
+										{isAvailable ? labels.available : labels.unavailable}
 								</span>}
 								</div>
 								<p>{view.body}</p>

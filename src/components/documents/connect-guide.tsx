@@ -23,14 +23,12 @@ const copyWithSelection = (text: string) => {
 	document.body.append(textarea);
 	textarea.select();
 	textarea.setSelectionRange(0, text.length);
-
+	
 	try {
 		return (document as unknown as LegacyCopyDocument).execCommand("copy");
-	}
-	catch {
+	} catch {
 		return false;
-	}
-	finally {
+	} finally {
 		textarea.remove();
 		previousFocus?.focus();
 	}
@@ -41,8 +39,7 @@ const copyText = async (text: string) => {
 	try {
 		await navigator.clipboard.writeText(text);
 		return true;
-	}
-	catch {
+	} catch {
 		return copyWithSelection(text);
 	}
 };
@@ -54,11 +51,11 @@ export default function ConnectGuide({ text, images, launchOption }: {
 }) {
 	const [copied, setCopied] = useState(false);
 	const copiedTimer = useRef<number | null>(null);
-
+	
 	useEffect(() => () => {
 		if (copiedTimer.current !== null) window.clearTimeout(copiedTimer.current);
 	}, []);
-
+	
 	const copyLaunchOption = async () => {
 		const copiedSuccessfully = await copyText(launchOption);
 		if (!copiedSuccessfully) return;
@@ -66,10 +63,11 @@ export default function ConnectGuide({ text, images, launchOption }: {
 		if (copiedTimer.current !== null) window.clearTimeout(copiedTimer.current);
 		copiedTimer.current = window.setTimeout(() => setCopied(false), 1800);
 	};
-
+	
 	return (
 		<>
-			<button type="button" className={styles.command_box} data-page-enter="box" onClick={copyLaunchOption} aria-label={`${text.copy}: ${launchOption}`}>
+			<button type="button" className={styles.command_box} data-page-enter="box" onClick={copyLaunchOption}
+			        aria-label={`${text.copy}: ${launchOption}`}>
 				<span><small>{text.copyCommand}</small><code>{launchOption}</code></span>
 				<span className={styles.copy_status} data-copied={copied}>
 					<FontAwesome prefix="fad" name={copied ? "check" : "copy"}/>{copied ? text.copied : text.copy}
@@ -81,10 +79,13 @@ export default function ConnectGuide({ text, images, launchOption }: {
 						<span className={styles.step_number}>{String(index + 1).padStart(2, "0")}</span>
 						<div className={styles.step_body}>
 							<p>{index === 5
-								? <CommandSentence text={step} command={launchOption} copied={copied} copyLabel={copied ? text.copied : text.copy} onCopy={copyLaunchOption}/>
+								? <CommandSentence text={step} command={launchOption} copied={copied}
+								                   copyLabel={copied ? text.copied : text.copy}
+								                   onCopy={copyLaunchOption}/>
 								: step}</p>
 							{images[index].length > 0 &&
-								<div className={styles.step_images} data-count={images[index].length} data-step={index + 1}>
+								<div className={styles.step_images} data-count={images[index].length}
+								     data-step={index + 1}>
 									{images[index].map((image, imageIndex) =>
 										<EnlargeableImage key={image.src}
 										                  {...image}

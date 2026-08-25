@@ -46,8 +46,7 @@ const readAboutMeResponse = async (response: Response): Promise<AboutMeUpdateRes
 	try {
 		const body: unknown = await response.json();
 		if (isAboutMeUpdateResult(body)) return body;
-	}
-	catch {
+	} catch {
 		// The fallback below is used when the response is not JSON.
 	}
 	return { success: false, message: "The server returned an unexpected response." };
@@ -82,7 +81,7 @@ export default function AboutMeEditor({
 	const [previewHtml, setPreviewHtml] = useState("");
 	const [status, setStatus] = useState<{ success: boolean, message: string } | null>(null);
 	const hasChanges = content !== savedContent;
-
+	
 	const insertBBCode = (open: string, close: string, placeholder: string) => {
 		const textarea = textareaRef.current;
 		const selectionStart = textarea?.selectionStart ?? content.length;
@@ -91,12 +90,15 @@ export default function AboutMeEditor({
 		const innerText = selectedText || placeholder;
 		const replacement = `${open}${innerText}${close}`;
 		const nextContent = `${content.slice(0, selectionStart)}${replacement}${content.slice(selectionEnd)}`;
-
+		
 		if (nextContent.length > MAX_ABOUT_ME_LENGTH) {
-			setStatus({ success: false, message: `About Me must be ${MAX_ABOUT_ME_LENGTH.toLocaleString()} characters or fewer.` });
+			setStatus({
+				success: false,
+				message: `About Me must be ${MAX_ABOUT_ME_LENGTH.toLocaleString()} characters or fewer.`
+			});
 			return;
 		}
-
+		
 		setContent(nextContent);
 		setStatus(null);
 		requestAnimationFrame(() => {
@@ -106,12 +108,12 @@ export default function AboutMeEditor({
 			textareaRef.current.setSelectionRange(innerStart, innerStart + innerText.length);
 		});
 	};
-
+	
 	const submit = (event: SubmitEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget);
 		setStatus(null);
-
+		
 		startTransition(async () => {
 			try {
 				const result = settingsEndpoint
@@ -123,7 +125,7 @@ export default function AboutMeEditor({
 					: await updateAboutMe(formData);
 				setStatus({ success: result.success, message: result.message });
 				if (!result.success) return;
-
+				
 				const saved = result.content ?? normalizeAboutMe(content);
 				setContent(saved);
 				setSavedContent(saved);
@@ -131,13 +133,12 @@ export default function AboutMeEditor({
 				setIsPreviewing(false);
 				if (!alwaysEditing) setIsEditing(false);
 				router.refresh();
-			}
-			catch {
+			} catch {
 				setStatus({ success: false, message: "About Me could not be updated." });
 			}
 		});
 	};
-
+	
 	const discardChanges = () => {
 		setContent(savedContent);
 		setStatus(null);
@@ -151,7 +152,7 @@ export default function AboutMeEditor({
 		}
 		discardChanges();
 	};
-
+	
 	const togglePreview = () => {
 		if (isPreviewing) {
 			setIsPreviewing(false);
@@ -159,7 +160,7 @@ export default function AboutMeEditor({
 			requestAnimationFrame(() => textareaRef.current?.focus());
 			return;
 		}
-
+		
 		setStatus(null);
 		startTransition(async () => {
 			try {
@@ -174,16 +175,15 @@ export default function AboutMeEditor({
 					setStatus({ success: false, message: result.message });
 					return;
 				}
-
+				
 				setPreviewHtml(result.html ?? "");
 				setIsPreviewing(true);
-			}
-			catch {
+			} catch {
 				setStatus({ success: false, message: "About Me preview could not be generated." });
 			}
 		});
 	};
-
+	
 	return (
 		<>
 			{!alwaysEditing && <div className={styles.about_me_header}>
@@ -204,7 +204,7 @@ export default function AboutMeEditor({
 					</button>
 				)}
 			</div>}
-
+			
 			{isEditing ? (
 				<form className={styles.about_me_editor} onSubmit={submit}>
 					<input type="hidden" name="mode" value={mode}/>
@@ -223,9 +223,9 @@ export default function AboutMeEditor({
 							<textarea id="about-me-content"
 							          ref={textareaRef}
 							          name="content"
-						          aria-label="About Me"
-						          value={content}
-						          maxLength={MAX_ABOUT_ME_LENGTH}
+							          aria-label="About Me"
+							          value={content}
+							          maxLength={MAX_ABOUT_ME_LENGTH}
 							          rows={12}
 							          onChange={(event) => setContent(event.target.value)}
 							          disabled={isPending}
@@ -280,13 +280,13 @@ export default function AboutMeEditor({
 					</>
 				) : <AboutMeEmptyState canEdit/>
 			)}
-
+			
 			{status && (
 				<p className={styles.editor_status} data-success={status.success} role="status">
 					{status.message}
 				</p>
 			)}
-
+			
 			<ConfirmationDialog isOpen={isCancelConfirmOpen}
 			                    title="Discard unsaved changes?"
 			                    description="Unsaved changes will be lost. Are you sure?"

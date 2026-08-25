@@ -33,7 +33,7 @@ export default function SectionSidebar({
 }>) {
 	const [activeSection, setActiveSection] = useState(sections[0]?.id ?? "");
 	const navigationRef = useRef<HTMLElement>(null);
-
+	
 	useEffect(() => {
 		let frame = 0;
 		const updateActiveSection = () => {
@@ -51,7 +51,7 @@ export default function SectionSidebar({
 				setActiveSection(current);
 			});
 		};
-
+		
 		updateActiveSection();
 		window.addEventListener("scroll", updateActiveSection, { passive: true });
 		window.addEventListener("resize", updateActiveSection);
@@ -61,12 +61,12 @@ export default function SectionSidebar({
 			window.removeEventListener("resize", updateActiveSection);
 		};
 	}, [sections]);
-
+	
 	useEffect(() => {
 		const navigation = navigationRef.current;
 		const activeLink = navigation?.querySelector<HTMLAnchorElement>(`a[href="#${activeSection}"]`);
 		if (!navigation || !activeLink) return;
-
+		
 		const edgePadding = 8;
 		const navigationRect = navigation.getBoundingClientRect();
 		const activeLinkRect = activeLink.getBoundingClientRect();
@@ -75,12 +75,12 @@ export default function SectionSidebar({
 			nextScrollLeft += activeLinkRect.left - navigationRect.left - edgePadding;
 		else if (activeLinkRect.right > navigationRect.right - edgePadding)
 			nextScrollLeft += activeLinkRect.right - navigationRect.right + edgePadding;
-
+		
 		if (Math.abs(nextScrollLeft - navigation.scrollLeft) < 1) return;
 		const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 		navigation.scrollTo({ left: nextScrollLeft, behavior: reduceMotion ? "auto" : "smooth" });
 	}, [activeSection]);
-
+	
 	const scrollToSection = (event: MouseEvent<HTMLAnchorElement>, section: string) => {
 		event.preventDefault();
 		const target = document.getElementById(section);
@@ -89,7 +89,7 @@ export default function SectionSidebar({
 		target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
 		window.history.pushState(null, "", `#${section}`);
 	};
-
+	
 	return (
 		<aside className={className} data-page-enter="box">
 			{header}

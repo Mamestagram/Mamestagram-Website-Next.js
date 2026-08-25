@@ -25,7 +25,7 @@ const getCollectionProgress = (achievements: Achievements, type: CollectionType)
 			};
 		}, { collected: 0, total: 0 });
 	}
-
+	
 	const groupByType: Partial<Record<CollectionType, AchievementGroup>> = {
 		[CollectionType.skill]: "skill",
 		[CollectionType.mod]: "mod",
@@ -37,13 +37,13 @@ const getCollectionProgress = (achievements: Achievements, type: CollectionType)
 
 export default async function AchievementCollection({ achievements }: Readonly<{ achievements: Achievements }>) {
 	const collectionDescriptions = await fetchInternalJson<CollectionStatusDesc>("/api/medal_collection");
-
+	
 	return (
 		<ul className={styles.collection_status}>
 			{collectionDescriptions.map((medal) => {
 				const { collected, total } = getCollectionProgress(achievements, medal.type);
 				const percentage = total > 0 ? collected / total * 100 : 0;
-
+				
 				return (
 					<li key={medal.type}>
 						<Tooltip className={styles.achv_img}

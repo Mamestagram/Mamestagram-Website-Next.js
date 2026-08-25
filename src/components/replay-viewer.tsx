@@ -15,8 +15,7 @@ import styles from "@s/replay-viewer.module.css";
 const getReplayOrigin = (replayUrl: string) => {
 	try {
 		return new URL(replayUrl).origin;
-	}
-	catch {
+	} catch {
 		return null;
 	}
 };
@@ -61,12 +60,12 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 				replayOrigin
 			);
 		}
-
+		
 		const iframe = iframeRef.current;
 		if (iframe) iframe.src = "about:blank";
 		closeReplay();
 	}, [closeReplay, replayOrigin]);
-
+	
 	useEffect(() => {
 		if (!isOpen) return;
 		const previousOverflow = document.body.style.overflow;
@@ -74,22 +73,22 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 		const closeOnEscape = (event: globalThis.KeyboardEvent) => {
 			if (event.key === "Escape") closeReplay();
 		};
-
+		
 		document.body.style.overflow = "hidden";
 		document.addEventListener("keydown", closeOnEscape);
 		requestAnimationFrame(() => closeButtonRef.current?.focus());
-
+		
 		return () => {
 			document.body.style.overflow = previousOverflow;
 			document.removeEventListener("keydown", closeOnEscape);
 			requestAnimationFrame(() => returnFocusTarget?.focus());
 		};
 	}, [closeReplay, isOpen]);
-
+	
 	useEffect(() => () => {
 		if (closeTimeoutRef.current !== null) window.clearTimeout(closeTimeoutRef.current);
 	}, []);
-
+	
 	useEffect(() => {
 		const pauseForPreview = (event: Event) => {
 			if (getMediaPlaybackSource(event) === "preview") pauseReplay();
@@ -104,7 +103,7 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 			if (event.source !== iframeRef.current?.contentWindow) return;
 			if (isReplayPlayMessage(event.data)) announceMediaPlayback("replay");
 		};
-
+		
 		window.addEventListener(MEDIA_PLAYBACK_EVENT, pauseForPreview);
 		window.addEventListener("blur", announceReplayFromIframe);
 		window.addEventListener("message", receiveReplayMessage);
@@ -114,7 +113,7 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 			window.removeEventListener("message", receiveReplayMessage);
 		};
 	}, [pauseReplay, replayOrigin]);
-
+	
 	return (
 		<>
 			<button ref={openButtonRef}

@@ -21,7 +21,8 @@ export default function FeaturedScoreCard({
 	replayLabel,
 	replayUrl,
 	baseDomain,
-	personal = false
+	personal = false,
+	hidePrivateDetails = false
 }: Readonly<{
 	score: BeatmapScore,
 	cosmetics: ProfileCosmetics | null,
@@ -32,8 +33,16 @@ export default function FeaturedScoreCard({
 	replayLabel: string,
 	replayUrl: string,
 	baseDomain: string,
-	personal?: boolean
+	personal?: boolean,
+	hidePrivateDetails?: boolean
 }>) {
+	if (hidePrivateDetails) return (
+		<div className={styles.top_score} data-private="true">
+			<span className={styles.top_rank}>#{rank}</span>
+			<strong className={styles.private_score_name}>Private User</strong>
+		</div>
+	);
+	
 	return (
 		<div className={classNames(styles.top_score, { [styles.personal_score]: personal })}
 		     data-rank={personal ? rank : undefined}>

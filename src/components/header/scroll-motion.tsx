@@ -20,7 +20,7 @@ export default function ScrollMotion() {
 			headerHeight = header.offsetHeight;
 			scheduleUpdate();
 		});
-
+		
 		updateHeader();
 		resizeObserver.observe(header);
 		window.addEventListener("scroll", scheduleUpdate, { passive: true });
@@ -30,6 +30,6 @@ export default function ScrollMotion() {
 			if (animationFrame !== 0) window.cancelAnimationFrame(animationFrame);
 		};
 	}, []);
-
+	
 	return null;
 }

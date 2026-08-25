@@ -37,17 +37,17 @@ export default function RankingSortSwitch({ mode, sortBy, country, isClan }: Rea
 		country !== undefined ? `country=${encodeURIComponent(country)}` : ""
 	].filter(Boolean);
 	const queryString = query.length > 0 ? `?${query.join("&")}` : "";
-
+	
 	useEffect(() => {
 		if (!isOpen) return;
-
+		
 		const closeOnOutsideClick = (event: PointerEvent) => {
 			if (!wrapperRef.current?.contains(event.target as Node)) setIsOpen(false);
 		};
 		const closeOnEscape = (event: KeyboardEvent) => {
 			if (event.key === "Escape") setIsOpen(false);
 		};
-
+		
 		document.addEventListener("pointerdown", closeOnOutsideClick);
 		document.addEventListener("keydown", closeOnEscape);
 		return () => {
@@ -55,13 +55,13 @@ export default function RankingSortSwitch({ mode, sortBy, country, isClan }: Rea
 			document.removeEventListener("keydown", closeOnEscape);
 		};
 	}, [isOpen]);
-
+	
 	useEffect(() => {
 		if (isOpen || !isMenuMounted) return;
 		const unmountTimer = window.setTimeout(() => setIsMenuMounted(false), 260);
 		return () => window.clearTimeout(unmountTimer);
 	}, [isOpen, isMenuMounted]);
-
+	
 	const toggleMenu = () => {
 		if (isOpen) {
 			setIsOpen(false);
@@ -70,7 +70,7 @@ export default function RankingSortSwitch({ mode, sortBy, country, isClan }: Rea
 		setIsMenuMounted(true);
 		setIsOpen(true);
 	};
-
+	
 	return (
 		<nav ref={wrapperRef}
 		     className={classNames(styles.selection_wrapper, styles.compact_mode_selection, styles.ranking_sort_control)}
@@ -88,7 +88,7 @@ export default function RankingSortSwitch({ mode, sortBy, country, isClan }: Rea
 				</span>
 				<FontAwesome className={styles.leaderboard_mode_chevron} prefix="fas" name="chevron-right"/>
 			</button>
-
+			
 			{isMenuMounted &&
 				<div className={classNames(styles.leaderboard_mode_menu, styles.ranking_sort_menu)}
 				     role="menu"

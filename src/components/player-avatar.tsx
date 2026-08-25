@@ -24,10 +24,10 @@ export default function PlayerAvatar({
 	className?: string,
 	sizes: string,
 	imageSize?: "default" | "compact",
-		priority?: boolean
-	}>) {
+	priority?: boolean
+}>) {
 	const avatarUrl = appendAvatarQueryMarker(imageUrl ?? `https://a.${baseDomain}/${userId}`);
-
+	
 	return (
 		<span className={classNames(styles.container, className)} data-image-size={imageSize}>
 			<span className={styles.avatar_surface}>
@@ -41,14 +41,14 @@ export default function PlayerAvatar({
 				       priority={priority}/>
 			</span>
 			{cosmetics?.frame && <Image src={cosmetics.frame.imageUrl}
-			                                  className={styles.frame}
-			                                  alt={cosmetics.frame.name}
-			                                  width={256}
-			                                  height={256}
-			                                  sizes={sizes}
-			                                  crossOrigin="anonymous"
-			                                  draggable={false}
-			                                  priority={priority}/>}
+			                            className={styles.frame}
+			                            alt={cosmetics.frame.name}
+			                            width={256}
+			                            height={256}
+			                            sizes={sizes}
+			                            crossOrigin="anonymous"
+			                            draggable={false}
+			                            priority={priority}/>}
 			<EquippedBadge badge={cosmetics?.badge ?? null} sizes={sizes} priority={priority}/>
 		</span>
 	);

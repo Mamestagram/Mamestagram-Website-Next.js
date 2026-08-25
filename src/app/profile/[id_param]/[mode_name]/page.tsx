@@ -44,7 +44,7 @@ const getProfileData = cache(async (
 	isDans: boolean
 ): Promise<ProfileData | null> => {
 	if (!isClan) return { type: "user", info: await getUserInfo(id) };
-
+	
 	const clanProfile = await getClanProfile(id);
 	if (!clanProfile) return null;
 	return {
@@ -68,9 +68,9 @@ export async function generateMetadata({ params, searchParams }: {
 		dans === undefined || (dans === "" &&
 			[OsuMode.std, OsuMode.taiko, OsuMode.ctb, OsuMode.mania].includes(mode_name as OsuMode))
 	];
-
+	
 	if (!conds.every((cond) => cond)) return { title: "Unknown user" };
-
+	
 	const id = Number(id_param), isClan = clan !== undefined, isDans = dans !== undefined;
 	if (id < (!isClan ? 3 : 1)) return { title: "Unknown user" };
 	const mode = ModeNum[mode_name as OsuMode];
@@ -81,10 +81,10 @@ export async function generateMetadata({ params, searchParams }: {
 	if (!profileRouteInfo) return { title: "Unknown user" };
 	if (!canViewProfile(id, isClan, profileRouteInfo, currentUser))
 		return { title: "Private profile", robots: { index: false, follow: false } };
-
+	
 	const profileData = await getProfileData(id, isClan, mode, isDans);
 	if (!profileData) return { title: "Unknown user" };
-
+	
 	return { title: `${profileData.info.name}・Profile` };
 }
 
@@ -109,7 +109,7 @@ export default async function Profile({ params, searchParams }: {
 	];
 	const queries = `(clan: ${clan}, dans: ${dans})`;
 	void writeLog("GET", `/profile/${id_param}/${mode_name} ${queries}`); // log
-
+	
 	if (conds.every((cond) => cond)) {
 		const id = Number(id_param), mode = ModeNum[mode_name as OsuMode],
 			isClan = clan !== undefined, isDans = dans !== undefined;
@@ -120,10 +120,10 @@ export default async function Profile({ params, searchParams }: {
 			]);
 			if (!profileRouteInfo) notFound();
 			if (!canViewProfile(id, isClan, profileRouteInfo, currentUser)) return <PrivateProfile/>;
-
+			
 			const profileData = await getProfileData(id, isClan, mode, isDans);
 			if (!profileData) notFound();
-
+			
 			const baseDomain = process.env.BASE_DOMAIN;
 			if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
 			const [rankHistory, avatarUrl, bannerUrl, backgroundUrl, cosmetics, isRival] = await Promise.all([
@@ -148,7 +148,7 @@ export default async function Profile({ params, searchParams }: {
 				&& currentUser.id !== id
 				&& (info.following.some(({ user }) => user === currentUser.id)
 					|| info.mutual.some(({ user }) => user === currentUser.id));
-
+			
 			return (
 				<div className={classNames(styles.profile_page, {
 					[styles.with_background]: backgroundUrl !== null
@@ -193,24 +193,32 @@ export default async function Profile({ params, searchParams }: {
 						         mode={mode_name}/>
 						{!isClan && <div className={classNames(styles.section_area, styles.map_scores)}>
 							<div className={styles.player_scores}>
-								<div className={classNames(styles.section_box, styles.list_container)} data-page-enter="box">
+								<div className={classNames(styles.section_box, styles.list_container)}
+								     data-page-enter="box">
 									<Suspense fallback={<PlayerScoresLoading label="Best Performance"/>}>
 										<PlayerScores scope={ScoreScope.bestPP} id={id} mode={mode} isDans={isDans}/>
 									</Suspense>
 								</div>
-								<div className={classNames(styles.section_box, styles.list_container)} data-page-enter="box">
+								<div className={classNames(styles.section_box, styles.list_container)}
+								     data-page-enter="box">
 									<Suspense fallback={<PlayerScoresLoading label="First Place Ranks"/>}>
-										<PlayerScores scope={ScoreScope.firstPlace} id={id} mode={mode} isDans={isDans}/>
+										<PlayerScores scope={ScoreScope.firstPlace} id={id} mode={mode}
+										              isDans={isDans}/>
 									</Suspense>
 								</div>
-								<div className={classNames(styles.section_box, styles.list_container)} data-page-enter="box">
-									<Suspense fallback={<PlayerScoresLoading label="Most Played Maps" hasGrade={false}/>}>
-										<PlayerScores scope={ScoreScope.mostPlayed} id={id} mode={mode} isDans={isDans}/>
+								<div className={classNames(styles.section_box, styles.list_container)}
+								     data-page-enter="box">
+									<Suspense
+										fallback={<PlayerScoresLoading label="Most Played Maps" hasGrade={false}/>}>
+										<PlayerScores scope={ScoreScope.mostPlayed} id={id} mode={mode}
+										              isDans={isDans}/>
 									</Suspense>
 								</div>
-								<div className={classNames(styles.section_box, styles.list_container)} data-page-enter="box">
+								<div className={classNames(styles.section_box, styles.list_container)}
+								     data-page-enter="box">
 									<Suspense fallback={<PlayerScoresLoading label="Recent Played Maps"/>}>
-										<PlayerScores scope={ScoreScope.recentPlayed} id={id} mode={mode} isDans={isDans}/>
+										<PlayerScores scope={ScoreScope.recentPlayed} id={id} mode={mode}
+										              isDans={isDans}/>
 									</Suspense>
 								</div>
 							</div>

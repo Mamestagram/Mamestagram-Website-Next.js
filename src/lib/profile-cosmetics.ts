@@ -73,7 +73,7 @@ const normalizeCosmetics = (userId: number, data: ProfileCosmeticsApi): ProfileC
 	const placement = frame?.placement;
 	const badgeId = badge?.id;
 	const frameId = frame?.id;
-
+	
 	return {
 		userId,
 		badge: data.profile_badge_is_set === true && badge && isPositiveSafeInteger(badgeId) && badge.icon_url
@@ -85,11 +85,11 @@ const normalizeCosmetics = (userId: number, data: ProfileCosmeticsApi): ProfileC
 			}
 			: null,
 		frame: data.avatar_frame_is_set === true && frame && placement && isPositiveSafeInteger(frameId) && frame.image_url
-			&& isFiniteNumber(placement.left_percent)
-			&& isFiniteNumber(placement.top_percent)
-			&& isFiniteNumber(placement.width_percent)
-			&& isFiniteNumber(placement.height_percent)
-			&& isFiniteNumber(placement.avatar_size_percent)
+		&& isFiniteNumber(placement.left_percent)
+		&& isFiniteNumber(placement.top_percent)
+		&& isFiniteNumber(placement.width_percent)
+		&& isFiniteNumber(placement.height_percent)
+		&& isFiniteNumber(placement.avatar_size_percent)
 			? {
 				id: frameId,
 				name: frame.name ?? `Frame ${frameId}`,
@@ -116,7 +116,7 @@ export const getProfileCosmetics = cache(async (userId: number): Promise<Profile
 		void writeError(new Error("BASE_DOMAIN is not configured"));
 		return emptyCosmetics(userId);
 	}
-
+	
 	try {
 		const url = new URL("/v1/get_profile_cosmetics", `https://api.${baseDomain}`);
 		url.searchParams.set("userid", userId.toString());
@@ -135,8 +135,7 @@ export const getProfileCosmetics = cache(async (userId: number): Promise<Profile
 		return data.status === "success" && data.user_id === userId
 			? normalizeCosmetics(userId, data)
 			: emptyCosmetics(userId);
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error, {
 			source: "server",
 			method: "GET",

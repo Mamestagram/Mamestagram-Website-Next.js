@@ -41,13 +41,21 @@ export const getVanillaMode = (mode: ModeNum): VnMode => {
 
 export const modeAbbreviation = (mode: ModeNum) => {
 	switch (mode) {
-		case ModeNum.std: return "vn!osu";
-		case ModeNum.taiko: return "vn!taiko";
-		case ModeNum.ctb: return "vn!ctb";
-		case ModeNum.mania: return "vn!mania";
-		case ModeNum.rxstd: return "rx!osu";
-		case ModeNum.rxtaiko: return "rx!taiko";
-		case ModeNum.rxctb: return "rx!ctb";
-		case ModeNum.apstd: return "ap!osu";
+		case ModeNum.std:
+			return "vn!osu";
+		case ModeNum.taiko:
+			return "vn!taiko";
+		case ModeNum.ctb:
+			return "vn!ctb";
+		case ModeNum.mania:
+			return "vn!mania";
+		case ModeNum.rxstd:
+			return "rx!osu";
+		case ModeNum.rxtaiko:
+			return "rx!taiko";
+		case ModeNum.rxctb:
+			return "rx!ctb";
+		case ModeNum.apstd:
+			return "ap!osu";
 	}
 }

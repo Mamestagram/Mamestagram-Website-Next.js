@@ -22,7 +22,7 @@ export default function SupportSidebar({ locale, languageLabel, nav }: Readonly<
 	                       navigationLabel="Support sections"
 	                       sections={sections}
 	                       header={<LanguageSwitcher className={styles.language_switcher}
-	                                                   current={locale}
-	                                                   label={languageLabel}
-	                                                   ariaLabel="Support page language"/>}/>;
+	                                                 current={locale}
+	                                                 label={languageLabel}
+	                                                 ariaLabel="Support page language"/>}/>;
 }

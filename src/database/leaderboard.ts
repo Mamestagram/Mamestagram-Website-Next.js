@@ -24,7 +24,8 @@ export type RankingList = {
 	score: number, // unused for dans lb
 	xCount: number, // unused for dans lb
 	sCount: number, // unused for dans lb
-	aCount: number // unused for dans lb
+	aCount: number, // unused for dans lb
+	isPrivate: 0 | 1
 };
 type Ranking = {
 	ranking: RankingList[],
@@ -51,8 +52,7 @@ enum SortByColumnName {
 export const getCountryList = async () => {
 	try {
 		return await executeQuery<{ country: string }>(countryListQuery);
-	}
-	catch (err) {
+	} catch (err) {
 		void writeError(err);
 		throw new Error("Couldn't get country list");
 	}
@@ -81,8 +81,7 @@ const getPages = async (sqlQuery: string, sqlArgs: QueryArgs) => {
 	try {
 		const recCount = (await executeQuery(sqlQuery, sqlArgs)).length;
 		return Math.ceil(recCount / 50);
-	}
-	catch (err) {
+	} catch (err) {
 		void writeError(err);
 		throw new Error("Couldn't get ranking pages");
 	}
@@ -107,7 +106,7 @@ const getClanRanking = async (mode: ModeNum, sortBy: SortBy, page: number): Prom
 			sCount: number,
 			aCount: number
 		};
-
+		
 		const usersStats = await executeQuery<UsersStats>(clanUsersStatsQuery, [mode]);
 		const statsByClan: UsersStats[] = [];
 		Map.groupBy(usersStats, ({ clan_id }) => clan_id).forEach((clan) => {
@@ -148,7 +147,8 @@ const getClanRanking = async (mode: ModeNum, sortBy: SortBy, page: number): Prom
 			score: stats.rscore,
 			xCount: stats.xCount,
 			sCount: stats.sCount,
-			aCount: stats.aCount
+			aCount: stats.aCount,
+			isPrivate: 0
 		}));
 	}
 	else {
@@ -159,7 +159,7 @@ const getClanRanking = async (mode: ModeNum, sortBy: SortBy, page: number): Prom
 			plays: number,
 			pp: number
 		};
-
+		
 		const usersStats = await executeQuery<UsersDanStats>(clanUsersDanStatsQuery, [mode, mode]);
 		const statsByClan: UsersDanStats[] = [];
 		Map.groupBy(usersStats, ({ clan_id }) => clan_id).forEach((clan) => {
@@ -191,7 +191,8 @@ const getClanRanking = async (mode: ModeNum, sortBy: SortBy, page: number): Prom
 			score: 0,
 			xCount: 0,
 			sCount: 0,
-			aCount: 0
+			aCount: 0,
+			isPrivate: 0
 		}));
 	}
 	return {
@@ -214,8 +215,7 @@ export const getLeaderboard = async (mode: ModeNum, sortBy: SortBy, page: number
 			);
 			const pages = await getPages(query, args);
 			return { ranking, pages };
-		}
-		catch (err) {
+		} catch (err) {
 			void writeError(err);
 			throw new Error("Couldn't get leaderboard");
 		}

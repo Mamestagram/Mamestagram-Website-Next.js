@@ -31,7 +31,9 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 		["clan", isClan],
 		[`country=${country}`, country !== undefined]
 	];
-	conds.forEach(([query, cond]) => { if (cond) queries.push(query); });
+	conds.forEach(([query, cond]) => {
+		if (cond) queries.push(query);
+	});
 	const queryStr = queries.length > 0 ? `&${queries.join("&")}` : "";
 	const buttonSize = 35, buttonGap = 10;
 	const longPressTimeout = useRef<NodeJS.Timeout>(undefined);
@@ -52,7 +54,7 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 		"--translate-x": `${pageTranslateX}px`,
 		"--page-list-width": `${pageListWidth}px`
 	} as CSSProperties;
-
+	
 	const resizeWindow = useCallback(() => {
 		let nextDisplayAmount = 7;
 		if (window.innerWidth <= 346) {
@@ -64,7 +66,7 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 		setDisplayAmount(nextDisplayAmount);
 		setPageOrder(makePageOrder(currentPage - 1, nextDisplayAmount, totalPage));
 	}, [currentPage, totalPage]);
-
+	
 	const shiftRefOrder = (element: HTMLButtonElement | HTMLLIElement, index?: number) => {
 		if (element.classList.contains("left")) {
 			setPageOrder((prevState) => {
@@ -82,13 +84,13 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 			setPageOrder(makePageOrder(index!, displayAmount, totalPage));
 		}
 	}
-
+	
 	const clickChevron = (e: MouseEvent<HTMLButtonElement>) => {
 		const element = e.currentTarget;
 		shiftRefOrder(element);
 		longPressTimeout.current = setTimeout(() => {
 			longPressInterval.current = setInterval(() => shiftRefOrder(element), 200);
-
+			
 			clearTimeout(longPressTimeout.current);
 			longPressTimeout.current = setTimeout(() => {
 				clearInterval(longPressInterval.current);
@@ -96,12 +98,12 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 			}, 1200);
 		}, 300);
 	}
-
+	
 	const pointerUpChevron = () => {
 		clearTimeout(longPressTimeout.current);
 		clearInterval(longPressInterval.current);
 	}
-
+	
 	useEffect(() => {
 		const initialResizeFrame = window.requestAnimationFrame(resizeWindow);
 		window.addEventListener("resize", resizeWindow);
@@ -110,7 +112,7 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 			window.removeEventListener("resize", resizeWindow);
 		}
 	}, [resizeWindow]);
-
+	
 	useEffect(() => {
 		let frameId = 0;
 		const changeLayout = (nextValue: boolean) => {
@@ -127,14 +129,14 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 				changeLayout(false);
 				return;
 			}
-
+			
 			const rect = ranking.getBoundingClientRect();
 			changeLayout(rect.top <= 72 + buttonSize + 16 && rect.bottom >= 72);
 		};
 		const scheduleUpdate = () => {
 			if (frameId === 0) frameId = window.requestAnimationFrame(updatePosition);
 		};
-
+		
 		scheduleUpdate();
 		window.addEventListener("scroll", scheduleUpdate, { passive: true });
 		window.addEventListener("resize", scheduleUpdate);
@@ -144,12 +146,12 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 			window.removeEventListener("resize", scheduleUpdate);
 		};
 	}, [buttonSize]);
-
+	
 	useLayoutEffect(() => {
 		const wrapper = pageWrapperRef.current, previous = previousPosition.current;
 		previousPosition.current = null;
 		if (!wrapper || !previous || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
+		
 		positionAnimation.current?.cancel();
 		const next = wrapper.getBoundingClientRect();
 		const deltaX = previous.left - next.left, deltaY = previous.top - next.top;
@@ -162,10 +164,10 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 			duration: 420,
 			easing: "cubic-bezier(.22, 1, .36, 1)"
 		});
-
+		
 		return () => positionAnimation.current?.cancel();
 	}, [isOverRanking]);
-
+	
 	return (
 		<div ref={pageWrapperRef}
 		     className={classNames(styles.page_wrapper, { [styles.over_ranking]: isOverRanking })}>
@@ -184,7 +186,7 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 			        onPointerUp={pointerUpChevron}
 			        onPointerLeave={pointerUpChevron}
 			        onPointerCancel={pointerUpChevron}
-					onContextMenu={(e) => e.preventDefault()}>
+			        onContextMenu={(e) => e.preventDefault()}>
 				<FontAwesome prefix="fas" name="chevron-left"/>
 			</button>
 			<ul className={styles.page_list} style={pageListStyle}>
@@ -195,7 +197,7 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 						    [styles.current_page]: i + 1 === currentPage,
 						    [styles.show]: pageOrder.includes(i)
 					    })}
-						onClick={(e) => shiftRefOrder(e.currentTarget, i)}>
+					    onClick={(e) => shiftRefOrder(e.currentTarget, i)}>
 						<Link href={`/leaderboard/${mode}/${sortBy}?page=${i + 1}${queryStr}`}>
 							{i + 1}
 						</Link>
@@ -205,11 +207,11 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 			<button className={classNames(styles.shift_arrow, "right")}
 			        type="button"
 			        aria-label="shift-right"
-					onPointerDown={clickChevron}
+			        onPointerDown={clickChevron}
 			        onPointerUp={pointerUpChevron}
-					onPointerLeave={pointerUpChevron}
-					onPointerCancel={pointerUpChevron}
-					onContextMenu={(e) => e.preventDefault()}>
+			        onPointerLeave={pointerUpChevron}
+			        onPointerCancel={pointerUpChevron}
+			        onContextMenu={(e) => e.preventDefault()}>
 				<FontAwesome prefix="fas" name="chevron-right"/>
 			</button>
 			<button className={styles.page_endpoint}

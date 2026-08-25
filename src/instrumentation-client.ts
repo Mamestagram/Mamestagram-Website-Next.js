@@ -13,8 +13,7 @@ const stringifyUnknown = (value: unknown) => {
 	try {
 		if (typeof value === "string") return value;
 		return JSON.stringify(value) ?? String(value);
-	}
-	catch {
+	} catch {
 		return String(value);
 	}
 };
@@ -54,7 +53,7 @@ const reportClientError = (payload: Omit<ClientErrorPayload, "pathname">) => {
 				if (now - reportedAt >= 5_000) recentErrors.delete(key);
 			}
 		}
-
+		
 		void fetch("/api/client-errors", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -62,8 +61,7 @@ const reportClientError = (payload: Omit<ClientErrorPayload, "pathname">) => {
 			credentials: "same-origin",
 			keepalive: true
 		}).catch(() => undefined);
-	}
-	catch {
+	} catch {
 		// Error reporting must not affect the application.
 	}
 };

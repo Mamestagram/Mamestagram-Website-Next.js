@@ -14,17 +14,17 @@ const HeaderSearchContext = createContext<HeaderSearchContextType | null>(null);
 export const HeaderSearchProvider = ({ children }: Readonly<{ children: ReactNode }>) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const openerRef = useRef<HTMLButtonElement | null>(null);
-
+	
 	const openSearch = useCallback((opener: HTMLButtonElement) => {
 		openerRef.current = opener;
 		setIsOpen(true);
 	}, []);
-
+	
 	const closeSearch = useCallback(() => {
 		setIsOpen(false);
 		requestAnimationFrame(() => openerRef.current?.focus());
 	}, []);
-
+	
 	return (
 		<HeaderSearchContext.Provider value={{ isOpen, openSearch, closeSearch }}>
 			{children}

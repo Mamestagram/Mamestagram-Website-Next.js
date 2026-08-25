@@ -14,20 +14,25 @@ export default function DanRequirementsTable({ dan, headers }: {
 		else groups.push([requirement]);
 		return groups;
 	}, []);
-
+	
 	return (
 		<div className={styles.dan_table_scroll}>
 			<table className={styles.dan_table}>
-				<thead><tr>{headers.map((header, index) =>
+				<thead>
+				<tr>{headers.map((header, index) =>
 					(index !== 1 || dan.mode !== OsuMode.mania) && (index !== 2 || dan.mode === OsuMode.mania) &&
-					<th key={header} data-optional={index === 2}>{header}</th>)}</tr></thead>
+					<th key={header} data-optional={index === 2}>{header}</th>)}</tr>
+				</thead>
 				{courseGroups.map((group, groupIndex) =>
 					<tbody key={`${group[0].course}-${groupIndex}`}>{group.map((requirement, index) =>
 						<tr key={`${requirement.level ?? requirement.keys}-${index}`}>
 							{index === 0 && <td data-course="true" rowSpan={group.length}>{requirement.course}</td>}
-							{dan.mode !== OsuMode.mania && <td data-level="true" data-numeric="true">{requirement.level}</td>}
-							{dan.mode === OsuMode.mania && <td data-level="true" data-numeric="true" data-optional="true">{requirement.keys ?? "—"}</td>}
-							<td data-highlight={dan.mode !== OsuMode.taiko} data-numeric="true">{requirement.accuracy}</td>
+							{dan.mode !== OsuMode.mania &&
+								<td data-level="true" data-numeric="true">{requirement.level}</td>}
+							{dan.mode === OsuMode.mania && <td data-level="true" data-numeric="true"
+							                                   data-optional="true">{requirement.keys ?? "—"}</td>}
+							<td data-highlight={dan.mode !== OsuMode.taiko}
+							    data-numeric="true">{requirement.accuracy}</td>
 							<td data-highlight={dan.mode === OsuMode.taiko} data-numeric="true">{requirement.score}</td>
 							<td data-highlight="true">{requirement.mod}</td>
 							<td data-highlight={dan.mode === OsuMode.std} data-numeric="true">{requirement.misses}</td>

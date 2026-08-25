@@ -87,25 +87,25 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 		: mediaMeta[type];
 	const endpoint = `/api/settings/media/${type}${scope === "clan" ? "?scope=clan" : ""}`;
 	const displayedImageUrl = previewUrl || (isCustomImage ? currentImageUrl : "");
-
+	
 	useEffect(() => () => {
 		if (previewUrl) URL.revokeObjectURL(previewUrl);
 	}, [previewUrl]);
-
+	
 	useEffect(() => () => {
 		if (cropSource) URL.revokeObjectURL(cropSource.url);
 	}, [cropSource]);
-
+	
 	const clearSelectedFile = () => {
 		setSelectedFile(null);
 		setSelectedSourceFile(null);
 		setPreviewUrl("");
 	};
-
+	
 	const openCropper = (file: File) => {
 		setCropSource({ file, url: URL.createObjectURL(file) });
 	};
-
+	
 	const selectFile = (file: File | undefined) => {
 		setStatus(null);
 		if (!file) return;
@@ -120,7 +120,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 			setStatus({ success: false, message: "Use a PNG, JPG, WebP, or GIF image." });
 			return;
 		}
-
+		
 		if (isGifFile(file)) {
 			setSelectedSourceFile(file);
 			setSelectedFile(file);
@@ -129,10 +129,10 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 			setIsImageUnavailable(false);
 			return;
 		}
-
+		
 		openCropper(file);
 	};
-
+	
 	const applyCrop = (file: File) => {
 		if (!cropSource) return;
 		setSelectedSourceFile(cropSource.file);
@@ -141,7 +141,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 		setCropSource(null);
 		setIsImageUnavailable(false);
 	};
-
+	
 	const upload = () => {
 		if (!selectedFile) return;
 		setStatus(null);
@@ -154,22 +154,20 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 				const result = await readMutationResponse(response);
 				setStatus(result);
 				if (!result.success) return;
-
+				
 				clearSelectedFile();
 				setCurrentImageUrl(getVersionedImageUrl(imageUrl));
 				setIsCustomImage(true);
 				if (inputRef.current) inputRef.current.value = "";
 				router.refresh();
-			}
-			catch {
+			} catch {
 				setStatus({ success: false, message: `${meta.label} could not be updated.` });
-			}
-			finally {
+			} finally {
 				setOperation(null);
 			}
 		});
 	};
-
+	
 	const reset = () => {
 		setResetError("");
 		setOperation("reset");
@@ -181,7 +179,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 					setResetError(result.message);
 					return;
 				}
-
+				
 				setStatus(result);
 				setIsResetOpen(false);
 				setIsCustomImage(false);
@@ -189,16 +187,14 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 				setCurrentImageUrl(getVersionedImageUrl(imageUrl));
 				if (inputRef.current) inputRef.current.value = "";
 				router.refresh();
-			}
-			catch {
+			} catch {
 				setResetError(`${meta.label} could not be reset.`);
-			}
-			finally {
+			} finally {
 				setOperation(null);
 			}
 		});
 	};
-
+	
 	return (
 		<article className={styles.media_card} data-media={type}>
 			<div className={styles.media_heading}>
@@ -208,7 +204,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 					{meta.description && <p>{meta.description}</p>}
 				</div>
 			</div>
-
+			
 			<div className={styles.media_preview} data-media={type} data-unavailable={isImageUnavailable}>
 				{displayedImageUrl && !isImageUnavailable
 					? <>
@@ -230,7 +226,7 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 						<span>{type === "avatar" ? <>No custom<br/>avatar</> : `No custom ${type}`}</span>
 					</span>}
 			</div>
-
+			
 			<div className={styles.media_controls}>
 				<label className={styles.file_picker}>
 					<FontAwesome prefix="fas" name="folder-open"/>
@@ -276,9 +272,10 @@ export default function MediaSettingCard({ type, imageUrl, hasCustomImage, scope
 					</button>
 				</div>
 			</div>
-			<p className={styles.media_note}>PNG, JPG, WebP, or GIF · 5 MB maximum · Original format preserved · GIF is not cropped</p>
+			<p className={styles.media_note}>PNG, JPG, WebP, or GIF · 5 MB maximum · Original format preserved · GIF is
+				not cropped</p>
 			{status && <p className={styles.status} data-success={status.success} role="status">{status.message}</p>}
-
+			
 			<ConfirmationDialog isOpen={isResetOpen}
 			                    title={`Reset ${meta.label.toLowerCase()}?`}
 			                    description={`Your custom ${meta.label.toLowerCase()} will be removed.`}

@@ -40,19 +40,19 @@ export default async function Leaderboard({ params, searchParams }: {
 	];
 	const queries = `(page: ${page}, country: ${selectedCountry}, clan: ${clan})`;
 	void writeLog("GET", `/leaderboard/${mode_name}/${sort_by} ${queries}`); // log
-
+	
 	if (conds.every((cond) => cond)) {
 		const mode = mode_name as OsuMode, sortBy = sort_by as SortBy, isClan = clan !== undefined;
-
+		
 		return (
 			<>
 				<LeaderboardHero/>
 				<div className={styles.container}>
 					<LeaderboardScopeSwitch mode={mode}
-						                        sortBy={sortBy}
-						                        countries={countryCodes}
-						                        country={selectedCountry}
-						                        isClan={isClan}/>
+					                        sortBy={sortBy}
+					                        countries={countryCodes}
+					                        country={selectedCountry}
+					                        isClan={isClan}/>
 					<div className={styles.leaderboard_control_stack}>
 						<ModeSelection mode={mode} sortBy={sortBy} country={selectedCountry} isClan={isClan}/>
 						<RankingSortSwitch mode={mode}
@@ -61,7 +61,8 @@ export default async function Leaderboard({ params, searchParams }: {
 						                   isClan={isClan}/>
 					</div>
 					<Suspense fallback={<RankingListLoading/>}>
-						<RankingList mode={mode} sortBy={sortBy} page={Number(page)} country={selectedCountry} isClan={isClan}/>
+						<RankingList mode={mode} sortBy={sortBy} page={Number(page)} country={selectedCountry}
+						             isClan={isClan}/>
 					</Suspense>
 				</div>
 			</>

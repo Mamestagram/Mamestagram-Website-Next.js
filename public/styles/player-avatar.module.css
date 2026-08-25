@@ -1,7 +1,7 @@
 .container {
 	--avatar-image-size: 100%;
 	--avatar-frame-size: 120%;
-
+	
 	position: relative;
 	display: block;
 	container-type: inline-size;

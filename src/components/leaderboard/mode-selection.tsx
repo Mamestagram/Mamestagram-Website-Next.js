@@ -90,17 +90,17 @@ export default function ModeSelection({ mode, sortBy, country, isClan }: {
 	const modeLabel = modeGroups.find((group) => group.mode === baseMode)?.label ?? "Mode";
 	const playstyleLabel = getPlaystyleLabel(mode, sortBy);
 	const referenceSort = sortBy === DANS_SORT ? PERFORMANCE_SORT : sortBy;
-
+	
 	useEffect(() => {
 		if (!isOpen) return;
-
+		
 		const closeOnOutsideClick = (event: PointerEvent) => {
 			if (!wrapperRef.current?.contains(event.target as Node)) setIsOpen(false);
 		};
 		const closeOnEscape = (event: KeyboardEvent) => {
 			if (event.key === "Escape") setIsOpen(false);
 		};
-
+		
 		document.addEventListener("pointerdown", closeOnOutsideClick);
 		document.addEventListener("keydown", closeOnEscape);
 		return () => {
@@ -108,13 +108,13 @@ export default function ModeSelection({ mode, sortBy, country, isClan }: {
 			document.removeEventListener("keydown", closeOnEscape);
 		};
 	}, [isOpen]);
-
+	
 	useEffect(() => {
 		if (isOpen || !isMenuMounted) return;
 		const unmountTimer = window.setTimeout(() => setIsMenuMounted(false), 260);
 		return () => window.clearTimeout(unmountTimer);
 	}, [isOpen, isMenuMounted]);
-
+	
 	const toggleMenu = () => {
 		if (isOpen) {
 			setIsOpen(false);
@@ -123,7 +123,7 @@ export default function ModeSelection({ mode, sortBy, country, isClan }: {
 		setIsMenuMounted(true);
 		setIsOpen(true);
 	};
-
+	
 	const getHref = (option: ModeOption) => {
 		const query = [
 			isClan ? "clan" : "",
@@ -132,7 +132,7 @@ export default function ModeSelection({ mode, sortBy, country, isClan }: {
 		const destinationSort = option.dans ? DANS_SORT : referenceSort;
 		return `/leaderboard/${option.mode}/${destinationSort}${query.length > 0 ? `?${query.join("&")}` : ""}`;
 	};
-
+	
 	return (
 		<aside ref={wrapperRef} className={classNames(styles.selection_wrapper, styles.compact_mode_selection)}>
 			<button type="button"
@@ -147,7 +147,7 @@ export default function ModeSelection({ mode, sortBy, country, isClan }: {
 				</span>
 				<FontAwesome className={styles.leaderboard_mode_chevron} prefix="fas" name="chevron-right"/>
 			</button>
-
+			
 			{isMenuMounted &&
 				<div className={styles.leaderboard_mode_menu}
 				     role="menu"

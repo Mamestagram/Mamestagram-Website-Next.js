@@ -17,7 +17,7 @@ const getUpstreamUrl = (
 ) => {
 	if (scope === "profile" && type === "badge")
 		return `https://market.${baseDomain}/media/badges/${id}`;
-
+	
 	const isClan = scope === "clan";
 	const subdomain = type === "cover"
 		? isClan ? "clan-banner" : "banner"
@@ -38,10 +38,10 @@ export const GET = async (
 	const id = Number(idParam);
 	if (!Number.isSafeInteger(id) || id <= 0 || !isSupportedVisual(scope, type))
 		return new NextResponse(null, { status: 404 });
-
+	
 	const baseDomain = process.env.BASE_DOMAIN;
 	if (!baseDomain) return new NextResponse(null, { status: 503 });
-
+	
 	try {
 		const response = await fetch(getUpstreamUrl(id, scope, type, baseDomain), {
 			cache: "no-store",
@@ -50,7 +50,7 @@ export const GET = async (
 		const contentType = response.headers.get("content-type");
 		if (!response.ok || contentType?.startsWith("image/") !== true)
 			return new NextResponse(null, { status: 404 });
-
+		
 		const headers = new Headers({
 			"Cache-Control": "public, max-age=31536000, immutable",
 			"Content-Type": contentType
@@ -60,8 +60,7 @@ export const GET = async (
 			if (value) headers.set(name, value);
 		}
 		return new NextResponse(response.body, { headers });
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error);
 		return new NextResponse(null, { status: 502 });
 	}

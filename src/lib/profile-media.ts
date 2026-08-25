@@ -12,7 +12,7 @@ export const MAX_PROFILE_MEDIA_BYTES = 5 * 1024 * 1024;
 
 export class ProfileMediaError extends Error {
 	readonly status: number;
-
+	
 	constructor(message: string, status: number = 400) {
 		super(message);
 		this.name = "ProfileMediaError";
@@ -35,7 +35,7 @@ const getMediaRoot = (type: ProfileMediaType, scope: ProfileMediaScope) => {
 			banner: process.env.BANNER_PATH,
 			background: process.env.BG_PATH
 		}[type];
-
+	
 	if (!root)
 		throw new ProfileMediaError("Profile media storage is not configured.", 503);
 	return root;
@@ -100,8 +100,7 @@ export const profileMediaExists = async (
 ) => {
 	try {
 		return (await getExistingMediaPaths(type, profileId, scope)).length > 0;
-	}
-	catch {
+	} catch {
 		return false;
 	}
 };
@@ -115,7 +114,7 @@ export const saveProfileMedia = async (
 	if (file.size === 0) throw new ProfileMediaError("Choose an image to upload.");
 	if (file.size > MAX_PROFILE_MEDIA_BYTES)
 		throw new ProfileMediaError("The image must be 5 MB or smaller.");
-
+	
 	const bytes = new Uint8Array(await file.arrayBuffer());
 	const format = getImageFormat(bytes);
 	if (!format)
@@ -123,7 +122,7 @@ export const saveProfileMedia = async (
 	const extension = getOriginalExtension(file, format);
 	if (!extension)
 		throw new ProfileMediaError("The file extension does not match the image format.");
-
+	
 	const targetPath = getMediaPath(type, profileId, scope, extension);
 	const targetDirectory = path.dirname(targetPath);
 	const temporaryPath = path.join(
@@ -137,8 +136,7 @@ export const saveProfileMedia = async (
 		const obsoletePaths = (await getExistingMediaPaths(type, profileId, scope))
 			.filter((mediaPath) => mediaPath !== targetPath);
 		await Promise.all(obsoletePaths.map((mediaPath) => unlink(mediaPath)));
-	}
-	catch {
+	} catch {
 		await unlink(temporaryPath).catch(() => undefined);
 		throw new ProfileMediaError("The image could not be saved.", 503);
 	}
@@ -152,8 +150,7 @@ export const removeProfileMedia = async (
 	try {
 		const mediaPaths = await getExistingMediaPaths(type, profileId, scope);
 		await Promise.all(mediaPaths.map((mediaPath) => unlink(mediaPath)));
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		if (error instanceof Error && "code" in error && error.code === "ENOENT") return;
 		throw new ProfileMediaError("The image could not be reset.", 503);
 	}

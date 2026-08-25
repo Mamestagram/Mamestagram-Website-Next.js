@@ -8,7 +8,7 @@ export default function AboutMeSettingsEditor({ initialBBCode, profileId, isClan
 	isClan: boolean
 }>) {
 	const settingsEndpoint = `/api/settings/me${isClan ? "?scope=clan" : ""}`;
-
+	
 	return (
 		<div className={`${profileStyles.container} ${styles.me_editor_scope}`}>
 			<div className={`${profileStyles.section_box} ${profileStyles.about_me} ${styles.me_editor_shell}`}>

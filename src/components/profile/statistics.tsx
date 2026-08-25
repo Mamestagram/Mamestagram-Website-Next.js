@@ -18,8 +18,7 @@ export default async function Statistics({ id, mode, isClan, isDans, statistics:
 	if (!statistics) {
 		try {
 			statistics = await getStatistics(id, mode, isClan, isDans);
-		}
-		catch (error: unknown) {
+		} catch (error: unknown) {
 			void writeError(error, {
 				source: "server",
 				method: "GET",
@@ -31,7 +30,7 @@ export default async function Statistics({ id, mode, isClan, isDans, statistics:
 	}
 	const formatAggregate = (value: number) => isClan ? Math.floor(value) : value;
 	const isVanillaMode = [ModeNum.std, ModeNum.taiko, ModeNum.ctb, ModeNum.mania].includes(mode);
-
+	
 	return (
 		<>
 			<h1 className={styles.section_title}>
@@ -68,7 +67,7 @@ export default async function Statistics({ id, mode, isClan, isDans, statistics:
 						</li>}
 					</ul>
 				</section>
-
+				
 				<section className={classNames(styles.stat_group, styles.grade_group)}>
 					<h2 className={styles.stat_group_title}>Grade Count</h2>
 					<ul className={styles.grade_count_area}>
@@ -80,7 +79,7 @@ export default async function Statistics({ id, mode, isClan, isDans, statistics:
 						)}
 					</ul>
 				</section>
-
+				
 				<section className={classNames(styles.stat_group, styles.performance_group)}>
 					<h2 className={styles.stat_group_title}>Performance</h2>
 					<ul className={styles.pp_area}>
@@ -109,7 +108,7 @@ export default async function Statistics({ id, mode, isClan, isDans, statistics:
 							</>}
 					</ul>
 				</section>
-
+				
 				<section className={classNames(styles.stat_group, styles.score_group)}>
 					<h2 className={styles.stat_group_title}>Score</h2>
 					<ul className={styles.score_area}>
@@ -123,7 +122,7 @@ export default async function Statistics({ id, mode, isClan, isDans, statistics:
 						</li>
 					</ul>
 				</section>
-
+				
 				<section className={classNames(styles.stat_group, styles.details_group)}>
 					<h2 className={styles.stat_group_title}>Other Details</h2>
 					<ul className={styles.others_area}>

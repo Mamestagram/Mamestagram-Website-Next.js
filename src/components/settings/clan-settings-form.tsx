@@ -22,7 +22,7 @@ export default function ClanSettingsForm({
 	const [isPending, startTransition] = useTransition();
 	const normalizedTag = tag.trim();
 	const hasChanges = normalizedTag !== savedTag || showPastTags !== savedShowPastTags;
-
+	
 	const submit = (event: SubmitEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		setStatus(null);
@@ -36,18 +36,17 @@ export default function ClanSettingsForm({
 				const result = await readMutationResponse(response);
 				setStatus(result);
 				if (!result.success) return;
-
+				
 				setTag(normalizedTag);
 				setSavedTag(normalizedTag);
 				setSavedShowPastTags(showPastTags);
 				router.refresh();
-			}
-			catch {
+			} catch {
 				setStatus({ success: false, message: "Clan settings could not be updated." });
 			}
 		});
 	};
-
+	
 	return (
 		<form className={styles.profile_form} onSubmit={submit}>
 			<div className={styles.field}>
@@ -72,7 +71,7 @@ export default function ClanSettingsForm({
 				</div>
 				<small>Use 1–6 characters without spaces.</small>
 			</div>
-
+			
 			<label className={styles.toggle_row}>
 				<span className={styles.toggle_copy}>
 					<span className={styles.toggle_icon}><FontAwesome prefix="fad" name="clock-rotate-left"/></span>
@@ -90,7 +89,7 @@ export default function ClanSettingsForm({
 				       }}/>
 				<span className={styles.toggle} aria-hidden="true"><span/></span>
 			</label>
-
+			
 			<div className={styles.form_footer}>
 				<span className={styles.status} data-success={status?.success} role="status">
 					{status?.message}

@@ -10,9 +10,9 @@ export const canViewProfile = (
 ) => {
 	if (!profile.isPrivate) return true;
 	if (!viewer.isLoggedIn || viewer.id === undefined) return false;
-
+	
 	const ownerId = isClan ? profile.ownerId : profileId;
 	if (ownerId !== null && viewer.id === ownerId) return true;
-
+	
 	return viewer.priv !== undefined && (viewer.priv & Priv.staff) !== 0;
 };

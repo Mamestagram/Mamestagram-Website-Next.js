@@ -12,11 +12,11 @@ const emptyResults: SearchResponse = {
 
 export const GET = async (request: NextRequest): Promise<NextResponse<SearchResponse>> => {
 	const query = request.nextUrl.searchParams.get("q")?.trim() ?? "";
-
+	
 	if (!query) return NextResponse.json(emptyResults);
 	if (query.length > 64)
 		return NextResponse.json({ ...emptyResults, error: "Search query is too long." }, { status: 400 });
-
+	
 	try {
 		const [usersPage, clansPage, beatmapsPage] = await Promise.all([
 			searchUsersPage(query, 1, 12),
@@ -33,8 +33,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse<SearchResp
 				beatmaps: beatmapsPage.total
 			}
 		});
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error);
 		return NextResponse.json(
 			{ ...emptyResults, error: "Search is temporarily unavailable." },

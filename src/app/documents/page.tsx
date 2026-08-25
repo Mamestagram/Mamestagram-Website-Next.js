@@ -17,7 +17,7 @@ export default async function DocumentsPage({ searchParams }: DocumentsPageProps
 	const { lang } = await searchParams;
 	void writeLog("GET", `/documents (lang: ${lang})`);
 	const locale: Locale = lang === "ja" ? "ja" : "en";
-
+	
 	return (
 		<>
 			<NameBodyHeader className="documents"/>

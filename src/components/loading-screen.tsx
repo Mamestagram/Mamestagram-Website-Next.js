@@ -14,26 +14,26 @@ export default function LoadingScreen() {
 	const [isReady, setIsReady] = useState(false);
 	const { serverInfo, loadingScreenEmbedUrl } = useUserContext();
 	const marketOrigin = `https://market.${serverInfo.baseDomain}`;
-
+	
 	useEffect(() => {
 		if (!loadingScreenEmbedUrl) return;
-
+		
 		const receiveMessage = (event: MessageEvent<unknown>) => {
 			if (event.origin !== marketOrigin) return;
 			if (event.source !== iframeRef.current?.contentWindow) return;
 			if (!isReadyMessage(event.data)) return;
-
+			
 			setIsReady(true);
 			iframeRef.current.contentWindow?.postMessage(
 				{ type: "mamestagram:loading-play" },
 				marketOrigin
 			);
 		};
-
+		
 		window.addEventListener("message", receiveMessage);
 		return () => window.removeEventListener("message", receiveMessage);
 	}, [loadingScreenEmbedUrl, marketOrigin]);
-
+	
 	return (
 		<section className={styles.screen}
 		         data-embedded={Boolean(loadingScreenEmbedUrl)}

@@ -55,14 +55,14 @@ export default function SupportPriceBar({ labels }: Readonly<{ labels: PriceBarL
 	const parsedInput = Number(normalizedInput);
 	const isInputValid = /^[0-9]+$/.test(normalizedInput) && Number.isInteger(parsedInput) &&
 		parsedInput >= MIN_WEEKS && parsedInput <= MAX_WEEKS;
-
+	
 	const updateWeeks = (value: number) => {
 		if (!Number.isFinite(value)) return;
 		const nextWeeks = clampWeeks(Math.trunc(value));
 		setSelectedWeeks(nextWeeks);
 		setWeeksInput(String(nextWeeks));
 	};
-
+	
 	const updateWeeksInput = (value: string) => {
 		const normalizedValue = normalizeWeeksInput(value);
 		setWeeksInput(value);
@@ -72,7 +72,7 @@ export default function SupportPriceBar({ labels }: Readonly<{ labels: PriceBarL
 			setSelectedWeeks(parsedValue);
 		}
 	};
-
+	
 	const validateWeeksInput = () => {
 		if (!/^[0-9]+$/.test(normalizedInput) || !Number.isFinite(parsedInput)) {
 			setWeeksInput(String(selectedWeeks));
@@ -80,7 +80,7 @@ export default function SupportPriceBar({ labels }: Readonly<{ labels: PriceBarL
 		}
 		updateWeeks(parsedInput);
 	};
-
+	
 	return (
 		<div className={styles.price_calculator} style={priceBarStyle} data-page-enter="box">
 			<div className={styles.price_calculator_heading}>
@@ -90,7 +90,7 @@ export default function SupportPriceBar({ labels }: Readonly<{ labels: PriceBarL
 					<p>{labels.description}</p>
 				</span>
 			</div>
-
+			
 			<div className={styles.price_bar}>
 				<output className={styles.price_tooltip} htmlFor={inputId} aria-live="polite">
 					<strong>{formatPrice(price)}</strong>
@@ -111,7 +111,7 @@ export default function SupportPriceBar({ labels }: Readonly<{ labels: PriceBarL
 					<span>{MAX_WEEKS}</span>
 				</div>
 			</div>
-
+			
 			<div className={styles.price_input_row} data-invalid={!isInputValid}>
 				<label htmlFor={`${inputId}-number`}>{labels.total}</label>
 				<span>
@@ -131,7 +131,8 @@ export default function SupportPriceBar({ labels }: Readonly<{ labels: PriceBarL
 					<small>{labels.weeks}</small>
 				</span>
 				<strong>{formatPrice(price)}</strong>
-				{!isInputValid && <small id={`${inputId}-error`} className={styles.price_input_error} role="alert">{labels.rangeError}</small>}
+				{!isInputValid && <small id={`${inputId}-error`} className={styles.price_input_error}
+				                         role="alert">{labels.rangeError}</small>}
 			</div>
 		</div>
 	);

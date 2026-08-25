@@ -1,6 +1,6 @@
 .page {
 	--not-found-accent: hsl(var(--user-hue), 78%, 72%);
-
+	
 	display: grid;
 	position: relative;
 	min-height: calc(100svh - 70px);
@@ -12,9 +12,8 @@
 
 :global(body.not-found) {
 	background-color: #080a0f;
-	background-image:
-		radial-gradient(circle at 50% 44%, hsla(var(--user-hue), 65%, 52%, .12), transparent 35%),
-		linear-gradient(180deg, #080a0f, #04060a);
+	background-image: radial-gradient(circle at 50% 44%, hsla(var(--user-hue), 65%, 52%, .12), transparent 35%),
+	linear-gradient(180deg, #080a0f, #04060a);
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-size: cover;
@@ -39,9 +38,8 @@
 	width: min(720px, 100%);
 	padding: clamp(42px, 7vw, 72px);
 	align-items: center;
-	background:
-		linear-gradient(145deg, rgba(14, 18, 27, .95), rgba(7, 9, 14, .95)),
-		repeating-linear-gradient(90deg, transparent 0 69px, rgba(255, 255, 255, .025) 69px 70px);
+	background: linear-gradient(145deg, rgba(14, 18, 27, .95), rgba(7, 9, 14, .95)),
+	repeating-linear-gradient(90deg, transparent 0 69px, rgba(255, 255, 255, .025) 69px 70px);
 	border: 1px solid rgba(255, 255, 255, .12);
 	border-radius: 30px;
 	box-shadow: 0 32px 90px rgba(0, 0, 0, .48), inset 0 1px 0 rgba(255, 255, 255, .06);
@@ -104,7 +102,7 @@
 	justify-content: center;
 	flex-wrap: wrap;
 	gap: 12px;
-
+	
 	& a {
 		display: inline-flex;
 		min-height: 52px;
@@ -117,7 +115,7 @@
 		font-size: .82rem;
 		font-weight: 800;
 		transition: color 180ms, background 180ms, border-color 180ms, transform 180ms;
-
+		
 		&:hover,
 		&:focus-visible {
 			border-color: hsla(var(--user-hue), 75%, 72%, .36);
@@ -129,7 +127,7 @@
 .primary_action {
 	color: #eef8ff;
 	background: hsla(var(--user-hue), 58%, 45%, .24);
-
+	
 	&:hover,
 	&:focus-visible {
 		background: hsla(var(--user-hue), 62%, 50%, .34);
@@ -139,7 +137,7 @@
 .secondary_action {
 	color: #aeb7c5;
 	background: rgba(255, 255, 255, .035);
-
+	
 	&:hover,
 	&:focus-visible {
 		color: #f3f7fc;
@@ -158,24 +156,24 @@
 		min-height: calc(100svh - 55px);
 		padding: 24px 16px;
 	}
-
+	
 	.card {
 		padding: 42px 20px;
 		border-radius: 24px;
 	}
-
+	
 	.eyebrow {
 		font-size: .88rem;
 	}
-
+	
 	.description {
 		font-size: 1.02rem;
 	}
-
+	
 	.actions {
 		align-items: stretch;
 		flex-direction: column;
-
+		
 		& a {
 			width: 100%;
 			font-size: .92rem;
@@ -186,7 +184,7 @@
 @media (prefers-reduced-motion: reduce) {
 	.actions a {
 		transition: none;
-
+		
 		&:hover,
 		&:focus-visible {
 			transform: none;

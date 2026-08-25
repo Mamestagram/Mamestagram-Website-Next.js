@@ -26,6 +26,7 @@
 			bottom: 50%;
 			margin-bottom: 8px;
 		}
+		
 		.tooltip-element.up:hover & {
 			bottom: 80%;
 			opacity: 1;
@@ -34,6 +35,7 @@
 		.tooltip-element.down & {
 			bottom: 0;
 		}
+		
 		.tooltip-element.down:hover & {
 			bottom: -50%;
 			opacity: 1;

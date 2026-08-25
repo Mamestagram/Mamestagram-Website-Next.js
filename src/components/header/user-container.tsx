@@ -21,10 +21,10 @@ export default function UserContainer() {
 		setIsSignOutConfirmationOpen(false);
 		startSignOutTransition(() => signout());
 	};
-
+	
 	useEffect(() => {
 		if (!isMenuOpen) return;
-
+		
 		const closeOnOutsideClick = (event: PointerEvent) => {
 			if (event.target instanceof Node && !containerRef.current?.contains(event.target)) {
 				setIsMenuOpen(false);
@@ -37,7 +37,7 @@ export default function UserContainer() {
 				setIsSignOutConfirmationOpen(false);
 			}
 		};
-
+		
 		document.addEventListener("pointerdown", closeOnOutsideClick);
 		document.addEventListener("keydown", closeOnEscape);
 		return () => {
@@ -45,7 +45,7 @@ export default function UserContainer() {
 			document.removeEventListener("keydown", closeOnEscape);
 		};
 	}, [isMenuOpen]);
-
+	
 	if (userInfo.isLoggedIn) {
 		return (
 			<li ref={containerRef} className={`avatar ${styles.container}`}>
@@ -71,7 +71,7 @@ export default function UserContainer() {
 					              priority/>
 					<span className={styles.username}>{userInfo.username}</span>
 				</button>
-
+				
 				<div id={menuId}
 				     className={styles.menu}
 				     role="menu"
@@ -104,7 +104,7 @@ export default function UserContainer() {
 						</button>
 					</div>
 				</div>
-
+				
 				<ConfirmationDialog isOpen={isSignOutConfirmationOpen}
 				                    title="Sign out?"
 				                    description="Are you sure you want to sign out?"

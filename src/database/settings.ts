@@ -134,7 +134,7 @@ const MAX_PAST_NAMES = 3;
 
 const appendPastName = (pastNames: string | null, previousName: string, nextName: string) => {
 	if (previousName === nextName) return pastNames;
-
+	
 	const previousNameKey = previousName.toLocaleLowerCase();
 	const nextNameKey = nextName.toLocaleLowerCase();
 	const previousNames = (pastNames ?? "")
@@ -146,7 +146,7 @@ const appendPastName = (pastNames: string | null, previousName: string, nextName
 			return nameKey !== previousNameKey && nameKey !== nextNameKey;
 		});
 	previousNames.unshift(previousName);
-
+	
 	return previousNames.slice(0, MAX_PAST_NAMES).join(", ") || null;
 };
 
@@ -165,7 +165,7 @@ export const getUserSettings = async (userId: number): Promise<UserSettings | nu
 		])
 		: [[], []] satisfies [BadgeStateRow[], BadgeCatalogRow[]];
 	const selectedBadge = badgeState.at(0)?.selected_badge ?? 0;
-
+	
 	const ownedBadgeIds = parseBadgeIds(badgeState.at(0)?.had_badge ?? null);
 	return {
 		username: user.name,
@@ -206,14 +206,14 @@ export const updateProfileSettings = async (
 		const [users] = await connection.query<ProfileSettingsLockRow[]>(profileSettingsUserForUpdateQuery, [userId]);
 		const currentUser = users.at(0);
 		if (!currentUser) return { success: false, reason: "missing" };
-
+		
 		const safeName = makeSafeName(username);
 		const [conflicts] = await connection.query<RowDataPacket[]>(
 			profileSettingsNameConflictQuery,
 			[safeName, userId]
 		);
 		if (conflicts.length > 0) return { success: false, reason: "conflict" };
-
+		
 		const pastNames = appendPastName(currentUser.past_name, currentUser.name, username);
 		if (schema.visibility === "none")
 			await connection.query(updateDefaultProfileSettingsQuery, [username, safeName, pastNames, userId]);
@@ -241,10 +241,10 @@ export const updateClanSettings = async (
 	const [clans] = await connection.query<ClanSettingsLockRow[]>(clanSettingsForUpdateQuery, [ownerId]);
 	const clan = clans.at(0);
 	if (!clan) return { success: false, reason: "missing" };
-
+	
 	const [conflicts] = await connection.query<RowDataPacket[]>(clanSettingsTagConflictQuery, [tag, clan.id]);
 	if (conflicts.length > 0) return { success: false, reason: "conflict" };
-
+	
 	const pastTags = appendPastName(clan.past_tag, clan.tag, tag);
 	await connection.query(updateClanSettingsQuery, [
 		tag,
@@ -270,7 +270,7 @@ export const updateClanPrivacy = async (ownerId: number, isPrivate: boolean) =>
 		const [clans] = await connection.query<ClanSettingsLockRow[]>(clanSettingsForUpdateQuery, [ownerId]);
 		const clan = clans.at(0);
 		if (!clan) return null;
-
+		
 		const [result] = await connection.query<ResultSetHeader>(
 			updateClanPrivacyQuery,
 			[isPrivate ? 0 : 1, clan.id, ownerId]
@@ -280,12 +280,12 @@ export const updateClanPrivacy = async (ownerId: number, isPrivate: boolean) =>
 
 export const updateSelectedBadge = async (userId: number, badgeId: number) => {
 	if (!(await getSettingsSchema()).canManageBadges) return false;
-
+	
 	return withTransaction(async (connection) => {
 		const [rows] = await connection.query<BadgeOwnershipRow[]>(badgeOwnershipForUpdateQuery, [userId]);
 		const ownership = rows.at(0);
 		if (!ownership) return false;
-
+		
 		if (badgeId !== 0 && !parseBadgeIds(ownership.had_badge).has(badgeId)) return false;
 		await connection.query(updateSelectedBadgeQuery, [badgeId, userId]);
 		return true;

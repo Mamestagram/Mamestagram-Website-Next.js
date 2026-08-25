@@ -28,7 +28,7 @@ export default function SearchBeatmapList({ items: beatmaps, columns = 1, onSele
 			{beatmaps.map((beatmap) => {
 				const primaryDifficulty = beatmap.difficulties.at(0);
 				if (!primaryDifficulty) return null;
-
+				
 				return (
 					<li key={beatmap.setId} data-rendering-item="large">
 						<article className={styles.beatmap_result_card}>
@@ -69,7 +69,8 @@ export default function SearchBeatmapList({ items: beatmaps, columns = 1, onSele
 											      role="img"
 											      aria-label={modeAbbreviation(mode)}
 											      title={modeAbbreviation(mode)}>
-												<i className={`mode-icon mode-${getVanillaMode(mode)}`} aria-hidden="true"></i>
+												<i className={`mode-icon mode-${getVanillaMode(mode)}`}
+												   aria-hidden="true"></i>
 											</span>
 											<strong>
 												<FontAwesome prefix="fas" name="star"/>

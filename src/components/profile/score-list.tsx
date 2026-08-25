@@ -69,7 +69,7 @@ export default function ScoreList({ children, count, title }: {
 		const activeTarget = activeTooltipTargetRef.current;
 		if (!activeTarget) return;
 		if (event.relatedTarget instanceof Node && activeTarget.contains(event.relatedTarget)) return;
-
+		
 		activeTooltipTargetRef.current = null;
 		setTooltip(null);
 	};
@@ -78,7 +78,7 @@ export default function ScoreList({ children, count, title }: {
 		setTooltip(null);
 		setIsOpen(false);
 	}, []);
-
+	
 	useLayoutEffect(() => {
 		const element = tooltipRef.current;
 		if (!element || !tooltip) return;
@@ -91,7 +91,7 @@ export default function ScoreList({ children, count, title }: {
 		}
 		if (shift !== 0) setTooltip((current) => current ? { ...current, left: current.left + shift } : null);
 	}, [tooltip]);
-
+	
 	useEffect(() => {
 		if (!isOpen) return;
 		const previousOverflow = document.body.style.overflow;
@@ -102,7 +102,7 @@ export default function ScoreList({ children, count, title }: {
 				return;
 			}
 			if (event.key !== "Tab" || !dialogRef.current) return;
-
+			
 			const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
 				'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
 			);
@@ -118,18 +118,18 @@ export default function ScoreList({ children, count, title }: {
 				first.focus();
 			}
 		};
-
+		
 		document.body.style.overflow = "hidden";
 		document.addEventListener("keydown", handleDialogKeys);
 		requestAnimationFrame(() => closeButtonRef.current?.focus());
-
+		
 		return () => {
 			document.body.style.overflow = previousOverflow;
 			document.removeEventListener("keydown", handleDialogKeys);
 			requestAnimationFrame(() => returnFocusTarget?.focus());
 		};
 	}, [closeScores, isOpen]);
-
+	
 	return (
 		<>
 			<div className={`${styles.score_list} ${styles.score_list_preview}`}

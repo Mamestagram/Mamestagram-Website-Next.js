@@ -18,7 +18,7 @@ const field = (formData: FormData, name: string) => String(formData.get(name) ??
 const verifyRecaptcha = async (token: string) => {
 	if (Boolean(Number(process.env.LOCAL_ONLY))) return true;
 	if (!token || !process.env.RECAPTCHA_SECRET_KEY) return false;
-
+	
 	try {
 		const body = new URLSearchParams({
 			secret: process.env.RECAPTCHA_SECRET_KEY,
@@ -32,8 +32,7 @@ const verifyRecaptcha = async (token: string) => {
 		if (!response.ok) return false;
 		const result = await response.json() as { success?: boolean, score?: number };
 		return result.success === true && (result.score === undefined || result.score >= 0.5);
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		void writeError(error);
 		return false;
 	}
@@ -51,7 +50,7 @@ export const register = async (_prevState: AuthState, formData: FormData): Promi
 	const password = field(formData, "password");
 	const confirmPassword = field(formData, "confirmPassword");
 	const errors: AuthState["errors"] = {};
-
+	
 	if (field(formData, "website")) return { errors: {}, message: "Registration could not be completed." };
 	if (username.length < 2 || username.length > 15)
 		errors.username = "Username must be between 2 and 15 characters.";
@@ -64,10 +63,10 @@ export const register = async (_prevState: AuthState, formData: FormData): Promi
 	if (confirmPassword !== password)
 		errors.confirmPassword = "Passwords do not match.";
 	if (Object.keys(errors).length > 0) return { errors };
-
+	
 	if (!await verifyRecaptcha(field(formData, "recaptcha")))
 		return { errors: { recaptcha: "Verification failed. Please try again." } };
-
+	
 	try {
 		const conflict = await findRegistrationConflict(username, email);
 		if (conflict) {
@@ -77,16 +76,15 @@ export const register = async (_prevState: AuthState, formData: FormData): Promi
 				errors.email = "This email address is already in use.";
 			return { errors };
 		}
-
+		
 		const user = await createUser({ username, email, password, country: await getCountry() });
 		await createSession(user);
 		await createRegistrationSuccessFlash();
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		await writeError(error);
 		return { errors: {}, message: "Registration could not be completed. Please try again later." };
 	}
-
+	
 	revalidatePath("/", "layout");
 	redirect("/");
 }
@@ -95,22 +93,21 @@ export const signin = async (_prevState: AuthState, formData: FormData): Promise
 	const login = field(formData, "login").trim();
 	const password = field(formData, "password");
 	const errors: AuthState["errors"] = {};
-
+	
 	if (!login) errors.login = "Enter your username or email address.";
 	if (!password) errors.password = "Enter your password.";
 	if (Object.keys(errors).length > 0) return { errors };
-
+	
 	try {
 		const user = await getUserByLogin(login);
 		if (!user || !await verifyPassword(password, user.passwordHash))
 			return { errors: {}, message: "The username/email address or password is incorrect." };
 		await createSession(user);
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		await writeError(error);
 		return { errors: {}, message: "Sign in is temporarily unavailable. Please try again later." };
 	}
-
+	
 	revalidatePath("/", "layout");
 	redirect("/?signin=success");
 }

@@ -154,15 +154,15 @@ export default function ImageCropDialog({
 		opacity: isReady ? 1 : 0,
 		transform: `translate(-50%, -50%) scale(${zoom})`
 	};
-
+	
 	useEffect(() => {
 		onCancelRef.current = onCancel;
 	}, [onCancel]);
-
+	
 	useEffect(() => {
 		isProcessingRef.current = isProcessing;
 	}, [isProcessing]);
-
+	
 	useEffect(() => {
 		if (!isClient) return;
 		const frame = frameRef.current;
@@ -177,7 +177,7 @@ export default function ImageCropDialog({
 		observer.observe(frame);
 		return () => observer.disconnect();
 	}, [isClient]);
-
+	
 	useEffect(() => {
 		if (!isClient) return;
 		const isCompactViewport = window.matchMedia("(max-width: 620px)").matches;
@@ -197,13 +197,13 @@ export default function ImageCropDialog({
 			document.removeEventListener("keydown", closeOnEscape);
 		};
 	}, [isClient]);
-
+	
 	const updateZoom = (value: number) => {
 		const nextZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value));
 		setZoom(nextZoom);
 		setPosition((current) => clampPosition(current, frameSize, imageSize, nextZoom));
 	};
-
+	
 	const startDragging = (event: PointerEvent<HTMLDivElement>) => {
 		if (!isReady || isProcessing) return;
 		event.currentTarget.setPointerCapture(event.pointerId);
@@ -214,7 +214,7 @@ export default function ImageCropDialog({
 			position: safePosition
 		};
 	};
-
+	
 	const dragImage = (event: PointerEvent<HTMLDivElement>) => {
 		const drag = dragRef.current;
 		if (!drag || drag.pointerId !== event.pointerId) return;
@@ -223,14 +223,14 @@ export default function ImageCropDialog({
 			y: drag.position.y + event.clientY - drag.clientY
 		}, frameSize, imageSize, zoom));
 	};
-
+	
 	const stopDragging = (event: PointerEvent<HTMLDivElement>) => {
 		if (dragRef.current?.pointerId !== event.pointerId) return;
 		if (event.currentTarget.hasPointerCapture(event.pointerId))
 			event.currentTarget.releasePointerCapture(event.pointerId);
 		dragRef.current = null;
 	};
-
+	
 	const moveWithKeyboard = (event: KeyboardEvent<HTMLDivElement>) => {
 		const directions: Partial<Record<string, Position>> = {
 			ArrowUp: { x: 0, y: -1 },
@@ -247,7 +247,7 @@ export default function ImageCropDialog({
 			y: safePosition.y + direction.y * distance
 		}, frameSize, imageSize, zoom));
 	};
-
+	
 	const applyCrop = async () => {
 		const image = imageRef.current;
 		if (!image || !isReady || isProcessing) return;
@@ -296,17 +296,15 @@ export default function ImageCropDialog({
 				getOutputName(sourceName, mediaType, outputFormat.extension),
 				{ type: blob.type, lastModified: Date.now() }
 			));
-		}
-		catch (cropError: unknown) {
+		} catch (cropError: unknown) {
 			setError(cropError instanceof Error ? cropError.message : "The cropped image could not be created.");
-		}
-		finally {
+		} finally {
 			setIsProcessing(false);
 		}
 	};
-
+	
 	if (!isClient) return null;
-
+	
 	return createPortal(
 		<div className={styles.overlay}
 		     onMouseDown={(event) => {
@@ -328,11 +326,11 @@ export default function ImageCropDialog({
 						<FontAwesome prefix="fas" name="xmark"/>
 					</button>
 				</div>
-
+				
 				<p id={descriptionId} className={styles.instructions}>
 					Drag the image to reposition it, then use the slider to zoom.
 				</p>
-
+				
 				<div ref={frameRef}
 				     className={styles.crop_frame}
 				     data-media={mediaType}
@@ -362,13 +360,14 @@ export default function ImageCropDialog({
 					       onError={() => setError("The selected image could not be opened.")}/>
 					{!isReady && <span className={styles.loading}>Preparing image…</span>}
 				</div>
-
+				
 				<div className={styles.zoom_control}>
 					<span><FontAwesome prefix="fas" name="magnifying-glass"/> Zoom</span>
 					<button type="button"
 					        aria-label="Zoom out"
 					        disabled={isProcessing || zoom <= MIN_ZOOM}
-					        onClick={() => updateZoom(zoom - .1)}>−</button>
+					        onClick={() => updateZoom(zoom - .1)}>−
+					</button>
 					<input type="range"
 					       min={MIN_ZOOM}
 					       max={MAX_ZOOM}
@@ -380,16 +379,17 @@ export default function ImageCropDialog({
 					<button type="button"
 					        aria-label="Zoom in"
 					        disabled={isProcessing || zoom >= MAX_ZOOM}
-					        onClick={() => updateZoom(zoom + .1)}>+</button>
+					        onClick={() => updateZoom(zoom + .1)}>+
+					</button>
 					<output>{Math.round(zoom * 100)}%</output>
 				</div>
-
+				
 				<div className={styles.output_info}>
 					<FontAwesome prefix="fas" name="image"/>
 					Output: {config.output.width} × {config.output.height} {outputFormat.extension.toUpperCase()}
 				</div>
 				{error && <p className={styles.error} role="alert">{error}</p>}
-
+				
 				<div className={styles.actions}>
 					<button type="button" disabled={isProcessing} onClick={onCancel}>Cancel</button>
 					<button type="button"

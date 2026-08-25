@@ -12,8 +12,7 @@ const getRequestHostname = (request: NextRequest) => {
 	if (!host) return request.nextUrl.hostname;
 	try {
 		return new URL(`http://${host}`).hostname;
-	}
-	catch {
+	} catch {
 		return request.nextUrl.hostname;
 	}
 };
@@ -44,11 +43,11 @@ export const proxy = async (request: NextRequest) => {
 	if (shouldRedirectToHttps(request)) {
 		return NextResponse.redirect(getSecureUrl(request), 308);
 	}
-
+	
 	const response = NextResponse.next();
 	const { pathname } = request.nextUrl;
 	if (pathname.startsWith("/api/profile-visual/")) return response;
-
+	
 	const cacheControl = PUBLIC_ASSET_PATTERN.test(pathname) ? REVALIDATE : NO_STORE;
 	response.headers.set(
 		"Cache-Control",

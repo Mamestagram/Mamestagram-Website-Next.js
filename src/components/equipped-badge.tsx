@@ -8,7 +8,7 @@ export default function EquippedBadge({ badge, sizes, priority = false }: Readon
 	priority?: boolean
 }>) {
 	if (!badge) return null;
-
+	
 	return (
 		<span className={styles.badge} data-avatar-badge={badge.id} aria-hidden="true">
 			<Image src={`/api/profile-visual/profile/badge/${badge.id}`}

@@ -41,7 +41,7 @@ const difficultyColor = (difficulty: number) => {
 		const color = difficultyColorStops[0];
 		return `hsl(${color.hue}, ${color.saturation}%, ${color.lightness}%)`;
 	}
-
+	
 	const lower = difficultyColorStops[upperIndex - 1];
 	const upper = difficultyColorStops[upperIndex];
 	const progress = (rating - lower.rating) / (upper.rating - lower.rating);
@@ -49,7 +49,7 @@ const difficultyColor = (difficulty: number) => {
 	const hue = (lower.hue + hueDistance * progress + 360) % 360;
 	const saturation = lower.saturation + (upper.saturation - lower.saturation) * progress;
 	const lightness = lower.lightness + (upper.lightness - lower.lightness) * progress;
-
+	
 	return `hsl(${hue.toFixed(1)}, ${saturation.toFixed(1)}%, ${lightness.toFixed(1)}%)`;
 };
 
@@ -83,7 +83,7 @@ export default async function BeatmapHero({ map, difficulties }: Readonly<{
 	const cover = map.server === "osu!" && map.setId > 0
 		? `https://assets.ppy.sh/beatmaps/${map.setId}/covers/cover.jpg`
 		: "/images/banner/maplist.jpg";
-
+	
 	return (
 		<section className={styles.hero}>
 			<div className={styles.hero_backdrop}>
@@ -142,15 +142,16 @@ export default async function BeatmapHero({ map, difficulties }: Readonly<{
 							<FontAwesome prefix="fas" name="star"/>
 							<span>{map.difficulty.toFixed(2)}</span>
 						</span>
-						<span className={styles.mapper}>mapped by <a href={`https://osu.ppy.sh/users/${encodeURIComponent(map.creator)}`}
-						                                                   target="_blank"
-						                                                   rel="noopener noreferrer">{map.creator}</a></span>
+						<span className={styles.mapper}>mapped by <a
+							href={`https://osu.ppy.sh/users/${encodeURIComponent(map.creator)}`}
+							target="_blank"
+							rel="noopener noreferrer">{map.creator}</a></span>
 					</div>
 					<div className={styles.hero_actions}>
-						{map.setId > 0 && <AudioPreview setId={map.setId}/>} 
+						{map.setId > 0 && <AudioPreview setId={map.setId}/>}
 						{map.setId > 0 && <a href={`https://api.nerinyan.moe/d/${map.setId}`}
-						                         target="_blank"
-						                         rel="noopener noreferrer">
+						                     target="_blank"
+						                     rel="noopener noreferrer">
 							<FontAwesome prefix="fas" name="download"/><span>Download</span>
 						</a>}
 						{map.server === "osu!" && map.setId > 0 && map.id > 0 &&
@@ -174,9 +175,14 @@ export default async function BeatmapHero({ map, difficulties }: Readonly<{
 					</div>
 					<div className={styles.hero_overview}>
 						<div className={styles.quick_stats}>
-							<span><FontAwesome prefix="fad" name="clock"/><small>Length</small><strong>{formatDuration(map.totalLength)}</strong></span>
-							<span><FontAwesome prefix="fad" name="gauge-high"/><small>BPM</small><strong><FormattedNumber value={Math.round(map.bpm)}/></strong></span>
-							<span><FontAwesome prefix="fad" name="link"/><small>Max combo</small><strong><FormattedNumber value={map.maxCombo}/><small>x</small></strong></span>
+							<span><FontAwesome prefix="fad"
+							                   name="clock"/><small>Length</small><strong>{formatDuration(map.totalLength)}</strong></span>
+							<span><FontAwesome prefix="fad"
+							                   name="gauge-high"/><small>BPM</small><strong><FormattedNumber
+								value={Math.round(map.bpm)}/></strong></span>
+							<span><FontAwesome prefix="fad"
+							                   name="link"/><small>Max combo</small><strong><FormattedNumber
+								value={map.maxCombo}/><small>x</small></strong></span>
 						</div>
 						<div className={styles.attribute_grid}>
 							{[

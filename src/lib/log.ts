@@ -51,13 +51,12 @@ const getDate = () => {
 
 const getIpAddress = async () => {
 	if (isProductionBuild()) return UNKNOWN_IP;
-
+	
 	try {
 		const requestHeaders = await headers();
 		const forwardedFor = requestHeaders.get("x-forwarded-for")?.split(",").at(0)?.trim();
 		return forwardedFor || requestHeaders.get("x-real-ip")?.trim() || UNKNOWN_IP;
-	}
-	catch {
+	} catch {
 		return UNKNOWN_IP;
 	}
 };
@@ -66,8 +65,7 @@ const writeFile = async (dirPath: string, filePath: string, data: string) => {
 	try {
 		await mkdir(dirPath, { recursive: true });
 		await appendFile(filePath, data);
-	}
-	catch (error: unknown) {
+	} catch (error: unknown) {
 		console.error(`Failed to append log file: ${filePath}`, error);
 	}
 };
@@ -107,7 +105,7 @@ export const writeLog = async (method: "GET" | "POST", pathname: string) => {
 		console.error("LOG_DIR is not configured.");
 		return;
 	}
-
+	
 	const ip = await getIpAddress();
 	const entry = `[${date.datetime}] ${method} ${escapeLogValue(pathname)} (${ip})`;
 	console.log(entry);
@@ -121,7 +119,7 @@ export const writeError = async (error: unknown, context: ErrorLogContext = {}) 
 		console.error("ERR_DIR is not configured.", error);
 		return;
 	}
-
+	
 	const details = getErrorDetails(error).slice(0, MAX_ERROR_DETAILS_LENGTH);
 	const contextualDetails = `${getErrorContext(context)}${details}`;
 	const now = Date.now();
@@ -133,7 +131,7 @@ export const writeError = async (error: unknown, context: ErrorLogContext = {}) 
 			if (now - writtenAt >= ERROR_DEDUPLICATION_MS) errorHistory.delete(key);
 		}
 	}
-
+	
 	const ip = context.ipAddress ?? await getIpAddress();
 	const message = escapeLogValue(contextualDetails);
 	const entry = `[${date.datetime}] ERROR ${message} (${escapeLogValue(ip)})`;

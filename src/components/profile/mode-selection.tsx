@@ -85,17 +85,17 @@ export default function ProfileModeSelection({ id, mode, isClan, isDans }: {
 	const baseMode = getBaseMode(mode);
 	const modeLabel = modeGroups.find((group) => group.mode === baseMode)?.label ?? "Mode";
 	const optionLabel = getOptionLabel(mode, isDans);
-
+	
 	useEffect(() => {
 		if (!isOpen) return;
-
+		
 		const closeOnOutsideClick = (event: PointerEvent) => {
 			if (!wrapperRef.current?.contains(event.target as Node)) setIsOpen(false);
 		};
 		const closeOnEscape = (event: KeyboardEvent) => {
 			if (event.key === "Escape") setIsOpen(false);
 		};
-
+		
 		document.addEventListener("pointerdown", closeOnOutsideClick);
 		document.addEventListener("keydown", closeOnEscape);
 		return () => {
@@ -103,13 +103,13 @@ export default function ProfileModeSelection({ id, mode, isClan, isDans }: {
 			document.removeEventListener("keydown", closeOnEscape);
 		};
 	}, [isOpen]);
-
+	
 	useEffect(() => {
 		if (isOpen || !isMenuMounted) return;
 		const unmountTimer = window.setTimeout(() => setIsMenuMounted(false), 260);
 		return () => window.clearTimeout(unmountTimer);
 	}, [isOpen, isMenuMounted]);
-
+	
 	const toggleMenu = () => {
 		if (isOpen) {
 			setIsOpen(false);
@@ -118,12 +118,12 @@ export default function ProfileModeSelection({ id, mode, isClan, isDans }: {
 		setIsMenuMounted(true);
 		setIsOpen(true);
 	};
-
+	
 	const getHref = (option: ModeOption) => {
 		const queries = [isClan ? "clan" : "", option.dans ? "dans" : ""].filter(Boolean);
 		return `/profile/${id}/${option.mode}${queries.length > 0 ? `?${queries.join("&")}` : ""}`;
 	};
-
+	
 	return (
 		<div ref={wrapperRef} className={styles.profile_mode_selection}>
 			<button type="button"
@@ -138,7 +138,7 @@ export default function ProfileModeSelection({ id, mode, isClan, isDans }: {
 				</span>
 				<FontAwesome className={styles.profile_mode_chevron} prefix="fas" name="chevron-down"/>
 			</button>
-
+			
 			{isMenuMounted &&
 				<div className={styles.profile_mode_menu}
 				     role="menu"

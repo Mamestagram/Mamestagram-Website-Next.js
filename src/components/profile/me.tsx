@@ -15,7 +15,7 @@ export default function AboutMe({ bbCode, canEdit = false, profileId, isClan, mo
 }) {
 	const html = bbCodeParser.parseToHtml(bbCode ?? "");
 	const hasContent = html.trim().length > 0;
-
+	
 	return (
 		<div className={classNames(styles.section_box, styles.about_me)} data-page-enter="box">
 			{canEdit ? (

@@ -23,7 +23,7 @@ export default function ClanMembers({ clanId, members, mode, isDans, canManage, 
 	baseDomain: string
 }) {
 	const profileQuery = isDans ? "?dans" : "";
-
+	
 	return (
 		<section className={styles.clan_members}>
 			<div className={styles.clan_member_grid_header}>
@@ -35,23 +35,23 @@ export default function ClanMembers({ clanId, members, mode, isDans, canManage, 
 			</div>
 			{members.length > 0
 				? <ul className={styles.clan_member_grid}>
-						{members.map((member) => {
-							const countryCode = member.country.trim().toLowerCase();
-							const hasCountry = /^[a-z]{2}$/.test(countryCode);
-							const role = getRoleMeta(member);
-							return (
-								<li key={member.id}
-								    className={styles.clan_member_grid_item}
-								    data-rendering-item="compact">
-									<Link className={styles.clan_member_card}
-									      href={`/profile/${member.id}/${mode}${profileQuery}`}>
-										<PlayerAvatar userId={member.id}
-										              name={member.name}
-										              baseDomain={baseDomain}
-										              cosmetics={member.cosmetics}
-										              className={styles.clan_member_grid_avatar}
-										              sizes="38px"/>
-										<span className={styles.clan_member_grid_copy}>
+					{members.map((member) => {
+						const countryCode = member.country.trim().toLowerCase();
+						const hasCountry = /^[a-z]{2}$/.test(countryCode);
+						const role = getRoleMeta(member);
+						return (
+							<li key={member.id}
+							    className={styles.clan_member_grid_item}
+							    data-rendering-item="compact">
+								<Link className={styles.clan_member_card}
+								      href={`/profile/${member.id}/${mode}${profileQuery}`}>
+									<PlayerAvatar userId={member.id}
+									              name={member.name}
+									              baseDomain={baseDomain}
+									              cosmetics={member.cosmetics}
+									              className={styles.clan_member_grid_avatar}
+									              sizes="38px"/>
+									<span className={styles.clan_member_grid_copy}>
 											<span className={styles.clan_member_grid_name}>
 								{hasCountry
 									? <FloatingCountryFlag code={countryCode}/>
@@ -63,16 +63,16 @@ export default function ClanMembers({ clanId, members, mode, isDans, canManage, 
 												{role.label}
 											</small>
 										</span>
-									</Link>
-									{canManage && !member.isOwner &&
-										<KickClanMemberButton clanId={clanId}
-										                      memberId={member.id}
-										                      memberName={member.name}
-										                      mode={mode}/>}
-								</li>
-							);
-						})}
-					</ul>
+								</Link>
+								{canManage && !member.isOwner &&
+									<KickClanMemberButton clanId={clanId}
+									                      memberId={member.id}
+									                      memberName={member.name}
+									                      mode={mode}/>}
+							</li>
+						);
+					})}
+				</ul>
 				: <div className={styles.no_clan_members} role="status">
 					<FontAwesome prefix="fad" name="user-slash"/>
 					<strong>No members found</strong>

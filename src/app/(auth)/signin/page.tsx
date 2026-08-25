@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Sign in" };
 
 export default function SignInPage() {
 	void writeLog("GET", "/signin");
-
+	
 	return (
 		<>
 			<AuthForm type="signin"/>

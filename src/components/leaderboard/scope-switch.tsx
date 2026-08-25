@@ -12,8 +12,7 @@ import styles from "@s/leaderboard.module.css";
 const getCountryName = (country: string) => {
 	try {
 		return new Intl.DisplayNames(["en"], { type: "region" }).of(country.toUpperCase()) ?? country.toUpperCase();
-	}
-	catch {
+	} catch {
 		return country.toUpperCase();
 	}
 };
@@ -39,17 +38,17 @@ export default function LeaderboardScopeSwitch({ mode, sortBy, countries, countr
 		return first.name.localeCompare(second.name);
 	}), [countries, preferredCountry]);
 	const selectedScope = isClan ? "clans" : country ? "country" : "global";
-
+	
 	useEffect(() => {
 		if (!isCountryMenuOpen) return;
-
+		
 		const closeOnOutsideClick = (event: PointerEvent) => {
 			if (!switchRef.current?.contains(event.target as Node)) setIsCountryMenuOpen(false);
 		};
 		const closeOnEscape = (event: KeyboardEvent) => {
 			if (event.key === "Escape") setIsCountryMenuOpen(false);
 		};
-
+		
 		document.addEventListener("pointerdown", closeOnOutsideClick);
 		document.addEventListener("keydown", closeOnEscape);
 		return () => {
@@ -57,7 +56,7 @@ export default function LeaderboardScopeSwitch({ mode, sortBy, countries, countr
 			document.removeEventListener("keydown", closeOnEscape);
 		};
 	}, [isCountryMenuOpen]);
-
+	
 	return (
 		<nav ref={switchRef}
 		     className={styles.leaderboard_scope_switch}
@@ -98,7 +97,7 @@ export default function LeaderboardScopeSwitch({ mode, sortBy, countries, countr
 							      role="menuitem"
 							      aria-current={country === option.code ? "page" : undefined}
 							      className={classNames({ [styles.selected_country]: country === option.code })}
-								      onClick={() => setIsCountryMenuOpen(false)}>
+							      onClick={() => setIsCountryMenuOpen(false)}>
 								<i className={`fi fi-${option.code}`} aria-hidden="true"/>
 								<span>{option.name}</span>
 							</Link>

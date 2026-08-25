@@ -8,7 +8,7 @@ export default function CollectionMedals({ imgSrc, collected, total }: Readonly<
 	total: number
 }>) {
 	const collectedRatio = total > 0 ? collected / total * 100 : 0;
-
+	
 	return (
 		<>
 			<Image className={styles.glay} src={imgSrc}

@@ -33,14 +33,14 @@ export default async function BeatmapPage({ params, searchParams }: Readonly<{
 	const [{ set_id, map_id }, query] = await Promise.all([params, searchParams]);
 	const queries = `(mode: ${query.mode}, mods: ${query.mods})`;
 	void writeLog("GET", `/beatmaps/${set_id}/${map_id} ${queries}`);
-
+	
 	const setId = parseId(set_id), mapId = parseId(map_id);
 	if (setId === null || mapId === null) notFound();
-
+	
 	const map = await getBeatmap(setId, mapId);
 	if (!map) notFound();
 	const difficulties = getBeatmapDifficulties(map.setId, map.server);
-
+	
 	return (
 		<div className={styles.page}>
 			<BeatmapHero map={map} difficulties={difficulties}/>
