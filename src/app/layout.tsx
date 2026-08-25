@@ -59,8 +59,10 @@ export const metadata: Metadata = {
 		default: "Home | Mamestagram",
 		template: "%s | Mamestagram",
 	},
-	description:
-		"Welcome to Mamestagram! This is an osu! private server operated by Mamesosu Dev Team.",
+	description: "Welcome to Mamestagram! This is an osu! private server operated by Mamesosu Dev Team.",
+	icons: {
+		icon: "/favicon.ico"
+	}
 };
 
 export const viewport: Viewport = {
