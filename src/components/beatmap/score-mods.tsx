@@ -53,9 +53,13 @@ const getModTone = (mod: Mods): ModTone => {
 	return "other";
 };
 
-export default function ScoreMods({ mods }: Readonly<{ mods: number }>) {
+export default function ScoreMods({ mods, hideNoMod = false }: Readonly<{
+	mods: number,
+	hideNoMod?: boolean
+}>) {
 	const scoreMods = getScoreMods(mods);
-	if (scoreMods.length === 0) return <span className={styles.no_mod} data-tone="other">NM</span>;
+	if (scoreMods.length === 0)
+		return hideNoMod ? null : <span className={styles.no_mod} data-tone="other">NM</span>;
 	return (
 		<span className={styles.mod_list}>
 			{scoreMods.map(({ mod }) =>

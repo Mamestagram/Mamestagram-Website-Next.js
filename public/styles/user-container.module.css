@@ -36,7 +36,7 @@
 .username {
 	display: block;
 	min-width: 0;
-	color: #fdfdfd;
+	color: hsl(var(--user-hue), 0%, 99.216%);
 	font-size: .78rem;
 	line-height: 1.15;
 	text-align: left;
@@ -103,7 +103,7 @@
 :global([data-site-header] .navigation li.avatar) .menu button:not(:disabled):hover,
 :global([data-site-header] .navigation li.avatar) .menu button:not(:disabled):focus-visible {
 	background-color: hsla(var(--user-hue), 45%, 55%, .18);
-	color: #fff;
+	color: hsl(var(--user-hue), 0%, 100%);
 	outline: none;
 }
 

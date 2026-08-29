@@ -17,19 +17,27 @@ export default function PlayerScoreValue({ i, map, scope, isDans }: {
 		case ScoreScope.firstPlace:
 		case ScoreScope.recentPlayed:
 			const scoreMap = map as PlayerScoreMap;
+			const status = Number(scoreMap.status);
+			const performance = Number(scoreMap.pp);
+			const isLoved = status === BeatmapStatus.loved;
+			const hasPerformance = Number.isFinite(performance)
+				&& (performance > 0
+					|| status === BeatmapStatus.ranked
+					|| status === BeatmapStatus.approved
+					|| isLoved);
 			return (
 				<>
 					<span
-						className={classNames(styles.recorded, { [styles.not_taken]: scoreMap.status !== BeatmapStatus.ranked && scoreMap.status !== BeatmapStatus.approved })}>
-						{(scoreMap.status !== BeatmapStatus.ranked && scoreMap.status !== BeatmapStatus.approved && "-") ||
-							<><span><FormattedNumber value={Math.round(scoreMap.pp)}/></span><span
+						className={classNames(styles.recorded, { [styles.not_taken]: !hasPerformance })}>
+						{(!hasPerformance && "-") ||
+							<><span><FormattedNumber value={Math.round(performance)}/></span><span
 								className={styles.pp_label}>pp</span></>}
 					</span>
-					{!isDans && scope === ScoreScope.bestPP &&
+					{!isDans && scope === ScoreScope.bestPP && hasPerformance &&
 						<span className={styles.weighted}>
-							(<FormattedNumber value={Math.round(scoreMap.pp * 0.95 ** i)}/>pp)
+							(<FormattedNumber value={Math.round(performance * 0.95 ** i)}/>pp)
 						</span>}
-					{scope !== ScoreScope.bestPP && scoreMap.status === BeatmapStatus.loved &&
+					{scope !== ScoreScope.bestPP && isLoved &&
 						<span className={styles.loved}>Loved</span>}
 				</>
 			);

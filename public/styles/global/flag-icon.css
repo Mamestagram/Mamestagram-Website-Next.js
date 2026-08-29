@@ -17,8 +17,8 @@
 		position: absolute;
 		left: 50%;
 		bottom: 60%;
-		background-color: #17171c;
-		color: #fdfdfd;
+		background-color: hsl(var(--user-hue), 9.804%, 10%);
+		color: hsl(var(--user-hue), 0%, 99.216%);
 		font-size: 0.8em;
 		line-height: 1;
 		width: auto;
@@ -43,8 +43,8 @@
 	z-index: 10000;
 	padding: 8px;
 	pointer-events: none;
-	color: #fdfdfd;
-	background-color: #17171c;
+	color: hsl(var(--user-hue), 0%, 99.216%);
+	background-color: hsl(var(--user-hue), 9.804%, 10%);
 	border-radius: 10px;
 	box-shadow: var(--glass-box-shadow-dark);
 	font-size: .8rem;
@@ -65,7 +65,7 @@
 		top: calc(100% - 1px);
 		left: 50%;
 		border: 7px solid transparent;
-		border-top-color: #17171c;
+		border-top-color: hsl(var(--user-hue), 9.804%, 10%);
 		transform: translateX(-50%);
 	}
 }

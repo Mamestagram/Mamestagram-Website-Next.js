@@ -56,7 +56,7 @@ const supportData = {
 			],
 			perksTitle: "サポーター特典",
 			perksLead: "通常の状態とMamestagram Supporterで利用できる追加機能を比較できます。",
-			labels: { free: "通常", supporter: "Supporter", available: "利用できます", unavailable: "利用できません" },
+			labels: { free: "通常", supporter: "サポーター", available: "利用できます", unavailable: "利用できません" },
 			subscriptionTitle: "サポーターになる",
 			subscriptionLead: "Ko-fiでMamestagramのメンバーシップに参加すると、アカウントへサポーター権限が自動的に付与されます。",
 			cancelNote: "加入後すぐにキャンセルした場合でも、翌月の同日まではサポーターの状態が維持されます。",
@@ -147,6 +147,7 @@ const supportData = {
 					}
 				}
 			},
+			/*
 			{
 				icon: "browser",
 				title: "Web Features",
@@ -160,6 +161,7 @@ const supportData = {
 					}
 				}
 			}
+			*/
 		],
 		ja: [
 			{
@@ -214,12 +216,12 @@ const supportData = {
 				icon: "badge-check",
 				title: "サポーターバッジ",
 				free: {
-					body: "プロフィールにはSupporterバッジが表示されません。",
-					media: { type: "image", src: `${mediaRoot}/role-3.png`, alt: "Supporterバッジなしのプロフィール" }
+					body: "プロフィールにはサポーターバッジが表示されません。",
+					media: { type: "image", src: `${mediaRoot}/role-3.png`, alt: "サポーターバッジなしのプロフィール" }
 				},
 				supporter: {
-					body: "プロフィールページに専用のSupporterバッジが追加されます。",
-					media: { type: "image", src: `${mediaRoot}/role-51.png`, alt: "Supporterバッジ付きプロフィール" }
+					body: "プロフィールページに専用のサポーターバッジが追加されます。",
+					media: { type: "image", src: `${mediaRoot}/role-51.png`, alt: "サポーターバッジ付きプロフィール" }
 				}
 			},
 			{
@@ -234,6 +236,7 @@ const supportData = {
 					}
 				}
 			},
+			/*
 			{
 				icon: "browser",
 				title: "Web機能",
@@ -247,6 +250,7 @@ const supportData = {
 					}
 				}
 			}
+			*/
 		]
 	}
 } as const;

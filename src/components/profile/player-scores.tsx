@@ -88,7 +88,11 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 								</span>
 							</span>}
 						<div className={styles.map_meta}>
-							<PlayerScoreHeading artist={map.artist} title={map.title}/>
+							<PlayerScoreHeading artist={map.artist}
+							                    title={map.title}
+							                    mods={scope === ScoreScope.mostPlayed
+								                    ? undefined
+								                    : (map as PlayerScoreMap).mods}/>
 							<p className={styles.map_details}>
 								<span className={styles.difficulty}>
 									<FontAwesome prefix="fas" name="layer-group"/>

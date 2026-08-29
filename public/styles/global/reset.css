@@ -40,11 +40,11 @@ body {
 	min-width: 0;
 	max-width: 100%;
 	overflow-x: clip;
-	background-color: #000;
+	background-color: hsl(var(--user-hue), 0%, 0%);
 	font-family: var(--font-fragment-mono), sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	color: #fdfdfd;
+	color: hsl(var(--user-hue), 0%, 99.216%);
 	margin: 0;
 	scroll-behavior: smooth;
 	-ms-overflow-style: none;
@@ -55,7 +55,7 @@ body::-webkit-scrollbar {
 }
 
 body::-webkit-scrollbar-track {
-	background-color: #fdfdfd;
+	background-color: hsl(var(--user-hue), 0%, 99.216%);
 }
 
 body::-webkit-scrollbar-thumb {

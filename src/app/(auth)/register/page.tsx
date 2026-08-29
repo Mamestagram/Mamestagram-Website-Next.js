@@ -12,7 +12,7 @@ export default function RegisterPage() {
 		<>
 			<AuthForm type="register"
 			          recaptchaSiteKey={process.env.RECAPTCHA_SITE_KEY}
-			          recaptchaEnabled={!Boolean(Number(process.env.LOCAL_ONLY))}/>
+			          recaptchaEnabled={!Boolean(Number(process.env.RECAPTCHA_ENABLED))}/>
 			<NameBodyHeader className="register"/>
 		</>
 	);

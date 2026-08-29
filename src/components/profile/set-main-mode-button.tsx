@@ -7,10 +7,14 @@ import type { OsuMode } from "@/lib/mode";
 import FontAwesome from "@/components/font-awesome";
 import styles from "@s/profile.module.css";
 
-export default function SetMainModeButton({ profileId, mode, isClan }: Readonly<{
-	profileId: number,
-	mode: OsuMode,
-	isClan: boolean
+export default function SetMainModeButton({
+	profileId,
+	mode,
+	isClan,
+}: Readonly<{
+	profileId: number;
+	mode: OsuMode;
+	isClan: boolean;
 }>) {
 	const router = useRouter();
 	const [isPending, startTransition] = useTransition();
@@ -30,14 +34,18 @@ export default function SetMainModeButton({ profileId, mode, isClan }: Readonly<
 	
 	return (
 		<span className={styles.main_mode_action}>
-			<button type="button"
-			        className={styles.set_main_mode}
-			        disabled={isPending}
-			        onClick={update}>
-				<FontAwesome prefix="fas" name={isPending ? "spinner" : "star"}/>
-				{isPending ? "Setting…" : "Set as main mode"}
-			</button>
+      <button
+	      type="button"
+	      className={styles.set_main_mode}
+	      aria-label="Set as main mode"
+	      title="Set as main mode"
+	      disabled={isPending}
+	      onClick={update}
+      >
+        <FontAwesome prefix="fas" name={isPending ? "spinner" : "star"}/>
+        <span>{isPending ? "Setting…" : "Set as main mode"}</span>
+      </button>
 			{error && <small role="alert">{error}</small>}
-		</span>
+    </span>
 	);
 }

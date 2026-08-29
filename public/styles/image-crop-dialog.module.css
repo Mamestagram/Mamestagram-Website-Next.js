@@ -5,7 +5,7 @@
 	z-index: 1400;
 	padding: 18px;
 	place-items: center;
-	background: rgba(2, 5, 10, .82);
+	background: hsla(var(--user-hue), 66.667%, 2.353%, 0.82);
 	backdrop-filter: blur(12px);
 	overflow-y: auto;
 	overscroll-behavior: contain;
@@ -17,12 +17,12 @@
 	max-height: calc(100vh - 36px);
 	padding: 22px;
 	gap: 16px;
-	color: #dce5ef;
+	color: hsl(var(--user-hue), 37.255%, 90%);
 	background: radial-gradient(circle at 15% 0%, hsla(var(--user-hue), 64%, 54%, .16), transparent 38%),
-	linear-gradient(145deg, rgba(18, 24, 34, .99), rgba(5, 8, 14, .995));
+	linear-gradient(145deg, hsla(var(--user-hue), 30.769%, 10.196%, 0.99), hsla(var(--user-hue), 47.368%, 3.725%, 0.995));
 	border: 1px solid hsla(var(--user-hue), 58%, 72%, .24);
 	border-radius: 22px;
-	box-shadow: 0 30px 90px rgba(0, 0, 0, .62), inset 0 1px 0 rgba(255, 255, 255, .06);
+	box-shadow: 0 30px 90px hsla(var(--user-hue), 0%, 0%, 0.62), inset 0 1px 0 hsla(var(--user-hue), 0%, 100%, 0.06);
 	overflow-y: auto;
 }
 
@@ -57,22 +57,22 @@
 	width: 38px;
 	height: 38px;
 	place-items: center;
-	color: #8996a7;
-	background: rgba(255, 255, 255, .045);
-	border: 1px solid rgba(255, 255, 255, .08);
+	color: hsl(var(--user-hue), 14.563%, 59.608%);
+	background: hsla(var(--user-hue), 0%, 100%, 0.045);
+	border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.08);
 	border-radius: 11px;
 	transition: color 140ms, background-color 140ms, border-color 140ms;
 }
 
 .header > button:hover:not(:disabled),
 .header > button:focus-visible:not(:disabled) {
-	color: #f7f9fc;
-	background-color: rgba(255, 255, 255, .1);
-	border-color: rgba(255, 255, 255, .16);
+	color: hsl(var(--user-hue), 45.455%, 97.843%);
+	background-color: hsla(var(--user-hue), 0%, 100%, 0.1);
+	border-color: hsla(var(--user-hue), 0%, 100%, 0.16);
 }
 
 .instructions {
-	color: #96a4b5;
+	color: hsl(var(--user-hue), 17.318%, 64.902%);
 	font-size: .88rem;
 	line-height: 1.55;
 }
@@ -81,11 +81,11 @@
 	position: relative;
 	width: 100%;
 	justify-self: center;
-	background: linear-gradient(135deg, rgba(255, 255, 255, .04), transparent),
-	#03060a;
+	background: linear-gradient(135deg, hsla(var(--user-hue), 0%, 100%, 0.04), transparent),
+	hsl(var(--user-hue), 53.846%, 2.549%);
 	border: 1px solid hsla(var(--user-hue), 62%, 72%, .32);
 	border-radius: 15px;
-	box-shadow: 0 18px 46px rgba(0, 0, 0, .42), inset 0 0 0 1px rgba(255, 255, 255, .025);
+	box-shadow: 0 18px 46px hsla(var(--user-hue), 0%, 0%, 0.42), inset 0 0 0 1px hsla(var(--user-hue), 0%, 100%, 0.025);
 	cursor: grab;
 	overflow: hidden;
 	touch-action: none;
@@ -110,9 +110,9 @@
 	position: absolute;
 	inset: 0;
 	z-index: 2;
-	background: linear-gradient(90deg, transparent 33.2%, rgba(255, 255, 255, .35) 33.33%, transparent 33.46%, transparent 66.53%, rgba(255, 255, 255, .35) 66.66%, transparent 66.8%),
-	linear-gradient(transparent 33.2%, rgba(255, 255, 255, .35) 33.33%, transparent 33.46%, transparent 66.53%, rgba(255, 255, 255, .35) 66.66%, transparent 66.8%);
-	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .2), inset 0 0 52px rgba(0, 0, 0, .18);
+	background: linear-gradient(90deg, transparent 33.2%, hsla(var(--user-hue), 0%, 100%, 0.35) 33.33%, transparent 33.46%, transparent 66.53%, hsla(var(--user-hue), 0%, 100%, 0.35) 66.66%, transparent 66.8%),
+	linear-gradient(transparent 33.2%, hsla(var(--user-hue), 0%, 100%, 0.35) 33.33%, transparent 33.46%, transparent 66.53%, hsla(var(--user-hue), 0%, 100%, 0.35) 66.66%, transparent 66.8%);
+	box-shadow: inset 0 0 0 1px hsla(var(--user-hue), 0%, 100%, 0.2), inset 0 0 52px hsla(var(--user-hue), 0%, 0%, 0.18);
 	pointer-events: none;
 }
 
@@ -141,7 +141,7 @@
 	inset: 0;
 	z-index: 3;
 	place-items: center;
-	color: #7f8da0;
+	color: hsl(var(--user-hue), 14.798%, 56.275%);
 	font-size: .65rem;
 	font-weight: 800;
 }
@@ -157,7 +157,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 7px;
-	color: #aab6c5;
+	color: hsl(var(--user-hue), 18.881%, 71.961%);
 	font-size: .66rem;
 	font-weight: 850;
 }
@@ -167,9 +167,9 @@
 	width: 34px;
 	height: 34px;
 	place-items: center;
-	color: #b4c0ce;
-	background: rgba(255, 255, 255, .05);
-	border: 1px solid rgba(255, 255, 255, .09);
+	color: hsl(var(--user-hue), 20.968%, 75.686%);
+	background: hsla(var(--user-hue), 0%, 100%, 0.05);
+	border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.09);
 	border-radius: 9px;
 	font-size: .9rem;
 	font-weight: 800;
@@ -178,7 +178,7 @@
 
 .zoom_control > button:hover:not(:disabled),
 .zoom_control > button:focus-visible:not(:disabled) {
-	color: #fff;
+	color: hsl(var(--user-hue), 0%, 100%);
 	background-color: hsla(var(--user-hue), 54%, 48%, .2);
 	border-color: hsla(var(--user-hue), 64%, 72%, .3);
 }
@@ -200,16 +200,16 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 7px;
-	color: #758397;
+	color: hsl(var(--user-hue), 14.05%, 52.549%);
 	font-size: .82rem;
 	font-weight: 750;
 }
 
 .error {
 	padding: 9px 11px;
-	color: #ff9ca6;
-	background: rgba(151, 38, 51, .16);
-	border: 1px solid rgba(255, 126, 139, .18);
+	color: hsl(var(--user-hue), 100%, 80.588%);
+	background: hsla(var(--user-hue), 59.788%, 37.059%, 0.16);
+	border: 1px solid hsla(var(--user-hue), 100%, 74.706%, 0.18);
 	border-radius: 9px;
 	font-size: .62rem;
 	font-weight: 750;
@@ -229,9 +229,9 @@
 	align-items: center;
 	justify-content: center;
 	gap: 8px;
-	color: #c2ccd8;
-	background: rgba(255, 255, 255, .05);
-	border: 1px solid rgba(255, 255, 255, .09);
+	color: hsl(var(--user-hue), 22%, 80.392%);
+	background: hsla(var(--user-hue), 0%, 100%, 0.05);
+	border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.09);
 	border-radius: 11px;
 	font-size: .68rem;
 	font-weight: 850;
@@ -240,9 +240,9 @@
 
 .actions button:hover:not(:disabled),
 .actions button:focus-visible:not(:disabled) {
-	color: #fff;
-	background-color: rgba(255, 255, 255, .1);
-	border-color: rgba(255, 255, 255, .17);
+	color: hsl(var(--user-hue), 0%, 100%);
+	background-color: hsla(var(--user-hue), 0%, 100%, 0.1);
+	border-color: hsla(var(--user-hue), 0%, 100%, 0.17);
 }
 
 .actions button:focus-visible,
@@ -253,7 +253,7 @@
 }
 
 .actions .apply {
-	color: #eef8ff;
+	color: hsl(var(--user-hue), 100%, 96.667%);
 	background: hsla(var(--user-hue), 58%, 46%, .4);
 	border-color: hsla(var(--user-hue), 70%, 72%, .3);
 }
@@ -299,7 +299,7 @@
 	.overlay {
 		padding: 10px;
 		place-items: start center;
-		background: rgba(2, 5, 10, .96);
+		background: hsla(var(--user-hue), 66.667%, 2.353%, 0.96);
 		backdrop-filter: none;
 		animation: crop-overlay-enter 160ms ease-out both;
 	}

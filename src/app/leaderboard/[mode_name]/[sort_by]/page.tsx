@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { SortBy, getCountryList } from "@/database/leaderboard";
 import { OsuMode } from "@/lib/mode";
 import { writeLog } from "@/lib/log";
+import GameModeSwitch from "@/components/leaderboard/game-mode-switch";
 import ModeSelection from "@/components/leaderboard/mode-selection";
 import RankingList from "@/components/leaderboard/ranking-list";
 import RankingListLoading from "@/components/leaderboard/ranking-list-loading";
@@ -53,8 +54,15 @@ export default async function Leaderboard({ params, searchParams }: {
 					                        countries={countryCodes}
 					                        country={selectedCountry}
 					                        isClan={isClan}/>
+					<GameModeSwitch mode={mode}
+					                sortBy={sortBy}
+					                country={selectedCountry}
+					                isClan={isClan}/>
 					<div className={styles.leaderboard_control_stack}>
-						<ModeSelection mode={mode} sortBy={sortBy} country={selectedCountry} isClan={isClan}/>
+						<ModeSelection mode={mode}
+						               sortBy={sortBy}
+						               country={selectedCountry}
+						               isClan={isClan}/>
 						<RankingSortSwitch mode={mode}
 						                   sortBy={sortBy}
 						                   country={selectedCountry}

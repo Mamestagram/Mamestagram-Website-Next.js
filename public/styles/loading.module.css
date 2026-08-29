@@ -1,14 +1,14 @@
 .page {
 	& > :not(.screen) {
-		animation: page-fade-in .42s ease-out both;
+		animation: page-fade-in 0.42s ease-out both;
 	}
 	
 	& [data-page-enter="box"] {
-		animation: page-box-slide-down .52s cubic-bezier(.22, 1, .36, 1);
+		animation: page-box-slide-down 0.52s cubic-bezier(0.22, 1, 0.36, 1);
 	}
 	
 	& [data-page-enter="section"] {
-		animation: page-section-slide-down .58s cubic-bezier(.22, 1, .36, 1);
+		animation: page-section-slide-down 0.58s cubic-bezier(0.22, 1, 0.36, 1);
 	}
 }
 
@@ -20,11 +20,11 @@
 	height: 100dvh;
 	overflow: hidden;
 	place-items: center;
-	background: #080a0f;
+	background: hsl(var(--user-hue), 30.435%, 4.51%);
 	z-index: 10000;
 }
 
-.panel {
+.content {
 	display: flex;
 	position: relative;
 	z-index: 2;
@@ -32,7 +32,7 @@
 	align-items: center;
 	flex-direction: column;
 	gap: 16px;
-	animation: loading-panel-enter .3s ease-out both;
+	animation: loading-panel-enter 0.3s ease-out both;
 }
 
 .market_frame {
@@ -41,7 +41,7 @@
 	z-index: 2;
 	width: 100%;
 	height: 100%;
-	background: #080a0f;
+	background: hsl(var(--user-hue), 30.435%, 4.51%);
 	border: 0;
 }
 
@@ -56,7 +56,7 @@
 		content: "";
 		position: absolute;
 		inset: 0;
-		border: 2px solid hsla(var(--user-hue), 48%, 68%, .12);
+		border: 2px solid hsla(var(--user-hue), 48%, 68%, 0.12);
 		border-top-color: hsl(var(--user-hue), 58%, 66%);
 		border-radius: 50%;
 		animation: loading-logo-spin 1.2s linear infinite;
@@ -67,13 +67,13 @@
 	width: 56px;
 	height: 56px;
 	object-fit: contain;
-	filter: drop-shadow(0 0 10px hsla(var(--user-hue), 56%, 62%, .16));
+	filter: drop-shadow(0 0 10px hsla(var(--user-hue), 56%, 62%, 0.16));
 }
 
 .label {
-	color: #929cab;
-	font-size: .76rem;
-	letter-spacing: .08em;
+	color: hsl(var(--user-hue), 12.953%, 62.157%);
+	font-size: 0.76rem;
+	letter-spacing: 0.08em;
 }
 
 .progress {
@@ -82,7 +82,7 @@
 	width: 120px;
 	height: 2px;
 	overflow: hidden;
-	background: rgba(255, 255, 255, .07);
+	background: hsla(var(--user-hue), 0%, 100%, 0.07);
 	border-radius: 999px;
 	
 	& i {
@@ -99,7 +99,7 @@
 	.page > :not(.screen),
 	.page [data-page-enter="box"],
 	.page [data-page-enter="section"],
-	.panel,
+	.content,
 	.logo_ring::after,
 	.progress i {
 		animation: none;
@@ -108,7 +108,7 @@
 	
 	.progress i {
 		width: 100%;
-		opacity: .45;
+		opacity: 0.45;
 	}
 }
 

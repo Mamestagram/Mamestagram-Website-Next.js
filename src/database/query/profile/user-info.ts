@@ -20,7 +20,15 @@ export const userPreferredModeQuery = `
 
 export const userProfileRouteInfoQuery = `
 	SELECT preferred_mode,
-	       COALESCE(\`private\`, 0) AS is_private
+	       COALESCE(\`private\`, 0) AS is_private,
+	       CASE
+		       WHEN COALESCE(use_web_appearance, 0) = 1 THEN COALESCE(web_theme, 1)
+		       ELSE COALESCE(profile_theme, 1)
+	       END AS profile_theme,
+	       CASE
+		       WHEN COALESCE(use_web_appearance, 0) = 1 THEN web_hue
+		       ELSE profile_hue
+	       END AS profile_hue
 		FROM users
 	WHERE id = ?
 	LIMIT 1
@@ -29,7 +37,9 @@ export const userProfileRouteInfoQuery = `
 export const clanProfileRouteInfoQuery = `
 	SELECT preferred_mode,
 	       owner,
-	       COALESCE(\`public\`, 1) AS is_public
+	       COALESCE(\`public\`, 1) AS is_public,
+	       COALESCE(profile_theme, 1) AS profile_theme,
+	       profile_hue
 		FROM clans
 	WHERE id = ?
 	LIMIT 1

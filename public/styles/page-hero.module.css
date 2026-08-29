@@ -3,14 +3,14 @@
 	height: clamp(150px, 18vw, 210px);
 	min-height: 150px;
 	overflow: hidden;
-	border-bottom: 1px solid rgba(235, 199, 101, .17);
+	border-bottom: 1px solid hsla(var(--user-hue), 77.011%, 65.882%, 0.17);
 	
 	&::after {
 		content: "";
 		position: absolute;
 		inset: auto 0 0;
 		height: 42%;
-		background: linear-gradient(transparent, #090a0e);
+		background: linear-gradient(transparent, hsl(var(--user-hue), 21.739%, 4.51%));
 		pointer-events: none;
 	}
 	
@@ -51,12 +51,12 @@
 .overlay {
 	position: absolute;
 	inset: 0;
-	background: linear-gradient(90deg, rgba(4, 5, 8, .93) 0%, rgba(5, 6, 9, .64) 47%, rgba(5, 6, 9, .2) 100%),
-	repeating-linear-gradient(90deg, transparent 0 69px, rgba(255, 255, 255, .025) 69px 70px);
+	background: linear-gradient(90deg, hsla(var(--user-hue), 33.333%, 2.353%, 0.93) 0%, hsla(var(--user-hue), 28.571%, 2.745%, 0.64) 47%, hsla(var(--user-hue), 28.571%, 2.745%, 0.2) 100%),
+	repeating-linear-gradient(90deg, transparent 0 69px, hsla(var(--user-hue), 0%, 100%, 0.025) 69px 70px);
 	
 	.hero[data-variant="support"] & {
-		background: linear-gradient(90deg, rgba(5, 6, 10, .94) 0%, rgba(8, 7, 11, .67) 47%, hsla(var(--user-hue), 48%, 14%, .2) 100%),
-		repeating-linear-gradient(90deg, transparent 0 69px, rgba(255, 255, 255, .025) 69px 70px),
+		background: linear-gradient(90deg, hsla(var(--user-hue), 33.333%, 2.941%, 0.94) 0%, hsla(var(--user-hue), 22.222%, 3.529%, 0.67) 47%, hsla(var(--user-hue), 48%, 14%, .2) 100%),
+		repeating-linear-gradient(90deg, transparent 0 69px, hsla(var(--user-hue), 0%, 100%, 0.025) 69px 70px),
 		radial-gradient(circle at 75% 38%, hsla(var(--user-hue), 88%, 60%, .13), transparent 28%);
 	}
 }
@@ -74,7 +74,7 @@
 	
 	& h1 {
 		max-width: 720px;
-		color: #fff;
+		color: hsl(var(--user-hue), 0%, 100%);
 		font-size: clamp(2rem, 4vw, 3.6rem);
 		font-weight: 900;
 		letter-spacing: -.055em;
@@ -103,17 +103,17 @@
 	}
 	
 	.hero[data-variant="patcher"] .overlay {
-		background: linear-gradient(90deg, rgba(4, 5, 8, .9), rgba(5, 6, 9, .46));
+		background: linear-gradient(90deg, hsla(var(--user-hue), 33.333%, 2.353%, 0.9), hsla(var(--user-hue), 28.571%, 2.745%, 0.46));
 	}
 	
 	.hero[data-variant="support"] .overlay {
-		background: linear-gradient(90deg, rgba(5, 6, 10, .91), rgba(8, 7, 11, .5));
+		background: linear-gradient(90deg, hsla(var(--user-hue), 33.333%, 2.941%, 0.91), hsla(var(--user-hue), 22.222%, 3.529%, 0.5));
 	}
 }
 
 @media (max-width: 700px) {
 	.hero[data-variant="documents"] .overlay {
-		background: linear-gradient(90deg, rgba(4, 5, 8, .9), rgba(5, 6, 9, .46));
+		background: linear-gradient(90deg, hsla(var(--user-hue), 33.333%, 2.353%, 0.9), hsla(var(--user-hue), 28.571%, 2.745%, 0.46));
 	}
 	
 	.hero[data-variant="documents"] .content h1 {

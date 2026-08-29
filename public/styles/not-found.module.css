@@ -11,16 +11,16 @@
 }
 
 :global(body.not-found) {
-	background-color: #080a0f;
+	background-color: hsl(var(--user-hue), 30.435%, 4.51%);
 	background-image: radial-gradient(circle at 50% 44%, hsla(var(--user-hue), 65%, 52%, .12), transparent 35%),
-	linear-gradient(180deg, #080a0f, #04060a);
+	linear-gradient(180deg, hsl(var(--user-hue), 30.435%, 4.51%), hsl(var(--user-hue), 42.857%, 2.745%));
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-size: cover;
 }
 
 :global(body.not-found footer) {
-	background-color: rgba(8, 10, 15, .92);
+	background-color: hsla(var(--user-hue), 30.435%, 4.51%, 0.92);
 }
 
 .glow {
@@ -38,11 +38,11 @@
 	width: min(720px, 100%);
 	padding: clamp(42px, 7vw, 72px);
 	align-items: center;
-	background: linear-gradient(145deg, rgba(14, 18, 27, .95), rgba(7, 9, 14, .95)),
-	repeating-linear-gradient(90deg, transparent 0 69px, rgba(255, 255, 255, .025) 69px 70px);
-	border: 1px solid rgba(255, 255, 255, .12);
-	border-radius: 30px;
-	box-shadow: 0 32px 90px rgba(0, 0, 0, .48), inset 0 1px 0 rgba(255, 255, 255, .06);
+	background: linear-gradient(145deg, hsla(var(--user-hue), 31.707%, 8.039%, 0.95), hsla(var(--user-hue), 33.333%, 4.118%, 0.95)),
+	repeating-linear-gradient(90deg, transparent 0 69px, hsla(var(--user-hue), 0%, 100%, 0.025) 69px 70px);
+	border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.12);
+	border-radius: 25px;
+	box-shadow: 0 32px 90px hsla(var(--user-hue), 0%, 0%, 0.48), inset 0 1px 0 hsla(var(--user-hue), 0%, 100%, 0.06);
 	flex-direction: column;
 	text-align: center;
 	backdrop-filter: blur(20px);
@@ -51,12 +51,12 @@
 .code {
 	display: flex;
 	align-items: center;
-	color: #f3f7fc;
+	color: hsl(var(--user-hue), 60%, 97.059%);
 	font-size: clamp(4.5rem, 13vw, 8.5rem);
 	font-weight: 700;
 	letter-spacing: -.09em;
 	line-height: .82;
-	text-shadow: 0 12px 38px rgba(0, 0, 0, .42);
+	text-shadow: 0 12px 38px hsla(var(--user-hue), 0%, 0%, 0.42);
 }
 
 .disc {
@@ -80,7 +80,7 @@
 
 .card h1 {
 	margin-top: 10px;
-	color: #f8f9fc;
+	color: hsl(var(--user-hue), 40%, 98.039%);
 	font-size: clamp(1.85rem, 5vw, 3rem);
 	font-weight: 900;
 	letter-spacing: -.045em;
@@ -90,7 +90,7 @@
 .description {
 	max-width: 520px;
 	margin-top: 18px;
-	color: #9da6b5;
+	color: hsl(var(--user-hue), 13.953%, 66.275%);
 	font-size: .95rem;
 	line-height: 1.75;
 }
@@ -110,7 +110,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: 10px;
-		border: 1px solid rgba(255, 255, 255, .1);
+		border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.1);
 		border-radius: 13px;
 		font-size: .82rem;
 		font-weight: 800;
@@ -125,7 +125,7 @@
 }
 
 .primary_action {
-	color: #eef8ff;
+	color: hsl(var(--user-hue), 100%, 96.667%);
 	background: hsla(var(--user-hue), 58%, 45%, .24);
 	
 	&:hover,
@@ -135,13 +135,13 @@
 }
 
 .secondary_action {
-	color: #aeb7c5;
-	background: rgba(255, 255, 255, .035);
+	color: hsl(var(--user-hue), 16.547%, 72.745%);
+	background: hsla(var(--user-hue), 0%, 100%, 0.035);
 	
 	&:hover,
 	&:focus-visible {
-		color: #f3f7fc;
-		background: rgba(255, 255, 255, .065);
+		color: hsl(var(--user-hue), 60%, 97.059%);
+		background: hsla(var(--user-hue), 0%, 100%, 0.065);
 	}
 }
 
@@ -159,7 +159,7 @@
 	
 	.card {
 		padding: 42px 20px;
-		border-radius: 24px;
+		border-radius: 21px;
 	}
 	
 	.eyebrow {
@@ -201,5 +201,5 @@
 }
 
 :global(html[data-rendering-mode="software"]) .card {
-	box-shadow: 0 9px 24px rgba(0, 0, 0, .32), inset 0 1px 0 rgba(255, 255, 255, .06);
+	box-shadow: 0 9px 24px hsla(var(--user-hue), 0%, 0%, 0.32), inset 0 1px 0 hsla(var(--user-hue), 0%, 100%, 0.06);
 }

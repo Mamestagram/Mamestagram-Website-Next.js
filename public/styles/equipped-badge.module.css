@@ -8,11 +8,11 @@
 	width: var(--avatar-badge-size, 40%);
 	aspect-ratio: 1;
 	overflow: hidden;
-	background: rgba(7, 12, 20, .96);
-	border: 1px solid rgba(218, 228, 239, .82);
+	background: hsla(var(--user-hue), 48.148%, 5.294%, 0.96);
+	border: 1px solid hsla(var(--user-hue), 39.623%, 89.608%, 0.82);
 	border-radius: 28%;
-	box-shadow: 0 3px 8px rgba(0, 0, 0, .6),
-	inset 0 0 0 1px rgba(255, 255, 255, .08);
+	box-shadow: 0 3px 8px hsla(var(--user-hue), 0%, 0%, 0.6),
+	inset 0 0 0 1px hsla(var(--user-hue), 0%, 100%, 0.08);
 	pointer-events: none;
 	isolation: isolate;
 }

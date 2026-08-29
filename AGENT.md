@@ -39,7 +39,9 @@ Mamestagram Web
 ### Styles
 
 - cssファイルはpublic/stylesの中に入れる
+- 色はhsl()またはhsla()で指定し、H（色相）はvar(--user-hue)など用意されているカスタムプロパティを使う
 - カスタムプロパティは初期値を指定する
+- セレクタ内でカンマの後は改行する（それ以外は改行しない）
 
 ### API
 
