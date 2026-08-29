@@ -46,18 +46,18 @@ export const clanProfileRouteInfoQuery = `
 `;
 
 export const updateUserpageContentQuery = `
-	UPDATE users
-		SET userpage_content = ?
-	WHERE id = ?
-	LIMIT 1
+    UPDATE users
+    SET userpage_content = ?
+    WHERE id = ?
+    LIMIT 1
 `;
 
 export const updateClanUserpageContentQuery = `
-	UPDATE clans
-		SET userpage_content = ?
-	WHERE id = ?
-		AND owner = ?
-	LIMIT 1
+    UPDATE clans
+    SET userpage_content = ?
+    WHERE id = ?
+      AND owner = ?
+    LIMIT 1
 `;
 
 export const clanOwnerQuery = `
@@ -69,18 +69,18 @@ export const clanOwnerQuery = `
 `;
 
 export const updateClanPreferredModeQuery = `
-	UPDATE clans
-		SET preferred_mode = ?
-	WHERE id = ?
-		AND owner = ?
-	LIMIT 1
+    UPDATE clans
+    SET preferred_mode = ?
+    WHERE id = ?
+      AND owner = ?
+    LIMIT 1
 `;
 
 export const updateUserPreferredModeQuery = `
-	UPDATE users
-		SET preferred_mode = ?
-	WHERE id = ?
-	LIMIT 1
+    UPDATE users
+    SET preferred_mode = ?
+    WHERE id = ?
+    LIMIT 1
 `;
 
 export const removableClanMemberQuery = `
@@ -96,19 +96,17 @@ export const removableClanMemberQuery = `
 `;
 
 export const removeClanMemberQuery = `
-	UPDATE users
-		SET clan_id = 0,
-		    clan_priv = 0
-	WHERE id = ?
-		AND clan_id = ?
-		AND id <> ?
-		AND EXISTS(
-			SELECT 1
-				FROM clans
-			WHERE id = ?
-				AND owner = ?
-		)
-	LIMIT 1
+    UPDATE users
+    SET clan_id   = 0,
+        clan_priv = 0
+    WHERE id = ?
+      AND clan_id = ?
+      AND id <> ?
+      AND EXISTS(SELECT 1
+                 FROM clans
+                 WHERE id = ?
+                   AND owner = ?)
+    LIMIT 1
 `;
 
 export const userJoinedClanQuery = `

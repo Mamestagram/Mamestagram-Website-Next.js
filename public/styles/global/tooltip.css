@@ -1,64 +1,63 @@
 .tooltip-element {
-  cursor: pointer;
-  position: relative;
-
-  &:hover,
-  &:focus-within {
-    z-index: 3000;
-  }
-
-  & .tooltip {
-    cursor: default;
-    pointer-events: none;
-    position: absolute;
-    left: 50%;
-    background-color: hsl(var(--user-hue), 9.804%, 10%);
-    color: hsl(var(--user-hue), 0%, 99.216%);
-    font-size: 0.8em;
-    line-height: 10px;
-    width: auto;
-    padding: 8px;
-    border-radius: 10px;
-    text-align: center;
-    white-space: nowrap;
-    box-shadow: var(--glass-box-shadow-dark);
-    opacity: 0;
-    z-index: 3000;
-    transform: translateX(-50%);
-    transition:
-      bottom 300ms,
-      opacity 300ms;
-
-    .tooltip-element.up & {
-      bottom: 50%;
-      margin-bottom: 8px;
-    }
-
-    .tooltip-element.up:hover & {
-      bottom: 80%;
-      opacity: 1;
-    }
-
-    .tooltip-element.down & {
-      bottom: 0;
-    }
-
-    .tooltip-element.down:hover & {
-      bottom: -50%;
-      opacity: 1;
-    }
-
-    &.bubble::before {
-      content: "";
-      position: absolute;
-      top: 80%;
-      left: 50%;
-      height: 0;
-      width: 0;
-      border: 10px solid transparent;
-      border-top: 12px solid hsl(var(--user-hue), 9.804%, 10%);
-      z-index: -1;
-      transform: translateX(-50%);
-    }
-  }
+	cursor: pointer;
+	position: relative;
+	
+	&:hover,
+	&:focus-within {
+		z-index: 3000;
+	}
+	
+	& .tooltip {
+		cursor: default;
+		pointer-events: none;
+		position: absolute;
+		left: 50%;
+		background-color: hsl(var(--user-hue), 9.804%, 10%);
+		color: hsl(var(--user-hue), 0%, 99.216%);
+		font-size: 0.8em;
+		line-height: 10px;
+		width: auto;
+		padding: 8px;
+		border-radius: 10px;
+		text-align: center;
+		white-space: nowrap;
+		box-shadow: var(--glass-box-shadow-dark);
+		opacity: 0;
+		z-index: 3000;
+		transform: translateX(-50%);
+		transition: bottom 300ms,
+		opacity 300ms;
+		
+		.tooltip-element.up & {
+			bottom: 50%;
+			margin-bottom: 8px;
+		}
+		
+		.tooltip-element.up:hover & {
+			bottom: 80%;
+			opacity: 1;
+		}
+		
+		.tooltip-element.down & {
+			bottom: 0;
+		}
+		
+		.tooltip-element.down:hover & {
+			bottom: -50%;
+			opacity: 1;
+		}
+		
+		&.bubble::before {
+			content: "";
+			position: absolute;
+			top: 80%;
+			left: 50%;
+			height: 0;
+			width: 0;
+			border: 10px solid transparent;
+			border-top: 12px solid hsl(var(--user-hue), 9.804%, 10%);
+			z-index: -1;
+			transform: translateX(-50%);
+		}
+	}
 }

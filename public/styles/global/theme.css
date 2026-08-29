@@ -1,171 +1,171 @@
 html[data-theme="legacy"] {
-  color-scheme: dark;
-  --profile-surface-hue: 240;
-  --glass-bg-dark: hsl(var(--user-hue), 11%, 16%);
-  --glass-bg-light-hover: hsl(var(--user-hue), 18%, 24%);
-  --glass-border-dark: transparent;
-  --glass-text-shadow-dark: 0 1px 2px hsla(var(--user-hue), 0%, 0%, 0.65);
-  --glass-box-shadow-dark: 0 2px 6px hsla(var(--user-hue), 0%, 0%, 0.38);
-  --glass-shadow: 0 2px 6px hsla(var(--user-hue), 0%, 0%, 0.32);
-  --text-main: hsl(var(--user-hue), 0%, 96.078%);
-  --text-sub: hsl(var(--user-hue), 2.941%, 73.333%);
-  --grid-minor: transparent;
-  --grid-major: transparent;
+	color-scheme: dark;
+	--profile-surface-hue: 240;
+	--glass-bg-dark: hsl(var(--user-hue), 11%, 16%);
+	--glass-bg-light-hover: hsl(var(--user-hue), 18%, 24%);
+	--glass-border-dark: transparent;
+	--glass-text-shadow-dark: 0 1px 2px hsla(var(--user-hue), 0%, 0%, 0.65);
+	--glass-box-shadow-dark: 0 2px 6px hsla(var(--user-hue), 0%, 0%, 0.38);
+	--glass-shadow: 0 2px 6px hsla(var(--user-hue), 0%, 0%, 0.32);
+	--text-main: hsl(var(--user-hue), 0%, 96.078%);
+	--text-sub: hsl(var(--user-hue), 2.941%, 73.333%);
+	--grid-minor: transparent;
+	--grid-major: transparent;
 }
 
 html[data-theme="legacy"][data-user-hue] {
-  --profile-surface-hue: var(--user-hue);
+	--profile-surface-hue: var(--user-hue);
 }
 
 html[data-theme="minimal"] {
-  color-scheme: dark;
-  --glass-bg-dark: hsl(var(--user-hue), 0%, 6.275%);
-  --glass-bg-light-hover: hsl(var(--user-hue), 0%, 10.196%);
-  --glass-border-dark: hsl(var(--user-hue), 0%, 17.647%);
-  --glass-text-shadow-dark: none;
-  --glass-svg-shadow-dark: none;
-  --glass-svg-shadow-light-hover: none;
-  --glass-box-shadow-dark: none;
-  --glass-shadow: none;
-  --text-main: hsl(var(--user-hue), 0%, 96.078%);
-  --text-sub: hsl(var(--user-hue), 0%, 64.314%);
-  --grid-minor: transparent;
-  --grid-major: transparent;
+	color-scheme: dark;
+	--glass-bg-dark: hsl(var(--user-hue), 0%, 6.275%);
+	--glass-bg-light-hover: hsl(var(--user-hue), 0%, 10.196%);
+	--glass-border-dark: hsl(var(--user-hue), 0%, 17.647%);
+	--glass-text-shadow-dark: none;
+	--glass-svg-shadow-dark: none;
+	--glass-svg-shadow-light-hover: none;
+	--glass-box-shadow-dark: none;
+	--glass-shadow: none;
+	--text-main: hsl(var(--user-hue), 0%, 96.078%);
+	--text-sub: hsl(var(--user-hue), 0%, 64.314%);
+	--grid-minor: transparent;
+	--grid-major: transparent;
 }
 
 html[data-theme="legacy"] body {
-  background-color: hsl(var(--user-hue), 8%, 10%) !important;
-  background-image: none !important;
+	background-color: hsl(var(--user-hue), 8%, 10%) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] footer {
-  background-color: hsl(var(--user-hue), 23.077%, 5.098%) !important;
+	background-color: hsl(var(--user-hue), 23.077%, 5.098%) !important;
 }
 
 html[data-theme="legacy"] [class$="_screen"],
 html[data-theme="legacy"] [class$="_market_frame"] {
-  background-color: hsl(var(--user-hue), 9%, 12%) !important;
-  background-image: none !important;
+	background-color: hsl(var(--user-hue), 9%, 12%) !important;
+	background-image: none !important;
 }
 
 html[data-theme="minimal"] body {
-  background-color: hsl(var(--user-hue), 0%, 3.137%) !important;
-  background-image: none !important;
+	background-color: hsl(var(--user-hue), 0%, 3.137%) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] body::before,
 html[data-theme="minimal"] body::before,
 html[data-theme="legacy"] body::after,
 html[data-theme="minimal"] body::after {
-  display: none !important;
+	display: none !important;
 }
 
 html[data-theme="legacy"] [data-site-header] {
-  background: hsl(var(--user-hue), 44%, 37%) !important;
-  border: 0 !important;
-  box-shadow: 0 2px 7px hsla(var(--user-hue), 0%, 0%, 0.42) !important;
-  backdrop-filter: none !important;
+	background: hsl(var(--user-hue), 44%, 37%) !important;
+	border: 0 !important;
+	box-shadow: 0 2px 7px hsla(var(--user-hue), 0%, 0%, 0.42) !important;
+	backdrop-filter: none !important;
 }
 
 html[data-theme="minimal"] [data-site-header] {
-  background: hsl(var(--user-hue), 0%, 5.098%) !important;
-  border-bottom: 1px solid hsl(var(--user-hue), 0%, 18.824%) !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
+	background: hsl(var(--user-hue), 0%, 5.098%) !important;
+	border-bottom: 1px solid hsl(var(--user-hue), 0%, 18.824%) !important;
+	box-shadow: none !important;
+	backdrop-filter: none !important;
 }
 
 html[data-theme="legacy"] [data-site-header] .navigation li::before,
 html[data-theme="legacy"] [data-site-header] .navigation li::after {
-  background: hsla(var(--user-hue), 0%, 100%, 0.16) !important;
+	background: hsla(var(--user-hue), 0%, 100%, 0.16) !important;
 }
 
 html[data-theme="minimal"] [data-site-header] .navigation li::before,
 html[data-theme="minimal"] [data-site-header] .navigation li::after {
-  background: hsl(var(--user-hue), 0%, 10.196%) !important;
+	background: hsl(var(--user-hue), 0%, 10.196%) !important;
 }
 
 html[data-theme="legacy"] [data-site-header] .navigation li,
 html[data-theme="minimal"] [data-site-header] .navigation li {
-  text-shadow: none !important;
+	text-shadow: none !important;
 }
 
 html[data-theme="legacy"] [data-site-header] .navigation li:hover,
 html[data-theme="minimal"] [data-site-header] .navigation li:hover,
 html[data-theme="legacy"] [data-site-header] .navigation li[class],
 html[data-theme="minimal"] [data-site-header] .navigation li[class] {
-  box-shadow: none !important;
+	box-shadow: none !important;
 }
 
 html[data-theme="legacy"] body *:not([data-theme-independent="true"]):not([data-theme-independent="true"] *),
 html[data-theme="minimal"] body *:not([data-theme-independent="true"]):not([data-theme-independent="true"] *) {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
 }
 
 html[data-theme="legacy"] body *:not([data-theme-independent="true"]):not([data-theme-independent="true"] *),
 html[data-theme="legacy"] body *:not([data-theme-independent="true"]):not([data-theme-independent="true"] *)::before,
 html[data-theme="legacy"] body *:not([data-theme-independent="true"]):not([data-theme-independent="true"] *)::after {
-  border: 0 !important;
+	border: 0 !important;
 }
 
 html[data-theme="legacy"] body *:not(.fi):not([data-theme-independent="true"]):not([data-theme-independent="true"] *),
 html[data-theme="legacy"] body *:not([data-theme-independent="true"]):not([data-theme-independent="true"] *)::before,
 html[data-theme="legacy"] body *:not([data-theme-independent="true"]):not([data-theme-independent="true"] *)::after {
-  background-image: none !important;
-  mask-image: none !important;
-  -webkit-mask-image: none !important;
+	background-image: none !important;
+	mask-image: none !important;
+	-webkit-mask-image: none !important;
 }
 
 html[data-theme="legacy"] body [data-avatar-badge][data-avatar-badge] {
-  border: 1px solid hsla(var(--user-hue), 39.623%, 89.608%, 0.82) !important;
+	border: 1px solid hsla(var(--user-hue), 39.623%, 89.608%, 0.82) !important;
 }
 
 html[data-theme="legacy"] body [class$="_sign_out_row"][class$="_sign_out_row"] {
-  border-top: 1px solid hsl(var(--user-hue), 10%, 38%) !important;
+	border-top: 1px solid hsl(var(--user-hue), 10%, 38%) !important;
 }
 
 @container (min-width: 80px) {
-  html[data-theme="legacy"] body [data-avatar-badge][data-avatar-badge] {
-    border-width: 2px !important;
-  }
+	html[data-theme="legacy"] body [data-avatar-badge][data-avatar-badge] {
+		border-width: 2px !important;
+	}
 }
 
 @container (min-width: 150px) {
-  html[data-theme="legacy"] body [data-avatar-badge][data-avatar-badge] {
-    border-width: 3px !important;
-  }
+	html[data-theme="legacy"] body [data-avatar-badge][data-avatar-badge] {
+		border-width: 3px !important;
+	}
 }
 
 html[data-theme="legacy"] body [style*="--home-hero-image"] {
-  background-color: hsl(var(--user-hue), 9%, 12%) !important;
-  background-image: var(--home-hero-image) !important;
-  background-position: center 44% !important;
-  background-size: cover !important;
-  background-repeat: no-repeat !important;
+	background-color: hsl(var(--user-hue), 9%, 12%) !important;
+	background-image: var(--home-hero-image) !important;
+	background-position: center 44% !important;
+	background-size: cover !important;
+	background-repeat: no-repeat !important;
 }
 
 html[data-theme="legacy"] body [style*="--home-hero-image"]::before {
-  display: block !important;
-  background-color: hsla(var(--user-hue), 60%, 2.941%, 0.68) !important;
+	display: block !important;
+	background-color: hsla(var(--user-hue), 60%, 2.941%, 0.68) !important;
 }
 
 html[data-theme="legacy"] [class$="_hero_counter"] {
-  background-color: hsl(var(--user-hue), 55.556%, 3.529%) !important;
+	background-color: hsl(var(--user-hue), 55.556%, 3.529%) !important;
 }
 
 html[data-theme="legacy"] body [style*="--activity-background-image"][style*="--activity-background-image"] [class*="_activity_card"][class*="_activity_card"] {
-  background-color: hsla(var(--user-hue), 11.111%, 3.529%, 0.72) !important;
-  background-image: var(--activity-background-image) !important;
-  background-position: center 45% !important;
-  background-size: cover !important;
-  background-repeat: no-repeat !important;
-  background-blend-mode: multiply;
+	background-color: hsla(var(--user-hue), 11.111%, 3.529%, 0.72) !important;
+	background-image: var(--activity-background-image) !important;
+	background-position: center 45% !important;
+	background-size: cover !important;
+	background-repeat: no-repeat !important;
+	background-blend-mode: multiply;
 }
 
 html[data-theme="legacy"] [class*="_overlay"]:not([data-theme-independent="true"]),
 html[data-theme="legacy"] [class*="_shade"],
 html[data-theme="legacy"] [class*="_backdrop"] {
-  background-color: hsla(var(--user-hue), 28.571%, 2.745%, 0.58) !important;
+	background-color: hsla(var(--user-hue), 28.571%, 2.745%, 0.58) !important;
 }
 
 html[data-theme="legacy"] [class*="_card"],
@@ -176,31 +176,31 @@ html[data-theme="legacy"] [class*="_dialog"]:not([data-theme-independent="true"]
 html[data-theme="legacy"] [class*="_notice"],
 html[data-theme="legacy"] [class*="_tabs"],
 html[data-theme="legacy"] [class*="_filters"] {
-  background-color: hsl(var(--user-hue), 9%, 17%) !important;
-  background-image: none !important;
-  box-shadow: 0 2px 5px hsla(var(--user-hue), 0%, 0%, 0.3) !important;
+	background-color: hsl(var(--user-hue), 9%, 17%) !important;
+	background-image: none !important;
+	box-shadow: 0 2px 5px hsla(var(--user-hue), 0%, 0%, 0.3) !important;
 }
 
 html[data-theme="legacy"] [class^="auth-module"][class$="_notice"] {
-  box-shadow: none !important;
+	box-shadow: none !important;
 }
 
 html[data-theme="legacy"] {
-  & [class$="_form"] > [class$="_field"] > input:focus,
-  & [class^="auth-module"][class$="_password_field"]:focus-within {
-    border: 1px solid hsla(var(--user-hue), 80%, 68%, 0.78) !important;
-    box-shadow: none !important;
-  }
-
-  & [class^="auth-module"][class$="_submit"] {
-    color: hsl(var(--user-hue), 0%, 100%) !important;
-    background-color: hsl(var(--user-hue), 68%, 48%) !important;
-  }
-
-  & [class^="auth-module"][class$="_submit"]:hover:not(:disabled),
-  & [class^="auth-module"][class$="_submit"]:focus-visible {
-    background-color: hsl(var(--user-hue), 72%, 55%) !important;
-  }
+	& [class$="_form"] > [class$="_field"] > input:focus,
+	& [class^="auth-module"][class$="_password_field"]:focus-within {
+		border: 1px solid hsla(var(--user-hue), 80%, 68%, 0.78) !important;
+		box-shadow: none !important;
+	}
+	
+	& [class^="auth-module"][class$="_submit"] {
+		color: hsl(var(--user-hue), 0%, 100%) !important;
+		background-color: hsl(var(--user-hue), 68%, 48%) !important;
+	}
+	
+	& [class^="auth-module"][class$="_submit"]:hover:not(:disabled),
+	& [class^="auth-module"][class$="_submit"]:focus-visible {
+		background-color: hsl(var(--user-hue), 72%, 55%) !important;
+	}
 }
 
 html[data-theme="legacy"] button:not([data-theme-independent="true"] *),
@@ -208,94 +208,94 @@ html[data-theme="legacy"] input,
 html[data-theme="legacy"] textarea,
 html[data-theme="legacy"] select,
 html[data-theme="legacy"] [role="button"] {
-  background-image: none !important;
-  box-shadow: none !important;
+	background-image: none !important;
+	box-shadow: none !important;
 }
 
 html[data-theme="legacy"] table tbody tr > td {
-  background-color: hsl(var(--user-hue), 7%, 18%) !important;
-  background-image: none !important;
-  box-shadow: none !important;
+	background-color: hsl(var(--user-hue), 7%, 18%) !important;
+	background-image: none !important;
+	box-shadow: none !important;
 }
 
 html[data-theme="legacy"] [class*="_primary_action"] {
-  background-color: var(--home-accent) !important;
-  background-image: none !important;
+	background-color: var(--home-accent) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] [class*="_primary_action"]:hover,
 html[data-theme="legacy"] [class*="_primary_action"]:focus-visible {
-  background-color: hsl(var(--user-hue), 72%, 67%) !important;
+	background-color: hsl(var(--user-hue), 72%, 67%) !important;
 }
 
 html[data-theme="legacy"] [class*="_secondary_action"] {
-  color: hsl(var(--user-hue), 23.81%, 95.882%) !important;
-  background-color: hsl(var(--user-hue), 12%, 24%) !important;
-  background-image: none !important;
-  box-shadow: 0 2px 6px hsla(var(--user-hue), 0%, 0%, 0.32) !important;
+	color: hsl(var(--user-hue), 23.81%, 95.882%) !important;
+	background-color: hsl(var(--user-hue), 12%, 24%) !important;
+	background-image: none !important;
+	box-shadow: 0 2px 6px hsla(var(--user-hue), 0%, 0%, 0.32) !important;
 }
 
 html[data-theme="legacy"] [class*="_secondary_action"]:hover,
 html[data-theme="legacy"] [class*="_secondary_action"]:focus-visible {
-  color: hsl(var(--user-hue), 0%, 100%) !important;
-  background-color: hsl(var(--user-hue), 16%, 30%) !important;
+	color: hsl(var(--user-hue), 0%, 100%) !important;
+	background-color: hsl(var(--user-hue), 16%, 30%) !important;
 }
 
 html[data-theme="legacy"] body [class*="_logo_orbit"][class*="_logo_orbit"] > span {
-  border: 1px solid hsla(var(--user-hue), 68%, 72%, 0.16) !important;
-  border-top-color: var(--home-accent-light) !important;
+	border: 1px solid hsla(var(--user-hue), 68%, 72%, 0.16) !important;
+	border-top-color: var(--home-accent-light) !important;
 }
 
 html[data-theme="legacy"] body [class*="_logo_orbit"][class*="_logo_orbit"] > span:nth-child(2) {
-  border-color: hsla(var(--user-hue), 68%, 72%, 0.08) !important;
-  border-right-color: hsla(var(--user-hue), 68%, 72%, 0.46) !important;
+	border-color: hsla(var(--user-hue), 68%, 72%, 0.08) !important;
+	border-right-color: hsla(var(--user-hue), 68%, 72%, 0.46) !important;
 }
 
 html[data-theme="legacy"] [class*="_player_card"]:hover,
 html[data-theme="legacy"] [class*="_player_card"]:focus-visible {
-  background-color: hsla(var(--user-hue), 48%, 52%, 0.09) !important;
+	background-color: hsla(var(--user-hue), 48%, 52%, 0.09) !important;
 }
 
 html[data-theme="legacy"] [class*="_activity_list"] > li {
-  box-shadow: 0 5px 14px hsla(var(--user-hue), 0%, 0%, 0.34) !important;
+	box-shadow: 0 5px 14px hsla(var(--user-hue), 0%, 0%, 0.34) !important;
 }
 
 html[data-theme="legacy"] [class*="_activity_grade"],
 html[data-theme="legacy"] [class*="_activity_value"] {
-  background-color: hsl(var(--user-hue), 35.484%, 6.078%) !important;
-  background-image: none !important;
+	background-color: hsl(var(--user-hue), 35.484%, 6.078%) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] body [data-grade="xh"],
 html[data-theme="legacy"] body [data-grade="sh"] {
-  color: hsl(var(--grade-silver-hue), 100%, 92.549%) !important;
+	color: hsl(var(--grade-silver-hue), 100%, 92.549%) !important;
 }
 
 html[data-theme="legacy"] body [data-grade="x"],
 html[data-theme="legacy"] body [data-grade="s"] {
-  color: hsl(var(--grade-gold-hue), 100%, 77.059%) !important;
+	color: hsl(var(--grade-gold-hue), 100%, 77.059%) !important;
 }
 
 html[data-theme="legacy"] body [data-grade="a"] {
-  color: hsl(var(--grade-a-hue), 57.724%, 75.882%) !important;
+	color: hsl(var(--grade-a-hue), 57.724%, 75.882%) !important;
 }
 
 html[data-theme="legacy"] body [data-grade="b"] {
-  color: hsl(var(--grade-b-hue), 100%, 78.039%) !important;
+	color: hsl(var(--grade-b-hue), 100%, 78.039%) !important;
 }
 
 html[data-theme="legacy"] body [data-grade="c"] {
-  color: hsl(var(--grade-c-hue), 100%, 82.353%) !important;
+	color: hsl(var(--grade-c-hue), 100%, 82.353%) !important;
 }
 
 html[data-theme="legacy"] body [data-grade="d"],
 html[data-theme="legacy"] body [data-grade="f"] {
-  color: hsl(var(--grade-low-hue), 100%, 80.392%) !important;
+	color: hsl(var(--grade-low-hue), 100%, 80.392%) !important;
 }
 
 html[data-theme="legacy"] [class$="_dashboard_panel"] {
-  background-color: hsl(var(--user-hue), 9%, 15%) !important;
-  background-image: none !important;
+	background-color: hsl(var(--user-hue), 9%, 15%) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] [class$="_stat_card"],
@@ -305,23 +305,23 @@ html[data-theme="legacy"] [class$="_activity_list"] > li,
 html[data-theme="legacy"] [class$="_activity_action_inner"],
 html[data-theme="legacy"] [class$="_score_action_inner"],
 html[data-theme="legacy"] [class$="_panel_empty"] {
-  background-color: hsl(var(--user-hue), 7%, 18%) !important;
-  background-image: none !important;
+	background-color: hsl(var(--user-hue), 7%, 18%) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] body [class$="_activity_list"][class$="_activity_list"] > li {
-  border: 1px solid transparent !important;
+	border: 1px solid transparent !important;
 }
 
 html[data-theme="legacy"] body [class$="_activity_list"][class$="_activity_list"] > li:is(:hover, :focus-within, [data-expanded="true"]) {
-  border-color: hsl(var(--user-hue), 72%, 68%) !important;
+	border-color: hsl(var(--user-hue), 72%, 68%) !important;
 }
 
 html[data-theme="legacy"] body [class$="_empty_score_icon"][class$="_empty_score_icon"],
 html[data-theme="legacy"] body [class$="_about_me_empty_icon"][class$="_about_me_empty_icon"],
 html[data-theme="legacy"] body [class$="_empty_scores"][class$="_empty_scores"] > span,
 html[data-theme="legacy"] body [class$="_statistics_unavailable"][class$="_statistics_unavailable"] > i {
-  border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.28) !important;
+	border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.28) !important;
 }
 
 html[data-theme="legacy"] body [class$="_panel_empty"][class$="_panel_empty"] > i,
@@ -331,708 +331,699 @@ html[data-theme="legacy"] body [class$="_rank_history_empty"][class$="_rank_hist
 html[data-theme="legacy"] body [class$="_message"][class$="_message"] > i,
 html[data-theme="legacy"] body [class$="_media_placeholder"][class$="_media_placeholder"] > i,
 html[data-theme="legacy"] body [class$="_clan_hero_avatar"][class$="_clan_hero_avatar"][data-empty="true"] > i {
-  display: inline-grid;
-  padding: 0.42em;
-  place-items: center;
-  border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.28) !important;
-  border-radius: 0.45em;
+	display: inline-grid;
+	padding: 0.42em;
+	place-items: center;
+	border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.28) !important;
+	border-radius: 0.45em;
 }
 
 html[data-theme="legacy"] [class$="_quick_links"] > a:hover,
 html[data-theme="legacy"] [class$="_quick_links"] > a:focus-visible {
-  background-color: hsl(var(--user-hue), 20%, 24%) !important;
+	background-color: hsl(var(--user-hue), 20%, 24%) !important;
 }
 
 html[data-theme="legacy"] [class*="_profile_page"] {
-  & [class*="_section_box"] {
-    background-color: hsla(
-      var(--profile-surface-hue),
-      11.34%,
-      19.02%,
-      0.92
-    ) !important;
-
-    & [class$="_meta_chip"],
-    & [class$="_social_strip"] > li,
-    & [class$="_last_online"],
-    & [class$="_clan_member_card"],
-    & [class$="_rank_history_stats"] > li,
-    & [class$="_rank_chart"],
-    & [class$="_stat_container"] ul > li {
-      background-color: hsl(
-        var(--profile-surface-hue),
-        9.934%,
-        29.608%
-      ) !important;
-      box-shadow: 0 4px 10px hsla(var(--user-hue), 0%, 0%, 0.36) !important;
-      transition-duration: 180ms !important;
-
-      &:hover,
-      &:focus-visible,
-      &:focus-within {
-        background-color: hsl(
-          var(--profile-surface-hue),
-          9.901%,
-          39.608%
-        ) !important;
-      }
-    }
-  }
-
-  & [class$="_profile_background_image"] {
-    filter: blur(5px) saturate(0.78) brightness(0.75) !important;
-  }
-
-  & [class$="_profile_cover_image"] {
-    filter: saturate(0.82) brightness(0.82) contrast(1.08) !important;
-  }
-
-  & [class$="_social_strip"] > li::after {
-    display: none;
-  }
-
-  & [class$="_social_strip"] > li {
-    background: hsl(var(--profile-surface-hue), 9.934%, 29.608%) !important;
-  }
-
-  & [class$="_social_card"] {
-    background-color: hsla(var(--profile-surface-hue), 0%, 0%, 0) !important;
-  }
-
-  & [class$="_social_icon"] {
-    background-color: hsl(
-      var(--profile-surface-hue),
-      9.934%,
-      24.608%
-    ) !important;
-    background-image: none !important;
-  }
-
-  & [class$="_stat_container"] {
-    padding: 0 12px 12px;
-  }
-
-  & [class$="_skeleton_stat_card"] {
-    background-color: hsl(
-      var(--profile-surface-hue),
-      9.934%,
-      29.608%
-    ) !important;
-    box-shadow: 0 4px 10px hsla(var(--user-hue), 0%, 0%, 0.36) !important;
-  }
-
-  & [class$="_skeleton_group_title"],
-  & [class$="_skeleton_stat_card"] i {
-    background-color: hsl(
-      var(--profile-surface-hue),
-      9.901%,
-      39.608%
-    ) !important;
-  }
-
-  & [class$="_collection_status"] [class$="_colored"] {
-    mask-image: conic-gradient(
-      hsl(var(--user-hue), 0%, 0%) 0 var(--collected-ratio),
-      transparent var(--collected-ratio) 100%
-    ) !important;
-    -webkit-mask-image: conic-gradient(
-      hsl(var(--user-hue), 0%, 0%) 0 var(--collected-ratio),
-      transparent var(--collected-ratio) 100%
-    ) !important;
-  }
+	& [class*="_section_box"] {
+		background-color: hsla(
+			var(--profile-surface-hue),
+			11.34%,
+			19.02%,
+			0.92
+		) !important;
+		
+		& [class$="_meta_chip"],
+		& [class$="_social_strip"] > li,
+		& [class$="_last_online"],
+		& [class$="_clan_member_card"],
+		& [class$="_rank_history_stats"] > li,
+		& [class$="_rank_chart"],
+		& [class$="_stat_container"] ul > li {
+			background-color: hsl(
+				var(--profile-surface-hue),
+				9.934%,
+				29.608%
+			) !important;
+			box-shadow: 0 4px 10px hsla(var(--user-hue), 0%, 0%, 0.36) !important;
+			transition-duration: 180ms !important;
+			
+			&:hover,
+			&:focus-visible,
+			&:focus-within {
+				background-color: hsl(
+					var(--profile-surface-hue),
+					9.901%,
+					39.608%
+				) !important;
+			}
+		}
+	}
+	
+	& [class$="_profile_background_image"] {
+		filter: blur(5px) saturate(0.78) brightness(0.75) !important;
+	}
+	
+	& [class$="_profile_cover_image"] {
+		filter: saturate(0.82) brightness(0.82) contrast(1.08) !important;
+	}
+	
+	& [class$="_social_strip"] > li::after {
+		display: none;
+	}
+	
+	& [class$="_social_strip"] > li {
+		background: hsl(var(--profile-surface-hue), 9.934%, 29.608%) !important;
+	}
+	
+	& [class$="_social_card"] {
+		background-color: hsla(var(--profile-surface-hue), 0%, 0%, 0) !important;
+	}
+	
+	& [class$="_social_icon"] {
+		background-color: hsl(
+			var(--profile-surface-hue),
+			9.934%,
+			24.608%
+		) !important;
+		background-image: none !important;
+	}
+	
+	& [class$="_stat_container"] {
+		padding: 0 12px 12px;
+	}
+	
+	& [class$="_skeleton_stat_card"] {
+		background-color: hsl(
+			var(--profile-surface-hue),
+			9.934%,
+			29.608%
+		) !important;
+		box-shadow: 0 4px 10px hsla(var(--user-hue), 0%, 0%, 0.36) !important;
+	}
+	
+	& [class$="_skeleton_group_title"],
+	& [class$="_skeleton_stat_card"] i {
+		background-color: hsl(
+			var(--profile-surface-hue),
+			9.901%,
+			39.608%
+		) !important;
+	}
+	
+	& [class$="_collection_status"] [class$="_colored"] {
+		mask-image: conic-gradient(
+			hsl(var(--user-hue), 0%, 0%) 0 var(--collected-ratio),
+			transparent var(--collected-ratio) 100%
+		) !important;
+		-webkit-mask-image: conic-gradient(
+			hsl(var(--user-hue), 0%, 0%) 0 var(--collected-ratio),
+			transparent var(--collected-ratio) 100%
+		) !important;
+	}
 }
 
 html[data-theme="legacy"] [class*="_player_scores"] {
-  & [class*="_score_entry"] > [role="button"],
-  & [class*="_score_list"] > :is(a, div)[data-rendering-item="medium"] {
-    box-shadow:
-      0 5px 14px hsla(var(--user-hue), 0%, 0%, 0.42),
-      inset 0 1px 0 hsla(var(--user-hue), 0%, 100%, 0.06) !important;
-  }
-
-  & [class*="_score_entry"] > [role="button"]:hover,
-  & [class*="_score_entry"] > [role="button"]:focus-visible,
-  & [class*="_score_entry"] > [role="button"]:focus-within,
-  & [class*="_score_list"] > :is(a, div)[data-rendering-item="medium"]:hover,
-  & [class*="_score_list"] > :is(a, div)[data-rendering-item="medium"]:focus-visible,
-  & [class*="_score_list"] > :is(a, div)[data-rendering-item="medium"]:focus-within {
-    box-shadow:
-      0 8px 20px hsla(var(--user-hue), 0%, 0%, 0.52),
-      inset 3px 0 0 hsla(var(--user-hue), 70%, 62%, 0.7) !important;
-  }
-
-  & [class$="_grade"],
-  & [class$="_score_value"] {
-    background-color: hsl(var(--user-hue), 35.484%, 6.078%) !important;
-  }
-
-  & [class$="_difficulty"] {
-    background-color: hsl(var(--user-hue), 24%, 18%) !important;
-  }
+	& [class*="_score_entry"] > [role="button"],
+	& [class*="_score_list"] > :is(a, div)[data-rendering-item="medium"] {
+		box-shadow: 0 5px 14px hsla(var(--user-hue), 0%, 0%, 0.42),
+		inset 0 1px 0 hsla(var(--user-hue), 0%, 100%, 0.06) !important;
+	}
+	
+	& [class*="_score_entry"] > [role="button"]:hover,
+	& [class*="_score_entry"] > [role="button"]:focus-visible,
+	& [class*="_score_entry"] > [role="button"]:focus-within,
+	& [class*="_score_list"] > :is(a, div)[data-rendering-item="medium"]:hover,
+	& [class*="_score_list"] > :is(a, div)[data-rendering-item="medium"]:focus-visible,
+	& [class*="_score_list"] > :is(a, div)[data-rendering-item="medium"]:focus-within {
+		box-shadow: 0 8px 20px hsla(var(--user-hue), 0%, 0%, 0.52),
+		inset 3px 0 0 hsla(var(--user-hue), 70%, 62%, 0.7) !important;
+	}
+	
+	& [class$="_grade"],
+	& [class$="_score_value"] {
+		background-color: hsl(var(--user-hue), 35.484%, 6.078%) !important;
+	}
+	
+	& [class$="_difficulty"] {
+		background-color: hsl(var(--user-hue), 24%, 18%) !important;
+	}
 }
 
 html[data-theme="legacy"] [class$="_score_modal"],
 html[data-theme="legacy"] [class$="_social_modal"] {
-  background-color: hsla(
-    var(--profile-surface-hue),
-    11.34%,
-    19.02%,
-    0.92
-  ) !important;
+	background-color: hsla(
+		var(--profile-surface-hue),
+		11.34%,
+		19.02%,
+		0.92
+	) !important;
 }
 
 html[data-theme="legacy"] [class$="_score_modal"] {
-  box-shadow: 0 22px 65px hsla(var(--user-hue), 0%, 0%, 0.72) !important;
+	box-shadow: 0 22px 65px hsla(var(--user-hue), 0%, 0%, 0.72) !important;
 }
 
 html[data-theme="legacy"] body [class*="_page_wrapper"][class*="_page_wrapper"],
 html[data-theme="legacy"] body [class*="_game_mode_switch"][class*="_game_mode_switch"],
 html[data-theme="legacy"] body [class*="_leaderboard_scope_switch"][class*="_leaderboard_scope_switch"] {
-  border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.55) !important;
-  box-shadow: 0 5px 14px hsla(var(--user-hue), 0%, 0%, 0.45) !important;
+	border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.55) !important;
+	box-shadow: 0 5px 14px hsla(var(--user-hue), 0%, 0%, 0.45) !important;
 }
 
 html[data-theme="legacy"] [class$="_leaderboard_control_stack"] {
-  & [class$="_leaderboard_mode_trigger"] {
-    color: hsl(var(--user-hue), 0%, 96.078%) !important;
-    background-color: hsl(var(--user-hue), 4%, 29%) !important;
-    border: 0 !important;
-  }
-
-  & [class*="_leaderboard_mode_menu"],
-  & [class$="_leaderboard_mode_group"] {
-    background-color: hsl(var(--user-hue), 4%, 14%) !important;
-    background-image: none !important;
-    border: 0 !important;
-    box-shadow: none !important;
-  }
-
-  & [class$="_leaderboard_playstyles"] > a {
-    color: hsl(var(--user-hue), 0%, 96.078%) !important;
-    background-color: hsl(var(--user-hue), 4%, 14%) !important;
-    border: 0 !important;
-  }
-
-  & [class$="_leaderboard_playstyles"] > a:hover,
-  & [class$="_leaderboard_playstyles"] > a:focus-visible,
-  & [class$="_leaderboard_playstyles"] > a[class*="_selected_playstyle"] {
-    background-color: hsl(var(--user-hue), 4%, 29%) !important;
-  }
+	& [class$="_leaderboard_mode_trigger"] {
+		color: hsl(var(--user-hue), 0%, 96.078%) !important;
+		background-color: hsl(var(--user-hue), 4%, 29%) !important;
+		border: 0 !important;
+	}
+	
+	& [class*="_leaderboard_mode_menu"],
+	& [class$="_leaderboard_mode_group"] {
+		background-color: hsl(var(--user-hue), 4%, 14%) !important;
+		background-image: none !important;
+		border: 0 !important;
+		box-shadow: none !important;
+	}
+	
+	& [class$="_leaderboard_playstyles"] > a {
+		color: hsl(var(--user-hue), 0%, 96.078%) !important;
+		background-color: hsl(var(--user-hue), 4%, 14%) !important;
+		border: 0 !important;
+	}
+	
+	& [class$="_leaderboard_playstyles"] > a:hover,
+	& [class$="_leaderboard_playstyles"] > a:focus-visible,
+	& [class$="_leaderboard_playstyles"] > a[class*="_selected_playstyle"] {
+		background-color: hsl(var(--user-hue), 4%, 29%) !important;
+	}
 }
 
 html[data-theme="legacy"] [class$="_profile_mode_trigger"] {
-  color: hsl(var(--user-hue), 0%, 96.078%) !important;
-  background-color: hsl(var(--user-hue), 4%, 29%) !important;
-  border: 0 !important;
-  box-shadow: none !important;
+	color: hsl(var(--user-hue), 0%, 96.078%) !important;
+	background-color: hsl(var(--user-hue), 4%, 29%) !important;
+	border: 0 !important;
+	box-shadow: none !important;
 }
 
 html[data-theme="legacy"] [class$="_profile_mode_menu"] {
-  background-color: hsl(var(--user-hue), 4%, 14%) !important;
-  background-image: none !important;
-  border: 0 !important;
-  box-shadow: none !important;
+	background-color: hsl(var(--user-hue), 4%, 14%) !important;
+	background-image: none !important;
+	border: 0 !important;
+	box-shadow: none !important;
 }
 
 html[data-theme="legacy"] [class$="_profile_playstyles"] > a {
-  color: hsl(var(--user-hue), 0%, 96.078%) !important;
-  background-color: hsl(var(--user-hue), 4%, 14%) !important;
-  border: 0 !important;
+	color: hsl(var(--user-hue), 0%, 96.078%) !important;
+	background-color: hsl(var(--user-hue), 4%, 14%) !important;
+	border: 0 !important;
 }
 
 html[data-theme="legacy"] [class$="_profile_playstyles"] {
-  & > a:hover,
-  & > a:focus-visible,
-  & > a[class*="_selected_playstyle"] {
-    background-color: hsl(var(--user-hue), 4%, 29%) !important;
-  }
+	& > a:hover,
+	& > a:focus-visible,
+	& > a[class*="_selected_playstyle"] {
+		background-color: hsl(var(--user-hue), 4%, 29%) !important;
+	}
 }
 
 html[data-theme="legacy"] [class*="_ranking_row"] {
-  filter: drop-shadow(0 4px 5px hsla(var(--user-hue), 0%, 0%, 0.34));
+	filter: drop-shadow(0 4px 5px hsla(var(--user-hue), 0%, 0%, 0.34));
 }
 
 html[data-theme="legacy"] [class*="_ranking_row"]:hover > td,
 html[data-theme="legacy"] [class*="_ranking_row"]:focus-within > td {
-  background-color: hsl(var(--user-hue), 20%, 24%) !important;
+	background-color: hsl(var(--user-hue), 20%, 24%) !important;
 }
 
 html[data-theme="legacy"] [class*="_leaderboard_scope_switch"]::before {
-  background-color: hsl(var(--user-hue), 44%, 36%) !important;
-  background-image: none !important;
+	background-color: hsl(var(--user-hue), 44%, 36%) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] [class$="_table_wrapper"] {
-  background-color: hsl(var(--user-hue), 9%, 15%) !important;
-  background-image: none !important;
+	background-color: hsl(var(--user-hue), 9%, 15%) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] [class$="_document_section"] {
-  background-color: hsl(var(--user-hue), 9%, 15%) !important;
-  background-image: none !important;
-
-  & [class$="_card"],
-  & [class$="_notice"],
-  & [class$="_command_box"],
-  & [class$="_command_item"],
-  & [class$="_success_message"],
-  & [class$="_faq_item"],
-  & [class$="_command_tips"] > article {
-    background-color: hsl(var(--user-hue), 9%, 20%) !important;
-    background-image: none !important;
-  }
+	background-color: hsl(var(--user-hue), 9%, 15%) !important;
+	background-image: none !important;
+	
+	& [class$="_card"],
+	& [class$="_notice"],
+	& [class$="_command_box"],
+	& [class$="_command_item"],
+	& [class$="_success_message"],
+	& [class$="_faq_item"],
+	& [class$="_command_tips"] > article {
+		background-color: hsl(var(--user-hue), 9%, 20%) !important;
+		background-image: none !important;
+	}
 }
 
 html[data-theme="legacy"] [class^="documents-module"][class$="_sidebar"] {
-  background-color: hsl(var(--user-hue), 9%, 15%) !important;
-  background-image: none !important;
+	background-color: hsl(var(--user-hue), 9%, 15%) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] [class$="_document_nav"] a {
-  background-color: hsl(var(--user-hue), 9%, 20%) !important;
-  background-image: none !important;
+	background-color: hsl(var(--user-hue), 9%, 20%) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] [class^="patcher-module"][class$="_patcher_section"],
 html[data-theme="legacy"] [class^="support-module"][class$="_support_section"] {
-  background-color: hsl(var(--user-hue), 9%, 15%) !important;
-  background-image: none !important;
-
-  & [class$="_card"],
-  & [class$="_download_panel"],
-  & [class$="_faq_item"],
-  & [class$="_comparison_bar"],
-  & [class$="_price_calculator"],
-  & [class$="_cancel_note"] {
-    background-color: hsl(var(--user-hue), 9%, 20%) !important;
-    background-image: none !important;
-  }
+	background-color: hsl(var(--user-hue), 9%, 15%) !important;
+	background-image: none !important;
+	
+	& [class$="_card"],
+	& [class$="_download_panel"],
+	& [class$="_faq_item"],
+	& [class$="_comparison_bar"],
+	& [class$="_price_calculator"],
+	& [class$="_cancel_note"] {
+		background-color: hsl(var(--user-hue), 9%, 20%) !important;
+		background-image: none !important;
+	}
 }
 
 html[data-theme="legacy"] [class^="support-module"] {
-  & [class$="_support_section"] [class$="_impact_grid"] > div,
-  & [class$="_support_section"] [class$="_subscription_grid"] > article {
-    background-color: hsl(var(--user-hue), 9%, 20%) !important;
-    background-image: none !important;
-  }
+	& [class$="_support_section"] [class$="_impact_grid"] > div,
+	& [class$="_support_section"] [class$="_subscription_grid"] > article {
+		background-color: hsl(var(--user-hue), 9%, 20%) !important;
+		background-image: none !important;
+	}
 }
 
 html[data-theme="legacy"] [class^="patcher-module"][class$="_sidebar"],
 html[data-theme="legacy"] [class^="support-module"][class$="_sidebar"] {
-  background-color: hsl(var(--user-hue), 9%, 15%) !important;
-  background-image: none !important;
+	background-color: hsl(var(--user-hue), 9%, 15%) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] [class$="_patcher_nav"] a,
 html[data-theme="legacy"] [class$="_support_nav"] a {
-  background-color: hsl(var(--user-hue), 9%, 20%) !important;
-  background-image: none !important;
+	background-color: hsl(var(--user-hue), 9%, 20%) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] [class^="search-module"][class$="_search_form"],
 html[data-theme="legacy"] [class^="search-module"][class$="_results"] {
-  background-color: hsl(var(--user-hue), 9%, 15%) !important;
-  background-image: none !important;
+	background-color: hsl(var(--user-hue), 9%, 15%) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] [class^="search-module"] {
-  & [class$="_categories"] > a,
-  & [class$="_pagination"] > a,
-  & [class$="_results"] [class$="_result_list"] > li > a,
-  & [class$="_results"] [class$="_beatmap_result_card"] {
-    background-color: hsl(var(--user-hue), 9%, 20%) !important;
-    background-image: none !important;
-  }
-
-  & [class$="_results"] [class$="_beatmap_difficulty"],
-  & [class$="_results"] [class$="_beatmap_meta"] > small {
-    background-color: hsl(var(--user-hue), 9%, 15%) !important;
-    background-image: none !important;
-  }
-
-  & [class$="_results"] [class$="_result_list"] > li > a:hover,
-  & [class$="_results"] [class$="_result_list"] > li > a:focus-visible,
-  & [class$="_results"] [class$="_beatmap_result_card"]:hover,
-  & [class$="_results"] [class$="_beatmap_result_card"]:focus-within,
-  & [class$="_results"] [class$="_beatmap_difficulty"]:hover,
-  & [class$="_results"] [class$="_beatmap_difficulty"]:focus-visible {
-    background-color: hsl(var(--user-hue), 20%, 24%) !important;
-  }
-
-  & [class$="_categories"] > a:hover,
-  & [class$="_categories"] > a:focus-visible,
-  & [class$="_categories"] > a[aria-current="page"],
-  & [class$="_pagination"] > a:hover,
-  & [class$="_pagination"] > a:focus-visible,
-  & [class$="_pagination"] > a[aria-current="page"],
-  & [class$="_search_form"] > button {
-    background-color: hsl(var(--user-hue), 44%, 36%) !important;
-    background-image: none !important;
-  }
+	& [class$="_categories"] > a,
+	& [class$="_pagination"] > a,
+	& [class$="_results"] [class$="_result_list"] > li > a,
+	& [class$="_results"] [class$="_beatmap_result_card"] {
+		background-color: hsl(var(--user-hue), 9%, 20%) !important;
+		background-image: none !important;
+	}
+	
+	& [class$="_results"] [class$="_beatmap_difficulty"],
+	& [class$="_results"] [class$="_beatmap_meta"] > small {
+		background-color: hsl(var(--user-hue), 9%, 15%) !important;
+		background-image: none !important;
+	}
+	
+	& [class$="_results"] [class$="_result_list"] > li > a:hover,
+	& [class$="_results"] [class$="_result_list"] > li > a:focus-visible,
+	& [class$="_results"] [class$="_beatmap_result_card"]:hover,
+	& [class$="_results"] [class$="_beatmap_result_card"]:focus-within,
+	& [class$="_results"] [class$="_beatmap_difficulty"]:hover,
+	& [class$="_results"] [class$="_beatmap_difficulty"]:focus-visible {
+		background-color: hsl(var(--user-hue), 20%, 24%) !important;
+	}
+	
+	& [class$="_categories"] > a:hover,
+	& [class$="_categories"] > a:focus-visible,
+	& [class$="_categories"] > a[aria-current="page"],
+	& [class$="_pagination"] > a:hover,
+	& [class$="_pagination"] > a:focus-visible,
+	& [class$="_pagination"] > a[aria-current="page"],
+	& [class$="_search_form"] > button {
+		background-color: hsl(var(--user-hue), 44%, 36%) !important;
+		background-image: none !important;
+	}
 }
 
 html[data-theme="legacy"] [class^="settings-module"][class$="_danger_button"] {
-  color: hsl(var(--settings-danger-hue), 100%, 92%) !important;
-  background-color: hsl(
-    var(--settings-danger-hue),
-    69.231%,
-    30.588%
-  ) !important;
+	color: hsl(var(--settings-danger-hue), 100%, 92%) !important;
+	background-color: hsl(
+		var(--settings-danger-hue),
+		69.231%,
+		30.588%
+	) !important;
 }
 
 html[data-theme="legacy"] [class^="settings-module"][class$="_sidebar"],
 html[data-theme="legacy"] [class^="settings-module"][class$="_sidebar_heading"],
 html[data-theme="legacy"] [class^="settings-module"][class$="_settings_menu"] {
-  box-shadow: none !important;
+	box-shadow: none !important;
 }
 
 html[data-theme="legacy"] body [class^="settings-module"] {
-  &[class$="_hero"],
-  &[class$="_sidebar"],
-  &[class$="_section_card"] {
-    background-color: hsl(var(--user-hue), 9%, 15%) !important;
-    background-image: none !important;
-  }
-
-  &[class$="_sidebar_heading"],
-  &[class$="_settings_menu"] {
-    background-color: transparent !important;
-    background-image: none !important;
-  }
-
-  &[class$="_settings_menu"] > a,
-  &[class$="_media_card"],
-  &[class$="_toggle_row"],
-  &[class$="_badge_option"],
-  &[class$="_hue_control"],
-  &[class$="_theme_option"] {
-    background-color: hsl(var(--user-hue), 9%, 20%) !important;
-    background-image: none !important;
-  }
-
-  &[class$="_theme_option"]:hover:not(:disabled),
-  &[class$="_theme_option"]:focus-visible:not(:disabled) {
-    background-color: hsl(var(--user-hue), 20%, 25%) !important;
-    border: 1px solid hsl(var(--user-hue), 48%, 52%) !important;
-  }
-
-  &[class$="_theme_option"][data-selected="true"] {
-    background-color: hsl(var(--user-hue), 34%, 28%) !important;
-    border: 1px solid hsl(var(--user-hue), 72%, 66%) !important;
-    outline: 2px solid hsl(var(--user-hue), 72%, 66%);
-    outline-offset: -2px;
-  }
-
-  &[class$="_theme_option"][data-selected="true"]:hover:not(:disabled),
-  &[class$="_theme_option"][data-selected="true"]:focus-visible:not(:disabled) {
-    background-color: hsl(var(--user-hue), 40%, 33%) !important;
-  }
-
-  &[class$="_theme_option"][data-selected="true"] [class$="_theme_selected_check"] {
-    color: hsl(var(--settings-success-hue), 61.446%, 67.451%) !important;
-    font-size: 1rem;
-  }
+	&[class$="_hero"],
+	&[class$="_sidebar"],
+	&[class$="_section_card"] {
+		background-color: hsl(var(--user-hue), 9%, 15%) !important;
+		background-image: none !important;
+	}
+	
+	&[class$="_sidebar_heading"],
+	&[class$="_settings_menu"] {
+		background-color: transparent !important;
+		background-image: none !important;
+	}
+	
+	&[class$="_settings_menu"] > a,
+	&[class$="_media_card"],
+	&[class$="_toggle_row"],
+	&[class$="_badge_option"],
+	&[class$="_hue_control"],
+	&[class$="_theme_option"] {
+		background-color: hsl(var(--user-hue), 9%, 20%) !important;
+		background-image: none !important;
+	}
+	
+	&[class$="_theme_option"]:hover:not(:disabled),
+	&[class$="_theme_option"]:focus-visible:not(:disabled) {
+		background-color: hsl(var(--user-hue), 20%, 25%) !important;
+		border: 1px solid hsl(var(--user-hue), 48%, 52%) !important;
+	}
+	
+	&[class$="_theme_option"][data-selected="true"] {
+		background-color: hsl(var(--user-hue), 34%, 28%) !important;
+		border: 1px solid hsl(var(--user-hue), 72%, 66%) !important;
+		outline: 2px solid hsl(var(--user-hue), 72%, 66%);
+		outline-offset: -2px;
+	}
+	
+	&[class$="_theme_option"][data-selected="true"]:hover:not(:disabled),
+	&[class$="_theme_option"][data-selected="true"]:focus-visible:not(:disabled) {
+		background-color: hsl(var(--user-hue), 40%, 33%) !important;
+	}
+	
+	&[class$="_theme_option"][data-selected="true"] [class$="_theme_selected_check"] {
+		color: hsl(var(--settings-success-hue), 61.446%, 67.451%) !important;
+		font-size: 1rem;
+	}
 }
 
 html[data-theme="legacy"] body [class^="settings-module"][class$="_scope_switch"]::before {
-  background-color: hsl(var(--user-hue), 44%, 36%) !important;
-  background-image: none !important;
+	background-color: hsl(var(--user-hue), 44%, 36%) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] [class^="settings-module"][class$="_danger_button"]:hover:not(:disabled),
 html[data-theme="legacy"] [class^="settings-module"][class$="_danger_button"]:focus-visible:not(:disabled) {
-  background-color: hsl(
-    var(--settings-danger-hue),
-    69.231%,
-    40.784%
-  ) !important;
+	background-color: hsl(
+		var(--settings-danger-hue),
+		69.231%,
+		40.784%
+	) !important;
 }
 
 html[data-theme="legacy"] body [class^="beatmap-module"] {
-  &[class$="_status"][data-tone="ranked"] {
-    color: hsl(var(--user-hue), 22%, 17%) !important;
-    background-color: hsl(
-      var(--beatmap-ranked-status-hue),
-      100%,
-      67%
-    ) !important;
-  }
-
-  &[class$="_status"][data-tone="loved"] {
-    color: hsl(var(--user-hue), 22%, 17%) !important;
-    background-color: hsl(
-      var(--beatmap-loved-status-hue),
-      100%,
-      70%
-    ) !important;
-  }
-
-  &[class$="_key_count"] {
-    background-color: hsl(var(--user-hue), 52%, 54%) !important;
-    background-image: none !important;
-    border: 1px solid hsla(var(--user-hue), 64%, 74%, 0.3) !important;
-  }
-
-  &[class$="_mode_badge"] {
-    border: 1px solid hsl(var(--user-hue), 58%, 70%) !important;
-  }
-
-  &[class$="_difficulty_list"] {
-    border: 1px solid hsl(var(--user-hue), 12%, 42%) !important;
-  }
-
-  &[class$="_difficulty_link"],
-  &[class$="_star_rating"] {
-    border: 1px solid var(--difficulty-visible-color) !important;
-  }
-
-  &[class$="_difficulty_name"] {
-    border: 1px solid hsl(var(--user-hue), 18%, 52%) !important;
-  }
-
-  &[class$="_hero_actions"] > a,
-  &[class$="_hero_actions"] > button,
-  &[class$="_preview_button"] {
-    border: 1px solid hsl(var(--user-hue), 42%, 56%) !important;
-  }
-
-  &[class$="_featured_replay_button"],
-  &[class$="_table_replay_button"] {
-    border: 1px solid hsl(var(--user-hue), 58%, 70%) !important;
-  }
-
-  & [class*="_attribute"] > i > span {
-    background-color: var(--beatmap-accent) !important;
-  }
-
-  & [class$="_hero_sidebar"],
-  & [class*="_card"],
-  & [class$="_difficulty_list"],
-  & [class$="_preview_controls"],
-  & [class$="_score_table_scroller"],
-  & [class$="_score_table"] th {
-    background-color: hsl(var(--user-hue), 9%, 15%) !important;
-    background-image: none !important;
-  }
-
-  & [class$="_quick_stats"] > span,
-  & [class$="_attribute_grid"] > [class*="_attribute"],
-  & [class$="_difficulty_link"],
-  & [class$="_difficulty_name"],
-  & [class$="_mode_tabs"],
-  & [class$="_convert_modes"],
-  & [class$="_mod_filters"],
-  & [class*="_top_score"],
-  & [class$="_empty_scores"],
-  & [class$="_hero_actions"] > a,
-  & [class$="_hero_actions"] > button,
-  & [class$="_preview_button"],
-  & [class$="_preview_transport"],
-  & [class$="_preview_mute"],
-  & [class$="_score_table"] td {
-    background-color: hsl(var(--user-hue), 9%, 20%) !important;
-    background-image: none !important;
-  }
-
-  & [class*="_top_score"] {
-    box-shadow:
-      inset 3px 0 0 var(--rank-1),
-      0 2px 5px hsla(var(--user-hue), 0%, 0%, 0.3) !important;
-  }
-
-  & [class*="_top_score"][class*="_personal_score"] {
-    box-shadow:
-      inset 3px 0 0 var(--beatmap-accent-light),
-      0 2px 5px hsla(var(--user-hue), 0%, 0%, 0.3) !important;
-  }
-
-  & [class*="_top_score"][class*="_personal_score"][data-rank="1"] {
-    box-shadow:
-      inset 3px 0 0 var(--rank-1),
-      0 2px 5px hsla(var(--user-hue), 0%, 0%, 0.3) !important;
-  }
-
-  & [class*="_top_score"][class*="_personal_score"][data-rank="2"] {
-    box-shadow:
-      inset 3px 0 0 var(--rank-2),
-      0 2px 5px hsla(var(--user-hue), 0%, 0%, 0.3) !important;
-  }
-
-  & [class*="_top_score"][class*="_personal_score"][data-rank="3"] {
-    box-shadow:
-      inset 3px 0 0 var(--rank-3),
-      0 2px 5px hsla(var(--user-hue), 0%, 0%, 0.3) !important;
-  }
-
-  & [class$="_score_table_scroller"] {
-    border: 1px solid hsla(var(--user-hue), 12%, 72%, 0.18) !important;
-  }
-
-  & [class$="_score_table"] {
-    & th,
-    & td {
-      border: 0 !important;
-      border-bottom: 1px solid hsla(var(--user-hue), 12%, 72%, 0.18) !important;
-    }
-
-    & tbody tr:last-child td {
-      border-bottom: 0 !important;
-    }
-  }
-
-  & [class$="_mod_filter_buttons"] > a {
-    color: color-mix(
-      in srgb,
-      var(--mod-filter-color) 48%,
-      hsl(var(--user-hue), 0%, 100%) 52%
-    ) !important;
-    background-color: color-mix(
-      in srgb,
-      var(--mod-filter-color) 11%,
-      hsl(var(--user-hue), 9%, 20%)
-    ) !important;
-    border: 1px solid
-      color-mix(
-        in srgb,
-        var(--mod-filter-color) 72%,
-        hsla(var(--user-hue), 0%, 100%, 0.1)
-      ) !important;
-    text-shadow: 0 0 8px
-      color-mix(in srgb, var(--mod-filter-color) 34%, transparent) !important;
-  }
-
-  & [class$="_mod_filter_buttons"] > a:hover,
-  & [class$="_mod_filter_buttons"] > a:focus-visible {
-    background-color: color-mix(
-      in srgb,
-      var(--mod-filter-color) 18%,
-      hsl(var(--user-hue), 9%, 20%)
-    ) !important;
-  }
-
-  & [class$="_mod_filter_buttons"] > a[data-active="true"] {
-    background-color: color-mix(
-      in srgb,
-      var(--mod-filter-color) 26%,
-      hsl(var(--user-hue), 9%, 20%)
-    ) !important;
-    border-color: color-mix(
-      in srgb,
-      var(--mod-filter-color) 82%,
-      hsl(var(--user-hue), 0%, 100%) 14%
-    ) !important;
-  }
-
-  & [class$="_top_grade"],
-  & [class$="_grade_icon"] {
-    background-color: hsl(var(--user-hue), 35.484%, 6.078%) !important;
-    box-shadow: 0 2px 5px hsla(var(--user-hue), 0%, 0%, 0.3) !important;
-  }
-
-  & [class$="_preview_seek"],
-  & [class$="_preview_volume"] {
-    background-color: hsl(var(--user-hue), 9%, 28%) !important;
-    background-image: linear-gradient(
-      90deg,
-      var(--beatmap-accent) 0 var(--preview-progress),
-      hsl(var(--user-hue), 9%, 28%) var(--preview-progress) 100%
-    ) !important;
-  }
-
-  & [class$="_difficulty_link"]:hover,
-  & [class$="_difficulty_link"]:focus-visible,
-  & [class$="_hero_actions"] > a:hover,
-  & [class$="_hero_actions"] > a:focus-visible,
-  & [class$="_hero_actions"] > button:hover,
-  & [class$="_hero_actions"] > button:focus-visible,
-  & [class$="_preview_button"]:hover,
-  & [class$="_preview_button"]:focus-visible,
-  & [class$="_preview_button"][aria-pressed="true"],
-  & [class$="_preview_transport"]:hover,
-  & [class$="_preview_transport"]:focus-visible,
-  & [class$="_preview_mute"]:hover,
-  & [class$="_preview_mute"]:focus-visible,
-  & [class$="_score_table"] tbody tr:hover td {
-    background-color: hsl(var(--user-hue), 20%, 24%) !important;
-  }
+	&[class$="_status"][data-tone="ranked"] {
+		color: hsl(var(--user-hue), 22%, 17%) !important;
+		background-color: hsl(
+			var(--beatmap-ranked-status-hue),
+			100%,
+			67%
+		) !important;
+	}
+	
+	&[class$="_status"][data-tone="loved"] {
+		color: hsl(var(--user-hue), 22%, 17%) !important;
+		background-color: hsl(
+			var(--beatmap-loved-status-hue),
+			100%,
+			70%
+		) !important;
+	}
+	
+	&[class$="_key_count"] {
+		background-color: hsl(var(--user-hue), 52%, 54%) !important;
+		background-image: none !important;
+		border: 1px solid hsla(var(--user-hue), 64%, 74%, 0.3) !important;
+	}
+	
+	&[class$="_mode_badge"] {
+		border: 1px solid hsl(var(--user-hue), 58%, 70%) !important;
+	}
+	
+	&[class$="_difficulty_list"] {
+		border: 1px solid hsl(var(--user-hue), 12%, 42%) !important;
+	}
+	
+	&[class$="_difficulty_link"],
+	&[class$="_star_rating"] {
+		border: 1px solid var(--difficulty-visible-color) !important;
+	}
+	
+	&[class$="_difficulty_name"] {
+		border: 1px solid hsl(var(--user-hue), 18%, 52%) !important;
+	}
+	
+	&[class$="_hero_actions"] > a,
+	&[class$="_hero_actions"] > button,
+	&[class$="_preview_button"] {
+		border: 1px solid hsl(var(--user-hue), 42%, 56%) !important;
+	}
+	
+	&[class$="_featured_replay_button"],
+	&[class$="_table_replay_button"] {
+		border: 1px solid hsl(var(--user-hue), 58%, 70%) !important;
+	}
+	
+	& [class*="_attribute"] > i > span {
+		background-color: var(--beatmap-accent) !important;
+	}
+	
+	& [class$="_hero_sidebar"],
+	& [class*="_card"],
+	& [class$="_difficulty_list"],
+	& [class$="_preview_controls"],
+	& [class$="_score_table_scroller"],
+	& [class$="_score_table"] th {
+		background-color: hsl(var(--user-hue), 9%, 15%) !important;
+		background-image: none !important;
+	}
+	
+	& [class$="_quick_stats"] > span,
+	& [class$="_attribute_grid"] > [class*="_attribute"],
+	& [class$="_difficulty_link"],
+	& [class$="_difficulty_name"],
+	& [class$="_mode_tabs"],
+	& [class$="_convert_modes"],
+	& [class$="_mod_filters"],
+	& [class*="_top_score"],
+	& [class$="_empty_scores"],
+	& [class$="_hero_actions"] > a,
+	& [class$="_hero_actions"] > button,
+	& [class$="_preview_button"],
+	& [class$="_preview_transport"],
+	& [class$="_preview_mute"],
+	& [class$="_score_table"] td {
+		background-color: hsl(var(--user-hue), 9%, 20%) !important;
+		background-image: none !important;
+	}
+	
+	& [class*="_top_score"] {
+		box-shadow: inset 3px 0 0 var(--rank-1),
+		0 2px 5px hsla(var(--user-hue), 0%, 0%, 0.3) !important;
+	}
+	
+	& [class*="_top_score"][class*="_personal_score"] {
+		box-shadow: inset 3px 0 0 var(--beatmap-accent-light),
+		0 2px 5px hsla(var(--user-hue), 0%, 0%, 0.3) !important;
+	}
+	
+	& [class*="_top_score"][class*="_personal_score"][data-rank="1"] {
+		box-shadow: inset 3px 0 0 var(--rank-1),
+		0 2px 5px hsla(var(--user-hue), 0%, 0%, 0.3) !important;
+	}
+	
+	& [class*="_top_score"][class*="_personal_score"][data-rank="2"] {
+		box-shadow: inset 3px 0 0 var(--rank-2),
+		0 2px 5px hsla(var(--user-hue), 0%, 0%, 0.3) !important;
+	}
+	
+	& [class*="_top_score"][class*="_personal_score"][data-rank="3"] {
+		box-shadow: inset 3px 0 0 var(--rank-3),
+		0 2px 5px hsla(var(--user-hue), 0%, 0%, 0.3) !important;
+	}
+	
+	& [class$="_score_table_scroller"] {
+		border: 1px solid hsla(var(--user-hue), 12%, 72%, 0.18) !important;
+	}
+	
+	& [class$="_score_table"] {
+		& th,
+		& td {
+			border: 0 !important;
+			border-bottom: 1px solid hsla(var(--user-hue), 12%, 72%, 0.18) !important;
+		}
+		
+		& tbody tr:last-child td {
+			border-bottom: 0 !important;
+		}
+	}
+	
+	& [class$="_mod_filter_buttons"] > a {
+		color: color-mix(
+			in srgb,
+			var(--mod-filter-color) 48%,
+			hsl(var(--user-hue), 0%, 100%) 52%
+		) !important;
+		background-color: color-mix(
+			in srgb,
+			var(--mod-filter-color) 11%,
+			hsl(var(--user-hue), 9%, 20%)
+		) !important;
+		border: 1px solid color-mix(
+			in srgb,
+			var(--mod-filter-color) 72%,
+			hsla(var(--user-hue), 0%, 100%, 0.1)
+		) !important;
+		text-shadow: 0 0 8px color-mix(in srgb, var(--mod-filter-color) 34%, transparent) !important;
+	}
+	
+	& [class$="_mod_filter_buttons"] > a:hover,
+	& [class$="_mod_filter_buttons"] > a:focus-visible {
+		background-color: color-mix(
+			in srgb,
+			var(--mod-filter-color) 18%,
+			hsl(var(--user-hue), 9%, 20%)
+		) !important;
+	}
+	
+	& [class$="_mod_filter_buttons"] > a[data-active="true"] {
+		background-color: color-mix(
+			in srgb,
+			var(--mod-filter-color) 26%,
+			hsl(var(--user-hue), 9%, 20%)
+		) !important;
+		border-color: color-mix(
+			in srgb,
+			var(--mod-filter-color) 82%,
+			hsl(var(--user-hue), 0%, 100%) 14%
+		) !important;
+	}
+	
+	& [class$="_top_grade"],
+	& [class$="_grade_icon"] {
+		background-color: hsl(var(--user-hue), 35.484%, 6.078%) !important;
+		box-shadow: 0 2px 5px hsla(var(--user-hue), 0%, 0%, 0.3) !important;
+	}
+	
+	& [class$="_preview_seek"],
+	& [class$="_preview_volume"] {
+		background-color: hsl(var(--user-hue), 9%, 28%) !important;
+		background-image: linear-gradient(
+			90deg,
+			var(--beatmap-accent) 0 var(--preview-progress),
+			hsl(var(--user-hue), 9%, 28%) var(--preview-progress) 100%
+		) !important;
+	}
+	
+	& [class$="_difficulty_link"]:hover,
+	& [class$="_difficulty_link"]:focus-visible,
+	& [class$="_hero_actions"] > a:hover,
+	& [class$="_hero_actions"] > a:focus-visible,
+	& [class$="_hero_actions"] > button:hover,
+	& [class$="_hero_actions"] > button:focus-visible,
+	& [class$="_preview_button"]:hover,
+	& [class$="_preview_button"]:focus-visible,
+	& [class$="_preview_button"][aria-pressed="true"],
+	& [class$="_preview_transport"]:hover,
+	& [class$="_preview_transport"]:focus-visible,
+	& [class$="_preview_mute"]:hover,
+	& [class$="_preview_mute"]:focus-visible,
+	& [class$="_score_table"] tbody tr:hover td {
+		background-color: hsl(var(--user-hue), 20%, 24%) !important;
+	}
 }
 
 html[data-theme="legacy"] body :is([class$="_mod_badge"][class$="_mod_badge"], [class$="_no_mod"][class$="_no_mod"]) {
-  color: hsl(var(--mod-other-hue, var(--user-hue)), 70%, 84%) !important;
-  background-color: hsl(
-    var(--mod-other-hue, var(--user-hue)),
-    42%,
-    22%
-  ) !important;
-  background-image: none !important;
-  border: 1px solid hsl(var(--mod-other-hue, var(--user-hue)), 62%, 55%) !important;
+	color: hsl(var(--mod-other-hue, var(--user-hue)), 70%, 84%) !important;
+	background-color: hsl(
+		var(--mod-other-hue, var(--user-hue)),
+		42%,
+		22%
+	) !important;
+	background-image: none !important;
+	border: 1px solid hsl(var(--mod-other-hue, var(--user-hue)), 62%, 55%) !important;
 }
 
 html[data-theme="legacy"] body :is([class$="_mod_badge"][class$="_mod_badge"], [class$="_no_mod"][class$="_no_mod"])[data-tone="easy"] {
-  color: hsl(var(--mod-easy-hue, var(--user-hue)), 70%, 82%) !important;
-  background-color: hsl(
-    var(--mod-easy-hue, var(--user-hue)),
-    38%,
-    22%
-  ) !important;
-  border-color: hsl(var(--mod-easy-hue, var(--user-hue)), 58%, 47%) !important;
+	color: hsl(var(--mod-easy-hue, var(--user-hue)), 70%, 82%) !important;
+	background-color: hsl(
+		var(--mod-easy-hue, var(--user-hue)),
+		38%,
+		22%
+	) !important;
+	border-color: hsl(var(--mod-easy-hue, var(--user-hue)), 58%, 47%) !important;
 }
 
 html[data-theme="legacy"] body :is([class$="_mod_badge"][class$="_mod_badge"], [class$="_no_mod"][class$="_no_mod"])[data-tone="hard"] {
-  color: hsl(var(--mod-hard-hue, var(--user-hue)), 76%, 84%) !important;
-  background-color: hsl(
-    var(--mod-hard-hue, var(--user-hue)),
-    48%,
-    20%
-  ) !important;
-  border-color: hsl(var(--mod-hard-hue, var(--user-hue)), 68%, 51%) !important;
+	color: hsl(var(--mod-hard-hue, var(--user-hue)), 76%, 84%) !important;
+	background-color: hsl(
+		var(--mod-hard-hue, var(--user-hue)),
+		48%,
+		20%
+	) !important;
+	border-color: hsl(var(--mod-hard-hue, var(--user-hue)), 68%, 51%) !important;
 }
 
 html[data-theme="legacy"] [class$="_download_button"] {
-  color: hsl(var(--user-hue), 31.429%, 6.863%) !important;
-  background-color: var(
-    --patcher-gold,
-    hsl(var(--user-hue), 72.165%, 61.961%)
-  ) !important;
-  background-image: none !important;
+	color: hsl(var(--user-hue), 31.429%, 6.863%) !important;
+	background-color: var(
+		--patcher-gold,
+		hsl(var(--user-hue), 72.165%, 61.961%)
+	) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] [class$="_comparison_bar"] {
-  & button[data-active="true"] {
-    color: hsl(var(--user-hue), 58.333%, 9.412%) !important;
-    background-color: var(
-      --support-accent,
-      hsl(var(--user-hue), 88%, 70%)
-    ) !important;
-    background-image: none !important;
-  }
+	& button[data-active="true"] {
+		color: hsl(var(--user-hue), 58.333%, 9.412%) !important;
+		background-color: var(
+			--support-accent,
+			hsl(var(--user-hue), 88%, 70%)
+		) !important;
+		background-image: none !important;
+	}
 }
 
 html[data-theme="legacy"] [class$="_price_tooltip"] {
-  color: hsl(var(--user-hue), 100%, 98.627%) !important;
-  background-color: var(
-    --support-accent-strong,
-    hsl(var(--user-hue), 72%, 55%)
-  ) !important;
-  background-image: none !important;
+	color: hsl(var(--user-hue), 100%, 98.627%) !important;
+	background-color: var(
+		--support-accent-strong,
+		hsl(var(--user-hue), 72%, 55%)
+	) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] [class$="_price_tooltip"]::after {
-  background-color: var(
-    --support-accent-strong,
-    hsl(var(--user-hue), 72%, 55%)
-  ) !important;
-  background-image: none !important;
+	background-color: var(
+		--support-accent-strong,
+		hsl(var(--user-hue), 72%, 55%)
+	) !important;
+	background-image: none !important;
 }
 
 html[data-theme="legacy"] body [class$="_dan_table"][class$="_dan_table"] th,
 html[data-theme="legacy"] body [class$="_dan_table"][class$="_dan_table"] td {
-  border: 1px solid hsla(var(--user-hue), 12%, 72%, 0.18) !important;
+	border: 1px solid hsla(var(--user-hue), 12%, 72%, 0.18) !important;
 }
 
 html[data-theme="minimal"] body *:not([data-theme-independent="true"]):not([data-theme-independent="true"] *) {
-  box-shadow: none !important;
-  text-shadow: none !important;
+	box-shadow: none !important;
+	text-shadow: none !important;
 }
 
 html[data-theme="minimal"] [class*="_card"],
@@ -1043,10 +1034,10 @@ html[data-theme="minimal"] [class*="_dialog"]:not([data-theme-independent="true"
 html[data-theme="minimal"] [class*="_notice"],
 html[data-theme="minimal"] [class*="_tabs"],
 html[data-theme="minimal"] [class*="_filters"] {
-  background-color: hsl(var(--user-hue), 0%, 6.667%) !important;
-  background-image: none !important;
-  border-color: hsl(var(--user-hue), 0%, 17.647%) !important;
-  border-radius: 8px !important;
+	background-color: hsl(var(--user-hue), 0%, 6.667%) !important;
+	background-image: none !important;
+	border-color: hsl(var(--user-hue), 0%, 17.647%) !important;
+	border-radius: 8px !important;
 }
 
 html[data-theme="minimal"] button:not([data-theme-independent="true"] *),
@@ -1054,30 +1045,30 @@ html[data-theme="minimal"] input,
 html[data-theme="minimal"] textarea,
 html[data-theme="minimal"] select,
 html[data-theme="minimal"] [role="button"] {
-  background-image: none !important;
-  border-color: hsl(var(--user-hue), 0%, 18.824%) !important;
-  border-radius: 6px !important;
+	background-image: none !important;
+	border-color: hsl(var(--user-hue), 0%, 18.824%) !important;
+	border-radius: 6px !important;
 }
 
 html[data-theme="minimal"] table {
-  border-spacing: 0 3px !important;
+	border-spacing: 0 3px !important;
 }
 
 html[data-theme="minimal"] table tbody tr > td {
-  background: hsl(var(--user-hue), 0%, 6.667%) !important;
-  border-color: hsl(var(--user-hue), 0%, 16.078%) !important;
-  border-radius: 0 !important;
+	background: hsl(var(--user-hue), 0%, 6.667%) !important;
+	border-color: hsl(var(--user-hue), 0%, 16.078%) !important;
+	border-radius: 0 !important;
 }
 
 html[data-theme="minimal"] [class*="_glow"],
 html[data-theme="minimal"] [class*="_orbit"],
 html[data-theme="minimal"] [class*="_shine"] {
-  display: none !important;
+	display: none !important;
 }
 
 html[data-theme="minimal"] [data-page-enter="box"],
 html[data-theme="minimal"] [data-rendering-item] {
-  animation-duration: 120ms !important;
+	animation-duration: 120ms !important;
 }
 
 html[data-theme="minimal"] a:focus-visible,
@@ -1085,16 +1076,16 @@ html[data-theme="minimal"] button:focus-visible,
 html[data-theme="minimal"] input:focus-visible,
 html[data-theme="minimal"] textarea:focus-visible,
 html[data-theme="minimal"] select:focus-visible {
-  outline-color: hsl(var(--user-hue), 68%, 62%) !important;
+	outline-color: hsl(var(--user-hue), 68%, 62%) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html[data-theme="legacy"] *,
-  html[data-theme="minimal"] *,
-  html[data-theme="legacy"] *::before,
-  html[data-theme="minimal"] *::before,
-  html[data-theme="legacy"] *::after,
-  html[data-theme="minimal"] *::after {
-    scroll-behavior: auto !important;
-  }
+	html[data-theme="legacy"] *,
+	html[data-theme="minimal"] *,
+	html[data-theme="legacy"] *::before,
+	html[data-theme="minimal"] *::before,
+	html[data-theme="legacy"] *::after,
+	html[data-theme="minimal"] *::after {
+		scroll-behavior: auto !important;
+	}
 }

@@ -163,65 +163,65 @@ export const clanSettingsTagConflictQuery = `
 `;
 
 export const updateLegacyProfileSettingsQuery = `
-	UPDATE users
-		SET name = ?,
-		    safe_name = ?,
-		    past_name = ?,
-		    show_past_name = ?
-	WHERE id = ?
-	LIMIT 1
+    UPDATE users
+    SET name           = ?,
+        safe_name      = ?,
+        past_name      = ?,
+        show_past_name = ?
+    WHERE id = ?
+    LIMIT 1
 `;
 
 export const updateModernProfileSettingsQuery = `
-	UPDATE users
-		SET name = ?,
-		    safe_name = ?,
-		    past_name = ?,
-		    show_past_name = ?
-	WHERE id = ?
-	LIMIT 1
+    UPDATE users
+    SET name           = ?,
+        safe_name      = ?,
+        past_name      = ?,
+        show_past_name = ?
+    WHERE id = ?
+    LIMIT 1
 `;
 
 export const updateDefaultProfileSettingsQuery = `
-	UPDATE users
-		SET name = ?,
-		    safe_name = ?,
-		    past_name = ?
-	WHERE id = ?
-	LIMIT 1
+    UPDATE users
+    SET name      = ?,
+        safe_name = ?,
+        past_name = ?
+    WHERE id = ?
+    LIMIT 1
 `;
 
 export const updateClanSettingsQuery = `
-	UPDATE clans
-		SET tag = ?,
-		    past_tag = ?,
-		    show_past_tag = ?
-	WHERE id = ?
-		AND owner = ?
-	LIMIT 1
+    UPDATE clans
+    SET tag           = ?,
+        past_tag      = ?,
+        show_past_tag = ?
+    WHERE id = ?
+      AND owner = ?
+    LIMIT 1
 `;
 
 export const updateProfilePrivacyQuery = `
-	UPDATE users
-		SET \`private\` = ?
-	WHERE id = ?
-	LIMIT 1
+    UPDATE users
+    SET \`private\` = ?
+    WHERE id = ?
+    LIMIT 1
 `;
 
 export const updateWebAppearanceQuery = `
-	UPDATE users
-		SET web_theme = ?,
-		    web_hue = ?,
-		    profile_theme = CASE
-			    WHEN COALESCE(use_web_appearance, 0) = 1 THEN ?
-			    ELSE profile_theme
-		    END,
-		    profile_hue = CASE
-			    WHEN COALESCE(use_web_appearance, 0) = 1 THEN ?
-			    ELSE profile_hue
-		    END
-	WHERE id = ?
-	LIMIT 1
+    UPDATE users
+    SET web_theme     = ?,
+        web_hue       = ?,
+        profile_theme = CASE
+                            WHEN COALESCE(use_web_appearance, 0) = 1 THEN ?
+                            ELSE profile_theme
+            END,
+        profile_hue   = CASE
+                            WHEN COALESCE(use_web_appearance, 0) = 1 THEN ?
+                            ELSE profile_hue
+            END
+    WHERE id = ?
+    LIMIT 1
 `;
 
 export const userWebThemeQuery = `
@@ -246,13 +246,13 @@ export const userUseWebAppearanceQuery = `
 `;
 
 export const updateProfileConfigurationQuery = `
-	UPDATE users
-		SET \`private\` = ?,
-		    use_web_appearance = ?,
-		    profile_theme = CASE WHEN ? = 1 THEN web_theme ELSE ? END,
-		    profile_hue = CASE WHEN ? = 1 THEN web_hue ELSE ? END
-	WHERE id = ?
-	LIMIT 1
+    UPDATE users
+    SET \`private\`        = ?,
+        use_web_appearance = ?,
+        profile_theme      = CASE WHEN ? = 1 THEN web_theme ELSE ? END,
+        profile_hue        = CASE WHEN ? = 1 THEN web_hue ELSE ? END
+    WHERE id = ?
+    LIMIT 1
 `;
 
 export const userProfileThemeQuery = `
@@ -270,21 +270,21 @@ export const userProfileHueQuery = `
 `;
 
 export const updateClanPrivacyQuery = `
-	UPDATE clans
-		SET \`public\` = ?
-	WHERE id = ?
-		AND owner = ?
-	LIMIT 1
+    UPDATE clans
+    SET \`public\` = ?
+    WHERE id = ?
+      AND owner = ?
+    LIMIT 1
 `;
 
 export const updateClanProfileConfigurationQuery = `
-	UPDATE clans
-		SET \`public\` = ?,
-		    profile_theme = ?,
-		    profile_hue = ?
-	WHERE id = ?
-		AND owner = ?
-	LIMIT 1
+    UPDATE clans
+    SET \`public\`    = ?,
+        profile_theme = ?,
+        profile_hue   = ?
+    WHERE id = ?
+      AND owner = ?
+    LIMIT 1
 `;
 
 export const badgeOwnershipForUpdateQuery = `
@@ -296,8 +296,8 @@ export const badgeOwnershipForUpdateQuery = `
 `;
 
 export const updateSelectedBadgeQuery = `
-	UPDATE gacha_stats
-		SET set_badge = ?
-	WHERE id = ?
-	LIMIT 1
+    UPDATE gacha_stats
+    SET set_badge = ?
+    WHERE id = ?
+    LIMIT 1
 `;
