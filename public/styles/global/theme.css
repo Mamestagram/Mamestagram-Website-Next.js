@@ -108,7 +108,7 @@ html[data-theme="legacy"] body *:not([data-theme-independent="true"]):not([data-
 	border: 0 !important;
 }
 
-html[data-theme="legacy"] body *:not(.fi):not([data-theme-independent="true"]):not([data-theme-independent="true"] *):not([style*="--home-hero-image"]),
+html[data-theme="legacy"] body *:not(.fi):not(input[type="range"]):not([data-theme-independent="true"]):not([data-theme-independent="true"] *):not([style*="--home-hero-image"]),
 html[data-theme="legacy"] body *:not([data-theme-independent="true"]):not([data-theme-independent="true"] *)::before,
 html[data-theme="legacy"] body *:not([data-theme-independent="true"]):not([data-theme-independent="true"] *)::after {
 	background-image: none !important;

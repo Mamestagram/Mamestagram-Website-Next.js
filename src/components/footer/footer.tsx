@@ -80,7 +80,7 @@ export default function Footer() {
 					   target="_blank"
 					   rel="noopener noreferrer">
 						<FontAwesome prefix="fab" name="x-twitter"/>
-					</a>, Coded with
+					</a>, Code assisted by
 					<FontAwesome prefix="fab" name="openai"/>
 					OpenAI Codex
 				</p>

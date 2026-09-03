@@ -46,7 +46,7 @@ Mamestagram Web
 ### API
 
 - Route Handlersを使用
-- エラーハンドリングを書く（自身のapiは不必要）
+- エラーハンドリングを書く（自身のapiは不要）
 - fetchを利用する
 
 ## Do Not
