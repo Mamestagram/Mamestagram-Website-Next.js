@@ -42,7 +42,7 @@ const lazerData = {
 	version: "1.0.0",
 	links: {
 		releases: "https://github.com/Mamestagram/Mamestagram-Lazer-Patcher/releases",
-		windowsDownload: "https://github.com/Mamestagram/Mamestagram-Lazer-Patcher/releases/download/v.1.0.0/windows.exe",
+		windowsDownload: "https://github.com/Mamestagram/Mamestagram-Lazer-Patcher/releases/download/v.1.0.0/Mamestagram-Lazer-Windows-x64.zip",
 		macOSDownload: "https://github.com/Mamestagram/Mamestagram-Lazer-Patcher/releases/download/v.1.0.0/macos.zip",
 		osuDownload: "https://osu.ppy.sh/home/download"
 	},
