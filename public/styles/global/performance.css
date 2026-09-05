@@ -16,6 +16,10 @@ html[data-rendering-mode="software"] [data-rendering-item] {
 	content-visibility: auto;
 }
 
+html[data-rendering-mode="software"] [data-rendering-item]:is(:hover, :focus-within) {
+	content-visibility: visible;
+}
+
 html[data-rendering-mode="software"] [data-page-enter="section"] {
 	contain-intrinsic-size: auto 560px;
 }
