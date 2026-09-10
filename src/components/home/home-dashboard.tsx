@@ -159,22 +159,15 @@ export default function HomeDashboard({
 			>
 				<div className={styles.hero_inner}>
 					<div className={styles.hero_copy}>
-						<p className={styles.hero_kicker}>Welcome to</p>
 						<h1>
-							Mamestagram <span>Dashboard</span>
+							Mamestagram <span>Dashboard</span>{/* heroTitle */}
 						</h1>
 						<div className={styles.hero_actions}>
-							<Link
-								className={styles.primary_action}
-								href={isLoggedIn ? "/documents#connect" : "/register"}
-							>
+							<Link className={styles.primary_action} href={isLoggedIn ? "/documents#connect" : "/register"}>
 								<FontAwesome prefix="fas" name="circle-play"/>
 								Join Mamestagram
 							</Link>
-							<Link
-								className={styles.secondary_action}
-								href="/leaderboard/std/performance"
-							>
+							<Link className={styles.secondary_action} href="/leaderboard/std/performance">
 								View leaderboard
 								<FontAwesome prefix="fas" name="arrow-right"/>
 							</Link>

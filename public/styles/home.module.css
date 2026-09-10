@@ -91,18 +91,6 @@
 	flex-direction: column;
 }
 
-.hero_kicker {
-	margin-bottom: 8px;
-	color: var(--home-accent-light);
-	font-size: clamp(0.82rem, 1.4vw, 1rem);
-	letter-spacing: 0.12em;
-	text-transform: uppercase;
-	
-	@media (max-width: 560px) {
-		font-size: 0.95rem;
-	}
-}
-
 .hero h1 {
 	max-width: 680px;
 	color: hsl(var(--user-hue), 57.143%, 97.255%);
