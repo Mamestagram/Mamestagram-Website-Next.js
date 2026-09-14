@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import type { CSSProperties } from "react";
 import FontAwesome from "@/components/font-awesome";
+import ScoreResetSettings from "@/components/settings/score-reset-settings";
 import { readMutationResponse } from "@/lib/mutation-response";
 import { getWebThemeName, WebTheme, webThemeValues } from "@/lib/theme";
 import styles from "@s/settings.module.css";
@@ -51,6 +52,7 @@ export default function ThemeSettingsForm({
 	initialUseWebsiteAppearance,
 	websiteTheme,
 	websiteHue,
+	canResetScores = false,
 	scope = "website",
 }: Readonly<{
 	initialTheme: WebTheme;
@@ -59,6 +61,7 @@ export default function ThemeSettingsForm({
 	initialUseWebsiteAppearance?: boolean;
 	websiteTheme?: WebTheme;
 	websiteHue?: number | null;
+	canResetScores?: boolean;
 	scope?: "website" | "personal" | "clan";
 }>) {
 	const [theme, setTheme] = useState(initialTheme);
@@ -181,6 +184,10 @@ export default function ThemeSettingsForm({
             <span/>
           </span>
 				</label>
+			)}
+
+			{isPersonalProfile && (
+				<ScoreResetSettings isSupporter={canResetScores}/>
 			)}
 			
 			<div

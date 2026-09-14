@@ -18,6 +18,7 @@ import {
 } from "@/lib/profile-banner";
 import { profileMediaExists } from "@/lib/profile-media";
 import { getProfileCosmetics } from "@/lib/profile-cosmetics";
+import { Priv } from "@/lib/priv";
 import { writeLog } from "@/lib/log";
 import { getCurrentUser } from "@/lib/session";
 import styles from "@s/settings.module.css";
@@ -188,6 +189,9 @@ export default async function SettingsPage({
 	]);
 	const activeClan = activeScope === "clan" ? ownedClan : null;
 	const isClanScope = activeClan !== null;
+	const canResetScores =
+		currentUser.priv !== undefined &&
+		(currentUser.priv & Priv.supporter) !== 0;
 	const profileHref = activeClan
 		? `/profile/${activeClan.id}?clan`
 		: `/profile/${currentUser.id}`;
@@ -435,6 +439,7 @@ export default async function SettingsPage({
 									}
 									websiteTheme={activeClan ? undefined : settings.webTheme}
 									websiteHue={activeClan ? undefined : settings.webHue}
+									canResetScores={canResetScores}
 									scope={activeScope}
 								/>
 							)}

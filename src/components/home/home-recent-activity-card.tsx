@@ -44,6 +44,7 @@ export default function HomeRecentActivityCard({
 		>
 			<div
 				className={styles.activity_card}
+				data-activity-background
 				role="button"
 				tabIndex={0}
 				aria-label={`${label}. ${isExpanded ? "Hide" : "Show"} score actions.`}

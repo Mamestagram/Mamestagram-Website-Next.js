@@ -2,6 +2,7 @@ import "server-only";
 
 import { randomBytes } from "node:crypto";
 import { getRedisClient } from "@/database/redis";
+import type { ScoreResetMode } from "@/lib/score-reset";
 
 const OAUTH_TOKEN_TTL_SECONDS = 31 * 24 * 60 * 60;
 const OAUTH_REFRESH_LOCK_MS = 17_000;
@@ -9,6 +10,11 @@ const OAUTH_REFRESH_WAIT_ATTEMPTS = 170;
 const OAUTH_REFRESH_WAIT_MS = 100;
 const OAUTH_REQUEST_TIMEOUT_MS = 15_000;
 const ACCESS_TOKEN_EXPIRY_BUFFER_MS = 30_000;
+const REQUIRED_OAUTH_SCOPES = [
+	"identify",
+	"friends:write",
+	"scores:reset",
+] as const;
 
 export type FriendAction = "follow" | "unfollow";
 
@@ -69,9 +75,11 @@ const getOAuthConfiguration = (): OAuthConfiguration => {
 	const scopes = new Set(scope.split(/\s+/u));
 	if (
 		!scopes.has("*") &&
-		(!scopes.has("identify") || !scopes.has("friends:write"))
+		REQUIRED_OAUTH_SCOPES.some((requiredScope) => !scopes.has(requiredScope))
 	)
-		throw new Error("OAUTH_SCOPE must include identify and friends:write");
+		throw new Error(
+			"OAUTH_SCOPE must include identify, friends:write, and scores:reset",
+		);
 	
 	return {
 		apiBaseUrl,
@@ -147,7 +155,10 @@ const parseOAuthTokenResponse = (
 		response.expires_in <= 0 ||
 		(typeof response.token_type === "string" &&
 			response.token_type.toLowerCase() !== "bearer") ||
-		(!scopes.has("*") && !scopes.has("friends:write"))
+		(!scopes.has("*") &&
+			REQUIRED_OAUTH_SCOPES.some(
+				(requiredScope) => !scopes.has(requiredScope),
+			))
 	)
 		throw new MamestagramApiError(
 			"Mamestagram returned an incomplete OAuth token response.",
@@ -319,12 +330,25 @@ const refreshOAuthTokenSet = async (
 	}
 };
 
-const getOAuthAccessToken = async (userId: number) => {
+const hasOAuthScope = (scope: string, requiredScope: string) => {
+	const scopes = new Set(scope.split(/\s+/u));
+	return scopes.has("*") || scopes.has(requiredScope);
+};
+
+const getOAuthAccessToken = async (
+	userId: number,
+	requiredScope?: string,
+) => {
 	const token = await getStoredOAuthTokenSet(userId);
 	if (!token) throw new OAuthAuthorizationRequiredError();
+	if (requiredScope && !hasOAuthScope(token.scope, requiredScope))
+		throw new OAuthAuthorizationRequiredError();
 	if (token.expiresAt - ACCESS_TOKEN_EXPIRY_BUFFER_MS > Date.now())
 		return token.accessToken;
-	return (await refreshOAuthTokenSet(userId, token.accessToken)).accessToken;
+	const refreshedToken = await refreshOAuthTokenSet(userId, token.accessToken);
+	if (requiredScope && !hasOAuthScope(refreshedToken.scope, requiredScope))
+		throw new OAuthAuthorizationRequiredError();
+	return refreshedToken.accessToken;
 };
 
 const requestAuthenticatedJson = async (
@@ -408,6 +432,46 @@ export const mutateFriendRelationship = async (
 	if (response.status === 401) {
 		accessToken = (await refreshOAuthTokenSet(userId, accessToken)).accessToken;
 		response = await requestFriendMutation(accessToken, targetUserId, action);
+	}
+	if (response.status === 401) {
+		await clearMamestagramOAuthTokens(userId);
+		throw new OAuthAuthorizationRequiredError();
+	}
+	const payload = await readResponsePayload(response);
+	throwForError(response, payload);
+};
+
+const requestScoreReset = async (
+	accessToken: string,
+	mode: ScoreResetMode,
+) => {
+	const configuration = getOAuthConfiguration();
+	return fetch(
+		getApiUrl(configuration, `/lazer/api/v2/me/scores/${mode}`),
+		{
+			method: "DELETE",
+			headers: {
+				Accept: "application/json",
+				Authorization: `Bearer ${accessToken}`,
+			},
+			cache: "no-store",
+			signal: AbortSignal.timeout(OAUTH_REQUEST_TIMEOUT_MS),
+		},
+	);
+};
+
+export const resetMamestagramModeScores = async (
+	userId: number,
+	mode: ScoreResetMode,
+) => {
+	let accessToken = await getOAuthAccessToken(userId, "scores:reset");
+	let response = await requestScoreReset(accessToken, mode);
+	if (response.status === 401) {
+		const refreshedToken = await refreshOAuthTokenSet(userId, accessToken);
+		if (!hasOAuthScope(refreshedToken.scope, "scores:reset"))
+			throw new OAuthAuthorizationRequiredError();
+		accessToken = refreshedToken.accessToken;
+		response = await requestScoreReset(accessToken, mode);
 	}
 	if (response.status === 401) {
 		await clearMamestagramOAuthTokens(userId);

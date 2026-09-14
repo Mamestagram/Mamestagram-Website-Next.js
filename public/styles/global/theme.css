@@ -108,7 +108,7 @@ html[data-theme="legacy"] body *:not([data-theme-independent="true"]):not([data-
 	border: 0 !important;
 }
 
-html[data-theme="legacy"] body *:not(.fi):not(input[type="range"]):not([data-theme-independent="true"]):not([data-theme-independent="true"] *):not([style*="--home-hero-image"]),
+html[data-theme="legacy"] body *:not(.fi):not(input[type="range"]):not([data-theme-independent="true"]):not([data-theme-independent="true"] *):not([style*="--home-hero-image"]):not([data-activity-background]),
 html[data-theme="legacy"] body *:not([data-theme-independent="true"]):not([data-theme-independent="true"] *)::before,
 html[data-theme="legacy"] body *:not([data-theme-independent="true"]):not([data-theme-independent="true"] *)::after {
 	background-image: none !important;
@@ -153,13 +153,14 @@ html[data-theme="legacy"] [class$="_hero_counter"] {
 	background-color: hsl(var(--user-hue), 55.556%, 3.529%) !important;
 }
 
-html[data-theme="legacy"] body [style*="--activity-background-image"][style*="--activity-background-image"] [class*="_activity_card"][class*="_activity_card"] {
-	background-color: hsla(var(--user-hue), 11.111%, 3.529%, 0.72) !important;
-	background-image: var(--activity-background-image) !important;
-	background-position: center 45% !important;
-	background-size: cover !important;
-	background-repeat: no-repeat !important;
-	background-blend-mode: multiply;
+html[data-theme="legacy"] body [style*="--activity-background-image"] [data-activity-background] {
+	background: linear-gradient(
+		90deg,
+		hsla(var(--user-hue), 57.895%, 3.725%, 0.94),
+		hsla(var(--user-hue), 57.895%, 3.725%, 0.72)
+	),
+	var(--activity-background-image) center 45% / cover no-repeat !important;
+	background-blend-mode: normal;
 }
 
 html[data-theme="legacy"] [class*="_overlay"]:not([data-theme-independent="true"]),
@@ -703,11 +704,12 @@ html[data-theme="legacy"] body [class^="settings-module"] {
 	&[class$="_toggle_row"],
 	&[class$="_badge_option"],
 	&[class$="_hue_control"],
-	&[class$="_theme_option"] {
+	&[class$="_theme_option"],
+	&[class$="_score_reset_select"] {
 		background-color: hsl(var(--user-hue), 9%, 20%) !important;
 		background-image: none !important;
 	}
-	
+
 	&[class$="_theme_option"]:hover:not(:disabled),
 	&[class$="_theme_option"]:focus-visible:not(:disabled) {
 		background-color: hsl(var(--user-hue), 20%, 25%) !important;
