@@ -3,9 +3,16 @@
 import { useState, useTransition } from "react";
 import type { CSSProperties } from "react";
 import FontAwesome from "@/components/font-awesome";
+import ProfileUiSettings from "@/components/settings/profile-ui-settings";
 import ScoreResetSettings from "@/components/settings/score-reset-settings";
 import { readMutationResponse } from "@/lib/mutation-response";
-import { getWebThemeName, WebTheme, webThemeValues } from "@/lib/theme";
+import type { ProfileUiItem } from "@/lib/profile-ui";
+import {
+	DEFAULT_WEB_THEME,
+	getWebThemeName,
+	WebTheme,
+	webThemeValues,
+} from "@/lib/theme";
 import styles from "@s/settings.module.css";
 
 const themeDetails = {
@@ -32,6 +39,14 @@ type HuePreviewStyle = CSSProperties & {
 	"--settings-hue-preview": number;
 };
 
+type ProfileUiEditorConfig = {
+	profileId: number;
+	initialContents: ProfileUiItem[];
+	isSupporter: boolean;
+	bannerUrl: string;
+	backgroundUrl: string;
+};
+
 const applyDocumentHue = (hue: number | null) => {
 	if (hue === null) {
 		delete document.documentElement.dataset.userHue;
@@ -48,26 +63,36 @@ const applyDocumentHue = (hue: number | null) => {
 export default function ThemeSettingsForm({
 	initialTheme,
 	initialHue,
+	initialCustomAppearance,
 	initialIsPrivate,
 	initialUseWebsiteAppearance,
 	websiteTheme,
 	websiteHue,
 	canResetScores = false,
 	scope = "website",
+	profileUiEditor,
 }: Readonly<{
 	initialTheme: WebTheme;
 	initialHue: number | null;
+	initialCustomAppearance?: boolean;
 	initialIsPrivate?: boolean;
 	initialUseWebsiteAppearance?: boolean;
 	websiteTheme?: WebTheme;
 	websiteHue?: number | null;
 	canResetScores?: boolean;
 	scope?: "website" | "personal" | "clan";
+	profileUiEditor?: ProfileUiEditorConfig;
 }>) {
 	const [theme, setTheme] = useState(initialTheme);
 	const [savedTheme, setSavedTheme] = useState(initialTheme);
 	const [hue, setHue] = useState(initialHue);
 	const [savedHue, setSavedHue] = useState(initialHue);
+	const [customAppearance, setCustomAppearance] = useState(
+		initialCustomAppearance ?? true,
+	);
+	const [savedCustomAppearance, setSavedCustomAppearance] = useState(
+		initialCustomAppearance ?? true,
+	);
 	const [isPrivate, setIsPrivate] = useState(initialIsPrivate ?? false);
 	const [savedIsPrivate, setSavedIsPrivate] = useState(
 		initialIsPrivate ?? false,
@@ -90,10 +115,14 @@ export default function ThemeSettingsForm({
 	const isClan = scope === "clan";
 	const isPersonalProfile = scope === "personal";
 	const profileLabel = isClan ? "Clan profile" : "Profile";
-	const isUsingWebsiteAppearance = isPersonalProfile && useWebsiteAppearance;
+	const isUsingWebsiteAppearance =
+		isPersonalProfile && customAppearance && useWebsiteAppearance;
+	const isAppearanceLocked = !customAppearance || isUsingWebsiteAppearance;
 	const hasChanges =
 		theme !== savedTheme ||
 		hue !== savedHue ||
+		(initialCustomAppearance !== undefined &&
+			customAppearance !== savedCustomAppearance) ||
 		(initialIsPrivate !== undefined && isPrivate !== savedIsPrivate) ||
 		(initialUseWebsiteAppearance !== undefined &&
 			useWebsiteAppearance !== savedUseWebsiteAppearance);
@@ -118,9 +147,12 @@ export default function ThemeSettingsForm({
 									theme,
 									hue,
 									isPrivate,
-									...(!isClan && { useWebsiteAppearance }),
+									...(!isClan && {
+										useWebsiteAppearance,
+										customAppearance,
+									}),
 								}
-								: { theme, hue },
+								: { theme, hue, customAppearance },
 						),
 					},
 				);
@@ -130,12 +162,17 @@ export default function ThemeSettingsForm({
 				
 				setSavedTheme(theme);
 				setSavedHue(hue);
+				setSavedCustomAppearance(customAppearance);
 				if (isProfileConfiguration) setSavedIsPrivate(isPrivate);
 				if (isPersonalProfile)
-					setSavedUseWebsiteAppearance(useWebsiteAppearance);
+					setSavedUseWebsiteAppearance(
+						customAppearance ? useWebsiteAppearance : false,
+					);
 				if (!isProfileConfiguration) {
-					document.documentElement.dataset.theme = getWebThemeName(theme);
-					applyDocumentHue(hue);
+					document.documentElement.dataset.theme = getWebThemeName(
+						customAppearance ? theme : DEFAULT_WEB_THEME,
+					);
+					applyDocumentHue(customAppearance ? hue : null);
 				}
 			} catch {
 				setStatus({
@@ -186,10 +223,6 @@ export default function ThemeSettingsForm({
 				</label>
 			)}
 
-			{isPersonalProfile && (
-				<ScoreResetSettings isSupporter={canResetScores}/>
-			)}
-			
 			<div
 				className={
 					isProfileConfiguration
@@ -202,11 +235,61 @@ export default function ThemeSettingsForm({
 						<h3>Profile appearance</h3>
 					</div>
 				)}
+				{isPersonalProfile && profileUiEditor && (
+					<ProfileUiSettings
+						profileId={profileUiEditor.profileId}
+						initialContents={profileUiEditor.initialContents}
+						isSupporter={profileUiEditor.isSupporter}
+						bannerUrl={profileUiEditor.bannerUrl}
+						backgroundUrl={profileUiEditor.backgroundUrl}
+						profileTheme={theme}
+						profileHue={hue}
+					/>
+				)}
+				{initialCustomAppearance !== undefined && !isClan && (
+					<label className={styles.toggle_row}>
+              <span className={styles.toggle_copy}>
+                <span className={styles.toggle_icon}>
+                  <FontAwesome prefix="fad" name="palette"/>
+                </span>
+                <span>
+                  <strong>
+                    {isPersonalProfile
+	                    ? "Customize profile appearance"
+	                    : "Customize website appearance"}
+                  </strong>
+                  <small>
+                    {isPersonalProfile
+	                    ? "Use your own theme and hue on profile pages."
+	                    : "Use your own theme and hue instead of the defaults."}
+                  </small>
+                </span>
+              </span>
+						<input
+							type="checkbox"
+							checked={customAppearance}
+							disabled={isPending}
+							onChange={(event) => {
+								const nextValue = event.currentTarget.checked;
+								setCustomAppearance(nextValue);
+								if (!nextValue && isPersonalProfile)
+									setUseWebsiteAppearance(false);
+								setStatus(null);
+							}}
+						/>
+						<span className={styles.toggle} aria-hidden="true">
+                <span/>
+              </span>
+					</label>
+				)}
 				{isPersonalProfile &&
 					initialUseWebsiteAppearance !== undefined &&
 					websiteTheme !== undefined &&
 					websiteHue !== undefined && (
-						<label className={styles.toggle_row}>
+						<label
+							className={styles.toggle_row}
+							data-disabled={!customAppearance}
+						>
               <span className={styles.toggle_copy}>
                 <span className={styles.toggle_icon}>
                   <FontAwesome prefix="fad" name="link"/>
@@ -222,7 +305,7 @@ export default function ThemeSettingsForm({
 							<input
 								type="checkbox"
 								checked={useWebsiteAppearance}
-								disabled={isPending}
+								disabled={isPending || !customAppearance}
 								onChange={(event) => {
 									const nextValue = event.currentTarget.checked;
 									setUseWebsiteAppearance(nextValue);
@@ -255,10 +338,10 @@ export default function ThemeSettingsForm({
 								className={styles.theme_option}
 								data-theme-preview={getWebThemeName(value)}
 								data-selected={theme === value}
-								data-appearance-locked={isUsingWebsiteAppearance}
+								data-appearance-locked={isAppearanceLocked}
 								role="radio"
 								aria-checked={theme === value}
-								disabled={isPending || isUsingWebsiteAppearance}
+								disabled={isPending || isAppearanceLocked}
 								onClick={() => {
 									setTheme(value);
 									setStatus(null);
@@ -297,12 +380,12 @@ export default function ThemeSettingsForm({
             </span>
 						<label
 							className={styles.hue_toggle}
-							data-appearance-locked={isUsingWebsiteAppearance}
+							data-appearance-locked={isAppearanceLocked}
 						>
 							<input
 								type="checkbox"
 								checked={hue !== null}
-								disabled={isPending || isUsingWebsiteAppearance}
+								disabled={isPending || isAppearanceLocked}
 								onChange={(event) => {
 									setHue(event.currentTarget.checked ? customHue : null);
 									setStatus(null);
@@ -323,7 +406,7 @@ export default function ThemeSettingsForm({
 							max="360"
 							step="1"
 							value={customHue}
-							disabled={isPending || isUsingWebsiteAppearance || hue === null}
+							disabled={isPending || isAppearanceLocked || hue === null}
 							onChange={(event) => {
 								const nextHue = Number(event.currentTarget.value);
 								setCustomHue(nextHue);
@@ -334,6 +417,10 @@ export default function ThemeSettingsForm({
 					</label>
 				</div>
 			</div>
+
+			{isPersonalProfile && (
+				<ScoreResetSettings isSupporter={canResetScores}/>
+			)}
 			
 			<div className={styles.form_footer}>
         <span
@@ -351,6 +438,7 @@ export default function ThemeSettingsForm({
 						onClick={() => {
 							setTheme(savedTheme);
 							setHue(savedHue);
+							setCustomAppearance(savedCustomAppearance);
 							setIsPrivate(savedIsPrivate);
 							setUseWebsiteAppearance(savedUseWebsiteAppearance);
 							setCustomHue(savedHue ?? SETTINGS_DEFAULT_HUE);

@@ -10,6 +10,7 @@ import ClanSettingsForm from "@/components/settings/clan-settings-form";
 import MediaSettingCard from "@/components/settings/media-setting-card";
 import ProfileSettingsForm from "@/components/settings/profile-settings-form";
 import ThemeSettingsForm from "@/components/settings/theme-settings-form";
+import { getProfileUi } from "@/database/profile-ui";
 import { getOwnedClanSettings, getUserSettings } from "@/database/settings";
 import {
 	resolveProfileAvatarUrl,
@@ -50,7 +51,7 @@ const profileSectionMeta: Record<SettingsSection, SectionMeta> = {
 		icon: "id-badge",
 	},
 	"profile-conf": {
-		title: "Profile conf",
+		title: "Profile settings",
 		icon: "user-gear",
 	},
 	appearance: {
@@ -73,7 +74,7 @@ const clanSectionMeta: Record<SettingsSection, SectionMeta> = {
 		icon: "id-badge",
 	},
 	"profile-conf": {
-		title: "Profile conf",
+		title: "Profile settings",
 		icon: "user-gear",
 	},
 	appearance: {
@@ -93,6 +94,7 @@ const normalizeSettingsSection = (value: unknown): SettingsSection => {
 	if (value === "avatar" || value === "banner" || value === "background")
 		return "images";
 	if (value === "privacy") return "profile-conf";
+	if (value === "profile-ui") return "profile-conf";
 	return isSettingsSection(value) ? value : "rename";
 };
 
@@ -122,10 +124,14 @@ export default async function SettingsPage({
 	if (!currentUser.isLoggedIn || !currentUser.id || !currentUser.username)
 		redirect("/signin");
 	
-	const [settings, ownedClan, cosmetics] = await Promise.all([
+	const isSupporter =
+		currentUser.priv !== undefined &&
+		(currentUser.priv & Priv.supporter) !== 0;
+	const [settings, ownedClan, cosmetics, profileUi] = await Promise.all([
 		getUserSettings(currentUser.id),
 		getOwnedClanSettings(currentUser.id),
 		getProfileCosmetics(currentUser.id),
+		isSupporter ? getProfileUi(currentUser.id) : Promise.resolve([]),
 	]);
 	if (!settings) redirect("/signin");
 	const legacyClanSection = params.section === "clan";
@@ -171,12 +177,8 @@ export default async function SettingsPage({
 		clanBackgroundUrl,
 	] = await Promise.all([
 		resolveProfileAvatarUrl(currentUser.id, false, baseDomain),
-		hasBanner
-			? resolveProfileBannerUrl(currentUser.id, false, baseDomain)
-			: Promise.resolve(null),
-		hasBackground
-			? resolveProfileBackgroundUrl(currentUser.id, false, baseDomain)
-			: Promise.resolve(null),
+		resolveProfileBannerUrl(currentUser.id, false, baseDomain),
+		resolveProfileBackgroundUrl(currentUser.id, false, baseDomain),
 		ownedClan && hasClanAvatar
 			? resolveProfileAvatarUrl(ownedClan.id, true, baseDomain)
 			: Promise.resolve(null),
@@ -189,9 +191,7 @@ export default async function SettingsPage({
 	]);
 	const activeClan = activeScope === "clan" ? ownedClan : null;
 	const isClanScope = activeClan !== null;
-	const canResetScores =
-		currentUser.priv !== undefined &&
-		(currentUser.priv & Priv.supporter) !== 0;
+	const canResetScores = isSupporter;
 	const profileHref = activeClan
 		? `/profile/${activeClan.id}?clan`
 		: `/profile/${currentUser.id}`;
@@ -323,7 +323,7 @@ export default async function SettingsPage({
 								}
 							>
 								<FontAwesome prefix="fad" name="user-gear"/>
-								Profile conf
+								Profile settings
 							</Link>
 							<Link
 								href={
@@ -437,16 +437,37 @@ export default async function SettingsPage({
 									initialUseWebsiteAppearance={
 										activeClan ? undefined : settings.useWebsiteAppearance
 									}
+									initialCustomAppearance={
+										activeClan
+											? undefined
+											: settings.hasCustomProfileAppearance
+									}
 									websiteTheme={activeClan ? undefined : settings.webTheme}
 									websiteHue={activeClan ? undefined : settings.webHue}
 									canResetScores={canResetScores}
 									scope={activeScope}
+									profileUiEditor={
+										activeClan
+											? undefined
+											: {
+												profileId: currentUser.id,
+												initialContents: profileUi,
+												isSupporter,
+												bannerUrl:
+													profileBannerUrl ??
+													`https://banner.${baseDomain}/${currentUser.id}`,
+												backgroundUrl:
+													profileBackgroundUrl ??
+													`https://bg.${baseDomain}/${currentUser.id}`,
+											}
+									}
 								/>
 							)}
 							{!isClanScope && activeSection === "appearance" && (
 								<ThemeSettingsForm
 									initialTheme={settings.webTheme}
 									initialHue={settings.webHue}
+									initialCustomAppearance={settings.hasCustomWebAppearance}
 								/>
 							)}
 							{activeClan && activeSection === "images" && (

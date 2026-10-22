@@ -35,9 +35,7 @@ export default function Header() {
 						</li>
 						<li className="market">
 							<span className="pipe"></span>
-							<a href={`https://market.${process.env.BASE_DOMAIN}`}
-							   target="_blank"
-							   rel="noopener noreferrer">
+							<a href={`https://market.${process.env.BASE_DOMAIN}`}>
 								Market
 							</a>
 						</li>

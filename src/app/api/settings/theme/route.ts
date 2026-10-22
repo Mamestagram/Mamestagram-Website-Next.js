@@ -37,6 +37,7 @@ export const PATCH = async (
 	}
 	if (
 		!isRecord(body) ||
+		typeof body.customAppearance !== "boolean" ||
 		!isWebTheme(body.theme) ||
 		(body.hue !== null && !isWebHue(body.hue))
 	)
@@ -50,6 +51,7 @@ export const PATCH = async (
 			currentUser.id,
 			body.theme,
 			body.hue,
+			body.customAppearance,
 		);
 		if (!wasUpdated)
 			return NextResponse.json(

@@ -102,8 +102,8 @@
 
 .profile_cover {
 	position: relative;
-	height: clamp(190px, 23vw, 280px);
-	min-height: 190px;
+	height: var(--profile-ui-cover-height, clamp(190px, 23vw, 280px));
+	min-height: var(--profile-ui-cover-height, 190px);
 	overflow: hidden;
 	border-bottom: 1px solid hsla(var(--user-hue), 58%, 70%, 0.17);
 	
@@ -193,7 +193,7 @@
 	--box-gap: 16px;
 	
 	display: grid;
-	grid-template-columns: 80%;
+	grid-template-columns: var(--profile-ui-page-track, 80%);
 	grid-template-rows: repeat(3, max-content);
 	grid-gap: var(--box-gap);
 	justify-content: center;
@@ -203,7 +203,7 @@
 		position: relative;
 		z-index: 3;
 		padding-top: 0;
-		margin-top: clamp(-140px, -11.5vw, -95px);
+		margin-top: var(--profile-ui-cover-overlap, clamp(-140px, -11.5vw, -95px));
 	}
 	
 	& .section_area {
@@ -2423,7 +2423,7 @@
 						
 						&[open] {
 							& .score_summary {
-								margin-bottom: 14px;
+								margin-bottom: var(--profile-ui-score-heading-gap, 14px);
 							}
 							
 							& .collapse_icon {
@@ -2433,8 +2433,8 @@
 					}
 					
 					& .score_list {
-						--list-row-height: 58px;
-						--list-gap: 6px;
+						--list-row-height: var(--profile-ui-score-row-height, 58px);
+						--list-gap: var(--profile-ui-score-row-gap, 6px);
 						--score-list-height: 314px;
 						
 						display: flex;
@@ -2925,9 +2925,9 @@
 					
 					& .score_list_toggle {
 						display: flex;
-						width: calc(100% + 64px);
-						height: 44px;
-						margin: 14px -32px -32px;
+						width: calc(100% + 2 * var(--profile-ui-score-padding, 32px));
+						height: var(--profile-ui-score-footer-height, 44px);
+						margin: var(--profile-ui-score-footer-gap, 14px) calc(-1 * var(--profile-ui-score-padding, 32px)) calc(-1 * var(--profile-ui-score-padding, 32px));
 						align-items: center;
 						justify-content: center;
 						gap: 8px;
@@ -4015,18 +4015,18 @@
 
 @media (max-width: 480px) {
 	.profile_cover {
-		height: 210px;
-		min-height: 210px;
+		height: var(--profile-ui-cover-height, 210px);
+		min-height: var(--profile-ui-cover-height, 210px);
 	}
 	
 	.container.with_cover {
-		margin-top: -105px;
+		margin-top: var(--profile-ui-cover-overlap, -105px);
 	}
 }
 
 @media (max-width: 872px) {
 	.container {
-		grid-template-columns: minmax(0, 94vw);
+		grid-template-columns: var(--profile-ui-page-track, minmax(0, 94vw));
 	}
 }
 
@@ -4840,6 +4840,333 @@
 :global(html[data-rendering-mode="software"]) .profile_background_image {
 	filter: saturate(0.78) brightness(0.52);
 	transform: none;
+}
+
+.profile_ui_layout {
+	display: grid;
+	width: 100%;
+	min-width: 0;
+	max-width: 100%;
+	grid-template-columns: repeat(100, minmax(0, 1fr));
+	column-gap: 0;
+	grid-auto-rows: max-content;
+	align-items: start;
+	row-gap: var(--profile-ui-layout-gap, var(--box-gap, 16px));
+}
+
+.profile_ui_slot {
+	display: block !important;
+	min-width: 0;
+	max-width: 100%;
+	grid-column: var(--profile-ui-responsive-content-column, span var(--profile-ui-content-span, 100));
+	padding-inline: calc(var(--profile-ui-layout-gap, var(--box-gap, 16px)) / 2);
+}
+
+.profile_ui_content {
+	display: block !important;
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
+	max-width: 100%;
+	height: var(--profile-ui-height, auto);
+	min-height: var(--profile-ui-min-height, 0px);
+}
+
+.profile_ui_content[data-fixed-height="true"] {
+	min-height: 0;
+	overflow: hidden;
+}
+
+.profile_ui_content > .section_box {
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
+	max-width: 100%;
+	height: 100%;
+	min-height: var(--profile-ui-min-height, 0px);
+	border-radius: var(--profile-ui-edge-radius, 20px);
+}
+
+.profile_ui_content[data-fixed-height="false"] > .section_box {
+	height: auto;
+}
+
+.profile_ui_slot[data-auto-height="true"] {
+	align-self: stretch;
+}
+
+.profile_ui_slot[data-auto-height="true"] > .profile_ui_content,
+.profile_ui_slot[data-auto-height="true"] > .profile_ui_content > .section_box {
+	min-height: var(--profile-ui-min-height, 0px);
+	height: 100%;
+}
+
+.profile_ui_slot[data-match-row="true"] > .profile_ui_content > .section_box {
+	overflow-x: hidden !important;
+	overflow-y: auto !important;
+	scrollbar-color: hsla(var(--user-hue, 210), 0%, 100%, 0.22) transparent;
+	scrollbar-width: thin;
+	touch-action: pan-y;
+}
+
+@media (min-width: 601px) {
+	.profile_ui_slot[data-match-row="true"] > .profile_ui_content > .about_me {
+		max-height: none;
+	}
+}
+
+.profile_ui_layout[data-profile-ui-default="true"] > [data-content="achievements"] {
+	min-height: 0;
+	contain: size;
+}
+
+.profile_ui_layout[data-profile-ui-default="true"] > [data-content="achievements"] > .profile_ui_content > .section_box {
+	height: fit-content;
+	max-height: 100%;
+	overflow-y: auto;
+}
+
+@media (max-width: 872px) {
+	.profile_ui_layout[data-profile-ui-default="true"] > [data-content="achievements"] {
+		contain: none;
+	}
+
+	.profile_ui_layout[data-profile-ui-default="true"] > .profile_ui_slot[data-auto-height="true"] > .profile_ui_content,
+	.profile_ui_layout[data-profile-ui-default="true"] > .profile_ui_slot[data-auto-height="true"] > .profile_ui_content > .section_box {
+		height: auto;
+		max-height: none;
+	}
+}
+
+@media (max-width: 600px) {
+	.profile_ui_slot[data-auto-height="true"] > .profile_ui_content,
+	.profile_ui_slot[data-auto-height="true"] > .profile_ui_content > .section_box {
+		height: auto;
+	}
+}
+
+.profile_ui_content[data-fixed-height="true"] > .section_box {
+	overflow-x: hidden !important;
+	overflow-y: auto !important;
+	scrollbar-color: hsla(var(--user-hue), 0%, 100%, 0.22) transparent;
+	scrollbar-width: thin;
+	touch-action: pan-y;
+}
+
+.profile_ui_content[data-fixed-height="true"] > .achievements {
+	min-height: 0;
+	height: 100% !important;
+}
+
+.profile_ui_content[data-fixed-height="true"] > .about_me {
+	min-height: 0;
+	max-height: none;
+	height: 100% !important;
+	overflow-x: hidden !important;
+	overflow-y: auto !important;
+	touch-action: pan-y;
+}
+
+.profile_ui_content.player_scores[data-fixed-height="true"] > .list_container {
+	overflow: hidden !important;
+}
+
+.profile_ui_content.player_scores > .list_container {
+	padding: var(--profile-ui-score-padding, 32px);
+}
+
+.profile_ui_content.player_scores .score_summary {
+	min-height: var(--profile-ui-score-heading-height, 30px);
+}
+
+.profile_ui_content.player_scores .section_title_label {
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.profile_ui_content.player_scores {
+	--profile-ui-score-padding: var(--profile-ui-responsive-score-padding, var(--profile-ui-score-default-padding, 32px));
+}
+
+.profile_ui_content.player_scores[data-fixed-height="false"] > .list_container > .score_details[open] {
+	display: flex;
+	min-height: 0;
+	height: 100%;
+	flex-direction: column;
+}
+
+.profile_ui_content.player_scores[data-fixed-height="false"] > .list_container > .score_details[open]::details-content {
+	display: flex;
+	min-height: 0;
+	flex: 1 1 auto;
+	flex-direction: column;
+}
+
+.profile_ui_content.player_scores[data-fixed-height="false"] .score_summary {
+	flex: 0 0 auto;
+}
+
+/* Keep a five-row intrinsic size even when a taller peer allows more rows. */
+.profile_ui_content.player_scores[data-fixed-height="false"] .score_list_preview {
+	height: var(--score-list-height, 314px);
+	flex: 1 0 auto;
+	contain: size;
+	overflow: hidden;
+}
+
+.profile_ui_content.player_scores[data-fixed-height="true"] > .list_container > .score_details {
+	display: flex;
+	position: relative;
+	min-height: 0;
+	height: 100%;
+	flex-direction: column;
+}
+
+.profile_ui_content.player_scores[data-fixed-height="true"] .score_summary {
+	flex: 0 0 auto;
+}
+
+.profile_ui_content.player_scores[data-fixed-height="true"] .score_list_preview {
+	min-height: 0 !important;
+	flex: 0 0 auto;
+}
+
+/* The disclosure content also needs to shrink inside a fixed-height card. */
+.profile_ui_content.player_scores[data-fixed-height="true"] > .list_container > .score_details[open]:has(> .score_list_preview[data-empty="true"])::details-content {
+	display: flex;
+	min-height: 0;
+	flex: 1 1 0;
+	flex-direction: column;
+}
+
+.profile_ui_layout .profile_ui_content.player_scores[data-fixed-height="true"] .score_list_preview[data-empty="true"] {
+	flex: 1 1 0;
+	overflow: hidden;
+	container-name: profile-empty-score;
+	container-type: size;
+
+	& .no_scores {
+		min-height: 0;
+		height: 100%;
+		padding: 8px;
+		flex: 1 1 0;
+	}
+
+	& .empty_score_copy {
+		max-width: 100%;
+		overflow-wrap: anywhere;
+	}
+
+	@container profile-empty-score (max-height: 160px) {
+		& .no_scores {
+			flex-direction: row;
+			gap: 12px;
+		}
+
+		& .empty_score_icon {
+			width: 36px;
+			height: 36px;
+			flex: 0 0 36px;
+			border-radius: 12px;
+			font-size: 1.15rem;
+		}
+
+		& .empty_score_copy {
+			min-width: 0;
+			align-items: flex-start;
+			text-align: left;
+		}
+
+		& .empty_score_copy strong {
+			font-size: 1rem;
+		}
+
+		& .empty_score_copy small {
+			font-size: 0.75rem;
+		}
+	}
+
+	@container profile-empty-score (max-height: 160px) and (max-width: 220px) {
+		& .empty_score_icon,
+		& .empty_score_copy small {
+			display: none;
+		}
+
+		& .empty_score_copy {
+			align-items: center;
+			text-align: center;
+		}
+	}
+}
+
+.profile_ui_content.player_scores[data-fixed-height="true"] .score_list_toggle {
+	position: absolute;
+	right: calc(-1 * var(--profile-ui-score-padding, 32px));
+	bottom: calc(-1 * var(--profile-ui-score-padding, 32px));
+	left: calc(-1 * var(--profile-ui-score-padding, 32px));
+	width: auto;
+	margin: 0 !important;
+}
+
+.achievement_tooltip {
+	width: min(250px, calc(100vw - 24px));
+	padding: 10px;
+}
+
+.achievement_tooltip .medal_name {
+	font-size: 1.5rem;
+	font-weight: 700;
+	line-height: 1;
+}
+
+.achievement_tooltip .medal_description {
+	margin-top: 15px;
+	font-size: 0.875rem;
+	line-height: 1.2;
+}
+
+.achievement_tooltip .medal_cond_description {
+	margin-top: 10px;
+	color: hsl(var(--user-hue), 1.653%, 52.549%);
+	font-size: 0.875rem;
+	line-height: 1.2;
+}
+
+.profile_ui_customized > .section_box {
+	background: linear-gradient(
+		135deg,
+		hsla(var(--user-hue), 27.273%, 4.314%, calc(var(--profile-ui-box-opacity, 0.9) * 0.85 / 0.9)) 0%,
+		hsla(var(--user-hue), 23.077%, 5.098%, calc(var(--profile-ui-box-opacity, 0.9) * 0.75 / 0.9)) 70%,
+		hsla(var(--user-hue), 43%, 14%, calc(var(--profile-ui-box-opacity, 0.9) * 0.3 / 0.9)) 100%
+	);
+}
+
+.profile_ui_customized[data-custom-color="true"] > .section_box {
+	background: hsla(
+		var(--profile-ui-color-hue, var(--user-hue)),
+		var(--profile-ui-color-saturation, 11%),
+		var(--profile-ui-color-lightness, 16%),
+		var(--profile-ui-box-opacity, 0.9)
+	);
+}
+
+:global(html[data-theme="legacy"]) .profile_page .profile_ui_customized > .section_box {
+	background-color: hsla(
+		var(--profile-surface-hue),
+		11.34%,
+		19.02%,
+		calc(var(--profile-ui-box-opacity, 0.9) * 0.92 / 0.9)
+	) !important;
+}
+
+:global(html[data-theme="legacy"]) .profile_page .profile_ui_customized[data-custom-color="true"] > .section_box {
+	background-color: hsla(
+		var(--profile-ui-color-hue, var(--user-hue)),
+		var(--profile-ui-color-saturation, 11%),
+		var(--profile-ui-color-lightness, 16%),
+		var(--profile-ui-box-opacity, 0.9)
+	) !important;
 }
 
 :global(html[data-rendering-mode="software"]) .section_box {

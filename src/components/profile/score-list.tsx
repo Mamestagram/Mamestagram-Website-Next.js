@@ -15,9 +15,9 @@ import {
 import { createPortal } from "react-dom";
 import FontAwesome from "@/components/font-awesome";
 import FormattedNumber from "@/components/formatted-number";
+import { getProfileUiScoreVisibleCount, PROFILE_UI_SCORE_LAYOUT } from "@/lib/profile-ui";
+import { getProfileUiScoreElementHeight, measureProfileUiScoreLayout } from "@/lib/profile-ui-score-layout";
 import styles from "@s/profile.module.css";
-
-const COLLAPSED_SCORE_COUNT = 5;
 
 type TooltipState = {
 	text: string,
@@ -37,12 +37,15 @@ export default function ScoreList({ children, count, title }: {
 	const dialogRef = useRef<HTMLElement>(null);
 	const closeButtonRef = useRef<HTMLButtonElement>(null);
 	const openButtonRef = useRef<HTMLButtonElement>(null);
+	const previewListRef = useRef<HTMLDivElement>(null);
 	const tooltipRef = useRef<HTMLSpanElement>(null);
 	const activeTooltipTargetRef = useRef<HTMLElement | null>(null);
 	const [tooltip, setTooltip] = useState<TooltipState | null>(null);
-	const canExpand = count > COLLAPSED_SCORE_COUNT;
+	const [fixedVisibleCount, setFixedVisibleCount] = useState<number | null>(null);
+	const visibleCount = fixedVisibleCount ?? PROFILE_UI_SCORE_LAYOUT.defaultVisibleCount;
+	const canExpand = count > visibleCount;
 	const items = Children.toArray(children);
-	const previewItems = count > 0 ? items.slice(0, COLLAPSED_SCORE_COUNT) : items;
+	const previewItems = count > 0 ? items.slice(0, visibleCount) : items;
 	const showTooltip = (element: HTMLElement) => {
 		const text = element.dataset.scoreTooltip;
 		if (!text) return;
@@ -91,6 +94,58 @@ export default function ScoreList({ children, count, title }: {
 		}
 		if (shift !== 0) setTooltip((current) => current ? { ...current, left: current.left + shift } : null);
 	}, [tooltip]);
+
+	useLayoutEffect(() => {
+		const list = previewListRef.current;
+		const details = list?.parentElement;
+		const sectionBox = details?.parentElement;
+		const fixedContent = sectionBox?.parentElement;
+		if (
+			!list ||
+			!details ||
+			!sectionBox ||
+			!fixedContent?.hasAttribute("data-fixed-height") ||
+			count <= 0
+		) return;
+
+		const updateVisibleCount = () => {
+			const fixedHeight = fixedContent.dataset.fixedHeight === "true";
+			const slot = fixedContent.parentElement;
+			const matchesRow = slot?.dataset.matchRow === "true" && getComputedStyle(slot).gridColumnEnd !== "-1";
+			if (!fixedHeight && !matchesRow) {
+				setFixedVisibleCount(null);
+				return;
+			}
+			const summary = details.querySelector<HTMLElement>("summary");
+			if (!summary) return;
+			const capacity = getProfileUiScoreVisibleCount(
+				getProfileUiScoreElementHeight(sectionBox),
+				count,
+				measureProfileUiScoreLayout(sectionBox, summary, list),
+			);
+			const nextVisibleCount = fixedHeight ? capacity
+				: Math.max(Math.min(count, PROFILE_UI_SCORE_LAYOUT.defaultVisibleCount), capacity);
+
+			setFixedVisibleCount((current) =>
+				current === nextVisibleCount ? current : nextVisibleCount,
+			);
+		};
+
+		updateVisibleCount();
+		const resizeObserver = new ResizeObserver(updateVisibleCount);
+		resizeObserver.observe(sectionBox);
+		const summary = details.querySelector("summary");
+		if (summary) resizeObserver.observe(summary);
+		const heightObserver = new MutationObserver(updateVisibleCount);
+		heightObserver.observe(fixedContent, { attributes: true, attributeFilter: ["data-fixed-height"] });
+		if (fixedContent.parentElement) heightObserver.observe(fixedContent.parentElement, {
+			attributes: true, attributeFilter: ["data-match-row"],
+		});
+		return () => {
+			resizeObserver.disconnect();
+			heightObserver.disconnect();
+		};
+	}, [canExpand, count]);
 	
 	useEffect(() => {
 		if (!isOpen) return;
@@ -132,7 +187,9 @@ export default function ScoreList({ children, count, title }: {
 	
 	return (
 		<>
-			<div className={`${styles.score_list} ${styles.score_list_preview}`}
+			<div ref={previewListRef}
+			     className={`${styles.score_list} ${styles.score_list_preview}`}
+			     data-empty={count === 0}
 			     onPointerOver={handleTooltipPointerOver}
 			     onPointerOut={handleTooltipPointerOut}>
 				{previewItems}

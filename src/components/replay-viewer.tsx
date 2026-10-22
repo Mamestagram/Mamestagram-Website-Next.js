@@ -1,7 +1,9 @@
 "use client";
 
+import classNames from "classnames";
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { useUserContext } from "@/components/context/user-provider";
 import FontAwesome from "@/components/font-awesome";
 import {
 	announceMediaPlayback,
@@ -27,21 +29,46 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 	className?: string,
 	children: ReactNode
 }>) {
+	const { userInfo } = useUserContext();
 	const [dialogState, setDialogState] = useState<"closed" | "open" | "closing">("closed");
+	const [loginTooltip, setLoginTooltip] = useState<{
+		left: number,
+		top: number,
+		side: "up" | "down"
+	} | null>(null);
 	const dialogStateRef = useRef(dialogState);
 	const closeTimeoutRef = useRef<number | null>(null);
 	const iframeRef = useRef<HTMLIFrameElement>(null);
 	const replayId = useId();
+	const loginTooltipId = `${replayId}-login-tooltip`;
 	const openButtonRef = useRef<HTMLButtonElement>(null);
 	const closeButtonRef = useRef<HTMLButtonElement>(null);
 	const isOpen = dialogState !== "closed";
+	const canWatchReplay = userInfo.isLoggedIn;
+	const resolvedButtonLabel = canWatchReplay
+		? buttonLabel
+		: "Please sign in to watch replays.";
 	const replayOrigin = getReplayOrigin(replayUrl);
+	const showLoginTooltip = () => {
+		if (canWatchReplay || !openButtonRef.current) return;
+		const bounds = openButtonRef.current.getBoundingClientRect();
+		const showBelow = bounds.top < 72;
+		setLoginTooltip({
+			left: Math.min(
+				window.innerWidth - 12,
+				Math.max(12, bounds.left + bounds.width / 2)
+			),
+			top: showBelow ? bounds.bottom + 10 : bounds.top - 10,
+			side: showBelow ? "down" : "up"
+		});
+	};
 	const openReplay = useCallback(() => {
+		if (!canWatchReplay) return;
 		if (closeTimeoutRef.current !== null) window.clearTimeout(closeTimeoutRef.current);
 		announceMediaPlayback("replay");
 		dialogStateRef.current = "open";
 		setDialogState("open");
-	}, []);
+	}, [canWatchReplay]);
 	const closeReplay = useCallback(() => {
 		if (dialogStateRef.current !== "open") return;
 		dialogStateRef.current = "closing";
@@ -117,16 +144,31 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 	return (
 		<>
 			<button ref={openButtonRef}
-			        className={className}
+			        className={classNames(styles.replay_trigger, className)}
 			        type="button"
+			        disabled={!canWatchReplay}
 			        aria-haspopup="dialog"
 			        aria-expanded={isOpen}
 			        aria-controls={replayId}
-			        aria-label={buttonLabel}
-			        title={buttonLabel}
+			        aria-label={resolvedButtonLabel}
+			        aria-describedby={!canWatchReplay ? loginTooltipId : undefined}
+			        title={canWatchReplay ? buttonLabel : undefined}
+			        onPointerEnter={showLoginTooltip}
+			        onPointerLeave={() => setLoginTooltip(null)}
 			        onClick={openReplay}>
 				{children}
 			</button>
+			{loginTooltip && createPortal(
+				<span id={loginTooltipId}
+				      className={styles.login_tooltip}
+				      data-side={loginTooltip.side}
+				      data-theme-independent="true"
+				      role="tooltip"
+				      style={{ left: loginTooltip.left, top: loginTooltip.top }}>
+					Please sign in to watch replays.
+				</span>,
+				document.body
+			)}
 			{isOpen && createPortal(
 				<div className={styles.replay_backdrop}
 				     data-closing={dialogState === "closing"}

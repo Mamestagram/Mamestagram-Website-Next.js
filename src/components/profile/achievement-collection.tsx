@@ -47,7 +47,9 @@ export default async function AchievementCollection({ achievements }: Readonly<{
 				return (
 					<li key={medal.type}>
 						<Tooltip className={styles.achv_img}
+						         tooltipClassName={styles.achievement_tooltip}
 						         bubble
+						         portal
 						         description={
 							         <MedalInfo name={medal.name}
 							                    description={medal.description}
@@ -57,7 +59,7 @@ export default async function AchievementCollection({ achievements }: Readonly<{
 							                  collected={collected}
 							                  total={total}/>
 						</Tooltip>
-						<p>{collected}/{total}</p>
+						<p>{collected} / {total}</p>
 						<p>{percentage.toFixed(2)}%</p>
 					</li>
 				);

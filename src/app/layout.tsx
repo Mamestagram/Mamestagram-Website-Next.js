@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import {
-	Fragment_Mono,
 	JetBrains_Mono,
 	M_PLUS_1_Code,
+	Nunito,
 	Space_Mono,
 } from "next/font/google";
 import type { CSSProperties, ReactNode } from "react";
@@ -27,11 +27,11 @@ import "@s/global/tooltip.css";
 import "@s/global/performance.css";
 import "@s/global/theme.css";
 
-const fragmentMono = Fragment_Mono({
+const nunito = Nunito({
 	display: "swap",
+	style: ["normal", "italic"],
 	subsets: ["latin"],
-	variable: "--font-fragment-mono",
-	weight: "400",
+	variable: "--font-nunito",
 });
 const jetBrainsMono = JetBrains_Mono({
 	display: "swap",
@@ -51,7 +51,7 @@ const spaceMono = Space_Mono({
 	weight: ["400", "700"],
 });
 const fontVariables = [
-	fragmentMono.variable,
+	nunito.variable,
 	jetBrainsMono.variable,
 	mPlusOneCode.variable,
 	spaceMono.variable,

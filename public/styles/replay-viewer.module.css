@@ -1,3 +1,46 @@
+.replay_trigger:disabled {
+	cursor: not-allowed;
+	opacity: 0.45;
+	transform: none;
+}
+
+.login_tooltip {
+	pointer-events: none;
+	position: fixed;
+	z-index: 6000;
+	max-width: calc(100vw - 24px);
+	padding: 9px 12px;
+	color: hsl(var(--user-hue), 0%, 98%);
+	background-color: hsl(var(--user-hue), 12%, 12%);
+	border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.16);
+	border-radius: 9px;
+	box-shadow: 0 7px 20px hsla(var(--user-hue), 0%, 0%, 0.38);
+	font-size: 0.78rem;
+	font-weight: 750;
+	line-height: 1.3;
+	text-align: center;
+	white-space: nowrap;
+	animation: login-tooltip-enter 130ms ease-out both;
+
+	&[data-side="up"] {
+		transform: translate(-50%, -100%);
+	}
+
+	&[data-side="down"] {
+		transform: translateX(-50%);
+	}
+}
+
+@keyframes login-tooltip-enter {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
 .replay_backdrop {
 	display: grid;
 	position: fixed;

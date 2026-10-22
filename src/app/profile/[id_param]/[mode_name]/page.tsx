@@ -13,6 +13,7 @@ import {
 	type Profile as ProfileInfo,
 } from "@/database/profile";
 import { getRankHistory } from "@/database/rank-history";
+import { getProfileUi } from "@/database/profile-ui";
 import { writeLog } from "@/lib/log";
 import {
 	resolveProfileAvatarUrl,
@@ -36,7 +37,11 @@ import StatisticsLoading from "@/components/profile/statistics-loading";
 import Achievements from "@/components/profile/achievements";
 import PrivateProfile from "@/components/profile/private-profile";
 import ProfileAppearance from "@/components/profile/profile-appearance";
+import ProfileUiLayout from "@/components/profile/profile-ui-layout";
+import ProfileUiLiveLayout from "@/components/profile/profile-ui-live-layout";
+import { Priv } from "@/lib/priv";
 import styles from "@s/profile.module.css";
+import responsiveStyles from "@s/profile-ui-responsive.module.css";
 
 type ProfileData =
 	| { type: "user"; info: ProfileInfo }
@@ -122,10 +127,11 @@ export default async function Profile({
 	searchParams: Promise<{
 		clan?: string;
 		dans?: string;
+		uiPreview?: string;
 	}>;
 }) {
 	const { id_param, mode_name } = await params;
-	const { clan, dans } = await searchParams;
+	const { clan, dans, uiPreview } = await searchParams;
 	const conds = [
 		!isNaN(Number(id_param)) && Number(id_param) > 0,
 		Object.values(OsuMode).includes(mode_name as OsuMode),
@@ -150,13 +156,27 @@ export default async function Profile({
 				getCurrentUser(),
 			]);
 			if (!profileRouteInfo) notFound();
+			const isLayoutPreview = uiPreview === "1" && !isClan && currentUser.isLoggedIn &&
+				currentUser.id === id && ((currentUser.priv ?? 0) & Priv.supporter) !== 0;
+			const UiLayout = isLayoutPreview ? ProfileUiLiveLayout : ProfileUiLayout;
+			const currentUserProfileAppearance =
+				!profileRouteInfo.hasProfileAppearance && currentUser.id !== undefined
+					? await getProfileRouteInfo(currentUser.id, false)
+					: null;
+			const profileAppearance = profileRouteInfo.hasProfileAppearance
+				? profileRouteInfo
+				: currentUserProfileAppearance?.hasProfileAppearance
+					? currentUserProfileAppearance
+					: null;
 			if (!canViewProfile(id, isClan, profileRouteInfo, currentUser))
 				return (
 					<>
-						<ProfileAppearance
-							theme={profileRouteInfo.profileTheme}
-							hue={profileRouteInfo.profileHue}
-						/>
+						{profileAppearance && (
+							<ProfileAppearance
+								theme={profileAppearance.profileTheme}
+								hue={profileAppearance.profileHue}
+							/>
+						)}
 						<PrivateProfile/>
 					</>
 				);
@@ -173,6 +193,7 @@ export default async function Profile({
 				backgroundUrl,
 				cosmetics,
 				isRival,
+				profileUi,
 			] = await Promise.all([
 				!isClan ? getRankHistory(id, mode) : null,
 				resolveProfileAvatarUrl(id, isClan, baseDomain),
@@ -185,6 +206,7 @@ export default async function Profile({
 				currentUser.id !== id
 					? isProfileRival(currentUser.id, id)
 					: false,
+				!isClan ? getProfileUi(id) : Promise.resolve([]),
 			]);
 			const info = profileData.info;
 			const clanMembers =
@@ -192,6 +214,7 @@ export default async function Profile({
 			const clanStatistics: PlayerStatistics | undefined =
 				profileData.type === "clan" ? profileData.statistics : undefined;
 			const canManageProfile =
+				!isLayoutPreview &&
 				currentUser.isLoggedIn &&
 				currentUser.id === (isClan ? info.ownerId : id);
 			const followsCurrentUser =
@@ -213,163 +236,69 @@ export default async function Profile({
 			
 			return (
 				<div
-					className={classNames(styles.profile_page, {
+					className={classNames(styles.profile_page, responsiveStyles.profile_ui_responsive, {
 						[styles.with_background]: backgroundUrl !== null,
 					})}
 				>
-					<ProfileAppearance
-						theme={profileRouteInfo.profileTheme}
-						hue={profileRouteInfo.profileHue}
-					/>
+					{profileAppearance && (
+						<ProfileAppearance
+							theme={profileAppearance.profileTheme}
+							hue={profileAppearance.profileHue}
+						/>
+					)}
 					{backgroundUrl && <ProfileBackground imageUrl={backgroundUrl}/>}
 					<ProfileBanner imageUrl={bannerUrl}/>
 					<div className={classNames(styles.container, styles.with_cover)}>
-						<div className={classNames(styles.section_area, styles.hero)}>
-							<UserInfo
-								id={id}
-								info={info}
-								mode={mode_name as OsuMode}
-								isClan={isClan}
-								isDans={isDans}
-								canManageProfile={canManageProfile}
-								isRival={isRival}
-								followsYou={followsCurrentUser}
-								canFollow={canFollowProfile}
-								isFollowing={isFollowingProfile}
-								rankHistory={rankHistory}
-								avatarUrl={avatarUrl}
-								cosmetics={cosmetics}
-							>
-								{isClan && (
-									<ClanMembers
-										clanId={id}
-										members={clanMembers}
-										mode={mode_name as OsuMode}
-										isDans={isDans}
-										canManage={canManageProfile}
-										baseDomain={baseDomain}
-									/>
-								)}
-							</UserInfo>
-							<div
-								className={classNames(styles.section_box, styles.statistics)}
-								data-page-enter="box"
-							>
-								<Suspense fallback={<StatisticsLoading/>}>
-									<Statistics
+						{isClan ? (
+							<>
+								<div className={classNames(styles.section_area, styles.hero)}>
+									<UserInfo
 										id={id}
-										mode={mode}
-										isClan={isClan}
+										info={info}
+										mode={mode_name as OsuMode}
+										isClan
 										isDans={isDans}
-										statistics={clanStatistics}
-									/>
-								</Suspense>
-							</div>
-						</div>
-						<AboutMe
-							bbCode={info.userpageContent}
-							canEdit={canManageProfile}
-							profileId={id}
-							isClan={isClan}
-							mode={mode_name}
-						/>
-						{!isClan && (
-							<div
-								className={classNames(styles.section_area, styles.map_scores)}
-							>
-								<div className={styles.player_scores}>
-									<div
-										className={classNames(
-											styles.section_box,
-											styles.list_container,
-										)}
-										data-page-enter="box"
+										canManageProfile={canManageProfile}
+										isRival={false}
+										followsYou={false}
+										canFollow={false}
+										isFollowing={false}
+										rankHistory={null}
+										avatarUrl={avatarUrl}
+										cosmetics={null}
 									>
-										<Suspense
-											fallback={
-												<PlayerScoresLoading label="Best Performance"/>
-											}
-										>
-											<PlayerScores
-												scope={ScoreScope.bestPP}
-												id={id}
-												mode={mode}
-												isDans={isDans}
-											/>
-										</Suspense>
-									</div>
-									<div
-										className={classNames(
-											styles.section_box,
-											styles.list_container,
-										)}
-										data-page-enter="box"
-									>
-										<Suspense
-											fallback={
-												<PlayerScoresLoading label="First Place Ranks"/>
-											}
-										>
-											<PlayerScores
-												scope={ScoreScope.firstPlace}
-												id={id}
-												mode={mode}
-												isDans={isDans}
-											/>
-										</Suspense>
-									</div>
-									<div
-										className={classNames(
-											styles.section_box,
-											styles.list_container,
-										)}
-										data-page-enter="box"
-									>
-										<Suspense
-											fallback={
-												<PlayerScoresLoading
-													label="Most Played Maps"
-													hasGrade={false}
-												/>
-											}
-										>
-											<PlayerScores
-												scope={ScoreScope.mostPlayed}
-												id={id}
-												mode={mode}
-												isDans={isDans}
-											/>
-										</Suspense>
-									</div>
-									<div
-										className={classNames(
-											styles.section_box,
-											styles.list_container,
-										)}
-										data-page-enter="box"
-									>
-										<Suspense
-											fallback={
-												<PlayerScoresLoading label="Recent Played Maps"/>
-											}
-										>
-											<PlayerScores
-												scope={ScoreScope.recentPlayed}
-												id={id}
-												mode={mode}
-												isDans={isDans}
-											/>
+										<ClanMembers
+											clanId={id}
+											members={clanMembers}
+											mode={mode_name as OsuMode}
+											isDans={isDans}
+											canManage={canManageProfile}
+											baseDomain={baseDomain}
+										/>
+									</UserInfo>
+									<div className={classNames(styles.section_box, styles.statistics)} data-page-enter="box">
+										<Suspense fallback={<StatisticsLoading/>}>
+											<Statistics id={id} mode={mode} isClan isDans={isDans} statistics={clanStatistics}/>
 										</Suspense>
 									</div>
 								</div>
-								<Achievements
-									id={id}
-									mode={mode}
-									canRevealSecretConditions={
-										currentUser.isLoggedIn && currentUser.id === id
-									}
-								/>
-							</div>
+								<AboutMe bbCode={info.userpageContent} canEdit={canManageProfile} profileId={id} isClan mode={mode_name}/>
+							</>
+						) : (
+							<UiLayout
+								profileId={id}
+								items={profileUi}
+								contents={{
+									info: <UserInfo id={id} info={info} mode={mode_name as OsuMode} isClan={false} isDans={isDans} isLayoutPreview={isLayoutPreview} canManageProfile={canManageProfile} isRival={isRival} followsYou={followsCurrentUser} canFollow={canFollowProfile} isFollowing={isFollowingProfile} rankHistory={rankHistory} avatarUrl={avatarUrl} cosmetics={cosmetics}/>,
+									stats: <div className={classNames(styles.section_box, styles.statistics)} data-page-enter="box"><Suspense fallback={<StatisticsLoading/>}><Statistics id={id} mode={mode} isClan={false} isDans={isDans}/></Suspense></div>,
+									me: <AboutMe bbCode={info.userpageContent} canEdit={canManageProfile} profileId={id} isClan={false} mode={mode_name}/>,
+									bestpp: <div className={classNames(styles.section_box, styles.list_container)} data-page-enter="box"><Suspense fallback={<PlayerScoresLoading label="Best Performance"/>}><PlayerScores scope={ScoreScope.bestPP} id={id} mode={mode} isDans={isDans}/></Suspense></div>,
+									first_place: <div className={classNames(styles.section_box, styles.list_container)} data-page-enter="box"><Suspense fallback={<PlayerScoresLoading label="First Place Ranks"/>}><PlayerScores scope={ScoreScope.firstPlace} id={id} mode={mode} isDans={isDans}/></Suspense></div>,
+									most_played: <div className={classNames(styles.section_box, styles.list_container)} data-page-enter="box"><Suspense fallback={<PlayerScoresLoading label="Most Played Maps" hasGrade={false}/> }><PlayerScores scope={ScoreScope.mostPlayed} id={id} mode={mode} isDans={isDans}/></Suspense></div>,
+									recent_played: <div className={classNames(styles.section_box, styles.list_container)} data-page-enter="box"><Suspense fallback={<PlayerScoresLoading label="Recent Played Maps"/>}><PlayerScores scope={ScoreScope.recentPlayed} id={id} mode={mode} isDans={isDans}/></Suspense></div>,
+									achievements: <Achievements id={id} mode={mode} canRevealSecretConditions={currentUser.isLoggedIn && currentUser.id === id}/>,
+								}}
+							/>
 						)}
 					</div>
 				</div>

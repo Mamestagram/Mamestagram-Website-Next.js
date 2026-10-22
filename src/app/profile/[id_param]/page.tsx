@@ -6,10 +6,10 @@ import { getCurrentUser } from "@/lib/session";
 
 export default async function OnlyId({ params, searchParams }: {
 	params: Promise<{ id_param: string }>,
-	searchParams: Promise<{ clan?: string }>
+	searchParams: Promise<{ clan?: string; uiPreview?: string }>
 }) {
 	const { id_param } = await params;
-	const { clan } = await searchParams;
+	const { clan, uiPreview } = await searchParams;
 	const conds = [
 		!isNaN(Number(id_param)) && Number(id_param) > 0,
 		clan === undefined || clan === ""
@@ -27,7 +27,8 @@ export default async function OnlyId({ params, searchParams }: {
 			const preferredMode = canViewProfile(id, isClan, profile, currentUser)
 				? ModeNum[profile.preferredMode] as OsuMode
 				: OsuMode.std;
-			redirect(`${id}/${preferredMode}${isClan ? "?clan" : ""}`);
+			const queries = [isClan ? "clan" : "", !isClan && uiPreview === "1" ? "uiPreview=1" : ""].filter(Boolean);
+			redirect(`${id}/${preferredMode}${queries.length > 0 ? `?${queries.join("&")}` : ""}`);
 		}
 		else {
 			notFound();

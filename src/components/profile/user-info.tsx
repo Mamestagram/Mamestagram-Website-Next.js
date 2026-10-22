@@ -195,6 +195,7 @@ export default function UserInfo({
 	isClan,
 	isDans,
 	canManageProfile,
+	isLayoutPreview = false,
 	isRival,
 	followsYou,
 	canFollow,
@@ -210,6 +211,7 @@ export default function UserInfo({
 	isClan: boolean;
 	isDans: boolean;
 	canManageProfile: boolean;
+	isLayoutPreview?: boolean;
 	isRival: boolean;
 	followsYou: boolean;
 	canFollow: boolean;
@@ -233,7 +235,7 @@ export default function UserInfo({
 		.slice(3)
 		.map(({ label }) => label)
 		.join(", ");
-	const profileQuery = isClan ? "?clan" : "";
+	const profileQuery = isClan ? "?clan" : isLayoutPreview ? "?uiPreview=1" : "";
 	const countrySort = isDans ? "dans" : "performance";
 	const nameTooltipId = `profile-name-tooltip-${isClan ? "clan" : "user"}-${id}`;
 	const lastOnlineDate = info.latestActivity.toLocaleDateString("en-US", {
@@ -341,6 +343,7 @@ export default function UserInfo({
 						mode={mode}
 						isClan={isClan}
 						isDans={isDans}
+						isLayoutPreview={isLayoutPreview}
 						mainMode={preferredMode.base}
 						canSetMainMode={
 							canManageProfile && !isDans && selectedMode !== info.preferredMode

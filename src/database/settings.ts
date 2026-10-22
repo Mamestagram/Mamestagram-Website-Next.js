@@ -1,12 +1,16 @@
 import type { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { executeQuery, withTransaction } from "@/database/connection";
 import {
+	appearanceSettingsUserForUpdateQuery,
 	badgeCatalogQuery,
 	badgeOwnershipForUpdateQuery,
 	badgeStateQuery,
+	clearProfileAppearanceQuery,
+	clearWebAppearanceQuery,
 	clanSettingsForUpdateQuery,
 	clanSettingsTagConflictQuery,
 	defaultUserSettingsQuery,
+	deleteDefaultAppearanceSettingsQuery,
 	legacyUserSettingsQuery,
 	modernUserSettingsQuery,
 	ownedClanSettingsQuery,
@@ -59,7 +63,7 @@ type SettingsSchemaRow = RowDataPacket & {
 };
 
 type WebThemeRow = RowDataPacket & {
-	web_theme: number;
+	web_theme: number | null;
 };
 
 type WebHueRow = RowDataPacket & {
@@ -67,7 +71,7 @@ type WebHueRow = RowDataPacket & {
 };
 
 type ProfileThemeRow = RowDataPacket & {
-	profile_theme: number;
+	profile_theme: number | null;
 };
 
 type ProfileHueRow = RowDataPacket & {
@@ -75,7 +79,11 @@ type ProfileHueRow = RowDataPacket & {
 };
 
 type UseWebAppearanceRow = RowDataPacket & {
-	use_web_appearance: 0 | 1;
+	use_web_appearance: 0 | 1 | null;
+};
+
+type AppearanceSettingsUserRow = RowDataPacket & {
+	id: number;
 };
 
 type BadgeCatalogRow = RowDataPacket & {
@@ -125,8 +133,10 @@ export type UserSettings = {
 	isPrivate: boolean;
 	webTheme: WebTheme;
 	webHue: number | null;
+	hasCustomWebAppearance: boolean;
 	profileTheme: WebTheme;
 	profileHue: number | null;
+	hasCustomProfileAppearance: boolean;
 	useWebsiteAppearance: boolean;
 	selectedBadge: number;
 	badges: SettingsBadge[];
@@ -283,6 +293,18 @@ export const getUserSettings = async (
 	const selectedBadge = badgeState.at(0)?.selected_badge ?? 0;
 	const webTheme = normalizeWebTheme(themeRows.at(0)?.web_theme);
 	const webHue = normalizeWebHue(hueRows.at(0)?.web_hue);
+	const hasCustomWebAppearance =
+		(themeRows.at(0)?.web_theme !== null &&
+			themeRows.at(0)?.web_theme !== undefined) ||
+		(hueRows.at(0)?.web_hue !== null &&
+			hueRows.at(0)?.web_hue !== undefined);
+	const hasCustomProfileAppearance =
+		(profileThemeRows.at(0)?.profile_theme !== null &&
+			profileThemeRows.at(0)?.profile_theme !== undefined) ||
+		(profileHueRows.at(0)?.profile_hue !== null &&
+			profileHueRows.at(0)?.profile_hue !== undefined) ||
+		(useWebAppearanceRows.at(0)?.use_web_appearance !== null &&
+			useWebAppearanceRows.at(0)?.use_web_appearance !== undefined);
 	const useWebsiteAppearance =
 		useWebAppearanceRows.at(0)?.use_web_appearance === 1;
 	
@@ -295,12 +317,14 @@ export const getUserSettings = async (
 		isPrivate: user.is_private === 1,
 		webTheme,
 		webHue,
+		hasCustomWebAppearance,
 		profileTheme: useWebsiteAppearance
 			? webTheme
 			: normalizeWebTheme(profileThemeRows.at(0)?.profile_theme),
 		profileHue: useWebsiteAppearance
 			? webHue
 			: normalizeWebHue(profileHueRows.at(0)?.profile_hue),
+		hasCustomProfileAppearance,
 		useWebsiteAppearance,
 		selectedBadge,
 		canManageBadges: schema.canManageBadges,
@@ -446,22 +470,35 @@ export const updateWebAppearance = async (
 	userId: number,
 	theme: WebTheme,
 	hue: number | null,
+	customAppearance: boolean,
 ) => {
 	const schema = await getSettingsSchema();
-	if (
-		!schema.hasWebTheme ||
-		!schema.hasWebHue ||
-		!schema.hasProfileTheme ||
-		!schema.hasProfileHue ||
-		!schema.hasUseWebAppearance
-	)
+	if (!schema.hasWebTheme || !schema.hasWebHue)
 		throw new Error("The users appearance columns are not available");
 	return withTransaction(async (connection) => {
-		const [result] = await connection.query<ResultSetHeader>(
-			updateWebAppearanceQuery,
-			[theme, hue, theme, hue, userId],
+		const [users] = await connection.query<AppearanceSettingsUserRow[]>(
+			appearanceSettingsUserForUpdateQuery,
+			[userId],
 		);
-		return result.affectedRows === 1;
+		if (users.length === 0) return false;
+		if (customAppearance)
+			await connection.query<ResultSetHeader>(updateWebAppearanceQuery, [
+				userId,
+				theme,
+				hue,
+				theme,
+				hue,
+			]);
+		else {
+			await connection.query<ResultSetHeader>(clearWebAppearanceQuery, [
+				userId,
+			]);
+			await connection.query<ResultSetHeader>(
+				deleteDefaultAppearanceSettingsQuery,
+				[userId],
+			);
+		}
+		return true;
 	});
 };
 
@@ -471,6 +508,7 @@ export const updateProfileConfiguration = async (
 	theme: WebTheme,
 	hue: number | null,
 	useWebsiteAppearance: boolean,
+	customAppearance: boolean,
 ) => {
 	const schema = await getSettingsSchema();
 	if (
@@ -480,19 +518,40 @@ export const updateProfileConfiguration = async (
 	)
 		throw new Error("The users profile appearance columns are not available");
 	return withTransaction(async (connection) => {
-		const [result] = await connection.query<ResultSetHeader>(
-			updateProfileConfigurationQuery,
-			[
-				isPrivate ? 1 : 0,
-				useWebsiteAppearance ? 1 : 0,
-				useWebsiteAppearance ? 1 : 0,
-				theme,
-				useWebsiteAppearance ? 1 : 0,
-				hue,
-				userId,
-			],
+		const [users] = await connection.query<AppearanceSettingsUserRow[]>(
+			appearanceSettingsUserForUpdateQuery,
+			[userId],
 		);
-		return result.affectedRows === 1;
+		if (users.length === 0) return false;
+		await connection.query(updateProfilePrivacyQuery, [
+			isPrivate ? 1 : 0,
+			userId,
+		]);
+		if (customAppearance) {
+			const storedUseWebsiteAppearance = useWebsiteAppearance ? 1 : 0;
+			await connection.query<ResultSetHeader>(
+				updateProfileConfigurationQuery,
+				[
+					userId,
+					theme,
+					hue,
+					storedUseWebsiteAppearance,
+					theme,
+					hue,
+					storedUseWebsiteAppearance,
+				],
+			);
+		}
+		else {
+			await connection.query<ResultSetHeader>(clearProfileAppearanceQuery, [
+				userId,
+			]);
+			await connection.query<ResultSetHeader>(
+				deleteDefaultAppearanceSettingsQuery,
+				[userId],
+			);
+		}
+		return true;
 	});
 };
 

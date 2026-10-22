@@ -19,18 +19,27 @@ export const userPreferredModeQuery = `
 `;
 
 export const userProfileRouteInfoQuery = `
-	SELECT preferred_mode,
-	       COALESCE(\`private\`, 0) AS is_private,
+	SELECT users.preferred_mode,
+	       COALESCE(users.\`private\`, 0) AS is_private,
+	       (
+		       web_settings.profile_theme IS NOT NULL
+		       OR web_settings.profile_hue IS NOT NULL
+		       OR web_settings.use_web_appearance IS NOT NULL
+	       ) AS has_profile_appearance,
 	       CASE
-		       WHEN COALESCE(use_web_appearance, 0) = 1 THEN COALESCE(web_theme, 1)
-		       ELSE COALESCE(profile_theme, 1)
+		       WHEN COALESCE(web_settings.use_web_appearance, 0) = 1
+			       THEN COALESCE(web_settings.web_theme, 1)
+		       ELSE COALESCE(web_settings.profile_theme, 1)
 	       END AS profile_theme,
 	       CASE
-		       WHEN COALESCE(use_web_appearance, 0) = 1 THEN web_hue
-		       ELSE profile_hue
+		       WHEN COALESCE(web_settings.use_web_appearance, 0) = 1
+			       THEN web_settings.web_hue
+		       ELSE web_settings.profile_hue
 	       END AS profile_hue
 		FROM users
-	WHERE id = ?
+	LEFT JOIN web_user_settings web_settings
+		ON web_settings.id = users.id
+	WHERE users.id = ?
 	LIMIT 1
 `;
 

@@ -47,7 +47,7 @@ public/
 └── styles/        Global CSS and CSS Modules
 ```
 
-See [`AGENT.md`](./AGENT.md) for the implementation rules.
+See [`AGENT.md`](./AGENT.md) for coding rules and implementation guidance.
 
 ### Bugs and Feature Requests
 
@@ -101,7 +101,7 @@ public/
 └── styles/        グローバルCSSとCSS Modules
 ```
 
-実装時のルールは [`AGENT.md`](./AGENT.md) を参照してください。
+コーディング等の開発・実装ルールは [`AGENT.md`](./AGENT.md) を参照してください。
 
 ### 不具合・要望
 

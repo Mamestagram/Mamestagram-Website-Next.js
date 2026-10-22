@@ -61,3 +61,113 @@
 		}
 	}
 }
+
+.tooltip-portal {
+	--tooltip-arrow-offset: 50%;
+
+	display: flex;
+	position: fixed;
+	z-index: 10000;
+	width: max-content;
+	max-width: min(320px, calc(100vw - 16px));
+	padding: 8px;
+	flex-direction: column;
+	color: hsl(var(--user-hue), 0%, 99.216%);
+	background-color: hsl(var(--user-hue), 9.804%, 10%);
+	border-radius: 10px;
+	box-shadow: var(--glass-box-shadow-dark);
+	font-size: 0.8em;
+	line-height: 1.25;
+	text-align: center;
+	white-space: normal;
+	pointer-events: none;
+	opacity: 0;
+}
+
+.tooltip-portal[data-positioned="true"] {
+	opacity: 1;
+}
+
+.tooltip-portal[data-positioned="true"][data-state="open"][data-side="up"] {
+	animation: tooltip-portal-up 180ms ease-out both;
+}
+
+.tooltip-portal[data-positioned="true"][data-state="open"][data-side="down"] {
+	animation: tooltip-portal-down 180ms ease-out both;
+}
+
+.tooltip-portal[data-positioned="true"][data-state="closing"][data-side="up"] {
+	animation: tooltip-portal-up-close 180ms ease-in both;
+}
+
+.tooltip-portal[data-positioned="true"][data-state="closing"][data-side="down"] {
+	animation: tooltip-portal-down-close 180ms ease-in both;
+}
+
+.tooltip-portal.bubble::before {
+	content: "";
+	position: absolute;
+	left: var(--tooltip-arrow-offset, 50%);
+	width: 0;
+	height: 0;
+	border: 10px solid transparent;
+	transform: translateX(-50%);
+}
+
+.tooltip-portal.bubble[data-side="up"]::before {
+	top: 100%;
+	border-top: 12px solid hsl(var(--user-hue), 9.804%, 10%);
+}
+
+.tooltip-portal.bubble[data-side="down"]::before {
+	bottom: 100%;
+	border-bottom: 12px solid hsl(var(--user-hue), 9.804%, 10%);
+}
+
+@keyframes tooltip-portal-up {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes tooltip-portal-down {
+	from {
+		opacity: 0;
+		transform: translateY(-8px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes tooltip-portal-up-close {
+	from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	to {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+}
+
+@keyframes tooltip-portal-down-close {
+	from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	to {
+		opacity: 0;
+		transform: translateY(-8px);
+	}
+}

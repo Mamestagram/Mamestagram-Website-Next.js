@@ -84,6 +84,7 @@ export default function ProfileModeSelection({
 	isDans,
 	mainMode,
 	canSetMainMode,
+	isLayoutPreview = false,
 }: {
 	id: number;
 	mode: OsuMode;
@@ -91,6 +92,7 @@ export default function ProfileModeSelection({
 	isDans: boolean;
 	mainMode: VnMode;
 	canSetMainMode: boolean;
+	isLayoutPreview?: boolean;
 }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isMenuMounted, setIsMenuMounted] = useState(false);
@@ -138,7 +140,7 @@ export default function ProfileModeSelection({
 	};
 	
 	const getHref = (option: ModeOption) => {
-		const queries = [isClan ? "clan" : "", option.dans ? "dans" : ""].filter(
+		const queries = [isClan ? "clan" : "", option.dans ? "dans" : "", isLayoutPreview ? "uiPreview=1" : ""].filter(
 			Boolean,
 		);
 		return `/profile/${id}/${option.mode}${queries.length > 0 ? `?${queries.join("&")}` : ""}`;

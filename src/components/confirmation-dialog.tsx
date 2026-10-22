@@ -8,6 +8,7 @@ import {
 	type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
+import classNames from "classnames";
 import FontAwesome from "@/components/font-awesome";
 import styles from "@s/confirmation-dialog.module.css";
 
@@ -34,6 +35,8 @@ type ConfirmationDialogProps = Readonly<
 		error?: ReactNode;
 		tone?: "danger" | "success";
 		singleAction?: boolean;
+		lockScroll?: boolean;
+		overlayClassName?: string;
 		onCancel: () => void;
 	} & ConfirmationHandler
 >;
@@ -50,6 +53,8 @@ export default function ConfirmationDialog({
 	error,
 	tone = "danger",
 	singleAction = false,
+	lockScroll = true,
+	overlayClassName,
 	onCancel,
 	confirmAction,
 	onConfirm,
@@ -76,17 +81,17 @@ export default function ConfirmationDialog({
 			if (event.key === "Escape" && !isPending) onCancelRef.current();
 		};
 		
-		document.body.style.overflow = "hidden";
+		if (lockScroll) document.body.style.overflow = "hidden";
 		document.addEventListener("keydown", closeOnEscape);
 		requestAnimationFrame(() => {
 			if (singleAction) confirmButtonRef.current?.focus();
 			else cancelButtonRef.current?.focus();
 		});
 		return () => {
-			document.body.style.overflow = previousOverflow;
+			if (lockScroll) document.body.style.overflow = previousOverflow;
 			document.removeEventListener("keydown", closeOnEscape);
 		};
-	}, [isOpen, isPending, singleAction]);
+	}, [isOpen, isPending, lockScroll, singleAction]);
 	
 	if (!isOpen || !isClient) return null;
 	
@@ -104,7 +109,7 @@ export default function ConfirmationDialog({
 	
 	return createPortal(
 		<div
-			className={styles.overlay}
+			className={classNames(styles.overlay, overlayClassName)}
 			data-theme-independent="true"
 			onMouseDown={(event) => {
 				if (event.target === event.currentTarget && !isPending) onCancel();

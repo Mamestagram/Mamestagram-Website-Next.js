@@ -50,7 +50,9 @@ export const PATCH = async (
 		typeof body.isPrivate !== "boolean" ||
 		!isWebTheme(body.theme) ||
 		(body.hue !== null && !isWebHue(body.hue)) ||
-		(!isClan && typeof body.useWebsiteAppearance !== "boolean")
+		(!isClan &&
+			(typeof body.useWebsiteAppearance !== "boolean" ||
+				typeof body.customAppearance !== "boolean"))
 	)
 		return NextResponse.json(
 			{ success: false, message: "The selected appearance is invalid." },
@@ -60,6 +62,10 @@ export const PATCH = async (
 		!isClan && typeof body.useWebsiteAppearance === "boolean"
 			? body.useWebsiteAppearance
 			: false;
+	const customAppearance =
+		!isClan && typeof body.customAppearance === "boolean"
+			? body.customAppearance
+			: true;
 	
 	try {
 		const profileId = isClan
@@ -75,6 +81,7 @@ export const PATCH = async (
 				body.theme,
 				body.hue,
 				useWebsiteAppearance,
+				customAppearance,
 			))
 				? currentUser.id
 				: null;

@@ -41,7 +41,7 @@ body {
 	max-width: 100%;
 	overflow-x: clip;
 	background-color: hsl(var(--user-hue), 0%, 0%);
-	font-family: var(--font-fragment-mono), sans-serif;
+	font-family: var(--font-body), sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	color: hsl(var(--user-hue), 0%, 99.216%);

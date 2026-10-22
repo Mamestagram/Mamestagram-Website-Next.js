@@ -139,6 +139,14 @@ body {
 	}
 }
 
+body:has([data-profile-ui-live-preview]) {
+	padding-top: 0;
+
+	& [data-site-header] {
+		display: none;
+	}
+}
+
 /* site header */
 [data-site-header] {
 	--header-height: 70px;

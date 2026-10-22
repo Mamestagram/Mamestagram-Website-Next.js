@@ -258,6 +258,7 @@ export type ProfileRouteInfo = Pick<
 	Profile,
 	"preferredMode" | "isPrivate" | "ownerId"
 > & {
+	hasProfileAppearance: boolean;
 	profileTheme: WebTheme;
 	profileHue: number | null;
 };
@@ -279,6 +280,7 @@ export const getProfileRouteInfo = cache(
 					preferredMode: clan.preferred_mode,
 					isPrivate: clan.is_public !== 1,
 					ownerId: clan.owner,
+					hasProfileAppearance: true,
 					profileTheme: normalizeWebTheme(clan.profile_theme),
 					profileHue: normalizeWebHue(clan.profile_hue),
 				}
@@ -289,6 +291,7 @@ export const getProfileRouteInfo = cache(
 			await executeQuery<{
 				preferred_mode: ModeNum;
 				is_private: 0 | 1;
+				has_profile_appearance: 0 | 1;
 				profile_theme: number;
 				profile_hue: number | null;
 			}>(userProfileRouteInfoQuery, [id])
@@ -298,6 +301,7 @@ export const getProfileRouteInfo = cache(
 				preferredMode: user.preferred_mode,
 				isPrivate: user.is_private === 1,
 				ownerId: null,
+				hasProfileAppearance: user.has_profile_appearance === 1,
 				profileTheme: normalizeWebTheme(user.profile_theme),
 				profileHue: normalizeWebHue(user.profile_hue),
 			}

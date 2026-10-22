@@ -23,35 +23,35 @@ export const settingsSchemaQuery = `
 		SELECT COUNT(*)
 			FROM information_schema.columns
 		WHERE table_schema = DATABASE()
-			AND table_name = 'users'
+			AND table_name = 'web_user_settings'
 			AND column_name = 'web_theme'
 	) AS has_web_theme,
 	(
 		SELECT COUNT(*)
 			FROM information_schema.columns
 		WHERE table_schema = DATABASE()
-			AND table_name = 'users'
+			AND table_name = 'web_user_settings'
 			AND column_name = 'web_hue'
 	) AS has_web_hue,
 	(
 		SELECT COUNT(*)
 			FROM information_schema.columns
 		WHERE table_schema = DATABASE()
-			AND table_name = 'users'
+			AND table_name = 'web_user_settings'
 			AND column_name = 'profile_theme'
 	) AS has_profile_theme,
 	(
 		SELECT COUNT(*)
 			FROM information_schema.columns
 		WHERE table_schema = DATABASE()
-			AND table_name = 'users'
+			AND table_name = 'web_user_settings'
 			AND column_name = 'profile_hue'
 	) AS has_profile_hue,
 	(
 		SELECT COUNT(*)
 			FROM information_schema.columns
 		WHERE table_schema = DATABASE()
-			AND table_name = 'users'
+			AND table_name = 'web_user_settings'
 			AND column_name = 'use_web_appearance'
 	) AS has_use_web_appearance,
 	(
@@ -208,63 +208,103 @@ export const updateProfilePrivacyQuery = `
     LIMIT 1
 `;
 
+export const appearanceSettingsUserForUpdateQuery = `
+	SELECT id
+		FROM users
+	WHERE id = ?
+	LIMIT 1
+	FOR UPDATE
+`;
+
 export const updateWebAppearanceQuery = `
-    UPDATE users
-    SET web_theme     = ?,
-        web_hue       = ?,
-        profile_theme = CASE
-                            WHEN COALESCE(use_web_appearance, 0) = 1 THEN ?
-                            ELSE profile_theme
-            END,
-        profile_hue   = CASE
-                            WHEN COALESCE(use_web_appearance, 0) = 1 THEN ?
-                            ELSE profile_hue
-            END
-    WHERE id = ?
-    LIMIT 1
+	INSERT INTO web_user_settings (
+		id,
+		web_theme,
+		web_hue,
+		profile_theme,
+		profile_hue,
+		use_web_appearance
+	)
+	VALUES (?, ?, ?, NULL, NULL, NULL)
+	ON DUPLICATE KEY UPDATE web_theme = ?,
+	                        web_hue   = ?
+`;
+
+export const clearWebAppearanceQuery = `
+	UPDATE web_user_settings
+	SET web_theme = NULL,
+	    web_hue   = NULL
+	WHERE id = ?
+	LIMIT 1
 `;
 
 export const userWebThemeQuery = `
-	SELECT COALESCE(web_theme, 1) AS web_theme
-		FROM users
+	SELECT web_theme
+		FROM web_user_settings
 	WHERE id = ?
 	LIMIT 1
 `;
 
 export const userWebHueQuery = `
 	SELECT web_hue
-		FROM users
+		FROM web_user_settings
 	WHERE id = ?
 	LIMIT 1
 `;
 
 export const userUseWebAppearanceQuery = `
-	SELECT COALESCE(use_web_appearance, 0) AS use_web_appearance
-		FROM users
+	SELECT use_web_appearance
+		FROM web_user_settings
 	WHERE id = ?
 	LIMIT 1
 `;
 
 export const updateProfileConfigurationQuery = `
-    UPDATE users
-    SET \`private\`        = ?,
-        use_web_appearance = ?,
-        profile_theme      = CASE WHEN ? = 1 THEN web_theme ELSE ? END,
-        profile_hue        = CASE WHEN ? = 1 THEN web_hue ELSE ? END
-    WHERE id = ?
-    LIMIT 1
+	INSERT INTO web_user_settings (
+		id,
+		web_theme,
+		web_hue,
+		profile_theme,
+		profile_hue,
+		use_web_appearance
+	)
+	VALUES (?, NULL, NULL, ?, ?, ?)
+	ON DUPLICATE KEY UPDATE profile_theme     = ?,
+	                        profile_hue       = ?,
+	                        use_web_appearance = ?
+`;
+
+export const clearProfileAppearanceQuery = `
+	UPDATE web_user_settings
+	SET profile_theme      = NULL,
+	    profile_hue        = NULL,
+	    use_web_appearance = NULL
+	WHERE id = ?
+	LIMIT 1
+`;
+
+export const deleteDefaultAppearanceSettingsQuery = `
+	DELETE FROM web_user_settings
+	WHERE id = ?
+		AND web_theme IS NULL
+		AND web_hue IS NULL
+		AND profile_theme IS NULL
+		AND profile_hue IS NULL
+		AND use_web_appearance IS NULL
+		AND profile_ui IS NULL
+	LIMIT 1
 `;
 
 export const userProfileThemeQuery = `
-	SELECT COALESCE(profile_theme, 1) AS profile_theme
-		FROM users
+	SELECT profile_theme
+		FROM web_user_settings
 	WHERE id = ?
 	LIMIT 1
 `;
 
 export const userProfileHueQuery = `
 	SELECT profile_hue
-		FROM users
+		FROM web_user_settings
 	WHERE id = ?
 	LIMIT 1
 `;
