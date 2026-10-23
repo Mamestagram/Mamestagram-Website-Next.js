@@ -11,6 +11,7 @@ import {
 } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { isTooltipFocusSuppressed } from "@/lib/tooltip-focus";
 
 type PortalSide = "up" | "down";
 
@@ -31,6 +32,7 @@ export default function Tooltip({
 	direction = "up",
 	bubble = false,
 	portal = false,
+	focusable = true,
 	description,
 	children
 }: Readonly<{
@@ -39,22 +41,47 @@ export default function Tooltip({
 	direction?: "up" | "down",
 	bubble?: boolean,
 	portal?: boolean,
+	focusable?: boolean,
 	description?: ReactNode,
 	children?: ReactNode
 }>) {
 	const anchorRef = useRef<HTMLSpanElement>(null);
+	const visibilityObserverRef = useRef<IntersectionObserver | null>(null);
+	const visibleAnchorRectRef = useRef<DOMRectReadOnly | null>(null);
 	const tooltipRef = useRef<HTMLParagraphElement>(null);
 	const tooltipId = useId();
 	const [isOpen, setIsOpen] = useState(false);
 	const [isClosing, setIsClosing] = useState(false);
 	const [position, setPosition] = useState<PortalPosition | null>(null);
 	const hasDescription = description !== undefined && description !== null;
-	const showPortal = () => {
-		if (!portal || !hasDescription) return;
+	const closePortal = useCallback(() => {
+		visibilityObserverRef.current?.disconnect();
+		visibilityObserverRef.current = null;
+		visibleAnchorRectRef.current = null;
+		setIsOpen(false);
 		setIsClosing(false);
-		setIsOpen(true);
+		setPosition(null);
+	}, []);
+	const showPortal = () => {
+		if (!portal || !hasDescription || !anchorRef.current) return;
+		visibilityObserverRef.current?.disconnect();
+		const observer = new IntersectionObserver(([entry]) => {
+			if (visibilityObserverRef.current !== observer) return;
+			if (!entry?.isIntersecting || entry.intersectionRatio <= 0) {
+				closePortal();
+				return;
+			}
+			visibleAnchorRectRef.current = entry.intersectionRect;
+			setIsClosing(false);
+			setIsOpen(true);
+			updatePosition();
+		});
+		visibilityObserverRef.current = observer;
+		observer.observe(anchorRef.current);
 	};
 	const hidePortal = () => {
+		visibilityObserverRef.current?.disconnect();
+		visibilityObserverRef.current = null;
 		if (portal && isOpen) setIsClosing(true);
 	};
 
@@ -62,10 +89,14 @@ export default function Tooltip({
 		const anchor = anchorRef.current;
 		const tooltip = tooltipRef.current;
 		if (!anchor || !tooltip) return;
+		const anchorRect = visibleAnchorRectRef.current;
+		if (!anchorRect) {
+			closePortal();
+			return;
+		}
 
 		const viewportPadding = 8;
 		const gap = bubble ? 12 : 8;
-		const anchorRect = anchor.getBoundingClientRect();
 		const tooltipRect = tooltip.getBoundingClientRect();
 		const fitsAbove = anchorRect.top - tooltipRect.height - gap >= viewportPadding;
 		const fitsBelow = anchorRect.bottom + tooltipRect.height + gap <=
@@ -89,22 +120,29 @@ export default function Tooltip({
 		);
 
 		setPosition({ top, left, arrowOffset, side });
-	}, [bubble, direction]);
+	}, [bubble, closePortal, direction]);
 
 	useLayoutEffect(() => {
 		if (!portal || !isOpen) return;
-		updatePosition();
+		const frame = requestAnimationFrame(updatePosition);
+		return () => cancelAnimationFrame(frame);
 	}, [isOpen, portal, updatePosition]);
 
 	useEffect(() => {
 		if (!portal || !isOpen) return;
-		window.addEventListener("resize", updatePosition);
-		window.addEventListener("scroll", updatePosition, true);
+		window.addEventListener("resize", closePortal);
+		window.addEventListener("scroll", closePortal, true);
+		window.visualViewport?.addEventListener("resize", closePortal);
+		window.visualViewport?.addEventListener("scroll", closePortal);
 		return () => {
-			window.removeEventListener("resize", updatePosition);
-			window.removeEventListener("scroll", updatePosition, true);
+			window.removeEventListener("resize", closePortal);
+			window.removeEventListener("scroll", closePortal, true);
+			window.visualViewport?.removeEventListener("resize", closePortal);
+			window.visualViewport?.removeEventListener("scroll", closePortal);
 		};
-	}, [isOpen, portal, updatePosition]);
+	}, [closePortal, isOpen, portal]);
+
+	useEffect(() => () => visibilityObserverRef.current?.disconnect(), []);
 
 	const portalStyle: PortalStyle | undefined = position ? {
 		top: position.top,
@@ -119,7 +157,12 @@ export default function Tooltip({
 			aria-describedby={portal && isOpen ? tooltipId : undefined}
 			onPointerEnter={showPortal}
 			onPointerLeave={hidePortal}
-			onFocus={showPortal}
+			onPointerDown={() => { if (portal) closePortal(); }}
+			onDragStartCapture={() => { if (portal) closePortal(); }}
+			onClick={() => { if (portal) closePortal(); }}
+			onFocus={(event) => {
+				if (!isTooltipFocusSuppressed(event.target)) showPortal();
+			}}
 			onBlur={(event) => {
 				const nextTarget = event.relatedTarget;
 				if (
@@ -128,7 +171,7 @@ export default function Tooltip({
 				)
 					hidePortal();
 			}}
-			tabIndex={portal ? 0 : undefined}
+			tabIndex={portal && focusable ? 0 : undefined}
 		>
 			{children}
 			{hasDescription && !portal &&

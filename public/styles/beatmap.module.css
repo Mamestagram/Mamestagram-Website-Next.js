@@ -1445,7 +1445,7 @@
 	box-shadow: 0 6px 18px hsla(var(--user-hue), 0%, 0%, 0.34),
 	inset 0 1px 0 hsla(var(--user-hue), 0%, 100%, 0.08);
 	cursor: default;
-	font-family: var(--font-space-mono), sans-serif;
+	font-family: var(--font-space-mono, "Space Mono"), var(--font-body, sans-serif);
 	font-weight: 700;
 	letter-spacing: -0.035em;
 	line-height: 1;

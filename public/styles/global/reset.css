@@ -25,6 +25,7 @@ html {
 	overflow-x: clip;
 	font-size: clamp(13px, calc(12px + .28vw), 18px);
 	line-height: 1.15; /* 1 */
+	font-synthesis: style;
 	-webkit-text-size-adjust: 100%; /* 2 */
 	-webkit-tap-highlight-color: transparent; /* 3 */
 }
@@ -42,8 +43,7 @@ body {
 	overflow-x: clip;
 	background-color: hsl(var(--user-hue), 0%, 0%);
 	font-family: var(--font-body), sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+	font-weight: 400;
 	color: hsl(var(--user-hue), 0%, 99.216%);
 	margin: 0;
 	scroll-behavior: smooth;
@@ -148,7 +148,7 @@ hr {
  */
 
 pre {
-	font-family: monospace, monospace; /* 1 */
+	font-family: var(--font-code, monospace); /* 1 */
 	font-size: inherit; /* 2 */
 }
 
@@ -195,7 +195,7 @@ strong {
 code,
 kbd,
 samp {
-	font-family: monospace, monospace; /* 1 */
+	font-family: var(--font-code, monospace); /* 1 */
 	font-size: inherit; /* 2 */
 }
 

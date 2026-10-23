@@ -420,7 +420,7 @@
 	& h3 {
 		margin: 5px 0 0;
 		color: hsl(var(--user-hue), 12%, 95.098%);
-		font-family: var(--font-jetbrains-mono), sans-serif;
+		font-family: var(--font-code, monospace);
 		font-size: 1.5rem;
 		font-weight: 750;
 	}
@@ -595,7 +595,7 @@
 	
 	& code {
 		color: hsl(var(--user-hue), 76.552%, 71.569%);
-		font-family: var(--font-jetbrains-mono), sans-serif;
+		font-family: var(--font-code, monospace);
 		font-size: .9rem;
 	}
 	

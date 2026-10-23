@@ -12,16 +12,22 @@ const getServerSnapshot = () => false;
 
 export default function ProfileUiSettingsDialog({
 	title,
+	className,
+	eyebrow = "Profile UI",
 	titleId,
 	closeLabel,
 	position,
+	keepInViewport = false,
 	onClose,
 	children,
 }: Readonly<{
 	title: string;
+	className?: string;
+	eyebrow?: string;
 	titleId: string;
 	closeLabel: string;
 	position: PopoverAnchor;
+	keepInViewport?: boolean;
 	onClose: () => void;
 	children: ReactNode;
 }>) {
@@ -49,12 +55,19 @@ export default function ProfileUiSettingsDialog({
 			const height = Math.min(viewport?.height ?? window.innerHeight, document.documentElement.clientHeight);
 			dialog.style.maxWidth = `${Math.max(0, width - 16)}px`;
 			dialog.style.maxHeight = `${Math.max(0, height - 16)}px`;
-			const fitted = getPopoverPosition({ ...position, x: position.x - left, y: position.y - top }, dialog.getBoundingClientRect(), {
+			const anchor = keepInViewport ? {
+				x: position.x + pageX - window.scrollX - ((container?.scrollLeft ?? 0) - initialScrollLeft),
+				y: position.y + pageY - window.scrollY - ((container?.scrollTop ?? 0) - initialScrollTop),
+			} : position;
+			const fitted = getPopoverPosition({ x: anchor.x - left, y: anchor.y - top }, dialog.getBoundingClientRect(), {
 				width,
 				height,
 			});
 			fittedPosition = { left: fitted.left + left, top: fitted.top + top };
-			followScroll();
+			if (keepInViewport) {
+				dialog.style.left = `${fittedPosition.left}px`;
+				dialog.style.top = `${fittedPosition.top}px`;
+			} else followScroll();
 		};
 		updatePosition();
 		const observer = new ResizeObserver(updatePosition);
@@ -62,15 +75,18 @@ export default function ProfileUiSettingsDialog({
 		window.addEventListener("resize", updatePosition);
 		window.visualViewport?.addEventListener("resize", updatePosition);
 		window.visualViewport?.addEventListener("scroll", updatePosition);
-		container?.addEventListener("scroll", followScroll, { passive: true });
+		const onScroll = keepInViewport ? updatePosition : followScroll;
+		if (keepInViewport) window.addEventListener("scroll", updatePosition, { passive: true });
+		container?.addEventListener("scroll", onScroll, { passive: true });
 		return () => {
 			observer.disconnect();
 			window.removeEventListener("resize", updatePosition);
 			window.visualViewport?.removeEventListener("resize", updatePosition);
 			window.visualViewport?.removeEventListener("scroll", updatePosition);
-			container?.removeEventListener("scroll", followScroll);
+			if (keepInViewport) window.removeEventListener("scroll", updatePosition);
+			container?.removeEventListener("scroll", onScroll);
 		};
-	}, [isMounted, position]);
+	}, [isMounted, position, keepInViewport]);
 
 	useEffect(() => {
 		if (!isMounted) return;
@@ -86,14 +102,14 @@ export default function ProfileUiSettingsDialog({
 	return createPortal(
 		<section
 			ref={dialogRef}
-			className={styles.profile_ui_settings_dialog}
-			style={{ left: position.x, top: position.y }}
+			className={`${styles.profile_ui_settings_dialog}${className ? ` ${className}` : ""}`}
+			style={{ left: position.x, top: position.y, ...(keepInViewport ? { position: "fixed" } : {}) }}
 			role="dialog"
 			aria-labelledby={titleId}
 		>
 			<div className={styles.profile_ui_dialog_heading}>
 				<div>
-					<small>Profile UI</small>
+					<small>{eyebrow}</small>
 					<h3 id={titleId}>{title}</h3>
 				</div>
 				<button type="button" aria-label={closeLabel} onClick={onClose}>

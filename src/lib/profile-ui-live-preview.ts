@@ -1,9 +1,11 @@
+import { parseCustomAchievements, type CustomAchievementSelection } from "@/lib/custom-achievements";
 import { isDefaultProfileUi, parseProfileUiContents, type ProfileUiItem } from "@/lib/profile-ui";
 import { isWebHue, isWebTheme, type WebTheme } from "@/lib/theme";
 
 export const PROFILE_UI_PREVIEW_CHANNEL = "profile-ui-preview";
 export type ProfileUiPreviewDraft = {
 	contents: ProfileUiItem[];
+	customAchievements?: CustomAchievementSelection;
 	theme: WebTheme;
 	hue: number | null;
 };
@@ -13,9 +15,12 @@ export const parseProfileUiPreviewDraft = (value: unknown): ProfileUiPreviewDraf
 	const raw = value as Record<string, unknown>;
 	const contents = parseProfileUiContents(raw.contents);
 	if (!contents || !isWebTheme(raw.theme) || (raw.hue !== null && !isWebHue(raw.hue))) return null;
+	const customAchievements = raw.customAchievements === undefined ? undefined : parseCustomAchievements(raw.customAchievements);
+	if (customAchievements === null) return null;
 	const customized = !isDefaultProfileUi(contents);
 	return {
 		contents: contents.map((content) => ({ ...content, customized })),
+		...(customAchievements === undefined ? {} : { customAchievements }),
 		theme: raw.theme,
 		hue: raw.hue,
 	};

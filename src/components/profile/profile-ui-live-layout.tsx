@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import CustomAchievementsCard from "@/components/profile/custom-achievements-card";
 import ProfileAppearance from "@/components/profile/profile-appearance";
 import ProfileUiLayout from "@/components/profile/profile-ui-layout";
 import type { ProfileUiItem, ProfileUiContent } from "@/lib/profile-ui";
@@ -47,6 +48,6 @@ export default function ProfileUiLiveLayout({ items, contents, profileId }: Read
 	return <>
 		<span data-profile-ui-live-preview hidden aria-hidden="true"/>
 		{draft && <ProfileAppearance theme={draft.theme} hue={draft.hue}/>}
-		<ProfileUiLayout items={draft?.contents ?? items} contents={contents}/>
+		<ProfileUiLayout items={draft?.contents ?? items} contents={draft?.customAchievements === undefined ? contents : { ...contents, custom_achievements: <CustomAchievementsCard achievements={draft.customAchievements} canRevealSecretConditions/> }}/>
 	</>;
 }

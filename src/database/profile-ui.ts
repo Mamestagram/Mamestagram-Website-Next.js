@@ -1,3 +1,5 @@
+import type { CustomAchievementIds } from "@/lib/custom-achievements";
+import { saveCustomAchievements } from "@/database/custom-achievements";
 import type { RowDataPacket } from "mysql2/promise";
 import { executeQuery, withTransaction } from "@/database/connection";
 import {
@@ -33,6 +35,7 @@ export const getProfileUi = async (userId: number): Promise<ProfileUiItem[]> => 
 export const saveProfileUi = async (
 	userId: number,
 	contents: ProfileUiItem[],
+	achievementIds?: CustomAchievementIds,
 ) => {
 	const parsedContents = parseProfileUiContents(contents);
 	if (!parsedContents) throw new Error("The profile UI layout is invalid.");
@@ -42,6 +45,7 @@ export const saveProfileUi = async (
 			[userId],
 		);
 		if (users.length === 0) throw new Error("The profile user does not exist.");
+		if (achievementIds !== undefined) await saveCustomAchievements(connection, userId, achievementIds);
 		if (isDefaultProfileUi(parsedContents)) {
 			await connection.query(clearProfileUiQuery, [userId]);
 			await connection.query(deleteDefaultAppearanceSettingsQuery, [userId]);

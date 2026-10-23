@@ -2,6 +2,12 @@ import type { Metadata, Viewport } from "next";
 import {
 	JetBrains_Mono,
 	M_PLUS_1_Code,
+	Noto_Sans,
+	Noto_Sans_Arabic,
+	Noto_Sans_JP,
+	Noto_Sans_KR,
+	Noto_Sans_TC,
+	Noto_Sans_Thai_Looped,
 	Nunito,
 	Space_Mono,
 } from "next/font/google";
@@ -28,34 +34,96 @@ import "@s/global/performance.css";
 import "@s/global/theme.css";
 
 const nunito = Nunito({
+	adjustFontFallback: false,
 	display: "swap",
 	style: ["normal", "italic"],
 	subsets: ["latin"],
 	variable: "--font-nunito",
 });
 const jetBrainsMono = JetBrains_Mono({
+	adjustFontFallback: false,
 	display: "swap",
+	style: ["normal", "italic"],
 	subsets: ["latin"],
 	variable: "--font-jetbrains-mono",
 });
 const mPlusOneCode = M_PLUS_1_Code({
+	adjustFontFallback: false,
 	display: "swap",
 	subsets: ["latin"],
 	variable: "--font-m-plus-1-code",
 });
 const spaceMono = Space_Mono({
+	adjustFontFallback: false,
 	display: "swap",
 	style: ["normal", "italic"],
 	subsets: ["latin"],
 	variable: "--font-space-mono",
 	weight: ["400", "700"],
 });
+// Language fallbacks use real variable weights and load only when their glyphs are needed.
+const notoSans = Noto_Sans({
+	adjustFontFallback: false,
+	display: "swap",
+	preload: false,
+	style: ["normal", "italic"],
+	variable: "--font-noto-sans",
+});
+const notoSansTC = Noto_Sans_TC({
+	adjustFontFallback: false,
+	display: "swap",
+	preload: false,
+	variable: "--font-noto-sans-tc",
+});
+const notoSansArabic = Noto_Sans_Arabic({
+	adjustFontFallback: false,
+	display: "swap",
+	preload: false,
+	variable: "--font-noto-sans-arabic",
+});
+const notoSansJP = Noto_Sans_JP({
+	adjustFontFallback: false,
+	display: "swap",
+	preload: false,
+	variable: "--font-noto-sans-jp",
+});
+const notoSansKR = Noto_Sans_KR({
+	adjustFontFallback: false,
+	display: "swap",
+	preload: false,
+	variable: "--font-noto-sans-kr",
+});
+const notoSansThaiLooped = Noto_Sans_Thai_Looped({
+	adjustFontFallback: false,
+	display: "swap",
+	preload: false,
+	variable: "--font-noto-sans-thai-looped",
+});
 const fontVariables = [
 	nunito.variable,
 	jetBrainsMono.variable,
 	mPlusOneCode.variable,
 	spaceMono.variable,
+	notoSans.variable,
+	notoSansTC.variable,
+	notoSansArabic.variable,
+	notoSansJP.variable,
+	notoSansKR.variable,
+	notoSansThaiLooped.variable,
 ].join(" ");
+// Keep generated local fallbacks from taking precedence over our language fonts.
+const primaryFontFamilies: CSSProperties & Record<`--font-${string}`, string> = {
+	"--font-nunito": nunito.style.fontFamily.split(",")[0],
+	"--font-jetbrains-mono": jetBrainsMono.style.fontFamily.split(",")[0],
+	"--font-m-plus-1-code": mPlusOneCode.style.fontFamily.split(",")[0],
+	"--font-space-mono": spaceMono.style.fontFamily.split(",")[0],
+	"--font-noto-sans": notoSans.style.fontFamily.split(",")[0],
+	"--font-noto-sans-tc": notoSansTC.style.fontFamily.split(",")[0],
+	"--font-noto-sans-arabic": notoSansArabic.style.fontFamily.split(",")[0],
+	"--font-noto-sans-jp": notoSansJP.style.fontFamily.split(",")[0],
+	"--font-noto-sans-kr": notoSansKR.style.fontFamily.split(",")[0],
+	"--font-noto-sans-thai-looped": notoSansThaiLooped.style.fontFamily.split(",")[0],
+};
 
 type UserHueStyle = CSSProperties & {
 	"--user-hue": number;
@@ -113,7 +181,7 @@ export default async function RootLayout({
 			lang="en"
 			data-theme={getWebThemeName(webTheme)}
 			data-user-hue={webHue ?? undefined}
-			style={userHueStyle}
+			style={{ ...primaryFontFamilies, ...userHueStyle }}
 		>
 			<body>
 				<RenderingPerformanceMode/>

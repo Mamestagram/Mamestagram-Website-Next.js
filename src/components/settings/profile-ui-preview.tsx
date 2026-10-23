@@ -5,6 +5,8 @@ import type { CSSProperties, MouseEvent as ReactMouseEvent, PointerEvent as Reac
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import FontAwesome from "@/components/font-awesome";
+import CustomAchievementSlots from "@/components/profile/custom-achievement-slots";
+import type { CustomAchievementSelection } from "@/lib/custom-achievements";
 import ProfileUiAchievementsPreview from "@/components/settings/profile-ui-achievements-preview";
 import ProfileUiMePreview from "@/components/settings/profile-ui-me-preview";
 import ProfileUiScorePreview from "@/components/settings/profile-ui-score-preview";
@@ -43,6 +45,8 @@ import responsiveStyles from "@s/profile-ui-responsive.module.css";
 type PreviewStyle = CSSProperties & {
 	"--profile-ui-preview-content-span"?: number;
 	"--profile-ui-preview-height"?: string;
+	"--profile-ui-preview-height-offset"?: string;
+	"--profile-ui-preview-min-actual-height"?: string;
 	"--profile-ui-preview-min-height"?: string;
 	"--profile-ui-preview-auto-height"?: string;
 	"--profile-ui-preview-radius"?: string;
@@ -69,6 +73,7 @@ const defaultContentHeights: Record<ProfileUiContent, number> = {
 	most_played: PROFILE_UI_SCORE_AUTO_HEIGHT,
 	recent_played: PROFILE_UI_SCORE_AUTO_HEIGHT,
 	achievements: 0,
+	custom_achievements: 0,
 };
 
 const toPreviewHeight = (height: number) =>
@@ -89,7 +94,7 @@ const roundWidth = (value: number) => Math.round(clamp(value, 0.01, 1) * 100) / 
 const getContentStyle = (
 	content: ProfileUiItem,
 ): PreviewStyle => {
-	const height = isProfileUiRowHeight(content.content) ? -1 : content.height;
+	const height = getProfileUiContentHeightLimits(content.content) === null ? -1 : content.height;
 	const minimumHeight = getProfileUiContentMinHeight(content.content);
 	const style: PreviewStyle = {
 		"--profile-ui-preview-content-span": Math.round(content.width * 100),
@@ -97,6 +102,8 @@ const getContentStyle = (
 			height === -1
 				? "auto"
 				: `${toPreviewHeight(Math.max(minimumHeight, height))}px`,
+		"--profile-ui-preview-height-offset": "0px",
+		"--profile-ui-preview-min-actual-height": `${minimumHeight}px`,
 		"--profile-ui-preview-min-height":
 			height === -1
 				? `${toPreviewHeight(defaultContentHeights[content.content])}px`
@@ -114,11 +121,19 @@ const getContentStyle = (
 	return style;
 };
 
-const ProfileUiPreviewContentBody = memo(function ProfileUiPreviewContentBody({ content }: {
+type AchievementSlotClick = (contentIndex: number, slotIndex: number, event: ReactMouseEvent<HTMLButtonElement>) => void;
+
+const ProfileUiPreviewContentBody = memo(function ProfileUiPreviewContentBody({ content, contentIndex, customAchievements, activeAchievementSlot, onAchievementSlotClick, onAchievementReorder, disabled = false }: {
 	content: ProfileUiItem;
+	contentIndex?: number;
+	customAchievements?: CustomAchievementSelection;
+	activeAchievementSlot?: number;
+	onAchievementSlotClick?: AchievementSlotClick;
+	onAchievementReorder?: (from: number, to: number) => void;
+	disabled?: boolean;
 }) {
 	return <div className={styles.profile_ui_preview_surface}>
-		<div className={styles.profile_ui_preview_heading}>
+		<div className={styles.profile_ui_preview_heading} data-preview-heading>
 			<FontAwesome prefix="fas" name="grip-dots"/>
 			<strong>{profileUiContentLabels[content.content]}</strong>
 		</div>
@@ -127,6 +142,14 @@ const ProfileUiPreviewContentBody = memo(function ProfileUiPreviewContentBody({ 
 			{content.content === "stats" && <>{Array.from({ length: 6 }, (_, index) => <span key={index}/>)}</>}
 			{content.content === "me" && <ProfileUiMePreview/>}
 			{content.content === "achievements" && <ProfileUiAchievementsPreview/>}
+			{content.content === "custom_achievements" && <div
+				onPointerDown={(event) => event.stopPropagation()} onClick={(event) => event.stopPropagation()}
+				onDragStart={(event) => { event.preventDefault(); event.stopPropagation(); }}>
+				<CustomAchievementSlots achievements={customAchievements ?? []} preview canRevealSecretConditions activeSlot={activeAchievementSlot} disabled={disabled}
+					onReorder={onAchievementReorder}
+					onSlotClick={onAchievementSlotClick && contentIndex !== undefined
+						? (slotIndex, event) => onAchievementSlotClick(contentIndex, slotIndex, event) : undefined}/>
+			</div>}
 			{["bestpp", "first_place", "most_played", "recent_played"].includes(content.content) && <ProfileUiScorePreview height={content.height}/>}
 		</div>
 	</div>;
@@ -138,9 +161,13 @@ type ResizeFeedback = { label: string; x: number; y: number };
 
 export default function ProfileUiPreview({
 	contents: savedContents, disabled, bannerUrl, backgroundUrl, profileTheme, profileHue,
-	selectedContentIndex, toolboxDrag, onToolboxDragEnd, onChange, onEditContent, snappingEnabled = true,
+	selectedContentIndex, customAchievements, activeAchievementSlot, onAchievementSlotClick, onAchievementReorder, toolboxDrag, onToolboxDragEnd, onChange, onEditContent, snappingEnabled = true,
 }: Readonly<{
 	contents: ProfileUiItem[];
+	customAchievements?: CustomAchievementSelection;
+	activeAchievementSlot?: { contentIndex: number; slotIndex: number } | null;
+	onAchievementSlotClick?: AchievementSlotClick;
+	onAchievementReorder?: (from: number, to: number) => void;
 	disabled: boolean;
 	bannerUrl: string;
 	backgroundUrl: string;
@@ -442,17 +469,18 @@ export default function ProfileUiPreview({
 		} : null;
 		const minimum = getProfileUiContentMinHeight(content.content);
 		const minimumWidth = (minimumWidths[index] ?? 1) / 100;
-		const startHeight = content.height === -1 ? fromPreviewHeight(card?.getBoundingClientRect().height ?? toPreviewHeight(minimum)) : content.height;
+		const startPreviewHeight = card?.getBoundingClientRect().height ?? toPreviewHeight(minimum);
+		const startHeight = content.height === -1 ? fromPreviewHeight(startPreviewHeight) : content.height;
 		beginResize(event, (deltaX, deltaY, x, y) => {
 			const width = canResizeWidth ? clamp(content.width + deltaX / gridWidth, minimumWidth, 1) : content.width;
-			const height = axis === "width" ? content.height : Math.round(clamp(startHeight + fromPreviewHeight(deltaY), minimum, limits?.max ?? 2400));
 			let snapAxis = axis;
 			if (axis === "both") {
 				if (!canResizeWidth || Math.abs(deltaX) < 3) snapAxis = "height";
 				else if (Math.abs(deltaY) < 3) snapAxis = "width";
 			}
-			const result = snappingEnabled && geometry ? snapProfileUiResize(width, height,
-				snapAxis, geometry, minimum, limits?.max)
+			const height = axis === "width" ? content.height
+				: Math.round(clamp(startHeight + fromPreviewHeight(deltaY), minimum, limits?.max ?? 2400));
+			const result = snappingEnabled && geometry ? snapProfileUiResize(width, height, snapAxis, geometry, minimum, limits?.max)
 				: { width: roundWidth(width), height, snapped: false, snappedWidth: false, snappedHeight: false };
 			const label = axis === "width" ? `W ${result.width.toFixed(2)}` : canResizeWidth ? `W ${result.width.toFixed(2)} · H ${result.height}px` : `H ${result.height}px`;
 			setResizeFeedback({ label: `${label}${result.snapped ? " · Aligned" : ""}`, x, y });
@@ -509,12 +537,12 @@ export default function ProfileUiPreview({
 	const renderGhost = () => ghost && <article
 		className={`${styles.profile_ui_preview_content} ${styles.profile_ui_preview_content_move_preview}`}
 		data-content={ghost.content.content} data-custom-color={ghost.content.color !== null}
-		data-fixed-height={!isProfileUiRowHeight(ghost.content.content) && ghost.content.height !== -1}
+		data-fixed-height={getProfileUiContentHeightLimits(ghost.content.content) !== null && ghost.content.height !== -1}
 		data-row-height={isProfileUiRowHeight(ghost.content.content)} data-match-row={rowMatches.get(-1)}
 		data-auto-height={isProfileUiAutoHeight(ghost.content)}
 		data-score-content={["bestpp", "first_place", "most_played", "recent_played"].includes(ghost.content.content)}
 		data-content-move-preview style={{ ...getContentStyle(ghost.content), order: ghost.order }} aria-hidden="true"
-	><ProfileUiPreviewContentBody content={ghost.content}/><span className={styles.profile_ui_preview_move_label}>Drop here</span></article>;
+	><ProfileUiPreviewContentBody content={ghost.content} customAchievements={customAchievements}/><span className={styles.profile_ui_preview_move_label}>Drop here</span></article>;
 
 	return <>
 		<div className={`${styles.profile_ui_preview_shell} ${responsiveStyles.profile_ui_responsive}`} data-theme-independent="true" data-profile-theme={getWebThemeName(profileTheme)} data-custom-hue={profileHue !== null} style={shellStyle}>
@@ -547,7 +575,7 @@ export default function ProfileUiPreview({
 					{contents.map((content, index) => <Fragment key={index}>
 						<article className={styles.profile_ui_preview_content} data-preview-content={index} data-content={content.content}
 							data-selected={selectedContentIndex === index} data-custom-color={content.color !== null}
-							data-fixed-height={!isProfileUiRowHeight(content.content) && content.height !== -1} data-row-height={isProfileUiRowHeight(content.content)} data-match-row={rowMatches.get(index)} data-score-content={["bestpp", "first_place", "most_played", "recent_played"].includes(content.content)}
+							data-fixed-height={getProfileUiContentHeightLimits(content.content) !== null && content.height !== -1} data-row-height={isProfileUiRowHeight(content.content)} data-match-row={rowMatches.get(index)} data-score-content={["bestpp", "first_place", "most_played", "recent_played"].includes(content.content)}
 							data-auto-height={isProfileUiAutoHeight(content)}
 							data-drag-source={draggedItem?.kind === "content" && draggedItem.index === index}
 							data-move-source={draggedItem?.kind === "content" && draggedItem.index === index && !!previewLayout.projected}
@@ -563,12 +591,14 @@ export default function ProfileUiPreview({
 							}}
 							onDragEnd={clearDragState}
 							onContextMenu={(event) => { event.preventDefault(); event.stopPropagation(); if (!disabled) onEditContent(index, getSettingsAnchor(event)); }}>
-							<ProfileUiPreviewContentBody content={content}/>
+							<ProfileUiPreviewContentBody content={content} contentIndex={index} customAchievements={customAchievements}
+								activeAchievementSlot={activeAchievementSlot?.contentIndex === index ? activeAchievementSlot.slotIndex : undefined}
+								onAchievementSlotClick={onAchievementSlotClick} onAchievementReorder={onAchievementReorder} disabled={disabled}/>
 							<button type="button" className={styles.profile_ui_preview_touch_content_move} aria-label={`Move ${profileUiContentLabels[content.content]}`} disabled={disabled} draggable={!disabled} onPointerDown={(event) => beginTouchMove(event, index)}><FontAwesome prefix="fas" name="grip-dots"/></button>
 							<button type="button" className={styles.profile_ui_preview_touch_settings} aria-label={`Edit ${profileUiContentLabels[content.content]}`} disabled={disabled} draggable={false} onDragStart={(event) => { event.preventDefault(); event.stopPropagation(); }} onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); onEditContent(index, getSettingsAnchor(event)); }}><FontAwesome prefix="fas" name="sliders"/></button>
 							<button type="button" className={styles.profile_ui_preview_remove_button} aria-label={`Remove ${profileUiContentLabels[content.content]}`} disabled={disabled} draggable={false} onDragStart={(event) => { event.preventDefault(); event.stopPropagation(); }} onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); if (!disabled) { onChange(normalizeProfileUi(contents.filter((_, current) => current !== index))); clearDragState(); } }}><FontAwesome prefix="fas" name="minus"/></button>
 							<button type="button" className={styles.profile_ui_preview_width_handle} data-profile-ui-resize="width" aria-label={`Resize ${profileUiContentLabels[content.content]} width`} title="Double-click to use auto width" disabled={disabled} onPointerDown={(event) => resizeContent(event, index, "width")} onDoubleClick={(event) => resetSize(event, index, "width")}/>
-							{!isProfileUiRowHeight(content.content) && <>
+							{getProfileUiContentHeightLimits(content.content) !== null && <>
 							<button type="button" className={styles.profile_ui_preview_height_handle} data-profile-ui-resize="height" aria-label={`Resize ${profileUiContentLabels[content.content]} height`} title="Double-click to use auto height" disabled={disabled} onPointerDown={(event) => resizeContent(event, index, "height")} onDoubleClick={(event) => resetSize(event, index, "height")}/>
 							<button type="button" className={styles.profile_ui_preview_corner_handle} data-profile-ui-resize="both" aria-label={`Resize ${profileUiContentLabels[content.content]} size`} title="Drag to resize. Double-click for auto width and height." disabled={disabled} onPointerDown={(event) => resizeContent(event, index, "both")} onDoubleClick={(event) => resetSize(event, index, "both")}/>
 							</>}

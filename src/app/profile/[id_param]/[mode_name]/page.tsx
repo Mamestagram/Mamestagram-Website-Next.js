@@ -1,3 +1,4 @@
+import CustomAchievements from "@/components/profile/custom-achievements";
 import classNames from "classnames";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -297,6 +298,8 @@ export default async function Profile({
 									most_played: <div className={classNames(styles.section_box, styles.list_container)} data-page-enter="box"><Suspense fallback={<PlayerScoresLoading label="Most Played Maps" hasGrade={false}/> }><PlayerScores scope={ScoreScope.mostPlayed} id={id} mode={mode} isDans={isDans}/></Suspense></div>,
 									recent_played: <div className={classNames(styles.section_box, styles.list_container)} data-page-enter="box"><Suspense fallback={<PlayerScoresLoading label="Recent Played Maps"/>}><PlayerScores scope={ScoreScope.recentPlayed} id={id} mode={mode} isDans={isDans}/></Suspense></div>,
 									achievements: <Achievements id={id} mode={mode} canRevealSecretConditions={currentUser.isLoggedIn && currentUser.id === id}/>,
+									custom_achievements: profileUi.some((item) => item.content === "custom_achievements") || isLayoutPreview
+										? <CustomAchievements id={id} canEdit={canManageProfile} canRevealSecretConditions={currentUser.isLoggedIn && currentUser.id === id}/> : null,
 								}}
 							/>
 						)}

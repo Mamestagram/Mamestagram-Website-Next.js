@@ -11,6 +11,7 @@ export const profileUiMinWidths: Record<ProfileUiContent, number> = {
 	most_played: 320,
 	recent_played: 360,
 	achievements: 260,
+	custom_achievements: 260,
 };
 
 export const getProfileUiMinimumWidths = (contents: Pick<ProfileUiItem, "content">[], gridWidth: number, gap = 16): number[] =>

@@ -2,48 +2,48 @@ import type { SetStateAction } from "react";
 import type { ProfileUiItem } from "@/lib/profile-ui";
 
 const HISTORY_LIMIT = 100;
-const equal = (left: ProfileUiItem[], right: ProfileUiItem[]) =>
+const equal = (left: unknown, right: unknown) =>
 	JSON.stringify(left) === JSON.stringify(right);
 
-export type ProfileUiHistory = {
-	past: ProfileUiItem[][];
-	present: ProfileUiItem[];
-	future: ProfileUiItem[][];
-	groupStart: ProfileUiItem[] | null;
+export type ProfileUiHistory<T = ProfileUiItem[]> = {
+	past: T[];
+	present: T;
+	future: T[];
+	groupStart: T | null;
 };
 
-type HistoryAction =
-	| { type: "set"; value: SetStateAction<ProfileUiItem[]> }
-	| { type: "reset"; value: ProfileUiItem[] }
+type HistoryAction<T> =
+	| { type: "set"; value: SetStateAction<T> }
+	| { type: "reset"; value: T }
 	| { type: "begin" | "end" | "undo" | "redo" };
 
-export const createProfileUiHistory = (contents: ProfileUiItem[]): ProfileUiHistory => ({
+export const createProfileUiHistory = <T,>(contents: T): ProfileUiHistory<T> => ({
 	past: [], present: contents, future: [], groupStart: null,
 });
 
-const appendPast = (past: ProfileUiItem[][], contents: ProfileUiItem[]) =>
+const appendPast = <T,>(past: T[], contents: T) =>
 	[...past, contents].slice(-HISTORY_LIMIT);
 
-const hasGroupChange = (history: ProfileUiHistory) =>
+const hasGroupChange = <T,>(history: ProfileUiHistory<T>) =>
 	history.groupStart !== null && !equal(history.groupStart, history.present);
 
-export const canUndoProfileUi = (history: ProfileUiHistory) =>
+export const canUndoProfileUi = <T,>(history: ProfileUiHistory<T>) =>
 	history.past.length > 0 || hasGroupChange(history);
 
-export const canRedoProfileUi = (history: ProfileUiHistory) =>
+export const canRedoProfileUi = <T,>(history: ProfileUiHistory<T>) =>
 	history.future.length > 0 && !hasGroupChange(history);
 
-const endGroup = (history: ProfileUiHistory): ProfileUiHistory => {
+const endGroup = <T,>(history: ProfileUiHistory<T>): ProfileUiHistory<T> => {
 	if (history.groupStart === null) return history;
 	return hasGroupChange(history)
 		? { ...history, past: appendPast(history.past, history.groupStart), future: [], groupStart: null }
 		: { ...history, groupStart: null };
 };
 
-export const profileUiHistoryReducer = (
-	history: ProfileUiHistory,
-	action: HistoryAction,
-): ProfileUiHistory => {
+export const profileUiHistoryReducer = <T,>(
+	history: ProfileUiHistory<T>,
+	action: HistoryAction<T>,
+): ProfileUiHistory<T> => {
 	switch (action.type) {
 		case "reset":
 			return createProfileUiHistory(action.value);
@@ -52,7 +52,7 @@ export const profileUiHistoryReducer = (
 		case "end":
 			return endGroup(history);
 		case "set": {
-			const next = typeof action.value === "function" ? action.value(history.present) : action.value;
+			const next = typeof action.value === "function" ? (action.value as (previous: T) => T)(history.present) : action.value;
 			if (equal(next, history.present)) return history;
 			return history.groupStart === null
 				? { past: appendPast(history.past, history.present), present: next, future: [], groupStart: null }

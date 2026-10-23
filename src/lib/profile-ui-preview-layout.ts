@@ -18,7 +18,8 @@ export const getProfileUiPreviewHeight = (
 ): number | undefined => {
 	const element = viewport?.querySelector<HTMLElement>(`[data-preview-content="${contentIndex}"]`);
 	const height = element?.getBoundingClientRect().height;
+	const offset = element ? Number.parseFloat(getComputedStyle(element).getPropertyValue("--profile-ui-preview-height-offset")) || 0 : 0;
 	return height !== undefined && Number.isFinite(height) && height > 0
-		? height / PROFILE_UI_PREVIEW_HEIGHT_SCALE
+		? (height - offset) / PROFILE_UI_PREVIEW_HEIGHT_SCALE
 		: undefined;
 };

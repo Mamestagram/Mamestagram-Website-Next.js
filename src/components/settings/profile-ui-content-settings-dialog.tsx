@@ -8,6 +8,7 @@ import type { PopoverAnchor } from "@/lib/popover-position";
 import { getProfileUiPreviewHeight, getProfileUiPreviewWidth } from "@/lib/profile-ui-preview-layout";
 import {
 	getProfileUiContentHeightLimits,
+	getProfileUiContentMinHeight,
 	hasDefaultProfileUiContentSettings,
 	profileUiContentLabels,
 	type ProfileUiItem,
@@ -42,6 +43,7 @@ export default function ProfileUiContentSettingsDialog({
 	const heightLimits = getProfileUiContentHeightLimits(content.content);
 	const viewportRef = useMemo(() => ({ current: position.scrollContainer ?? null }), [position.scrollContainer]);
 	const { width: gridWidth } = useProfileUiGridSize(viewportRef, "[data-profile-ui-grid]");
+	const minimumHeight = getProfileUiContentMinHeight(content.content);
 	const minimumWidth = getProfileUiMinimumWidths([content], gridWidth)[0] / 100;
 	return (
 		<ProfileUiSettingsDialog
@@ -63,7 +65,7 @@ export default function ProfileUiContentSettingsDialog({
 				</div>
 				<div className={styles.profile_ui_content_fields}>
 					<ProfileUiNumberField label="Width" min={minimumWidth} max={1} step={0.01} value={content.autoWidth ? -1 : Math.max(minimumWidth, content.width)} autoValue={Math.max(minimumWidth, content.width)} disabled={disabled} auto getAutoValue={() => getProfileUiPreviewWidth(position.scrollContainer, contentIndex) ?? content.width} onChange={(width) => onChange({ ...content, autoWidth: width === -1, width: width === -1 ? content.width : width })}/>
-					{heightLimits && <ProfileUiNumberField label="Height (px)" min={heightLimits.min} max={heightLimits.max} value={content.height} disabled={disabled} auto getAutoValue={() => getProfileUiPreviewHeight(position.scrollContainer, contentIndex)} onChange={(height) => onChange({ ...content, height })}/>}
+					{heightLimits && <ProfileUiNumberField label="Height (px)" min={minimumHeight} max={heightLimits.max} value={content.height === -1 ? -1 : Math.max(content.height, minimumHeight)} disabled={disabled} auto getAutoValue={() => getProfileUiPreviewHeight(position.scrollContainer, contentIndex)} onChange={(height) => onChange({ ...content, height })}/>}
 					<ProfileUiNumberField label="Radius" min={0} max={80} value={content.edgeRadius} disabled={disabled} onChange={(edgeRadius) => onChange({ ...content, edgeRadius })}/>
 					<ProfileUiNumberField label="Opacity" min={0} max={1} step={0.1} value={content.boxOpacity} disabled={disabled} onChange={(boxOpacity) => onChange({ ...content, boxOpacity })}/>
 					<label>Color

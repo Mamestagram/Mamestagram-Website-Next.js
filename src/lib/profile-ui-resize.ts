@@ -15,6 +15,7 @@ export type ProfileUiResizeGeometry = {
 	reflowWidths?: boolean;
 	autoWidths?: boolean[];
 	minimumWidths?: number[];
+	heightOffset?: number;
 };
 
 const getGridPositions = (spans: number[], contentIndex: number, width: number) => {
@@ -88,7 +89,7 @@ export const snapProfileUiResize = (
 	const heightTargets = neighbors.filter((neighbor) =>
 		!neighbor.followsRowHeight && Math.abs(neighbor.top - bounds.top) <= 1 &&
 		finalPositions[contentIndex].row === finalPositions[neighbor.index].row,
-	).map((neighbor) => Math.round((neighbor.bottom - bounds.top) / PROFILE_UI_PREVIEW_HEIGHT_SCALE));
+	).map((neighbor) => Math.round((neighbor.bottom - bounds.top - (geometry.heightOffset ?? 0)) / PROFILE_UI_PREVIEW_HEIGHT_SCALE));
 	const snappedHeight = axis === "width"
 		? { value: height, snapped: false }
 		: closest(height, heightTargets, PROFILE_UI_PREVIEW_HEIGHT_SCALE, minimumHeight, maximumHeight);

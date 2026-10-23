@@ -39,13 +39,14 @@ const scoreContents = new Set<ProfileUiContent>([
 const getContentStyle = (
 	content: ProfileUiItem,
 ): ProfileUiStyle => {
+	const minimumHeight = getProfileUiContentMinHeight(content.content);
 	const style: ProfileUiStyle = {
 		"--profile-ui-content-span": Math.round(content.width * 100),
 		"--profile-ui-min-height": `${getProfileUiContentHeightLimits(content.content)?.min ?? 0}px`,
 		"--profile-ui-height":
-			isProfileUiRowHeight(content.content) || content.height === -1
+			!getProfileUiContentHeightLimits(content.content) || content.height === -1
 				? "auto"
-				: `${Math.max(content.height, getProfileUiContentMinHeight(content.content))}px`,
+				: `${Math.max(content.height, minimumHeight)}px`,
 		"--profile-ui-edge-radius": `${content.edgeRadius}px`,
 		"--profile-ui-box-opacity": content.boxOpacity,
 	};
@@ -81,7 +82,7 @@ export default function ProfileUiLayout({
 					<div className={classNames(styles.profile_ui_content, {
 						[styles.player_scores]: scoreContents.has(content.content),
 						[styles.profile_ui_customized]: content.customized,
-					})} data-fixed-height={!isProfileUiRowHeight(content.content) && content.height !== -1} data-custom-color={content.color !== null}>
+					})} data-fixed-height={getProfileUiContentHeightLimits(content.content) !== null && content.height !== -1} data-custom-color={content.color !== null}>
 						{contents[content.content]}
 					</div>
 				</section>

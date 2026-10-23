@@ -1,5 +1,7 @@
 "use client";
 
+import type { CustomAchievementSettings } from "@/lib/custom-achievements";
+
 import { useState, useTransition } from "react";
 import type { CSSProperties } from "react";
 import FontAwesome from "@/components/font-awesome";
@@ -42,6 +44,7 @@ type HuePreviewStyle = CSSProperties & {
 type ProfileUiEditorConfig = {
 	profileId: number;
 	initialContents: ProfileUiItem[];
+	customAchievements?: CustomAchievementSettings;
 	isSupporter: boolean;
 	bannerUrl: string;
 	backgroundUrl: string;
@@ -239,6 +242,7 @@ export default function ThemeSettingsForm({
 					<ProfileUiSettings
 						profileId={profileUiEditor.profileId}
 						initialContents={profileUiEditor.initialContents}
+						customAchievements={profileUiEditor.customAchievements}
 						isSupporter={profileUiEditor.isSupporter}
 						bannerUrl={profileUiEditor.bannerUrl}
 						backgroundUrl={profileUiEditor.backgroundUrl}

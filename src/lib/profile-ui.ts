@@ -9,6 +9,7 @@ export const profileUiContentValues = [
 	"most_played",
 	"recent_played",
 	"achievements",
+	"custom_achievements",
 ] as const;
 
 export type ProfileUiContent = (typeof profileUiContentValues)[number];
@@ -70,6 +71,7 @@ export const profileUiContentLabels: Record<ProfileUiContent, string> = {
 	most_played: "Most played maps",
 	recent_played: "Recent played maps",
 	achievements: "Achievements",
+	custom_achievements: "Featured achievements",
 };
 
 export const profileUiHeightLimits = {
@@ -85,7 +87,8 @@ export const isProfileUiRowHeight = (content: ProfileUiContent) =>
 	content === "info" || content === "stats" || content === "achievements";
 
 export const isProfileUiAutoHeight = (content: ProfileUiItem) =>
-	isProfileUiRowHeight(content.content) || content.height === -1;
+	// Featured medals always keep their intrinsic height instead of stretching to a peer.
+	content.content !== "custom_achievements" && (isProfileUiRowHeight(content.content) || content.height === -1);
 
 export const getProfileUiContentHeightLimits = (content: ProfileUiContent) =>
 	content in profileUiHeightLimits
@@ -161,8 +164,8 @@ export const createProfileUiContent = (
 	content,
 	order,
 	width,
-	...(content === "stats" || content === "me" || content === "achievements" ? { autoWidth: true } : {}),
-	height: isProfileUiRowHeight(content) || content === "me"
+	...(content === "stats" || content === "me" || content === "achievements" || content === "custom_achievements" ? { autoWidth: true } : {}),
+	height: isProfileUiRowHeight(content) || content === "me" || content === "custom_achievements"
 		? -1 : getProfileUiScoreHeightForRows(PROFILE_UI_SCORE_LAYOUT.defaultVisibleCount),
 	edgeRadius: 20,
 	boxOpacity: 0.9,

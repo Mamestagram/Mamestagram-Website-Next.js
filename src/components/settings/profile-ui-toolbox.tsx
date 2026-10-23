@@ -15,6 +15,7 @@ import styles from "@s/settings.module.css";
 const contentIcons: Record<ProfileUiContent, string> = {
 	info: "user", stats: "chart-simple", me: "align-left", bestpp: "trophy",
 	first_place: "flag", most_played: "play", recent_played: "clock-rotate-left", achievements: "medal",
+	custom_achievements: "award",
 };
 
 export default function ProfileUiToolbox({

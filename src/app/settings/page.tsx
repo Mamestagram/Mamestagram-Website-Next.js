@@ -1,3 +1,4 @@
+import { getCustomAchievementSettings } from "@/database/custom-achievements";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -127,11 +128,12 @@ export default async function SettingsPage({
 	const isSupporter =
 		currentUser.priv !== undefined &&
 		(currentUser.priv & Priv.supporter) !== 0;
-	const [settings, ownedClan, cosmetics, profileUi] = await Promise.all([
+	const [settings, ownedClan, cosmetics, profileUi, customAchievements] = await Promise.all([
 		getUserSettings(currentUser.id),
 		getOwnedClanSettings(currentUser.id),
 		getProfileCosmetics(currentUser.id),
 		isSupporter ? getProfileUi(currentUser.id) : Promise.resolve([]),
+		isSupporter ? getCustomAchievementSettings(currentUser.id) : Promise.resolve({ achievements: [], selectedIds: [] }),
 	]);
 	if (!settings) redirect("/signin");
 	const legacyClanSection = params.section === "clan";
@@ -452,6 +454,7 @@ export default async function SettingsPage({
 											: {
 												profileId: currentUser.id,
 												initialContents: profileUi,
+												customAchievements,
 												isSupporter,
 												bannerUrl:
 													profileBannerUrl ??

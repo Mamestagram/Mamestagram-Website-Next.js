@@ -17,6 +17,7 @@ import FontAwesome from "@/components/font-awesome";
 import FormattedNumber from "@/components/formatted-number";
 import { getProfileUiScoreVisibleCount, PROFILE_UI_SCORE_LAYOUT } from "@/lib/profile-ui";
 import { getProfileUiScoreElementHeight, measureProfileUiScoreLayout } from "@/lib/profile-ui-score-layout";
+import { useScoreActionHeight } from "@/lib/use-score-action-height";
 import styles from "@s/profile.module.css";
 
 type TooltipState = {
@@ -46,6 +47,7 @@ export default function ScoreList({ children, count, title }: {
 	const canExpand = count > visibleCount;
 	const items = Children.toArray(children);
 	const previewItems = count > 0 ? items.slice(0, visibleCount) : items;
+	useScoreActionHeight(previewListRef);
 	const showTooltip = (element: HTMLElement) => {
 		const text = element.dataset.scoreTooltip;
 		if (!text) return;
@@ -116,10 +118,11 @@ export default function ScoreList({ children, count, title }: {
 				setFixedVisibleCount(null);
 				return;
 			}
-			const summary = details.querySelector<HTMLElement>("summary");
+			const summary = details.querySelector<HTMLElement>(`.${styles.score_summary}`);
 			if (!summary) return;
 			const capacity = getProfileUiScoreVisibleCount(
-				getProfileUiScoreElementHeight(sectionBox),
+				getProfileUiScoreElementHeight(sectionBox) -
+					(Number.parseFloat(getComputedStyle(fixedContent).getPropertyValue("--profile-ui-score-actions-height")) || 0),
 				count,
 				measureProfileUiScoreLayout(sectionBox, summary, list),
 			);
@@ -134,7 +137,7 @@ export default function ScoreList({ children, count, title }: {
 		updateVisibleCount();
 		const resizeObserver = new ResizeObserver(updateVisibleCount);
 		resizeObserver.observe(sectionBox);
-		const summary = details.querySelector("summary");
+		const summary = details.querySelector(`.${styles.score_summary}`);
 		if (summary) resizeObserver.observe(summary);
 		const heightObserver = new MutationObserver(updateVisibleCount);
 		heightObserver.observe(fixedContent, { attributes: true, attributeFilter: ["data-fixed-height"] });

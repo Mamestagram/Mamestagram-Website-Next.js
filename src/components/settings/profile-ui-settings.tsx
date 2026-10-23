@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore, useTransition, type SetStateAction } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore, useTransition, type MouseEvent, type SetStateAction } from "react";
 import { createPortal } from "react-dom";
 import FontAwesome from "@/components/font-awesome";
 import ConfirmationDialog from "@/components/confirmation-dialog";
 import ProfileUiContentSettingsDialog from "@/components/settings/profile-ui-content-settings-dialog";
+import CustomAchievementSelectionDialog from "@/components/profile/custom-achievement-selection-dialog";
 import ProfileUiPreview from "@/components/settings/profile-ui-preview";
 import ProfileUiLivePreview from "@/components/settings/profile-ui-live-preview";
 import ProfileUiToolbox from "@/components/settings/profile-ui-toolbox";
@@ -33,17 +34,26 @@ import { getProfileUiMinimumWidths } from "@/lib/profile-ui-width";
 import type { WebTheme } from "@/lib/theme";
 import { captureProfileUiDragLayout, type ProfileUiToolboxDragSession } from "@/lib/profile-ui-drag";
 import type { PopoverAnchor } from "@/lib/popover-position";
+import { focusWithoutTooltip } from "@/lib/tooltip-focus";
+import { areCustomAchievementIdsEqual, getSelectedCustomAchievements, moveCustomAchievement, parseCustomAchievementIds, createEmptyCustomAchievementIds, type CustomAchievementIds, type CustomAchievementSettings } from "@/lib/custom-achievements";
 import styles from "@s/settings.module.css";
 
 const subscribeToClient = () => () => undefined;
 const getClientSnapshot = () => true;
 const getServerSnapshot = () => false;
 
+const emptyCustomAchievements: CustomAchievementSettings = { achievements: [], selectedIds: createEmptyCustomAchievementIds() };
+type ProfileUiEditorDraft = { contents: ProfileUiItem[]; achievementIds: CustomAchievementIds };
+const equalDrafts = (left: ProfileUiEditorDraft, right: ProfileUiEditorDraft) =>
+	areProfileUiContentsEqual(left.contents, right.contents) && areCustomAchievementIdsEqual(left.achievementIds, right.achievementIds);
+
 type EditingTarget = { contentIndex: number; position: PopoverAnchor };
+type EditingMedal = EditingTarget & { slotIndex: number };
 
 export default function ProfileUiSettings({
 	profileId,
 	initialContents,
+	customAchievements = emptyCustomAchievements,
 	isSupporter,
 	bannerUrl,
 	backgroundUrl,
@@ -52,33 +62,36 @@ export default function ProfileUiSettings({
 }: Readonly<{
 	profileId: number;
 	initialContents: ProfileUiItem[];
+	customAchievements?: CustomAchievementSettings;
 	isSupporter: boolean;
 	bannerUrl: string;
 	backgroundUrl: string;
 	profileTheme: WebTheme;
 	profileHue: number | null;
 }>) {
-	const [history, dispatchHistory] = useReducer(profileUiHistoryReducer, initialContents,
-		(contents) => createProfileUiHistory(normalizeProfileUi(contents)));
-	const contents = history.present;
+	const [history, dispatchHistory] = useReducer(profileUiHistoryReducer<ProfileUiEditorDraft>,
+		{ contents: initialContents, achievementIds: customAchievements.selectedIds },
+		(draft) => createProfileUiHistory({ ...draft, contents: normalizeProfileUi(draft.contents), achievementIds: parseCustomAchievementIds(draft.achievementIds) ?? createEmptyCustomAchievementIds() }));
+	const { contents, achievementIds } = history.present;
+	const selectedAchievements = useMemo(() => getSelectedCustomAchievements(customAchievements.achievements, achievementIds),
+		[customAchievements.achievements, achievementIds]);
 	const setContents = useCallback((value: SetStateAction<ProfileUiItem[]>) => {
-		dispatchHistory({ type: "set", value });
+		dispatchHistory({ type: "set", value: (draft) => ({ ...draft, contents: typeof value === "function" ? value(draft.contents) : value }) });
 	}, []);
 	const beginHistoryGroup = useCallback(() => dispatchHistory({ type: "begin" }), []);
 	const endHistoryGroup = useCallback(() => dispatchHistory({ type: "end" }), []);
 	const pointerHistoryGroup = useRef<number | null>(null);
 	const canUndo = canUndoProfileUi(history);
 	const canRedo = canRedoProfileUi(history);
-	const [savedContents, setSavedContents] = useState(() =>
-		normalizeProfileUi(initialContents),
-	);
-	const savedContentsRef = useRef(savedContents);
+	const [savedDraft, setSavedDraft] = useState(history.present);
+	const savedDraftRef = useRef(savedDraft);
 	const saveInFlightRef = useRef(false);
 	const [status, setStatus] = useState<{
 		success: boolean;
 		message: string;
 	} | null>(null);
 	const [editingTarget, setEditingTarget] = useState<EditingTarget | null>(null);
+	const [editingMedal, setEditingMedal] = useState<EditingMedal | null>(null);
 	const editingContentIndex = editingTarget?.contentIndex ?? null;
 	const [isEditorOpen, setIsEditorOpen] = useState(false);
 	const [isToolboxOpen, setIsToolboxOpen] = useState(true);
@@ -98,11 +111,29 @@ export default function ProfileUiSettings({
 	const closeSettings = useCallback(() => {
 		endHistoryGroup();
 		setEditingTarget(null);
+		setEditingMedal(null);
+	}, [endHistoryGroup]);
+	const closeMedalSelection = useCallback(() => {
+		setEditingMedal(null);
+		if (editingMedal) requestAnimationFrame(() => {
+			if (document.activeElement !== document.body) return;
+			focusWithoutTooltip(editorRef.current?.querySelectorAll<HTMLButtonElement>(`[data-preview-content="${editingMedal.contentIndex}"] button[aria-haspopup="dialog"]`)[editingMedal.slotIndex]);
+		});
+	}, [editingMedal]);
+	const editMedal = useCallback((contentIndex: number, slotIndex: number, event: MouseEvent<HTMLButtonElement>) => {
+		endHistoryGroup();
+		setEditingTarget(null);
+		const rect = event.currentTarget.getBoundingClientRect();
+		setEditingMedal({ contentIndex, slotIndex, position: {
+			x: rect.left, y: rect.bottom + 8,
+			scrollContainer: event.currentTarget.closest<HTMLElement>("[data-profile-ui-preview]") ?? undefined,
+		} });
 	}, [endHistoryGroup]);
 	const stepHistory = useCallback((direction: "undo" | "redo") => {
 		if (!(direction === "undo" ? canUndo : canRedo)) return;
 		dispatchHistory({ type: direction });
 		setEditingTarget(null);
+		setEditingMedal(null);
 		setStatus(null);
 	}, [canRedo, canUndo]);
 	const isMounted = useSyncExternalStore(
@@ -111,19 +142,20 @@ export default function ProfileUiSettings({
 		getServerSnapshot,
 	);
 	const hasChanges = useMemo(
-		() => !areProfileUiContentsEqual(contents, savedContents),
-		[contents, savedContents],
+		() => !equalDrafts(history.present, savedDraft),
+		[history.present, savedDraft],
 	);
 	const discardAndCloseEditor = useCallback(() => {
-		dispatchHistory({ type: "reset", value: normalizeProfileUi(savedContents) });
+		dispatchHistory({ type: "reset", value: { ...savedDraft, contents: normalizeProfileUi(savedDraft.contents) } });
 		pointerHistoryGroup.current = null;
 		setToolboxDrag(null);
 		setStatus(null);
 		setEditingTarget(null);
+		setEditingMedal(null);
 		setIsDiscardConfirmOpen(false);
 		setLivePreviewDraft(null);
 		setIsEditorOpen(false);
-	}, [savedContents]);
+	}, [savedDraft]);
 	const closeEditor = useCallback(() => {
 		if (isPending) return;
 		closeSettings();
@@ -183,7 +215,7 @@ export default function ProfileUiSettings({
 	useEffect(() => {
 		if (!isEditorOpen || isDiscardConfirmOpen || livePreviewDraft !== null) return;
 		const closeOnEscape = (event: KeyboardEvent) => {
-			if (event.key !== "Escape") return;
+			if (event.key !== "Escape" || event.defaultPrevented) return;
 			if (editingContentIndex !== null) {
 				closeSettings();
 				return;
@@ -227,7 +259,8 @@ export default function ProfileUiSettings({
 
 	const save = () => {
 		const submittedContents = normalizeProfileUi(contents);
-		if (!hasChanges || isPending || saveInFlightRef.current || areProfileUiContentsEqual(submittedContents, savedContentsRef.current)) return;
+		const submittedDraft = { contents: submittedContents, achievementIds };
+		if (!hasChanges || isPending || saveInFlightRef.current || equalDrafts(submittedDraft, savedDraftRef.current)) return;
 		saveInFlightRef.current = true;
 		setStatus(null);
 		startTransition(async () => {
@@ -235,13 +268,13 @@ export default function ProfileUiSettings({
 				const response = await fetch("/api/settings/profile-ui", {
 					method: "PUT",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ contents: submittedContents }),
+					body: JSON.stringify(submittedDraft),
 				});
 				const result = await readMutationResponse(response);
 				setStatus(result);
 				if (result.success) {
-					savedContentsRef.current = submittedContents;
-					setSavedContents(submittedContents);
+					savedDraftRef.current = submittedDraft;
+					setSavedDraft(submittedDraft);
 				}
 			} catch {
 				setStatus({
@@ -258,6 +291,7 @@ export default function ProfileUiSettings({
 		endHistoryGroup();
 		setContents(normalizeProfileUi(getDefaultProfileUi()));
 		setEditingTarget(null);
+		setEditingMedal(null);
 		setStatus(null);
 	};
 	const resetContentSettings = (index?: number) => {
@@ -341,7 +375,7 @@ export default function ProfileUiSettings({
 							</button>
 							<button ref={previewButtonRef} type="button" className={styles.secondary_button} disabled={isPending} onClick={() => {
 								closeSettings();
-								const draft = parseProfileUiPreviewDraft({ contents, theme: profileTheme, hue: profileHue });
+								const draft = parseProfileUiPreviewDraft({ contents, customAchievements: selectedAchievements, theme: profileTheme, hue: profileHue });
 								if (draft) setLivePreviewDraft(draft);
 								else setStatus({ success: false, message: "The current layout cannot be previewed. Check its settings." });
 							}}>
@@ -405,6 +439,16 @@ export default function ProfileUiSettings({
 					<div className={styles.profile_ui_fullscreen_body}>
 						<ProfileUiPreview
 							contents={contents}
+							customAchievements={selectedAchievements}
+							activeAchievementSlot={editingMedal}
+							onAchievementSlotClick={editMedal}
+							onAchievementReorder={(from, to) => {
+								const ids = moveCustomAchievement(achievementIds, from, to);
+								if (isPending || areCustomAchievementIdsEqual(ids, achievementIds)) return;
+								closeSettings();
+								dispatchHistory({ type: "set", value: (draft) => ({ ...draft, achievementIds: ids }) });
+								setStatus(null);
+							}}
 							toolboxDrag={toolboxDrag}
 							onToolboxDragEnd={endToolboxDrag}
 							disabled={isPending}
@@ -421,10 +465,21 @@ export default function ProfileUiSettings({
 							}}
 							onEditContent={(contentIndex, position) => {
 								endHistoryGroup();
+								setEditingMedal(null);
 								setEditingTarget({ contentIndex, position });
 							}}
 						/>
 					</div>
+
+					{editingMedal && contents[editingMedal.contentIndex]?.content === "custom_achievements" && <CustomAchievementSelectionDialog
+						achievements={customAchievements.achievements} selectedIds={achievementIds} slotIndex={editingMedal.slotIndex}
+						position={editingMedal.position} disabled={isPending} onClose={closeMedalSelection} onChange={(ids) => {
+							if (isPending) return;
+							endHistoryGroup();
+							if (!areCustomAchievementIdsEqual(ids, achievementIds)) dispatchHistory({ type: "set", value: (draft) => ({ ...draft, achievementIds: ids }) });
+							setStatus(null);
+							closeMedalSelection();
+						}}/>}
 
 					{editingTarget && contents[editingTarget.contentIndex] && (
 						<ProfileUiContentSettingsDialog
@@ -440,7 +495,7 @@ export default function ProfileUiSettings({
 								setEditingTarget({ ...editingTarget, contentIndex: editingTarget.contentIndex + offset });
 							}}
 							onChange={(content) => {
-								setContents((current) => updateProfileUiContent(current, editingTarget.contentIndex, content, history.groupStart ?? current,
+								setContents((current) => updateProfileUiContent(current, editingTarget.contentIndex, content, history.groupStart?.contents ?? current,
 									getProfileUiMinimumWidths(current, editingTarget.position.scrollContainer?.querySelector<HTMLElement>("[data-profile-ui-grid]")?.clientWidth ?? 0)));
 								setStatus(null);
 							}}
@@ -458,7 +513,7 @@ export default function ProfileUiSettings({
 			<ConfirmationDialog
 				isOpen={isEditorOpen && isDiscardConfirmOpen}
 				title="Discard unsaved changes?"
-				description="All unsaved profile layout changes will be discarded."
+				description="All unsaved profile layout and achievement changes will be discarded."
 				icon="triangle-exclamation"
 				confirmLabel="Discard changes"
 				cancelLabel="Keep editing"

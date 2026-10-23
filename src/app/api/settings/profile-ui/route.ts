@@ -1,3 +1,5 @@
+import { InvalidCustomAchievementsError } from "@/database/custom-achievements";
+import { parseCustomAchievementIds } from "@/lib/custom-achievements";
 import { revalidatePath } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
 import { saveProfileUi } from "@/database/profile-ui";
@@ -51,9 +53,14 @@ export const PUT = async (
 			{ status: 400 },
 		);
 
+	const achievementIds = isRecord(body) && body.achievementIds !== undefined ? parseCustomAchievementIds(body.achievementIds) : undefined;
+	if (achievementIds === null) return NextResponse.json(
+		{ success: false, message: "Select up to 8 different earned achievements." }, { status: 400 },
+	);
+
 	try {
 		const restoredDefault = isDefaultProfileUi(contents);
-		await saveProfileUi(currentUser.id, contents);
+		await saveProfileUi(currentUser.id, contents, achievementIds);
 		revalidatePath(`/profile/${currentUser.id}`, "layout");
 		revalidatePath("/settings");
 		return NextResponse.json({
@@ -63,6 +70,9 @@ export const PUT = async (
 				: "Profile UI updated.",
 		});
 	} catch (error: unknown) {
+		if (error instanceof InvalidCustomAchievementsError) return NextResponse.json(
+			{ success: false, message: error.message }, { status: 400 },
+		);
 		void writeError(error, {
 			source: "server",
 			method: "PUT",

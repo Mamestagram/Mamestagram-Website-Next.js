@@ -38,8 +38,8 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 	if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
 	
 	return (
-		<details className={styles.score_details} open>
-			<summary className={styles.score_summary}>
+		<div className={styles.score_details}>
+			<div className={styles.score_summary}>
 				<h1 className={styles.section_title}>
 					<span className={styles.section_title_label}>
 						{(scope === ScoreScope.bestPP && <><FontAwesome prefix="fad" name="chart-bar"/>Best
@@ -51,9 +51,8 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 							(scope === ScoreScope.recentPlayed && <><FontAwesome prefix="fadr" name="calendar-days"/>Recent
 								Played Maps</>)}
 					</span>
-					<FontAwesome className={styles.collapse_icon} prefix="fas" name="chevron-down"/>
 				</h1>
-			</summary>
+			</div>
 			<ScoreList count={playerScores.length} title={sectionTitle}>
 				{playerScores.length === 0 &&
 					<div className={styles.no_scores} role="status">
@@ -130,6 +129,6 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 					</PlayerScoreCard>;
 				})}
 			</ScoreList>
-		</details>
+		</div>
 	);
 }

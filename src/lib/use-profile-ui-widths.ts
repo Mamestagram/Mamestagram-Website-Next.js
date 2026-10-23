@@ -33,6 +33,8 @@ export const useProfileUiWidths = (gridRef: RefObject<HTMLDivElement | null>, co
 	// widths belong to the free grid and must not turn the standard layout into it.
 	const constrained = singleColumn || defaultArrangement ? contents : constrainProfileUiWidths(contents, minimumWidths);
 	return {
+		gridWidth: width,
+		viewportWidth,
 		minimumWidths,
 		defaultArrangement,
 		contents: resolveProfileUiAutoWidths(constrained, singleColumn || defaultArrangement, minimumWidths),

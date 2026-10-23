@@ -2281,7 +2281,7 @@
 						
 						&.grade_count_area {
 							& li h3 {
-								font-family: var(--font-space-mono), sans-serif;
+								font-family: var(--font-space-mono, "Space Mono"), var(--font-body, sans-serif);
 								font-size: 0.92rem;
 							}
 							
@@ -2381,17 +2381,7 @@
 							justify-content: space-between;
 							gap: 16px;
 							border-radius: 8px;
-							cursor: pointer;
-							list-style: none;
-							
-							&::-webkit-details-marker {
-								display: none;
-							}
-							
-							&:focus-visible {
-								outline: 2px solid hsl(var(--user-hue), 62%, 68%);
-								outline-offset: 5px;
-							}
+							margin-bottom: var(--profile-ui-score-heading-gap, 14px);
 							
 							& .section_title {
 								justify-content: space-between;
@@ -2408,27 +2398,6 @@
 								}
 							}
 							
-							& .collapse_icon {
-								flex: 0 0 auto;
-								color: hsl(var(--user-hue), 26.829%, 83.922%);
-								font-size: 0.75rem;
-								transition: transform 200ms ease,
-								color 150ms;
-							}
-							
-							&:hover .collapse_icon {
-								color: hsl(var(--user-hue), 0%, 100%);
-							}
-						}
-						
-						&[open] {
-							& .score_summary {
-								margin-bottom: var(--profile-ui-score-heading-gap, 14px);
-							}
-							
-							& .collapse_icon {
-								transform: rotate(180deg);
-							}
 						}
 					}
 					
@@ -2690,7 +2659,7 @@
 								border-radius: 12px;
 								box-shadow: 0 6px 18px hsla(var(--user-hue), 0%, 0%, 0.34),
 								inset 0 1px 0 hsla(var(--user-hue), 0%, 100%, 0.08);
-								font-family: var(--font-space-mono), sans-serif;
+								font-family: var(--font-space-mono, "Space Mono"), var(--font-body, sans-serif);
 								font-size: 1.28rem;
 								font-weight: 700;
 								letter-spacing: -0.035em;
@@ -3270,7 +3239,7 @@
 				background: hsla(var(--user-hue), 52.941%, 3.333%, 0.66);
 				border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.14);
 				border-radius: 12px;
-				font-family: var(--font-jetbrains-mono), sans-serif;
+				font-family: var(--font-code, monospace);
 				font-size: 0.86rem;
 				line-height: 1.55;
 				outline: none;
@@ -3565,7 +3534,7 @@
 			& code,
 			& pre {
 				background-color: hsla(var(--user-hue), 0%, 0%, 0.3);
-				font-family: var(--font-jetbrains-mono), sans-serif;
+				font-family: var(--font-code, monospace);
 				border-radius: 6px;
 			}
 			
@@ -3633,6 +3602,7 @@
 
 .score_entry {
 	min-width: 0;
+	flex: 0 0 auto;
 	
 	&[data-expanded="true"] {
 		& .score {
@@ -3668,6 +3638,10 @@
 	background: hsla(var(--user-hue), 62.5%, 3.137%, 0.78);
 	border-top: 1px solid hsla(var(--user-hue), 100%, 75.49%, 0.12);
 	border-radius: 0 0 13px 13px;
+}
+
+.score_entry[data-expanded="false"] .score_action_inner {
+	border-top-width: 0;
 }
 
 .score_actions {
@@ -4989,17 +4963,10 @@
 	--profile-ui-score-padding: var(--profile-ui-responsive-score-padding, var(--profile-ui-score-default-padding, 32px));
 }
 
-.profile_ui_content.player_scores[data-fixed-height="false"] > .list_container > .score_details[open] {
+.profile_ui_content.player_scores[data-fixed-height="false"] > .list_container > .score_details {
 	display: flex;
 	min-height: 0;
 	height: 100%;
-	flex-direction: column;
-}
-
-.profile_ui_content.player_scores[data-fixed-height="false"] > .list_container > .score_details[open]::details-content {
-	display: flex;
-	min-height: 0;
-	flex: 1 1 auto;
 	flex-direction: column;
 }
 
@@ -5009,7 +4976,7 @@
 
 /* Keep a five-row intrinsic size even when a taller peer allows more rows. */
 .profile_ui_content.player_scores[data-fixed-height="false"] .score_list_preview {
-	height: var(--score-list-height, 314px);
+	height: calc(var(--score-list-height, 314px) + var(--profile-ui-score-actions-height, 0px));
 	flex: 1 0 auto;
 	contain: size;
 	overflow: hidden;
@@ -5030,14 +4997,6 @@
 .profile_ui_content.player_scores[data-fixed-height="true"] .score_list_preview {
 	min-height: 0 !important;
 	flex: 0 0 auto;
-}
-
-/* The disclosure content also needs to shrink inside a fixed-height card. */
-.profile_ui_content.player_scores[data-fixed-height="true"] > .list_container > .score_details[open]:has(> .score_list_preview[data-empty="true"])::details-content {
-	display: flex;
-	min-height: 0;
-	flex: 1 1 0;
-	flex-direction: column;
 }
 
 .profile_ui_layout .profile_ui_content.player_scores[data-fixed-height="true"] .score_list_preview[data-empty="true"] {
@@ -5109,9 +5068,316 @@
 	margin: 0 !important;
 }
 
+.profile_ui_content.player_scores[data-score-actions-expanded="true"] {
+	height: calc(var(--profile-ui-score-actions-base-height, 0px) + var(--profile-ui-score-actions-height, 0px));
+	min-height: calc(var(--profile-ui-score-actions-base-height, 0px) + var(--profile-ui-score-actions-height, 0px));
+}
+
+.profile_ui_content.player_scores[data-score-actions-expanded="true"] > .section_box {
+	height: 100%;
+	min-height: 0;
+}
+
 .achievement_tooltip {
 	width: min(250px, calc(100vw - 24px));
 	padding: 10px;
+}
+
+.custom_achievement_title {
+	min-width: 0;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.profile_ui_slot[data-content="custom_achievements"] > .profile_ui_content {
+	display: grid !important;
+	min-height: min-content;
+}
+
+.profile_ui_content > .custom_achievements {
+	display: grid;
+	grid-template-rows: max-content max-content;
+	align-content: start;
+	min-height: min-content;
+}
+
+.custom_achievement_count {
+	margin-left: auto;
+	padding-left: 10px;
+	flex-shrink: 0;
+	font-size: 0.75rem;
+	letter-spacing: 0;
+}
+
+.custom_achievement_slot_button {
+	display: grid;
+	position: relative;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	place-items: center;
+	color: inherit;
+	background: none;
+	border: 0;
+	border-radius: 18px;
+	font: inherit;
+	cursor: pointer;
+}
+
+.custom_achievement_slot[data-empty="true"] .custom_achievement_slot_button:hover:not(:disabled),
+.custom_achievement_slot_button:focus-visible {
+	outline: 1px solid hsla(var(--user-hue, 210), 60%, 75%, 0.5);
+	outline-offset: 3px;
+}
+
+.custom_achievement_slot[data-empty="true"] .custom_achievement_slot_button:hover:not(:disabled),
+.custom_achievement_slot[data-empty="true"] .custom_achievement_slot_button:focus-visible {
+	background: hsla(var(--user-hue, 210), 60%, 75%, 0.08);
+}
+
+.custom_achievement_slot_button:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.custom_achievement_menu {
+	display: grid;
+	gap: 12px;
+}
+
+.custom_achievement_menu_dialog[role="dialog"],
+.custom_achievement_menu_tooltip:global(.tooltip-portal) {
+	box-shadow: none;
+}
+
+/* Legacy's generic _menu styles also match the individual medal wrappers. */
+:global(html[data-theme="legacy"]) .custom_achievement_menu_dialog :is(
+	.custom_achievement_menu,
+	.custom_achievement_menu_groups,
+	.custom_achievement_menu_group,
+	.custom_achievement_menu_list,
+	.custom_achievement_menu_medal
+) {
+	background-color: transparent !important;
+	box-shadow: none !important;
+}
+
+:global(html[data-theme="legacy"]) .custom_achievement_menu_dialog[role="dialog"],
+:global(html[data-theme="legacy"]) .custom_achievement_menu_tooltip:global(.tooltip-portal) {
+	box-shadow: none !important;
+}
+
+.custom_achievement_menu > label {
+	display: grid;
+	gap: 6px;
+	font-size: 0.8rem;
+}
+
+.custom_achievement_menu input {
+	width: 100%;
+	min-width: 0;
+	min-height: 38px;
+	padding: 0 10px;
+	color: hsl(var(--user-hue, 210), 30%, 90%);
+	background: hsl(var(--user-hue, 210), 12%, 15%);
+	border: 1px solid hsla(var(--user-hue, 210), 0%, 100%, 0.15);
+	border-radius: 9px;
+	font: inherit;
+}
+
+.custom_achievement_menu input:focus-visible {
+	outline: 2px solid hsla(var(--user-hue, 210), 65%, 70%, 0.5);
+	outline-offset: 1px;
+}
+
+.custom_achievement_menu_groups {
+	display: grid;
+	max-height: 360px;
+	gap: 16px;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+
+.custom_achievement_menu_group {
+	display: grid;
+	gap: 8px;
+}
+
+.custom_achievement_menu_group h4 {
+	margin: 0;
+	padding: 4px 0;
+	color: hsl(var(--user-hue, 210), 22%, 84%);
+	border-bottom: 1px solid hsla(var(--user-hue, 210), 30%, 75%, 0.18);
+	font-size: 0.75rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+.custom_achievement_menu_list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 64px), 1fr));
+	margin: 0;
+	padding: 0;
+	gap: 6px;
+	justify-items: center;
+	list-style: none;
+}
+
+.custom_achievement_menu_list button {
+	display: grid;
+	width: 100%;
+	min-width: 0;
+	height: 64px;
+	padding: 7px;
+	place-items: center;
+	color: hsl(var(--user-hue, 210), 22%, 84%);
+	background: none;
+	border: 1px solid transparent;
+	border-radius: 8px;
+	cursor: pointer;
+}
+
+.custom_achievement_menu_list button:hover:not(:disabled),
+.custom_achievement_menu_list button:focus-visible,
+.custom_achievement_menu_list button[aria-pressed="true"] {
+	background: hsla(var(--user-hue, 210), 60%, 65%, 0.12);
+	border-color: hsla(var(--user-hue, 210), 60%, 75%, 0.4);
+}
+
+.custom_achievement_menu_list button:disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+
+.custom_achievement_menu_list img {
+	width: 48px;
+	height: auto;
+	aspect-ratio: 1;
+	object-fit: contain;
+}
+
+.custom_achievement_menu_medal {
+	display: block;
+	width: 64px;
+	max-width: 100%;
+}
+
+.custom_achievement_menu_tooltip {
+	max-width: min(240px, calc(100vw - 24px));
+	padding: 8px 12px;
+	font-size: 0.8rem;
+	line-height: 1.4;
+	overflow-wrap: anywhere;
+}
+
+.custom_achievement_editor_actions {
+	display: flex;
+	margin-top: 16px;
+	justify-content: flex-end;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.custom_achievement_slots {
+	--custom-achievement-medal-size: 90px;
+
+	display: grid;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--custom-achievement-medal-size, 90px)), 1fr));
+	gap: 12px 8px;
+	justify-items: center;
+	align-content: start;
+	list-style: none;
+}
+
+.custom_achievement_slot {
+	display: grid;
+	width: var(--custom-achievement-medal-size, 90px);
+	max-width: 100%;
+	height: var(--custom-achievement-medal-size, 90px);
+	place-items: center;
+	transition: transform 300ms;
+}
+
+.custom_achievement_slot_button[draggable="true"] {
+	cursor: grab;
+}
+
+.custom_achievement_slot[data-dragging="true"] {
+	opacity: 0.35;
+	cursor: grabbing;
+}
+
+.custom_achievement_slot[data-drop-target="true"] {
+	outline: 2px dashed hsla(var(--user-hue, 210), 60%, 75%, 0.7);
+	outline-offset: 4px;
+	border-radius: 18px;
+}
+
+.custom_achievement_slot[data-empty="false"]:hover,
+.custom_achievement_slot[data-empty="false"]:has(:focus-visible) {
+	position: relative;
+	z-index: 30;
+	transform: translateY(-5px);
+}
+
+.custom_achievement_slot[data-empty="false"]:hover img,
+.custom_achievement_slot[data-empty="false"]:has(:focus-visible) img {
+	filter: drop-shadow(0 5px 3px hsla(var(--user-hue, 210), 0%, 100%, 0.34));
+}
+
+.custom_achievement_slot[data-empty="true"] {
+	color: hsla(var(--user-hue, 210), 20%, 80%, 0.55);
+	font-size: 0.65rem;
+}
+
+.custom_achievement_empty {
+	display: grid;
+	position: relative;
+	width: var(--custom-achievement-medal-size, 90px);
+	height: var(--custom-achievement-medal-size, 90px);
+	place-items: center;
+}
+
+.custom_achievement_empty svg {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.25px;
+	stroke-dasharray: 3 3;
+	stroke-linecap: round;
+}
+
+.custom_achievement_empty path {
+	vector-effect: non-scaling-stroke;
+}
+
+.custom_achievement_medal {
+	display: block;
+	position: relative;
+	width: var(--custom-achievement-medal-size, 90px);
+	height: var(--custom-achievement-medal-size, 90px);
+}
+
+.custom_achievement_medal img {
+	object-fit: contain;
+	transition: filter 300ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.custom_achievement_slot,
+	.custom_achievement_medal img {
+		transition: none;
+	}
+}
+
+.custom_achievement_slots_preview {
+	row-gap: 6px;
 }
 
 .achievement_tooltip .medal_name {

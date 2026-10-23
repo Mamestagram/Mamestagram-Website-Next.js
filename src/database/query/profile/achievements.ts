@@ -1,4 +1,5 @@
 import { ModeNum } from "@/lib/mode";
+import { getSkillMedalOrder, medalModOrder, medalOthersOrder, medalOrderQuery } from "@/database/query/profile/achievement-order";
 
 export const medalSkillQuery = (mode: ModeNum) => {
 	let modeName: "osu" | "taiko" | "fruits" | "mania";
@@ -35,21 +36,7 @@ export const medalSkillQuery = (mode: ModeNum) => {
 		    FROM achievements
 		WHERE file LIKE '${modeName}-%' -- modeName = osu, taiko, fruits, mania
 		    OR file LIKE 'skill-%'
-		ORDER BY REGEXP_SUBSTR(file, '(?<=^${modeName}-skill-)[a-z]+(?=-)') NOT IN ('pass', 'fc', 'dans') DESC,
-		    REGEXP_SUBSTR(file, '(?<=^${modeName}-skill-)[a-z]+(?=-)') = 'pass' DESC,
-		    REGEXP_SUBSTR(file, '(?<=^${modeName}-skill-)[a-z]+(?=-)') = 'fc' DESC,
-		    REGEXP_SUBSTR(file, '(?<=^${modeName}-skill-)[a-z]+(?=-)') = 'dans' DESC,
-		    file like '%hide-%',
-		    file LIKE 'skill-%',
-		    REGEXP_SUBSTR(file, '^${modeName}-[a-z]+-'),
-		    CAST(REGEXP_SUBSTR(file, '[0-9]+$') AS UNSIGNED),
-		    CASE
-		        WHEN NOT REGEXP_SUBSTR(file, '(?<=^${modeName}-)[a-z]+(?=-)') = 'rank' THEN CAST(REGEXP_SUBSTR(REPLACE(cond_desc, ',', ''), '[0-9]+') AS UNSIGNED)
-		    END,
-		    CASE
-		        WHEN REGEXP_SUBSTR(file, '(?<=^${modeName}-)[a-z]+(?=-)') = 'rank' THEN CAST(REGEXP_SUBSTR(REPLACE(cond_desc, ',', ''), '[0-9]+') AS UNSIGNED)
-		    END DESC,
-		    id
+		ORDER BY ${medalOrderQuery(getSkillMedalOrder(modeName))}
 	`;
 }
 
@@ -67,7 +54,7 @@ export const medalModQuery = `
            ) AS isCollected
     	FROM achievements
     WHERE file LIKE 'all-%'
-    ORDER BY id
+    ORDER BY ${medalOrderQuery(medalModOrder)}
 `;
 
 export const medalOthersQuery = `
@@ -89,8 +76,5 @@ export const medalOthersQuery = `
 		AND NOT file LIKE 'mania-%'
 		AND NOT file LIKE 'skill-%'
 		AND NOT file LIKE 'all-%'
-    ORDER BY file LIKE '%hide-%',
-		REGEXP_SUBSTR(file, '^[a-z]+-'),
-		CAST(REGEXP_SUBSTR(REPLACE(cond_desc, ',', ''), '[0-9]+') AS UNSIGNED),
-		id
+    ORDER BY ${medalOrderQuery(medalOthersOrder)}
 `;

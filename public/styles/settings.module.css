@@ -1332,6 +1332,37 @@
 	flex: 0 0 auto;
 }
 
+.profile_ui_preview_content[data-content="custom_achievements"] {
+	--profile-ui-score-padding: var(--profile-ui-responsive-score-padding, var(--profile-ui-score-default-padding, 16px));
+	--profile-ui-touch-heading-center: calc(var(--profile-ui-score-padding) + var(--profile-ui-score-heading-height, 15px) / 2);
+	--profile-ui-preview-padding-top: var(--profile-ui-score-padding);
+	--profile-ui-preview-padding-inline: var(--profile-ui-score-padding);
+	--profile-ui-preview-body-gap: 7px;
+}
+
+.profile_ui_preview_content[data-content="custom_achievements"] .profile_ui_preview_heading {
+	height: auto;
+	min-height: 15px;
+	flex: 0 0 auto;
+	line-height: 15px;
+}
+
+.profile_ui_preview_content[data-content="custom_achievements"] .profile_ui_preview_heading strong {
+	min-width: 0;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.profile_ui_preview_content[data-content="custom_achievements"] > .profile_ui_preview_surface {
+	min-height: min-content;
+}
+
+.profile_ui_preview_mock[data-content="custom_achievements"] {
+	display: block;
+	padding-inline: var(--profile-ui-preview-padding-inline, 16px);
+	flex: 0 0 auto;
+}
+
 .profile_ui_preview_content[data-content="achievements"][data-fixed-height="false"] {
 	min-height: var(--profile-ui-preview-achievements-height, 0px);
 }
@@ -2707,7 +2738,8 @@
 	}
 
 	.profile_ui_preview_content[data-score-content="true"] > .profile_ui_preview_surface > .profile_ui_preview_heading,
-	.profile_ui_preview_content[data-content="achievements"] > .profile_ui_preview_surface > .profile_ui_preview_heading {
+	.profile_ui_preview_content[data-content="achievements"] > .profile_ui_preview_surface > .profile_ui_preview_heading,
+	.profile_ui_preview_content[data-content="custom_achievements"] > .profile_ui_preview_surface > .profile_ui_preview_heading {
 		min-height: var(--profile-ui-score-heading-height);
 	}
 
