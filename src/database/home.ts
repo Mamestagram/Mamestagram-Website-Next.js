@@ -6,6 +6,7 @@ import { writeError } from "@/lib/log";
 import type { ModeNum } from "@/lib/mode";
 import { getProfileCosmeticsMap } from "@/lib/profile-cosmetics";
 import type { ProfileCosmetics } from "@/lib/profile-cosmetics";
+import { isHomePlayerCounts } from "@/lib/home-player-counts";
 
 export type HomePlayerCounts = {
 	online: number,
@@ -41,17 +42,12 @@ export type HomeRecentActivity = {
 	playTime: Date
 };
 
-type PlayerCountApi = {
-	status: string,
-	counts?: HomePlayerCounts
-};
-
 const globalHomeData = globalThis as typeof globalThis & {
 	topPlayers?: HomeTopPlayer[],
 	recentActivity?: HomeRecentActivity[]
 };
 
-const getPlayerCounts = async (): Promise<HomePlayerCounts | null> => {
+export const getPlayerCounts = async (): Promise<HomePlayerCounts | null> => {
 	const baseDomain = process.env.BASE_DOMAIN;
 	if (!baseDomain) throw new Error("BASE_DOMAIN is not configured");
 	
@@ -65,8 +61,10 @@ const getPlayerCounts = async (): Promise<HomePlayerCounts | null> => {
 			void writeError(new Error(`Player count API request failed (${response.status})`));
 			return null;
 		}
-		const data = await response.json() as PlayerCountApi;
-		return data.status === "success" && data.counts ? data.counts : null;
+		const data: unknown = await response.json();
+		return typeof data === "object" && data !== null
+			&& "status" in data && data.status === "success"
+			&& "counts" in data && isHomePlayerCounts(data.counts) ? data.counts : null;
 	} catch (error: unknown) {
 		void writeError(error);
 		return null;

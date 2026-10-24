@@ -354,11 +354,7 @@ export default async function SettingsPage({
 								</Link>
 							)}
 							{!isClanScope && (
-								<a
-									href={`https://market.${baseDomain}`}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
+								<a href={`https://market.${baseDomain}`}>
 									<FontAwesome prefix="fad" name="store"/>
 									Badge market
 									<FontAwesome

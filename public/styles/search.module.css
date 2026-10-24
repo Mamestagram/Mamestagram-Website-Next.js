@@ -69,10 +69,11 @@
 	
 	& h1 {
 		margin-top: 3px;
-		color: hsl(var(--user-hue), 40%, 98.039%);
+		color: hsl(var(--user-hue), 0%, 100%);
 		font-size: clamp(2.1rem, 4vw, 3.5rem);
-		font-weight: 900;
-		line-height: 1;
+		font-weight: 700;
+		letter-spacing: 0;
+		line-height: .98;
 	}
 	
 }

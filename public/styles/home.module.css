@@ -107,7 +107,7 @@
 	max-width: 680px;
 	color: hsl(var(--user-hue), 57.143%, 97.255%);
 	font-size: clamp(2.35rem, 5vw, 4.45rem);
-	font-weight: 900;
+	font-weight: 800;
 	letter-spacing: -0.055em;
 	line-height: 0.98;
 	text-wrap: balance;
@@ -274,12 +274,12 @@
 	}
 }
 
-.dashboard_section,
+.stats_section,
 .dashboard_panel {
 	min-width: 0;
 }
 
-.dashboard_section {
+.stats_section {
 	margin-top: 0;
 }
 
@@ -324,13 +324,13 @@
 	align-items: center;
 	gap: 7px;
 	color: hsl(var(--user-hue), 15.068%, 57.059%);
-	font-size: 0.64rem;
+	font-size: 0.85rem;
 	font-weight: 800;
 	transition: color 150ms,
 	transform 150ms;
 	
 	@media (max-width: 560px) {
-		font-size: 0.72rem;
+		font-size: 0.95rem;
 	}
 	
 	&:hover,
@@ -342,35 +342,25 @@
 
 .stats_grid {
 	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
-	gap: 10px;
+	width: max-content;
+	max-width: 100%;
+	margin-inline: auto;
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+	align-items: center;
+	gap: 0 32px;
 }
 
-.stat_card {
+.stat_item {
 	--stat-tone: var(--home-accent);
 	
 	display: grid;
-	position: relative;
+	grid-column: span 2;
 	grid-template-columns: max-content minmax(0, 1fr);
-	min-height: 106px;
-	padding: 16px;
+	max-width: 100%;
+	min-height: 80px;
+	padding: 12px 0;
 	align-items: center;
 	gap: 13px;
-	overflow: hidden;
-	background: radial-gradient(
-		circle at 0 0,
-		color-mix(in srgb, var(--stat-tone) 14%, transparent),
-		transparent 52%
-	),
-	var(--home-panel);
-	border: 1px solid var(--home-border);
-	border-radius: 15px;
-	box-shadow: 0 12px 34px hsla(var(--user-hue), 0%, 0%, 0.16),
-	inset 0 1px 0 hsla(var(--user-hue), 0%, 100%, 0.035);
-	
-	&[data-tone="live"] {
-		--stat-tone: hsl(var(--user-hue), 72.571%, 65.686%);
-	}
 	
 	&[data-tone="players"] {
 		--stat-tone: hsl(var(--user-hue), 75%, 65%);
@@ -395,13 +385,8 @@
 		var(--stat-tone) 78%,
 		hsl(var(--user-hue), 0%, 100%) 22%
 	);
-	background: color-mix(
-		in srgb,
-		var(--stat-tone) 12%,
-		hsla(var(--user-hue), 62.5%, 3.137%, 0.9)
-	);
-	border: 1px solid color-mix(in srgb, var(--stat-tone) 30%, transparent);
-	border-radius: 13px;
+	border: 1px solid color-mix(in srgb, var(--stat-tone, hsl(var(--user-hue, 210), 72%, 62%)) 35%, transparent);
+	border-radius: 12px;
 	font-size: 1rem;
 }
 
@@ -436,16 +421,6 @@
 			font-size: 1.24rem;
 		}
 	}
-}
-
-.stat_signal {
-	position: absolute;
-	right: 0;
-	bottom: 0;
-	width: 38%;
-	height: 3px;
-	background: linear-gradient(90deg, transparent, var(--stat-tone));
-	opacity: 0.58;
 }
 
 .dashboard_grid {
@@ -563,15 +538,21 @@
 		width: 100%;
 		align-items: center;
 		justify-content: center;
-		gap: 5px;
+		gap: 6px;
 		overflow: hidden;
 		color: hsl(var(--user-hue), 13.793%, 45.49%);
-		font-size: 0.7rem;
+		font-size: 0.9rem;
 		font-weight: 720;
 		white-space: nowrap;
 		
 		@media (max-width: 760px) {
-			font-size: 0.78rem;
+			font-size: 1rem;
+		}
+
+		& > i {
+			flex: 0 0 auto;
+			font-size: 1.15em;
+			line-height: 1;
 		}
 	}
 }
@@ -832,7 +813,7 @@
 	align-items: baseline;
 	color: var(--home-accent-light);
 	font-size: 1.25rem;
-	font-weight: 900;
+	font-weight: 800;
 	font-variant-numeric: tabular-nums;
 	letter-spacing: -0.035em;
 	line-height: 1;
@@ -862,10 +843,15 @@
 	align-items: baseline;
 	gap: 4px;
 	color: hsl(var(--user-hue), 13.6%, 50.98%);
-	font-size: 0.74rem;
+	font-size: 0.9rem;
 	
 	@media (max-width: 560px) {
-		font-size: 0.82rem;
+		font-size: 1rem;
+	}
+
+	& > span {
+		flex-shrink: 0;
+		white-space: nowrap;
 	}
 	
 	& > strong {
@@ -1066,9 +1052,13 @@
 	}
 	
 	.stats_grid {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-template-columns: repeat(4, minmax(0, 1fr));
 	}
-	
+
+	.stat_item:last-child {
+		grid-column: 2 / span 2;
+	}
+
 	.quick_links {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
@@ -1099,9 +1089,17 @@
 		width: calc(100% - 20px);
 	}
 	
-	.stat_card {
-		min-height: 94px;
-		padding: 12px;
+	.stats_grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.stat_item:last-child {
+		grid-column: span 2;
+	}
+
+	.stat_item {
+		min-height: 76px;
+		padding: 10px 0;
 		gap: 9px;
 	}
 	
@@ -1129,7 +1127,6 @@
 }
 
 @media (max-width: 360px) {
-	.stats_grid,
 	.top_players {
 		grid-template-columns: 1fr;
 	}
@@ -1147,7 +1144,6 @@
 }
 
 :global(html[data-rendering-mode="software"]) .hero,
-:global(html[data-rendering-mode="software"]) .dashboard_section,
 :global(html[data-rendering-mode="software"]) .dashboard_panel {
 	box-shadow: 0 8px 22px hsla(var(--user-hue), 0%, 0%, 0.24),
 	inset 0 1px 0 hsla(var(--user-hue), 0%, 100%, 0.035);

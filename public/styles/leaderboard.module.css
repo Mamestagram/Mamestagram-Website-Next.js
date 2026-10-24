@@ -381,10 +381,6 @@
 			}
 		}
 		
-		& > .ranking_sort_control {
-			container-type: inline-size;
-		}
-		
 		& > .ranking_sort_control .leaderboard_mode_trigger > i:first-child {
 			place-self: center;
 			font-size: 1.5rem;
@@ -396,7 +392,8 @@
 		}
 		
 		& > .ranking_sort_control .leaderboard_mode_trigger {
-			gap: 7px;
+			padding-inline: 8px;
+			gap: 6px;
 		}
 		
 		& > .ranking_sort_control .leaderboard_mode_name {
@@ -422,15 +419,13 @@
 			font-size: 0.72rem;
 		}
 		
-		& > .ranking_sort_control:is([data-sort="performance"], [data-sort="playcount"]) .leaderboard_mode_name strong {
-			font-size: clamp(0.65rem, 7cqi, 0.78rem);
-		}
-		
 		& .ranking_sort_control .ranking_sort_menu,
 		& .playstyle_selection .leaderboard_mode_menu {
 			grid-template-columns: minmax(0, 1fr);
-			width: min(320px, calc(100vw - 32px));
-			padding: 11px;
+			width: min(350px, calc(100vw - 32px));
+			max-height: calc(100dvh - 32px);
+			padding: 12px;
+			overflow-y: auto;
 			background: hsla(var(--user-hue), 40%, 5.882%, 0.97);
 			border: 0;
 			box-shadow: none;
@@ -440,34 +435,41 @@
 				padding: 3px;
 				background: transparent;
 				border: 0;
+
+				& h2 {
+					margin-bottom: 10px;
+					font-size: 0.95rem;
+				}
 			}
 			
 			& .leaderboard_mode_group .leaderboard_playstyles {
 				display: grid;
 				grid-template-columns: repeat(2, minmax(0, 1fr));
+				gap: 6px;
 				
 				& a {
-					min-height: 34px;
+					min-height: 40px;
+					padding: 8px 10px;
 					align-items: center;
 					justify-content: flex-start;
-					gap: 7px;
+					gap: 8px;
+					font-size: 0.85rem;
 					line-height: 1;
 					white-space: nowrap;
 					
 					& i {
-						width: 16px;
+						width: 18px;
+						flex-shrink: 0;
 						color: hsl(var(--user-hue), 55%, 70%);
+						font-size: 1rem;
 						text-align: center;
 					}
 					
-					&[data-sort="performance"] i {
-						font-size: 0.9rem;
-					}
-					
-					&[data-playstyle="Auto Pilot"] {
-						font-size: 0.68rem;
-					}
 				}
+			}
+
+			@media (max-width: 1155px) {
+				max-height: calc(100dvh - 140px);
 			}
 		}
 		
@@ -1032,27 +1034,27 @@
 					
 					&.rank {
 						color: hsl(var(--user-hue), 15.152%, 61.176%);
-						font-size: 0.85rem;
+						font-size: 1.05rem;
 						font-weight: 500;
 						white-space: nowrap;
 						
 						&.top_1 {
 							color: var(--rank-1);
-							font-size: 1rem;
+							font-size: 1.25rem;
 							font-weight: 800;
 							text-shadow: var(--rank-1-shadow);
 						}
 						
 						&.top_2 {
 							color: var(--rank-2);
-							font-size: 0.9375rem;
+							font-size: 1.1875rem;
 							font-weight: 800;
 							text-shadow: var(--rank-2-shadow);
 						}
 						
 						&.top_3 {
 							color: var(--rank-3);
-							font-size: 0.875rem;
+							font-size: 1.125rem;
 							font-weight: 800;
 							text-shadow: var(--rank-3-shadow);
 						}
@@ -1080,7 +1082,7 @@
 						& span:is(.percent_label, .pp_label) {
 							color: hsl(var(--user-hue), 17%, 57%);
 							font-size: 0.75rem;
-							font-weight: 300;
+							font-weight: inherit;
 						}
 					}
 					

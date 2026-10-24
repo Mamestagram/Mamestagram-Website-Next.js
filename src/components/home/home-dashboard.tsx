@@ -4,6 +4,9 @@ import type { CSSProperties } from "react";
 import FontAwesome from "@/components/font-awesome";
 import FormattedNumber from "@/components/formatted-number";
 import DashboardSectionHeading from "@/components/home/dashboard-section-heading";
+import HomeLiveStats from "@/components/home/home-live-stats";
+import HomePlayerCount from "@/components/home/home-player-count";
+import HomePlayerCountsProvider from "@/components/home/home-player-counts-provider";
 import ModeIcon from "@/components/mode-icon";
 import type {
 	HomePlayerCounts,
@@ -35,34 +38,6 @@ const formatRelativeTime = (date: Date) => {
 	const months = Math.floor(days / 30);
 	return months < 12 ? `${months}mo ago` : `${Math.floor(days / 365)}y ago`;
 };
-
-const statCards = (counts: HomePlayerCounts | null) =>
-	[
-		{
-			icon: "signal-stream",
-			label: "Online now",
-			value: counts?.online,
-			tone: "live",
-		},
-		{
-			icon: "users",
-			label: "Registered players",
-			value: counts?.total,
-			tone: "players",
-		},
-		{
-			icon: "computer-mouse",
-			label: "Stable online",
-			value: counts?.stable,
-			tone: "stable",
-		},
-		{
-			icon: "rocket-launch",
-			label: "Lazer online",
-			value: counts?.lazer,
-			tone: "lazer",
-		},
-	] as const;
 
 const quickLinks = [
 	{
@@ -151,6 +126,7 @@ export default function HomeDashboard({
 	};
 	
 	return (
+		<HomePlayerCountsProvider initialCounts={playerCounts}>
 		<div className={styles.page}>
 			<section
 				className={styles.hero}
@@ -197,38 +173,14 @@ export default function HomeDashboard({
               <span>
                 <i></i>Online
               </span>
-							<strong>{playerCounts ? <FormattedNumber value={playerCounts.online}/> : "—"}</strong>
+							<strong><HomePlayerCount kind="online"/></strong>
 						</div>
 					</div>
 				</div>
 			</section>
 			<div className={styles.dashboard}>
-				<section className={styles.dashboard_section} data-page-enter="section">
-					<DashboardSectionHeading
-						icon="chart-mixed"
-						title="Live Stats"
-					/>
-					<div className={styles.stats_grid}>
-						{statCards(playerCounts).map((stat) => (
-							<article
-								key={stat.label}
-								className={styles.stat_card}
-								data-tone={stat.tone}
-								data-page-enter="box"
-							>
-                <span className={styles.stat_icon}>
-                  <FontAwesome prefix="fad" name={stat.icon}/>
-                </span>
-								<span className={styles.stat_copy}>
-                  <small>{stat.label}</small>
-                  <strong>{stat.value === undefined || stat.value === null
-	                  ? "—"
-	                  : <FormattedNumber value={stat.value}/>}</strong>
-                </span>
-								<span className={styles.stat_signal}></span>
-							</article>
-						))}
-					</div>
+				<section className={styles.stats_section} data-page-enter="section" aria-label="Live stats">
+					<HomeLiveStats/>
 				</section>
 				
 				<div className={styles.dashboard_grid}>
@@ -405,5 +357,6 @@ export default function HomeDashboard({
 			
 			</div>
 		</div>
+		</HomePlayerCountsProvider>
 	);
 }

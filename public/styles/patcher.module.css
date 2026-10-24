@@ -47,7 +47,7 @@
 	& > span {
 		color: hsl(var(--user-hue), 10.672%, 50.392%);
 		font-size: .7rem;
-		font-weight: 850;
+		font-weight: 750;
 		letter-spacing: .1em;
 		text-transform: uppercase;
 	}
@@ -64,7 +64,7 @@
 			color: hsl(var(--user-hue), 8.333%, 52.941%);
 			border-radius: 5px;
 			font-size: .74rem;
-			font-weight: 900;
+			font-weight: 800;
 			text-align: center;
 			transition: color 160ms, background-color 160ms, box-shadow 160ms;
 			
@@ -113,7 +113,7 @@
 		& > span {
 			color: hsl(var(--user-hue), 11.957%, 36.078%);
 			font-size: .76rem;
-			font-weight: 850;
+			font-weight: 750;
 			font-variant-numeric: tabular-nums;
 		}
 		
@@ -124,7 +124,7 @@
 		
 		& strong {
 			padding-bottom: 2px;
-			font-weight: 800;
+			font-weight: 700;
 			line-height: 1.45;
 			overflow-wrap: anywhere;
 			white-space: normal;
@@ -190,7 +190,7 @@
 	& h2 {
 		color: hsl(var(--user-hue), 28.571%, 94.51%);
 		font-size: clamp(1.5rem, 2.9vw, 2rem);
-		font-weight: 880;
+		font-weight: 780;
 		letter-spacing: -.025em;
 	}
 	
@@ -214,7 +214,7 @@
 		margin: 12px 0;
 		color: hsl(var(--user-hue), 69.231%, 84.706%);
 		font-size: clamp(1.5rem, 3vw, 2.1rem);
-		font-weight: 880;
+		font-weight: 780;
 		letter-spacing: -.03em;
 	}
 	
@@ -237,7 +237,7 @@
 	border: 1px solid hsla(var(--user-hue), 72.165%, 61.961%, 0.15);
 	border-radius: 8px;
 	font-size: .66rem;
-	font-weight: 850;
+	font-weight: 750;
 	letter-spacing: .04em;
 	text-transform: uppercase;
 }
@@ -281,7 +281,7 @@
 	& h3 {
 		color: hsl(var(--user-hue), 14.286%, 91.765%);
 		font-size: 1rem;
-		font-weight: 850;
+		font-weight: 750;
 	}
 	
 	& p {
@@ -349,7 +349,7 @@
 	& h3 {
 		color: hsl(var(--user-hue), 15.789%, 92.549%);
 		font-size: 1rem;
-		font-weight: 860;
+		font-weight: 760;
 		line-height: 1.35;
 	}
 	
@@ -413,7 +413,7 @@
 	& > span {
 		color: hsl(var(--user-hue), 32.489%, 46.471%);
 		font-size: .8rem;
-		font-weight: 850;
+		font-weight: 750;
 		letter-spacing: .05em;
 	}
 	
@@ -422,7 +422,7 @@
 		color: hsl(var(--user-hue), 12%, 95.098%);
 		font-family: var(--font-code, monospace);
 		font-size: 1.5rem;
-		font-weight: 750;
+		font-weight: 650;
 	}
 }
 
@@ -439,7 +439,7 @@
 	border-radius: 12px;
 	box-shadow: 0 12px 28px hsla(var(--user-hue), 72.165%, 61.961%, 0.16);
 	font-size: .92rem;
-	font-weight: 900;
+	font-weight: 800;
 	transition: filter 170ms, box-shadow 170ms, transform 170ms;
 	cursor: pointer;
 	
@@ -500,7 +500,7 @@
 		gap: 7px;
 		color: hsl(var(--user-hue), 31.765%, 50%);
 		font-size: .7rem;
-		font-weight: 850;
+		font-weight: 750;
 		transition: color 160ms;
 		
 		&:hover {
@@ -531,7 +531,7 @@
 		border: 1px solid hsla(var(--user-hue), 72.165%, 61.961%, 0.14);
 		border-radius: 9px;
 		font-size: .72rem;
-		font-weight: 850;
+		font-weight: 750;
 		transition: color 160ms, background-color 160ms, border-color 160ms;
 	}
 	
@@ -584,7 +584,7 @@
 	& h3 {
 		color: hsl(var(--user-hue), 14.286%, 91.765%);
 		font-size: 1rem;
-		font-weight: 850;
+		font-weight: 750;
 	}
 	
 	& p {
@@ -601,7 +601,7 @@
 	
 	& strong {
 		color: hsl(var(--user-hue), 20.635%, 87.647%);
-		font-weight: 850;
+		font-weight: 750;
 	}
 }
 
@@ -617,7 +617,7 @@
 	border: 1px solid hsla(var(--user-hue), 72.165%, 61.961%, 0.16);
 	border-radius: 10px;
 	font-size: 1rem;
-	font-weight: 900;
+	font-weight: 800;
 	font-variant-numeric: tabular-nums;
 	text-align: center;
 }
@@ -672,13 +672,13 @@
 	gap: 10px;
 	color: hsl(var(--user-hue), 18.519%, 89.412%);
 	font-size: .98rem;
-	font-weight: 820;
+	font-weight: 720;
 	text-align: left;
 	
 	& > span {
 		color: hsl(var(--user-hue), 30.594%, 42.941%);
 		font-size: .78rem;
-		font-weight: 900;
+		font-weight: 800;
 		font-variant-numeric: tabular-nums;
 	}
 	
@@ -744,7 +744,7 @@
 	box-shadow: 0 14px 36px hsla(var(--user-hue), 0%, 0%, 0.3);
 	backdrop-filter: blur(14px);
 	font-size: .74rem;
-	font-weight: 850;
+	font-weight: 750;
 	opacity: 0;
 	pointer-events: none;
 	transform: translateY(8px);

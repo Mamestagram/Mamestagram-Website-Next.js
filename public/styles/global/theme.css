@@ -299,7 +299,6 @@ html[data-theme="legacy"] [class$="_dashboard_panel"] {
 	background-image: none !important;
 }
 
-html[data-theme="legacy"] [class$="_stat_card"],
 html[data-theme="legacy"] [class$="_player_card"],
 html[data-theme="legacy"] [class$="_quick_links"] > a,
 html[data-theme="legacy"] [class$="_activity_list"] > li,
@@ -337,6 +336,13 @@ html[data-theme="legacy"] body [class$="_clan_hero_avatar"][class$="_clan_hero_a
 	place-items: center;
 	border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.28) !important;
 	border-radius: 0.45em;
+}
+
+html[data-theme="legacy"] body [class^="header-search-module"][class$="_message"] > i,
+html[data-theme="legacy"] body [class^="search-module"][class$="_message"] > i {
+	width: 2.1em;
+	height: 2.1em;
+	flex: 0 0 auto;
 }
 
 html[data-theme="legacy"] [class$="_quick_links"] > a:hover,

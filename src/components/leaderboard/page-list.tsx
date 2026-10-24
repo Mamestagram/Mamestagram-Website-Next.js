@@ -177,17 +177,17 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 			        title="Show first pages"
 			        disabled={isFirstPageWindow}
 			        onClick={() => setPageOrder(makePageOrder(0, displayAmount, totalPage))}>
-				<FontAwesome prefix="fad" name="chevrons-left"/>
+				<FontAwesome prefix="fad" name={isOverRanking ? "chevrons-up" : "chevrons-left"}/>
 			</button>
 			<button className={classNames(styles.shift_arrow, "left")}
 			        type="button"
-			        aria-label="shift-left"
+			        aria-label={isOverRanking ? "shift-up" : "shift-left"}
 			        onPointerDown={clickChevron}
 			        onPointerUp={pointerUpChevron}
 			        onPointerLeave={pointerUpChevron}
 			        onPointerCancel={pointerUpChevron}
 			        onContextMenu={(e) => e.preventDefault()}>
-				<FontAwesome prefix="fas" name="chevron-left"/>
+				<FontAwesome prefix="fas" name={isOverRanking ? "chevron-up" : "chevron-left"}/>
 			</button>
 			<ul className={styles.page_list} style={pageListStyle}>
 				{Array.from({ length: totalPage }).map((_val, i) =>
@@ -206,13 +206,13 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 			</ul>
 			<button className={classNames(styles.shift_arrow, "right")}
 			        type="button"
-			        aria-label="shift-right"
+			        aria-label={isOverRanking ? "shift-down" : "shift-right"}
 			        onPointerDown={clickChevron}
 			        onPointerUp={pointerUpChevron}
 			        onPointerLeave={pointerUpChevron}
 			        onPointerCancel={pointerUpChevron}
 			        onContextMenu={(e) => e.preventDefault()}>
-				<FontAwesome prefix="fas" name="chevron-right"/>
+				<FontAwesome prefix="fas" name={isOverRanking ? "chevron-down" : "chevron-right"}/>
 			</button>
 			<button className={styles.page_endpoint}
 			        type="button"
@@ -220,7 +220,7 @@ export default function PageList({ currentPage, totalPage, mode, sortBy, isClan,
 			        title="Show last pages"
 			        disabled={isLastPageWindow}
 			        onClick={() => setPageOrder(makePageOrder(totalPage - 1, displayAmount, totalPage))}>
-				<FontAwesome prefix="fad" name="chevrons-right"/>
+				<FontAwesome prefix="fad" name={isOverRanking ? "chevrons-down" : "chevrons-right"}/>
 			</button>
 		</div>
 	);
