@@ -1,5 +1,7 @@
 "use client";
 
+import { applyAccentColor, getAccentHue, hueToAccentColor } from "@/lib/accent-color";
+
 import type { CustomAchievementSettings } from "@/lib/custom-achievements";
 
 import { useState, useTransition } from "react";
@@ -39,6 +41,7 @@ const SETTINGS_DEFAULT_HUE = 18;
 
 type HuePreviewStyle = CSSProperties & {
 	"--settings-hue-preview": number;
+	"--settings-accent-preview": string;
 };
 
 type ProfileUiEditorConfig = {
@@ -50,38 +53,29 @@ type ProfileUiEditorConfig = {
 	backgroundUrl: string;
 };
 
-const applyDocumentHue = (hue: number | null) => {
-	if (hue === null) {
-		delete document.documentElement.dataset.userHue;
-		document.documentElement.style.setProperty(
-			"--user-hue",
-			String(SETTINGS_DEFAULT_HUE),
-		);
-		return;
-	}
-	document.documentElement.dataset.userHue = String(hue);
-	document.documentElement.style.setProperty("--user-hue", String(hue));
-};
-
 export default function ThemeSettingsForm({
 	initialTheme,
 	initialHue,
+	initialColor = null,
 	initialCustomAppearance,
 	initialIsPrivate,
 	initialUseWebsiteAppearance,
 	websiteTheme,
 	websiteHue,
+	websiteColor,
 	canResetScores = false,
 	scope = "website",
 	profileUiEditor,
 }: Readonly<{
 	initialTheme: WebTheme;
 	initialHue: number | null;
+	initialColor?: string | null;
 	initialCustomAppearance?: boolean;
 	initialIsPrivate?: boolean;
 	initialUseWebsiteAppearance?: boolean;
 	websiteTheme?: WebTheme;
 	websiteHue?: number | null;
+	websiteColor?: string | null;
 	canResetScores?: boolean;
 	scope?: "website" | "personal" | "clan";
 	profileUiEditor?: ProfileUiEditorConfig;
@@ -90,6 +84,8 @@ export default function ThemeSettingsForm({
 	const [savedTheme, setSavedTheme] = useState(initialTheme);
 	const [hue, setHue] = useState(initialHue);
 	const [savedHue, setSavedHue] = useState(initialHue);
+	const [color, setColor] = useState(initialColor);
+	const [savedColor, setSavedColor] = useState(initialColor);
 	const [customAppearance, setCustomAppearance] = useState(
 		initialCustomAppearance ?? true,
 	);
@@ -106,8 +102,8 @@ export default function ThemeSettingsForm({
 	const [savedUseWebsiteAppearance, setSavedUseWebsiteAppearance] = useState(
 		initialUseWebsiteAppearance ?? false,
 	);
-	const [customHue, setCustomHue] = useState(
-		initialHue ?? SETTINGS_DEFAULT_HUE,
+	const [customColor, setCustomColor] = useState(
+		initialColor ?? hueToAccentColor(initialHue ?? SETTINGS_DEFAULT_HUE),
 	);
 	const [status, setStatus] = useState<{
 		success: boolean;
@@ -124,13 +120,15 @@ export default function ThemeSettingsForm({
 	const hasChanges =
 		theme !== savedTheme ||
 		hue !== savedHue ||
+		color !== savedColor ||
 		(initialCustomAppearance !== undefined &&
 			customAppearance !== savedCustomAppearance) ||
 		(initialIsPrivate !== undefined && isPrivate !== savedIsPrivate) ||
 		(initialUseWebsiteAppearance !== undefined &&
 			useWebsiteAppearance !== savedUseWebsiteAppearance);
 	const huePreviewStyle: HuePreviewStyle = {
-		"--settings-hue-preview": customHue,
+		"--settings-hue-preview": getAccentHue(customColor) ?? SETTINGS_DEFAULT_HUE,
+		"--settings-accent-preview": customColor,
 	};
 	
 	const saveSettings = () => {
@@ -149,13 +147,14 @@ export default function ThemeSettingsForm({
 								? {
 									theme,
 									hue,
+									color,
 									isPrivate,
 									...(!isClan && {
 										useWebsiteAppearance,
 										customAppearance,
 									}),
 								}
-								: { theme, hue, customAppearance },
+								: { theme, hue, color, customAppearance },
 						),
 					},
 				);
@@ -165,6 +164,7 @@ export default function ThemeSettingsForm({
 				
 				setSavedTheme(theme);
 				setSavedHue(hue);
+				setSavedColor(color);
 				setSavedCustomAppearance(customAppearance);
 				if (isProfileConfiguration) setSavedIsPrivate(isPrivate);
 				if (isPersonalProfile)
@@ -175,7 +175,7 @@ export default function ThemeSettingsForm({
 					document.documentElement.dataset.theme = getWebThemeName(
 						customAppearance ? theme : DEFAULT_WEB_THEME,
 					);
-					applyDocumentHue(customAppearance ? hue : null);
+					applyAccentColor(document.documentElement, customAppearance ? color : null, customAppearance ? hue : null, SETTINGS_DEFAULT_HUE);
 				}
 			} catch {
 				setStatus({
@@ -247,7 +247,8 @@ export default function ThemeSettingsForm({
 						bannerUrl={profileUiEditor.bannerUrl}
 						backgroundUrl={profileUiEditor.backgroundUrl}
 						profileTheme={theme}
-						profileHue={hue}
+						profileHue={customAppearance ? hue : null}
+						profileColor={customAppearance ? color : null}
 					/>
 				)}
 				{initialCustomAppearance !== undefined && !isClan && (
@@ -264,8 +265,8 @@ export default function ThemeSettingsForm({
                   </strong>
                   <small>
                     {isPersonalProfile
-	                    ? "Use your own theme and hue on profile pages."
-	                    : "Use your own theme and hue instead of the defaults."}
+	                    ? "Use your own theme and accent color on profile pages."
+	                    : "Use your own theme and accent color instead of the defaults."}
                   </small>
                 </span>
               </span>
@@ -301,7 +302,7 @@ export default function ThemeSettingsForm({
                 <span>
                   <strong>Use website appearance</strong>
                   <small>
-                    Keep your profile theme and hue synchronized with Website
+                    Keep your profile theme and accent color synchronized with Website
                     Appearance.
                   </small>
                 </span>
@@ -316,7 +317,8 @@ export default function ThemeSettingsForm({
 									if (nextValue) {
 										setTheme(websiteTheme);
 										setHue(websiteHue);
-										setCustomHue(websiteHue ?? SETTINGS_DEFAULT_HUE);
+										setColor(websiteColor ?? null);
+										setCustomColor(websiteColor ?? hueToAccentColor(websiteHue ?? SETTINGS_DEFAULT_HUE));
 									}
 									setStatus(null);
 								}}
@@ -379,8 +381,8 @@ export default function ThemeSettingsForm({
 					<div className={styles.hue_control_heading}>
 						<span className={styles.hue_swatch} aria-hidden="true"/>
 						<span className={styles.hue_copy}>
-              <strong>Color hue</strong>
-              <small>{hue === null ? "Page default" : `${hue}°`}</small>
+              <strong>Accent color</strong>
+              <small>{hue === null && color === null ? "Page default" : customColor.toUpperCase()}</small>
             </span>
 						<label
 							className={styles.hue_toggle}
@@ -388,33 +390,33 @@ export default function ThemeSettingsForm({
 						>
 							<input
 								type="checkbox"
-								checked={hue !== null}
+								checked={hue !== null || color !== null}
 								disabled={isPending || isAppearanceLocked}
 								onChange={(event) => {
-									setHue(event.currentTarget.checked ? customHue : null);
+									const enabled = event.currentTarget.checked;
+									setHue(enabled ? getAccentHue(customColor) : null);
+									setColor(enabled ? customColor : null);
 									setStatus(null);
 								}}
 							/>
 							<span className={styles.toggle} aria-hidden="true">
                 <span/>
               </span>
-							<span>Custom hue</span>
+							<span>Custom color</span>
 						</label>
 					</div>
-					<label className={styles.hue_slider}>
-						<span>Hue value</span>
-						<output>{customHue}°</output>
+					<label className={`${styles.hue_slider} ${styles.accent_color_picker}`}>
+						<span>Accent color</span>
+						<output>{customColor.toUpperCase()}</output>
 						<input
-							type="range"
-							min="0"
-							max="360"
-							step="1"
-							value={customHue}
-							disabled={isPending || isAppearanceLocked || hue === null}
+							type="color"
+							value={customColor}
+							disabled={isPending || isAppearanceLocked || (hue === null && color === null)}
 							onChange={(event) => {
-								const nextHue = Number(event.currentTarget.value);
-								setCustomHue(nextHue);
-								setHue(nextHue);
+								const nextColor = event.currentTarget.value.toLowerCase();
+								setCustomColor(nextColor);
+								setColor(nextColor);
+								setHue(getAccentHue(nextColor));
 								setStatus(null);
 							}}
 						/>
@@ -442,10 +444,11 @@ export default function ThemeSettingsForm({
 						onClick={() => {
 							setTheme(savedTheme);
 							setHue(savedHue);
+							setColor(savedColor);
 							setCustomAppearance(savedCustomAppearance);
 							setIsPrivate(savedIsPrivate);
 							setUseWebsiteAppearance(savedUseWebsiteAppearance);
-							setCustomHue(savedHue ?? SETTINGS_DEFAULT_HUE);
+							setCustomColor(savedColor ?? hueToAccentColor(savedHue ?? SETTINGS_DEFAULT_HUE));
 							setStatus(null);
 						}}
 					>

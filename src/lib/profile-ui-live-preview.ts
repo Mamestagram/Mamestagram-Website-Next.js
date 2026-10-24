@@ -1,3 +1,4 @@
+import { isAccentColor } from "@/lib/accent-color";
 import { parseCustomAchievements, type CustomAchievementSelection } from "@/lib/custom-achievements";
 import { isDefaultProfileUi, parseProfileUiContents, type ProfileUiItem } from "@/lib/profile-ui";
 import { isWebHue, isWebTheme, type WebTheme } from "@/lib/theme";
@@ -8,6 +9,7 @@ export type ProfileUiPreviewDraft = {
 	customAchievements?: CustomAchievementSelection;
 	theme: WebTheme;
 	hue: number | null;
+	color: string | null;
 };
 
 export const parseProfileUiPreviewDraft = (value: unknown): ProfileUiPreviewDraft | null => {
@@ -15,6 +17,7 @@ export const parseProfileUiPreviewDraft = (value: unknown): ProfileUiPreviewDraf
 	const raw = value as Record<string, unknown>;
 	const contents = parseProfileUiContents(raw.contents);
 	if (!contents || !isWebTheme(raw.theme) || (raw.hue !== null && !isWebHue(raw.hue))) return null;
+	if (raw.color !== undefined && raw.color !== null && !isAccentColor(raw.color)) return null;
 	const customAchievements = raw.customAchievements === undefined ? undefined : parseCustomAchievements(raw.customAchievements);
 	if (customAchievements === null) return null;
 	const customized = !isDefaultProfileUi(contents);
@@ -23,6 +26,7 @@ export const parseProfileUiPreviewDraft = (value: unknown): ProfileUiPreviewDraf
 		...(customAchievements === undefined ? {} : { customAchievements }),
 		theme: raw.theme,
 		hue: raw.hue,
+		color: typeof raw.color === "string" ? raw.color.toLowerCase() : null,
 	};
 };
 

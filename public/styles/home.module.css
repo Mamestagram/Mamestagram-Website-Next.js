@@ -570,7 +570,7 @@
 	
 	& > small {
 		margin-left: 3px;
-		color: hsl(var(--user-hue), 15.612%, 46.471%);
+		color: inherit;
 		font-size: 0.62rem;
 		
 		@media (max-width: 760px) {
@@ -592,7 +592,7 @@
 	
 	min-width: 0;
 	overflow: hidden;
-	background: hsla(var(--user-hue), 62.5%, 3.137%, 0.78);
+	background: hsl(var(--user-hue), 0%, 3.137%);
 	border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.05);
 	border-radius: 11px;
 	transition: border-color 150ms ease,
@@ -633,8 +633,8 @@
 	color: inherit;
 	background: linear-gradient(
 		90deg,
-		hsla(var(--user-hue), 57.895%, 3.725%, 0.94),
-		hsla(var(--user-hue), 57.895%, 3.725%, 0.72)
+		hsla(var(--user-hue), 0%, 3.725%, 0.94),
+		hsla(var(--user-hue), 0%, 3.725%, 0.72)
 	),
 	var(--activity-background-image) center 45% / cover no-repeat;
 	border-radius: inherit;
@@ -671,7 +671,7 @@
 .activity_action_inner {
 	min-height: 0;
 	overflow: hidden;
-	background: hsla(var(--user-hue), 62.5%, 3.137%, 0.78);
+	background: hsl(var(--user-hue), 0%, 3.137%);
 	border-top: 1px solid hsla(var(--user-hue), 100%, 75.49%, 0.12);
 }
 
@@ -708,7 +708,7 @@
 		&:hover,
 		&:focus-visible {
 			color: hsl(var(--user-hue), 0%, 100%);
-			background-color: hsla(var(--user-hue), 56.332%, 55.098%, 0.16);
+			background-color: hsla(var(--user-hue), 0%, 100%, 0.16);
 			border-color: hsla(var(--user-hue), 100%, 75.49%, 0.28);
 		}
 		
@@ -737,8 +737,8 @@
 	color: hsl(var(--grade-default-hue), 26.829%, 83.922%);
 	background: linear-gradient(
 		145deg,
-		hsla(var(--user-hue), 32.203%, 11.569%, 0.94),
-		hsla(var(--user-hue), 57.143%, 2.745%, 0.88)
+		hsl(var(--user-hue), 0%, 11.569%),
+		hsl(var(--user-hue), 0%, 2.745%)
 	);
 	border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.14);
 	border-radius: 10px;
@@ -798,8 +798,8 @@
 	overflow: hidden;
 	background: linear-gradient(
 		145deg,
-		hsla(var(--user-hue), 41.176%, 6.667%, 0.86),
-		hsla(var(--user-hue), 63.636%, 2.157%, 0.9)
+		hsl(var(--user-hue), 0%, 6.667%),
+		hsl(var(--user-hue), 0%, 2.157%)
 	);
 	border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.1);
 	border-radius: 0 12px 12px 0;
@@ -821,7 +821,7 @@
 	
 	& > small {
 		margin-left: 2px;
-		color: hsl(var(--user-hue), 11.79%, 55.098%);
+		color: inherit;
 		font-size: 0.7rem;
 		font-weight: 800;
 		letter-spacing: 0.01em;

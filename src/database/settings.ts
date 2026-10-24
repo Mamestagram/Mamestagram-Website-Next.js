@@ -2,6 +2,12 @@ import type { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { executeQuery, withTransaction } from "@/database/connection";
 import {
 	appearanceSettingsUserForUpdateQuery,
+	userWebAccentColorQuery,
+	userProfileAccentColorQuery,
+	clanProfileAccentColorQuery,
+	updateWebAccentColorQuery,
+	updateProfileAccentColorQuery,
+	updateClanAccentColorQuery,
 	badgeCatalogQuery,
 	badgeOwnershipForUpdateQuery,
 	badgeStateQuery,
@@ -33,6 +39,7 @@ import {
 	userProfileHueQuery,
 	userProfileThemeQuery,
 } from "@/database/query/settings";
+import { normalizeAccentColor } from "@/lib/accent-color";
 import { makeSafeName } from "@/database/auth";
 import { normalizeWebHue, normalizeWebTheme, type WebTheme } from "@/lib/theme";
 
@@ -55,6 +62,9 @@ type SettingsSchemaRow = RowDataPacket & {
 	has_modern_visibility: number;
 	has_web_theme: number;
 	has_web_hue: number;
+	has_web_color: number;
+	has_profile_color: number;
+	has_clan_profile_color: number;
 	has_profile_theme: number;
 	has_profile_hue: number;
 	has_use_web_appearance: number;
@@ -133,9 +143,11 @@ export type UserSettings = {
 	isPrivate: boolean;
 	webTheme: WebTheme;
 	webHue: number | null;
+	webColor: string | null;
 	hasCustomWebAppearance: boolean;
 	profileTheme: WebTheme;
 	profileHue: number | null;
+	profileColor: string | null;
 	hasCustomProfileAppearance: boolean;
 	useWebsiteAppearance: boolean;
 	selectedBadge: number;
@@ -152,6 +164,7 @@ export type OwnedClanSettings = {
 	isPrivate: boolean;
 	profileTheme: WebTheme;
 	profileHue: number | null;
+	profileColor: string | null;
 };
 
 export type ProfileSettingsUpdateResult =
@@ -181,6 +194,9 @@ const getBadgeRarity = (
 type SettingsSchema = {
 	canManageBadges: boolean;
 	hasWebHue: boolean;
+	hasWebColor: boolean;
+	hasProfileColor: boolean;
+	hasClanProfileColor: boolean;
 	hasWebTheme: boolean;
 	hasProfileHue: boolean;
 	hasProfileTheme: boolean;
@@ -198,6 +214,9 @@ const loadSettingsSchema = async (): Promise<SettingsSchema> => {
 	).at(0);
 	return {
 		canManageBadges: schema?.badge_table_count === 2,
+		hasWebColor: schema?.has_web_color === 1,
+		hasProfileColor: schema?.has_profile_color === 1,
+		hasClanProfileColor: schema?.has_clan_profile_color === 1,
 		hasWebHue: schema?.has_web_hue === 1,
 		hasWebTheme: schema?.has_web_theme === 1,
 		hasProfileHue: schema?.has_profile_hue === 1,
@@ -220,6 +239,39 @@ const getSettingsSchema = () => {
 		throw error;
 	});
 	return settingsSchemaPromise;
+};
+
+const appearanceColumns = {
+	hasWebTheme: "web_user_settings.web_theme",
+	hasWebHue: "web_user_settings.web_hue",
+	hasWebColor: "web_user_settings.web_color",
+	hasProfileTheme: "web_user_settings.profile_theme",
+	hasProfileHue: "web_user_settings.profile_hue",
+	hasProfileColor: "web_user_settings.profile_color",
+	hasUseWebAppearance: "web_user_settings.use_web_appearance",
+	hasClanProfileTheme: "clans.profile_theme",
+	hasClanProfileHue: "clans.profile_hue",
+	hasClanProfileColor: "clans.profile_color",
+} as const;
+
+export class AppearanceSchemaError extends Error {
+	constructor(readonly missingColumns: readonly string[]) {
+		super(`Appearance settings are not ready. Missing database columns: ${missingColumns.join(", ")}.`);
+		this.name = "AppearanceSchemaError";
+	}
+}
+
+const requireAppearanceSchema = async (required: readonly (keyof typeof appearanceColumns)[]): Promise<SettingsSchema> => {
+	const cached = getSettingsSchema();
+	let schema = await cached;
+	if (required.some((key) => !schema[key])) {
+		// Recheck after schema changes without retaining a stale negative result until restart.
+		if (settingsSchemaPromise === cached) settingsSchemaPromise = null;
+		schema = await getSettingsSchema();
+	}
+	const missing = required.filter((key) => !schema[key]);
+	if (missing.length > 0) throw new AppearanceSchemaError(missing.map((key) => appearanceColumns[key]));
+	return schema;
 };
 
 const MAX_PAST_NAMES = 3;
@@ -267,6 +319,8 @@ export const getUserSettings = async (
 		profileThemeRows,
 		profileHueRows,
 		useWebAppearanceRows,
+		webColor,
+		profileColor,
 	] = await Promise.all([
 		schema.canManageBadges
 			? executeQuery<BadgeStateRow>(badgeStateQuery, [userId])
@@ -289,6 +343,8 @@ export const getUserSettings = async (
 		schema.hasUseWebAppearance
 			? executeQuery<UseWebAppearanceRow>(userUseWebAppearanceQuery, [userId])
 			: Promise.resolve([]),
+		getUserWebAccentColor(userId),
+		getProfileAccentColor(userId, false),
 	]);
 	const selectedBadge = badgeState.at(0)?.selected_badge ?? 0;
 	const webTheme = normalizeWebTheme(themeRows.at(0)?.web_theme);
@@ -317,6 +373,7 @@ export const getUserSettings = async (
 		isPrivate: user.is_private === 1,
 		webTheme,
 		webHue,
+		webColor,
 		hasCustomWebAppearance,
 		profileTheme: useWebsiteAppearance
 			? webTheme
@@ -324,6 +381,7 @@ export const getUserSettings = async (
 		profileHue: useWebsiteAppearance
 			? webHue
 			: normalizeWebHue(profileHueRows.at(0)?.profile_hue),
+		profileColor,
 		hasCustomProfileAppearance,
 		useWebsiteAppearance,
 		selectedBadge,
@@ -354,6 +412,7 @@ export const getOwnedClanSettings = async (
 			isPrivate: clan.is_public !== 1,
 			profileTheme: normalizeWebTheme(clan.profile_theme),
 			profileHue: normalizeWebHue(clan.profile_hue),
+			profileColor: await getProfileAccentColor(clan.id, true),
 		}
 		: null;
 };
@@ -471,10 +530,12 @@ export const updateWebAppearance = async (
 	theme: WebTheme,
 	hue: number | null,
 	customAppearance: boolean,
+	color?: string | null,
 ) => {
-	const schema = await getSettingsSchema();
-	if (!schema.hasWebTheme || !schema.hasWebHue)
-		throw new Error("The users appearance columns are not available");
+	const schema = await requireAppearanceSchema([
+		"hasWebTheme", "hasWebHue",
+		...(customAppearance && color != null ? ["hasWebColor" as const] : []),
+	]);
 	return withTransaction(async (connection) => {
 		const [users] = await connection.query<AppearanceSettingsUserRow[]>(
 			appearanceSettingsUserForUpdateQuery,
@@ -493,11 +554,15 @@ export const updateWebAppearance = async (
 			await connection.query<ResultSetHeader>(clearWebAppearanceQuery, [
 				userId,
 			]);
+			if (schema.hasWebColor)
+				await connection.query(updateWebAccentColorQuery, [null, userId]);
 			await connection.query<ResultSetHeader>(
 				deleteDefaultAppearanceSettingsQuery,
 				[userId],
 			);
 		}
+		if (customAppearance && color !== undefined && schema.hasWebColor)
+			await connection.query(updateWebAccentColorQuery, [color, userId]);
 		return true;
 	});
 };
@@ -509,14 +574,12 @@ export const updateProfileConfiguration = async (
 	hue: number | null,
 	useWebsiteAppearance: boolean,
 	customAppearance: boolean,
+	color?: string | null,
 ) => {
-	const schema = await getSettingsSchema();
-	if (
-		!schema.hasProfileTheme ||
-		!schema.hasProfileHue ||
-		!schema.hasUseWebAppearance
-	)
-		throw new Error("The users profile appearance columns are not available");
+	const schema = await requireAppearanceSchema([
+		"hasProfileTheme", "hasProfileHue", "hasUseWebAppearance",
+		...(customAppearance && color != null ? ["hasProfileColor" as const] : []),
+	]);
 	return withTransaction(async (connection) => {
 		const [users] = await connection.query<AppearanceSettingsUserRow[]>(
 			appearanceSettingsUserForUpdateQuery,
@@ -546,11 +609,15 @@ export const updateProfileConfiguration = async (
 			await connection.query<ResultSetHeader>(clearProfileAppearanceQuery, [
 				userId,
 			]);
+			if (schema.hasProfileColor)
+				await connection.query(updateProfileAccentColorQuery, [null, userId]);
 			await connection.query<ResultSetHeader>(
 				deleteDefaultAppearanceSettingsQuery,
 				[userId],
 			);
 		}
+		if (customAppearance && color !== undefined && schema.hasProfileColor)
+			await connection.query(updateProfileAccentColorQuery, [color, userId]);
 		return true;
 	});
 };
@@ -560,10 +627,12 @@ export const updateClanProfileConfiguration = async (
 	isPrivate: boolean,
 	theme: WebTheme,
 	hue: number | null,
+	color?: string | null,
 ) => {
-	const schema = await getSettingsSchema();
-	if (!schema.hasClanProfileTheme || !schema.hasClanProfileHue)
-		throw new Error("The clans profile appearance columns are not available");
+	const schema = await requireAppearanceSchema([
+		"hasClanProfileTheme", "hasClanProfileHue",
+		...(color != null ? ["hasClanProfileColor" as const] : []),
+	]);
 	return withTransaction(async (connection) => {
 		const [clans] = await connection.query<ClanSettingsLockRow[]>(
 			clanSettingsForUpdateQuery,
@@ -576,6 +645,8 @@ export const updateClanProfileConfiguration = async (
 			updateClanProfileConfigurationQuery,
 			[isPrivate ? 0 : 1, theme, hue, clan.id, ownerId],
 		);
+		if (color !== undefined && schema.hasClanProfileColor)
+			await connection.query(updateClanAccentColorQuery, [color, clan.id]);
 		return result.affectedRows === 1 ? clan.id : null;
 	});
 };
@@ -613,4 +684,17 @@ export const updateSelectedBadge = async (userId: number, badgeId: number) => {
 		await connection.query(updateSelectedBadgeQuery, [badgeId, userId]);
 		return true;
 	});
+};
+
+export const getUserWebAccentColor = async (userId: number): Promise<string | null> => {
+	if (!(await getSettingsSchema()).hasWebColor) return null;
+	const rows = await executeQuery<RowDataPacket & { color: string | null }>(userWebAccentColorQuery, [userId]);
+	return normalizeAccentColor(rows.at(0)?.color);
+};
+
+export const getProfileAccentColor = async (id: number, isClan: boolean): Promise<string | null> => {
+	const schema = await getSettingsSchema();
+	if (isClan ? !schema.hasClanProfileColor : !schema.hasProfileColor || !schema.hasWebColor) return null;
+	const rows = await executeQuery<RowDataPacket & { color: string | null }>(isClan ? clanProfileAccentColorQuery : userProfileAccentColorQuery, [id]);
+	return normalizeAccentColor(rows.at(0)?.color);
 };

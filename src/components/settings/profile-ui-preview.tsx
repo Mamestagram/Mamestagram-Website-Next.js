@@ -1,5 +1,7 @@
 "use client";
 
+import { getAccentColorStyle } from "@/lib/accent-color";
+
 import { Fragment, memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
 import { createPortal } from "react-dom";
@@ -160,7 +162,7 @@ type DraggedItem = { kind: "content"; index: number; layout: ProfileUiDragLayout
 type ResizeFeedback = { label: string; x: number; y: number };
 
 export default function ProfileUiPreview({
-	contents: savedContents, disabled, bannerUrl, backgroundUrl, profileTheme, profileHue,
+	contents: savedContents, disabled, bannerUrl, backgroundUrl, profileTheme, profileHue, profileColor = null,
 	selectedContentIndex, customAchievements, activeAchievementSlot, onAchievementSlotClick, onAchievementReorder, toolboxDrag, onToolboxDragEnd, onChange, onEditContent, snappingEnabled = true,
 }: Readonly<{
 	contents: ProfileUiItem[];
@@ -173,6 +175,7 @@ export default function ProfileUiPreview({
 	backgroundUrl: string;
 	profileTheme: WebTheme;
 	profileHue: number | null;
+	profileColor?: string | null;
 	selectedContentIndex: number | null;
 	snappingEnabled?: boolean;
 	toolboxDrag?: ProfileUiToolboxDragSession | null;
@@ -501,9 +504,10 @@ export default function ProfileUiPreview({
 			...(autoHeight ? { height: -1 } : {}),
 		});
 	};
-	const shellStyle: PreviewShellStyle = { ...getProfileUiScoreLayoutStyle(PROFILE_UI_PREVIEW_HEIGHT_SCALE), "--user-hue": profileHue ?? 210 };
+	const accentStyle = { "--user-hue": profileHue ?? 210, "--accent-saturation-scale": 1, "--accent-lightness-shift": "0%", ...getAccentColorStyle(profileColor) };
+	const shellStyle: PreviewShellStyle = { ...getProfileUiScoreLayoutStyle(PROFILE_UI_PREVIEW_HEIGHT_SCALE), ...accentStyle };
 	const feedbackStyle: ResizeValueStyle | undefined = resizeFeedback ? {
-		"--user-hue": profileHue ?? 210,
+		...accentStyle,
 		left: clamp(resizeFeedback.x + 14, 8, Math.max(8, window.innerWidth - 160)),
 		top: clamp(resizeFeedback.y + 14, 8, Math.max(8, window.innerHeight - 48)),
 	} : undefined;
@@ -545,7 +549,7 @@ export default function ProfileUiPreview({
 	><ProfileUiPreviewContentBody content={ghost.content} customAchievements={customAchievements}/><span className={styles.profile_ui_preview_move_label}>Drop here</span></article>;
 
 	return <>
-		<div className={`${styles.profile_ui_preview_shell} ${responsiveStyles.profile_ui_responsive}`} data-theme-independent="true" data-profile-theme={getWebThemeName(profileTheme)} data-custom-hue={profileHue !== null} style={shellStyle}>
+		<div className={`${styles.profile_ui_preview_shell} ${responsiveStyles.profile_ui_responsive}`} data-theme-independent="true" data-profile-theme={getWebThemeName(profileTheme)} data-custom-hue={profileHue !== null || profileColor !== null} data-accent-color={profileColor ?? undefined} style={shellStyle}>
 			<div className={styles.profile_ui_preview_toolbar}>
 				<span><FontAwesome prefix="fad" name="desktop"/> Live profile preview</span>
 				<small>Drag content to move, resize from the highlighted edges, or right-click for settings.</small>
@@ -610,7 +614,7 @@ export default function ProfileUiPreview({
 			</div>
 		</div>
 		{resizeAlignment && snappingEnabled && createPortal(
-			<div ref={guidesRef} className={styles.profile_ui_preview_resize_guides} style={{ "--user-hue": profileHue ?? 210 } as ResizeValueStyle} data-theme-independent="true" data-profile-ui-resize-guides aria-hidden="true">
+			<div ref={guidesRef} className={styles.profile_ui_preview_resize_guides} style={accentStyle as ResizeValueStyle} data-theme-independent="true" data-profile-ui-resize-guides aria-hidden="true">
 				{resizeAlignment.width && <span data-snap-axis="width"/>}
 				{resizeAlignment.height && <span data-snap-axis="height"/>}
 			</div>, document.body)}

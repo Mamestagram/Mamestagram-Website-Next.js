@@ -176,6 +176,7 @@ export default async function Profile({
 							<ProfileAppearance
 								theme={profileAppearance.profileTheme}
 								hue={profileAppearance.profileHue}
+							color={profileAppearance.profileColor}
 							/>
 						)}
 						<PrivateProfile/>
@@ -245,6 +246,7 @@ export default async function Profile({
 						<ProfileAppearance
 							theme={profileAppearance.profileTheme}
 							hue={profileAppearance.profileHue}
+							color={profileAppearance.profileColor}
 						/>
 					)}
 					{backgroundUrl && <ProfileBackground imageUrl={backgroundUrl}/>}

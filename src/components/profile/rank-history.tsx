@@ -126,8 +126,8 @@ export default function RankHistoryChart({ history }: { history: RankHistory }) 
 				     aria-hidden="true">
 					<defs>
 						<linearGradient id="rank-history-area" x1="0" y1="0" x2="0" y2="1">
-							<stop offset="0%" stopColor="hsl(var(--user-hue), 70%, 62%)" stopOpacity=".34"/>
-							<stop offset="100%" stopColor="hsl(var(--user-hue), 70%, 42%)" stopOpacity="0"/>
+							<stop offset="0%" className={styles.rank_gradient_start} stopOpacity=".34"/>
+							<stop offset="100%" className={styles.rank_gradient_end} stopOpacity="0"/>
 						</linearGradient>
 					</defs>
 					{[.25, .5, .75].map((position) =>

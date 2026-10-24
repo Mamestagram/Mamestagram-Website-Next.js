@@ -1,6 +1,7 @@
+import { getAccentHue, isAccentColor } from "@/lib/accent-color";
 import { revalidatePath } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
-import { updateWebAppearance } from "@/database/settings";
+import { AppearanceSchemaError, updateWebAppearance } from "@/database/settings";
 import { isSameOriginMutation } from "@/lib/api-request";
 import { writeError } from "@/lib/log";
 import type { MutationResponse } from "@/lib/mutation-response";
@@ -39,19 +40,23 @@ export const PATCH = async (
 		!isRecord(body) ||
 		typeof body.customAppearance !== "boolean" ||
 		!isWebTheme(body.theme) ||
-		(body.hue !== null && !isWebHue(body.hue))
+		(body.hue !== null && !isWebHue(body.hue)) ||
+		(body.color !== undefined && body.color !== null && !isAccentColor(body.color))
 	)
 		return NextResponse.json(
 			{ success: false, message: "The selected appearance is invalid." },
 			{ status: 400 },
 		);
 	
+	const color = typeof body.color === "string" ? body.color.toLowerCase() : body.color;
+	const hue = typeof color === "string" ? getAccentHue(color) : body.hue;
 	try {
 		const wasUpdated = await updateWebAppearance(
 			currentUser.id,
 			body.theme,
-			body.hue,
+			hue,
 			body.customAppearance,
+			color,
 		);
 		if (!wasUpdated)
 			return NextResponse.json(
@@ -71,8 +76,8 @@ export const PATCH = async (
 			routeType: "theme-settings",
 		});
 		return NextResponse.json(
-			{ success: false, message: "Appearance could not be updated." },
-			{ status: 500 },
+			{ success: false, message: error instanceof AppearanceSchemaError ? error.message : "Appearance could not be updated." },
+			{ status: error instanceof AppearanceSchemaError ? 503 : 500 },
 		);
 	}
 };

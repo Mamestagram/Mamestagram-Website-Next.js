@@ -1080,7 +1080,7 @@
 						font-weight: 800;
 						
 						& span:is(.percent_label, .pp_label) {
-							color: hsl(var(--user-hue), 17%, 57%);
+							color: inherit;
 							font-size: 0.75rem;
 							font-weight: inherit;
 						}

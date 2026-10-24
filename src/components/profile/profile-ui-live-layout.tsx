@@ -47,7 +47,7 @@ export default function ProfileUiLiveLayout({ items, contents, profileId }: Read
 
 	return <>
 		<span data-profile-ui-live-preview hidden aria-hidden="true"/>
-		{draft && <ProfileAppearance theme={draft.theme} hue={draft.hue}/>}
+		{draft && <ProfileAppearance theme={draft.theme} hue={draft.hue} color={draft.color}/>}
 		<ProfileUiLayout items={draft?.contents ?? items} contents={draft?.customAchievements === undefined ? contents : { ...contents, custom_achievements: <CustomAchievementsCard achievements={draft.customAchievements} canRevealSecretConditions/> }}/>
 	</>;
 }

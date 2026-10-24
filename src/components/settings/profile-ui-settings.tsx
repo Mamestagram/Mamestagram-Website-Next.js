@@ -59,6 +59,7 @@ export default function ProfileUiSettings({
 	backgroundUrl,
 	profileTheme,
 	profileHue,
+	profileColor = null,
 }: Readonly<{
 	profileId: number;
 	initialContents: ProfileUiItem[];
@@ -68,6 +69,7 @@ export default function ProfileUiSettings({
 	backgroundUrl: string;
 	profileTheme: WebTheme;
 	profileHue: number | null;
+	profileColor?: string | null;
 }>) {
 	const [history, dispatchHistory] = useReducer(profileUiHistoryReducer<ProfileUiEditorDraft>,
 		{ contents: initialContents, achievementIds: customAchievements.selectedIds },
@@ -375,7 +377,7 @@ export default function ProfileUiSettings({
 							</button>
 							<button ref={previewButtonRef} type="button" className={styles.secondary_button} disabled={isPending} onClick={() => {
 								closeSettings();
-								const draft = parseProfileUiPreviewDraft({ contents, customAchievements: selectedAchievements, theme: profileTheme, hue: profileHue });
+								const draft = parseProfileUiPreviewDraft({ contents, customAchievements: selectedAchievements, theme: profileTheme, hue: profileHue, color: profileColor });
 								if (draft) setLivePreviewDraft(draft);
 								else setStatus({ success: false, message: "The current layout cannot be previewed. Check its settings." });
 							}}>
@@ -456,6 +458,7 @@ export default function ProfileUiSettings({
 							backgroundUrl={backgroundUrl}
 							profileTheme={profileTheme}
 							profileHue={profileHue}
+						profileColor={profileColor}
 							selectedContentIndex={editingContentIndex}
 							snappingEnabled={snappingEnabled}
 							onChange={(next) => {

@@ -2529,7 +2529,7 @@
 							width: 100%;
 							padding: 0 0 0 7px;
 							overflow: hidden;
-							background: hsla(var(--user-hue), 47.368%, 3.725%, 0.66);
+							background: hsl(var(--user-hue), 0%, 3.725%);
 							border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.08);
 							border-radius: 13px;
 							box-shadow: 0 8px 24px hsla(var(--user-hue), 0%, 0%, 0.14),
@@ -2566,20 +2566,20 @@
 								z-index: -1;
 								background: linear-gradient(
 									90deg,
-									hsla(var(--user-hue), 47.368%, 3.725%, 0.92) 0%,
-									hsla(var(--user-hue), 47.368%, 3.725%, 0.67) 49%,
-									hsla(var(--user-hue), 47.368%, 3.725%, 0.9) 100%
+									hsla(var(--user-hue), 0%, 3.725%, 0.92) 0%,
+									hsla(var(--user-hue), 0%, 3.725%, 0.67) 49%,
+									hsla(var(--user-hue), 0%, 3.725%, 0.9) 100%
 								),
 								linear-gradient(
 									110deg,
-									hsla(var(--user-hue), 70%, 58%, 0.13),
+									hsla(var(--user-hue), 0%, 58%, 0.13),
 									transparent 48%
 								);
 								pointer-events: none;
 							}
 							
 							&:hover {
-								background: hsla(var(--user-hue), 42.857%, 5.49%, 0.8);
+								background: hsl(var(--user-hue), 0%, 5.49%);
 								border-color: hsla(var(--user-hue), 70%, 70%, 0.32);
 								box-shadow: 0 10px 28px hsla(var(--user-hue), 0%, 0%, 0.24),
 								inset 3px 0 0 hsla(var(--user-hue), 70%, 62%, 0.7);
@@ -2652,8 +2652,8 @@
 								color: hsl(var(--grade-default-hue), 26.829%, 83.922%);
 								background: linear-gradient(
 									145deg,
-									hsla(var(--user-hue), 32.203%, 11.569%, 0.94),
-									hsla(var(--user-hue), 57.143%, 2.745%, 0.88)
+									hsl(var(--user-hue), 0%, 11.569%),
+									hsl(var(--user-hue), 0%, 2.745%)
 								);
 								border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.14);
 								border-radius: 12px;
@@ -2777,7 +2777,7 @@
 								padding: 4px 7px;
 								overflow: hidden;
 								color: hsl(var(--user-hue), 60%, 78%);
-								background: hsla(var(--user-hue), 52%, 45%, 0.16);
+								background: hsl(var(--user-hue), 0%, 12%);
 								border: 1px solid hsla(var(--user-hue), 62%, 65%, 0.16);
 								border-radius: 999px;
 								font-weight: 700;
@@ -2821,8 +2821,8 @@
 								overflow: hidden;
 								background: linear-gradient(
 									145deg,
-									hsla(var(--user-hue), 41.176%, 6.667%, 0.86),
-									hsla(var(--user-hue), 63.636%, 2.157%, 0.9)
+									hsl(var(--user-hue), 0%, 6.667%),
+									hsl(var(--user-hue), 0%, 2.157%)
 								);
 								border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.1);
 								border-radius: 0 12px 12px 0;
@@ -2860,7 +2860,7 @@
 								
 								& .pp_label {
 									margin-left: 2px;
-									color: hsl(var(--user-hue), 32%, 65%);
+									color: inherit;
 									font-size: 0.7rem;
 									font-weight: 800;
 									letter-spacing: 0.01em;
@@ -3635,7 +3635,7 @@
 .score_action_inner {
 	min-height: 0;
 	overflow: hidden;
-	background: hsla(var(--user-hue), 62.5%, 3.137%, 0.78);
+	background: hsl(var(--user-hue), 0%, 3.137%);
 	border-top: 1px solid hsla(var(--user-hue), 100%, 75.49%, 0.12);
 	border-radius: 0 0 13px 13px;
 }
@@ -3674,7 +3674,7 @@
 		&:hover,
 		&:focus-visible {
 			color: hsl(var(--user-hue), 0%, 100%);
-			background-color: hsla(var(--user-hue), 56.332%, 55.098%, 0.16);
+			background-color: hsla(var(--user-hue), 0%, 100%, 0.16);
 			border-color: hsla(var(--user-hue), 100%, 75.49%, 0.28);
 		}
 		
@@ -5399,6 +5399,14 @@
 	line-height: 1.2;
 }
 
+.rank_gradient_start {
+	stop-color: hsl(var(--user-hue), 70%, 62%);
+}
+
+.rank_gradient_end {
+	stop-color: hsl(var(--user-hue), 70%, 42%);
+}
+
 .profile_ui_customized > .section_box {
 	background: linear-gradient(
 		135deg,
@@ -5406,6 +5414,47 @@
 		hsla(var(--user-hue), 23.077%, 5.098%, calc(var(--profile-ui-box-opacity, 0.9) * 0.75 / 0.9)) 70%,
 		hsla(var(--user-hue), 43%, 14%, calc(var(--profile-ui-box-opacity, 0.9) * 0.3 / 0.9)) 100%
 	);
+}
+
+.profile_ui_customized[data-custom-color="true"] {
+	--accent-saturation-scale: 1;
+	--accent-lightness-shift: 0%;
+	--user-hue: var(--profile-ui-color-hue, 210);
+	--profile-surface-hue: var(--profile-ui-color-hue, 210);
+	--profile-ui-child-background: hsl(
+		var(--profile-ui-color-hue, 210),
+		var(--profile-ui-color-saturation, 11%),
+		clamp(0%, calc(var(--profile-ui-color-lightness, 16%) + 10%), 100%)
+	);
+	--profile-ui-child-hover-background: hsl(
+		var(--profile-ui-color-hue, 210),
+		var(--profile-ui-color-saturation, 11%),
+		clamp(0%, calc(var(--profile-ui-color-lightness, 16%) + 20%), 100%)
+	);
+	--profile-ui-child-icon-background: hsl(
+		var(--profile-ui-color-hue, 210),
+		var(--profile-ui-color-saturation, 11%),
+		clamp(0%, calc(var(--profile-ui-color-lightness, 16%) + 5%), 100%)
+	);
+}
+
+.profile_page .container .profile_ui_customized[data-custom-color="true"] > .section_box :is(
+	.meta_chip,
+	.social_strip > li,
+	.last_online,
+	.clan_member_card,
+	.rank_history_stats > li,
+	.rank_chart,
+	.stat_container ul > li,
+	.skeleton_stat_card
+) {
+	background-color: var(--profile-ui-child-background, transparent);
+
+	&:hover,
+	&:focus-visible,
+	&:focus-within {
+		background-color: var(--profile-ui-child-hover-background, transparent);
+	}
 }
 
 .profile_ui_customized[data-custom-color="true"] > .section_box {

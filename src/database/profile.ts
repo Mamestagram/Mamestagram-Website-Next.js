@@ -1,3 +1,4 @@
+import { getProfileAccentColor } from "@/database/settings";
 import { cache } from "react";
 import { executeQuery } from "./connection";
 import {
@@ -261,6 +262,7 @@ export type ProfileRouteInfo = Pick<
 	hasProfileAppearance: boolean;
 	profileTheme: WebTheme;
 	profileHue: number | null;
+	profileColor: string | null;
 };
 
 export const getProfileRouteInfo = cache(
@@ -283,6 +285,7 @@ export const getProfileRouteInfo = cache(
 					hasProfileAppearance: true,
 					profileTheme: normalizeWebTheme(clan.profile_theme),
 					profileHue: normalizeWebHue(clan.profile_hue),
+					profileColor: await getProfileAccentColor(id, true),
 				}
 				: null;
 		}
@@ -304,6 +307,7 @@ export const getProfileRouteInfo = cache(
 				hasProfileAppearance: user.has_profile_appearance === 1,
 				profileTheme: normalizeWebTheme(user.profile_theme),
 				profileHue: normalizeWebHue(user.profile_hue),
+				profileColor: await getProfileAccentColor(id, false),
 			}
 			: null;
 	},

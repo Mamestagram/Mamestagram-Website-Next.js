@@ -6,6 +6,18 @@ export const settingsSchemaQuery = `
 			AND table_name IN ('gacha', 'gacha_stats')
 	) AS badge_table_count,
 	(
+		SELECT COUNT(*) FROM information_schema.columns
+		WHERE table_schema = DATABASE() AND table_name = 'clans' AND column_name = 'profile_color'
+	) AS has_clan_profile_color,
+	(
+		SELECT COUNT(*) FROM information_schema.columns
+		WHERE table_schema = DATABASE() AND table_name = 'web_user_settings' AND column_name = 'profile_color'
+	) AS has_profile_color,
+	(
+		SELECT COUNT(*) FROM information_schema.columns
+		WHERE table_schema = DATABASE() AND table_name = 'web_user_settings' AND column_name = 'web_color'
+	) AS has_web_color,
+	(
 		SELECT COUNT(*)
 			FROM information_schema.columns
 		WHERE table_schema = DATABASE()
@@ -340,4 +352,29 @@ export const updateSelectedBadgeQuery = `
     SET set_badge = ?
     WHERE id = ?
     LIMIT 1
+`;
+
+export const userWebAccentColorQuery = `
+	SELECT web_color AS color FROM web_user_settings WHERE id = ? LIMIT 1
+`;
+
+export const userProfileAccentColorQuery = `
+	SELECT CASE WHEN COALESCE(use_web_appearance, 0) = 1 THEN web_color ELSE profile_color END AS color
+	FROM web_user_settings WHERE id = ? LIMIT 1
+`;
+
+export const clanProfileAccentColorQuery = `
+	SELECT profile_color AS color FROM clans WHERE id = ? LIMIT 1
+`;
+
+export const updateWebAccentColorQuery = `
+	UPDATE web_user_settings SET web_color = ? WHERE id = ? LIMIT 1
+`;
+
+export const updateProfileAccentColorQuery = `
+	UPDATE web_user_settings SET profile_color = ? WHERE id = ? LIMIT 1
+`;
+
+export const updateClanAccentColorQuery = `
+	UPDATE clans SET profile_color = ? WHERE id = ? LIMIT 1
 `;

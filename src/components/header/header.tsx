@@ -20,7 +20,7 @@ export default function Header() {
 					</Link>
 					<PageTitle/>
 					<div className="donation">
-						<Link title="Support us!" href="/support">
+						<Link title="Support us!" href="/support" data-accent-contrast-icon>
 							<FontAwesome prefix="fas" name="heart"/>
 						</Link>
 					</div>
@@ -54,7 +54,7 @@ export default function Header() {
 							</a>
 						</li>
 						<li className="donation">
-							<Link title="Support us!" href="/support">
+							<Link title="Support us!" href="/support" data-accent-contrast-icon>
 								<FontAwesome prefix="fas" name="heart"/>
 							</Link>
 						</li>

@@ -3,6 +3,8 @@
 :root {
 	/* hue */
 	--user-hue: 210;
+	--accent-saturation-scale: 1;
+	--accent-lightness-shift: 0%;
 	--grade-default-hue: 215;
 	--grade-silver-hue: 205.263;
 	--grade-gold-hue: 44.103;

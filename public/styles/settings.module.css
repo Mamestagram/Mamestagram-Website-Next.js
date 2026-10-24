@@ -1121,6 +1121,23 @@
 	border-radius: inherit;
 }
 
+.profile_ui_preview_content[data-custom-color="true"] > .profile_ui_preview_surface {
+	--accent-saturation-scale: 1;
+	--accent-lightness-shift: 0%;
+	--user-hue: var(--profile-ui-preview-color-hue, 210);
+	--profile-preview-surface-hue: var(--profile-ui-preview-color-hue, 210);
+	--profile-ui-child-background: hsl(
+		var(--profile-ui-preview-color-hue, 210),
+		var(--profile-ui-preview-color-saturation, 11%),
+		clamp(0%, calc(var(--profile-ui-preview-color-lightness, 16%) + 10%), 100%)
+	);
+	--profile-ui-child-hover-background: hsl(
+		var(--profile-ui-preview-color-hue, 210),
+		var(--profile-ui-preview-color-saturation, 11%),
+		clamp(0%, calc(var(--profile-ui-preview-color-lightness, 16%) + 20%), 100%)
+	);
+}
+
 .profile_ui_preview_content[data-selected="true"] {
 	outline: 2px solid hsl(var(--user-hue), 78%, 78%);
 	outline-offset: -2px;
@@ -1240,7 +1257,7 @@
 .profile_ui_preview_mock > span {
 	display: block;
 	min-width: 0;
-	background: hsla(var(--user-hue), 0%, 100%, 0.1);
+	background: var(--profile-ui-child-background, hsla(var(--user-hue), 0%, 100%, 0.1));
 	border-radius: 5px;
 }
 
@@ -1251,7 +1268,7 @@
 
 .profile_ui_preview_mock[data-content="info"] .profile_ui_preview_mock_avatar {
 	grid-row: 1 / -1;
-	background: hsla(var(--user-hue), 60%, 72%, 0.28);
+	background: var(--profile-ui-child-hover-background, hsla(var(--user-hue), 60%, 72%, 0.28));
 	border-radius: 11px;
 }
 
@@ -1288,7 +1305,7 @@
 	width: 32%;
 	height: 7px;
 	flex: 0 0 7px;
-	background: hsla(var(--user-hue), 60%, 72%, 0.28);
+	background: var(--profile-ui-child-hover-background, hsla(var(--user-hue), 60%, 72%, 0.28));
 	border-radius: 5px;
 }
 
@@ -1312,7 +1329,7 @@
 .profile_ui_preview_me_paragraph > span {
 	width: 96%;
 	min-width: 0;
-	background: hsla(var(--user-hue), 0%, 100%, 0.1);
+	background: var(--profile-ui-child-background, hsla(var(--user-hue), 0%, 100%, 0.1));
 	border-radius: 5px;
 }
 
@@ -1426,7 +1443,7 @@
 .profile_ui_preview_achievement_stat {
 	width: min(36px, 70%);
 	height: 4px;
-	background: hsla(var(--user-hue), 0%, 100%, 0.1);
+	background: var(--profile-ui-child-background, hsla(var(--user-hue), 0%, 100%, 0.1));
 	border-radius: 5px;
 }
 
@@ -1448,7 +1465,7 @@
 .profile_ui_preview_achievement_group_heading {
 	height: 18px;
 	flex: 0 0 auto;
-	background: hsla(var(--user-hue), 0%, 100%, 0.05);
+	background: var(--profile-ui-child-background, hsla(var(--user-hue), 0%, 100%, 0.05));
 	border-radius: 9px;
 }
 
@@ -1544,7 +1561,7 @@
 	grid-template-columns: 24px minmax(0, 1fr) 90px;
 	align-items: center;
 	column-gap: 9px;
-	background: hsla(var(--user-hue), 0%, 100%, 0.1);
+	background: hsl(var(--user-hue), 0%, 8%);
 	border-radius: 6px;
 }
 
@@ -1558,7 +1575,7 @@
 	width: 24px;
 	height: 24px;
 	grid-column: 1;
-	background: hsla(var(--user-hue), 60%, 72%, 0.22);
+	background: hsl(var(--user-hue), 0%, 16%);
 	border-radius: 6px;
 }
 
@@ -1566,7 +1583,7 @@
 	width: 90px;
 	height: 29px;
 	grid-column: 3;
-	background: hsla(var(--user-hue), 48%, 58%, 0.18);
+	background: hsl(var(--user-hue), 0%, 5%);
 	border-radius: 0 6px 6px 0;
 }
 
@@ -1592,7 +1609,7 @@
 	margin: var(--profile-ui-score-footer-gap) calc(-1 * var(--profile-ui-score-padding)) calc(-1 * var(--profile-ui-score-padding));
 	place-items: center;
 	color: hsl(var(--user-hue), 26.829%, 83.922%);
-	background: hsla(var(--user-hue), 0%, 100%, 0.045);
+	background: var(--profile-ui-child-background, hsla(var(--user-hue), 0%, 100%, 0.045));
 	border-top: 1px solid hsla(var(--user-hue), 0%, 100%, 0.12);
 	border-radius: 0 0 var(--profile-ui-preview-radius, 10px) var(--profile-ui-preview-radius, 10px);
 	font-size: 0.75rem;
@@ -3173,6 +3190,7 @@
 
 .hue_control {
 	--settings-hue-preview: 18;
+	--settings-accent-preview: hsl(18, 60%, 60%);
 	
 	display: grid;
 	padding: 18px;
@@ -3192,7 +3210,7 @@
 .hue_swatch {
 	width: 38px;
 	height: 38px;
-	background-color: hsl(var(--settings-hue-preview), 72%, 58%);
+	background-color: var(--settings-accent-preview, hsl(var(--settings-hue-preview), 72%, 58%));
 	border: 2px solid hsla(var(--settings-hue-preview), 82%, 84%, 0.72);
 	border-radius: 50%;
 	box-shadow: 0 0 18px hsla(var(--settings-hue-preview), 72%, 58%, 0.3);
@@ -3823,4 +3841,12 @@
 :global(html[data-rendering-mode="software"]) .section_card {
 	box-shadow: 0 7px 20px hsla(var(--user-hue), 0%, 0%, 0.2),
 	inset 0 1px 0 hsla(var(--user-hue), 0%, 100%, 0.04);
+}
+
+.accent_color_picker input[type="color"] {
+	height: 44px;
+	padding: 4px;
+	background: hsla(var(--user-hue), 0%, 100%, 0.04);
+	border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.15);
+	border-radius: 9px;
 }

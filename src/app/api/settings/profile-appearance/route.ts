@@ -1,6 +1,8 @@
+import { getAccentHue, isAccentColor } from "@/lib/accent-color";
 import { revalidatePath } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
 import {
+	AppearanceSchemaError,
 	updateClanProfileConfiguration,
 	updateProfileConfiguration,
 } from "@/database/settings";
@@ -50,6 +52,7 @@ export const PATCH = async (
 		typeof body.isPrivate !== "boolean" ||
 		!isWebTheme(body.theme) ||
 		(body.hue !== null && !isWebHue(body.hue)) ||
+		(body.color !== undefined && body.color !== null && !isAccentColor(body.color)) ||
 		(!isClan &&
 			(typeof body.useWebsiteAppearance !== "boolean" ||
 				typeof body.customAppearance !== "boolean"))
@@ -67,21 +70,25 @@ export const PATCH = async (
 			? body.customAppearance
 			: true;
 	
+	const color = typeof body.color === "string" ? body.color.toLowerCase() : body.color;
+	const hue = typeof color === "string" ? getAccentHue(color) : body.hue;
 	try {
 		const profileId = isClan
 			? await updateClanProfileConfiguration(
 				currentUser.id,
 				body.isPrivate,
 				body.theme,
-				body.hue,
+				hue,
+				color,
 			)
 			: (await updateProfileConfiguration(
 				currentUser.id,
 				body.isPrivate,
 				body.theme,
-				body.hue,
+				hue,
 				useWebsiteAppearance,
 				customAppearance,
+				color,
 			))
 				? currentUser.id
 				: null;
@@ -114,9 +121,9 @@ export const PATCH = async (
 		return NextResponse.json(
 			{
 				success: false,
-				message: `${isClan ? "Clan profile" : "Profile"} configuration could not be updated.`,
+				message: error instanceof AppearanceSchemaError ? error.message : `${isClan ? "Clan profile" : "Profile"} configuration could not be updated.`,
 			},
-			{ status: 500 },
+			{ status: error instanceof AppearanceSchemaError ? 503 : 500 },
 		);
 	}
 };

@@ -1,3 +1,4 @@
+import { getAccentColorStyle } from "@/lib/accent-color";
 import type { Metadata, Viewport } from "next";
 import {
 	JetBrains_Mono,
@@ -14,10 +15,11 @@ import {
 import type { CSSProperties, ReactNode } from "react";
 import type { ServerInfo, UserInfo } from "@/components/context/user-provider";
 import { UserProvider } from "@/components/context/user-provider";
+import AccentColorContrast from "@/components/accent-color-contrast";
 import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
 import RenderingPerformanceMode from "@/components/rendering-performance-mode";
-import { getUserWebHue, getUserWebTheme } from "@/database/settings";
+import { getUserWebAccentColor, getUserWebHue, getUserWebTheme } from "@/database/settings";
 import { getLoadingScreenEmbedUrl } from "@/lib/loading-screen";
 import { resolveProfileAvatarUrl } from "@/lib/profile-banner";
 import { getProfileCosmetics } from "@/lib/profile-cosmetics";
@@ -161,6 +163,7 @@ export default async function RootLayout({
 		loadingScreenEmbedUrl,
 		webTheme,
 		webHue,
+		webColor,
 	] = await Promise.all([
 		userInfo.id
 			? resolveProfileAvatarUrl(userInfo.id, false, serverInfo.baseDomain)
@@ -171,6 +174,7 @@ export default async function RootLayout({
 			? getUserWebTheme(userInfo.id)
 			: Promise.resolve(DEFAULT_WEB_THEME),
 		userInfo.id ? getUserWebHue(userInfo.id) : Promise.resolve(null),
+		userInfo.id ? getUserWebAccentColor(userInfo.id) : Promise.resolve(null),
 	]);
 	const userHueStyle: UserHueStyle | undefined =
 		webHue === null ? undefined : { "--user-hue": webHue };
@@ -181,10 +185,12 @@ export default async function RootLayout({
 			lang="en"
 			data-theme={getWebThemeName(webTheme)}
 			data-user-hue={webHue ?? undefined}
-			style={{ ...primaryFontFamilies, ...userHueStyle }}
+			data-accent-color={webColor ?? undefined}
+			style={{ ...primaryFontFamilies, ...userHueStyle, ...getAccentColorStyle(webColor) }}
 		>
 			<body>
 				<RenderingPerformanceMode/>
+				<AccentColorContrast/>
 				<UserProvider
 					serverInfo={serverInfo}
 					userInfo={userInfo}

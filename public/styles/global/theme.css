@@ -156,8 +156,8 @@ html[data-theme="legacy"] [class$="_hero_counter"] {
 html[data-theme="legacy"] body [style*="--activity-background-image"] [data-activity-background] {
 	background: linear-gradient(
 		90deg,
-		hsla(var(--user-hue), 57.895%, 3.725%, 0.94),
-		hsla(var(--user-hue), 57.895%, 3.725%, 0.72)
+		hsla(var(--user-hue), 0%, 3.725%, 0.94),
+		hsla(var(--user-hue), 0%, 3.725%, 0.72)
 	),
 	var(--activity-background-image) center 45% / cover no-repeat !important;
 	background-blend-mode: normal;
@@ -263,7 +263,7 @@ html[data-theme="legacy"] [class*="_activity_list"] > li {
 
 html[data-theme="legacy"] [class*="_activity_grade"],
 html[data-theme="legacy"] [class*="_activity_value"] {
-	background-color: hsl(var(--user-hue), 35.484%, 6.078%) !important;
+	background-color: hsl(var(--user-hue), 0%, 6.078%) !important;
 	background-image: none !important;
 }
 
@@ -301,11 +301,15 @@ html[data-theme="legacy"] [class$="_dashboard_panel"] {
 
 html[data-theme="legacy"] [class$="_player_card"],
 html[data-theme="legacy"] [class$="_quick_links"] > a,
-html[data-theme="legacy"] [class$="_activity_list"] > li,
-html[data-theme="legacy"] [class$="_activity_action_inner"],
-html[data-theme="legacy"] [class$="_score_action_inner"],
 html[data-theme="legacy"] [class$="_panel_empty"] {
 	background-color: hsl(var(--user-hue), 7%, 18%) !important;
+	background-image: none !important;
+}
+
+html[data-theme="legacy"] [class$="_activity_list"] > li,
+html[data-theme="legacy"] [class$="_activity_action_inner"],
+html[data-theme="legacy"] [class$="_score_action_inner"] {
+	background-color: hsl(var(--user-hue), 0%, 3.137%) !important;
 	background-image: none !important;
 }
 
@@ -366,22 +370,14 @@ html[data-theme="legacy"] [class*="_profile_page"] {
 		& [class$="_rank_history_stats"] > li,
 		& [class$="_rank_chart"],
 		& [class$="_stat_container"] ul > li {
-			background-color: hsl(
-				var(--profile-surface-hue),
-				9.934%,
-				29.608%
-			) !important;
+			background-color: var(--profile-ui-child-background, hsl(var(--profile-surface-hue), 9.934%, 29.608%)) !important;
 			box-shadow: 0 4px 10px hsla(var(--user-hue), 0%, 0%, 0.36) !important;
 			transition-duration: 180ms !important;
 			
 			&:hover,
 			&:focus-visible,
 			&:focus-within {
-				background-color: hsl(
-					var(--profile-surface-hue),
-					9.901%,
-					39.608%
-				) !important;
+				background-color: var(--profile-ui-child-hover-background, hsl(var(--profile-surface-hue), 9.901%, 39.608%)) !important;
 			}
 		}
 	}
@@ -399,7 +395,7 @@ html[data-theme="legacy"] [class*="_profile_page"] {
 	}
 	
 	& [class$="_social_strip"] > li {
-		background: hsl(var(--profile-surface-hue), 9.934%, 29.608%) !important;
+		background: var(--profile-ui-child-background, hsl(var(--profile-surface-hue), 9.934%, 29.608%)) !important;
 	}
 	
 	& [class$="_social_card"] {
@@ -407,11 +403,7 @@ html[data-theme="legacy"] [class*="_profile_page"] {
 	}
 	
 	& [class$="_social_icon"] {
-		background-color: hsl(
-			var(--profile-surface-hue),
-			9.934%,
-			24.608%
-		) !important;
+		background-color: var(--profile-ui-child-icon-background, hsl(var(--profile-surface-hue), 9.934%, 24.608%)) !important;
 		background-image: none !important;
 	}
 	
@@ -420,21 +412,13 @@ html[data-theme="legacy"] [class*="_profile_page"] {
 	}
 	
 	& [class$="_skeleton_stat_card"] {
-		background-color: hsl(
-			var(--profile-surface-hue),
-			9.934%,
-			29.608%
-		) !important;
+		background-color: var(--profile-ui-child-background, hsl(var(--profile-surface-hue), 9.934%, 29.608%)) !important;
 		box-shadow: 0 4px 10px hsla(var(--user-hue), 0%, 0%, 0.36) !important;
 	}
 	
 	& [class$="_skeleton_group_title"],
 	& [class$="_skeleton_stat_card"] i {
-		background-color: hsl(
-			var(--profile-surface-hue),
-			9.901%,
-			39.608%
-		) !important;
+		background-color: var(--profile-ui-child-hover-background, hsl(var(--profile-surface-hue), 9.901%, 39.608%)) !important;
 	}
 	
 	& [class$="_collection_status"] [class$="_colored"] {
@@ -468,11 +452,11 @@ html[data-theme="legacy"] [class*="_player_scores"] {
 	
 	& [class$="_grade"],
 	& [class$="_score_value"] {
-		background-color: hsl(var(--user-hue), 35.484%, 6.078%) !important;
+		background-color: hsl(var(--user-hue), 0%, 6.078%) !important;
 	}
 	
 	& [class$="_difficulty"] {
-		background-color: hsl(var(--user-hue), 24%, 18%) !important;
+		background-color: hsl(var(--user-hue), 0%, 18%) !important;
 	}
 }
 

@@ -429,6 +429,7 @@ export default async function SettingsPage({
 									initialHue={
 										activeClan ? activeClan.profileHue : settings.profileHue
 									}
+									initialColor={activeClan ? activeClan.profileColor : settings.profileColor}
 									initialIsPrivate={
 										activeClan ? activeClan.isPrivate : settings.isPrivate
 									}
@@ -442,6 +443,7 @@ export default async function SettingsPage({
 									}
 									websiteTheme={activeClan ? undefined : settings.webTheme}
 									websiteHue={activeClan ? undefined : settings.webHue}
+									websiteColor={activeClan ? undefined : settings.webColor}
 									canResetScores={canResetScores}
 									scope={activeScope}
 									profileUiEditor={
@@ -466,6 +468,7 @@ export default async function SettingsPage({
 								<ThemeSettingsForm
 									initialTheme={settings.webTheme}
 									initialHue={settings.webHue}
+									initialColor={settings.webColor}
 									initialCustomAppearance={settings.hasCustomWebAppearance}
 								/>
 							)}
