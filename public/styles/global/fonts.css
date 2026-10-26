@@ -1,4 +1,14 @@
 :root {
+	--font-nunito: "Nunito";
+	--font-m-plus-1-code: "M PLUS 1 Code";
+	--font-noto-sans: "Noto Sans";
+	--font-noto-sans-tc: "Noto Sans TC";
+	--font-noto-sans-arabic: "Noto Sans Arabic";
+	--font-noto-sans-jp: "Noto Sans JP";
+	--font-noto-sans-kr: "Noto Sans KR";
+	--font-noto-sans-thai-looped: "Noto Sans Thai Looped";
+	--font-jetbrains-mono: "JetBrains Mono";
+	--font-space-mono: "Space Mono";
 	--font-body: var(--font-nunito, "Nunito"), var(--font-m-plus-1-code, "M PLUS 1 Code"), var(--font-noto-sans, "Noto Sans"), var(--font-noto-sans-tc, "Noto Sans TC"), var(--font-noto-sans-arabic, "Noto Sans Arabic"), var(--font-noto-sans-jp, "Noto Sans JP"), var(--font-noto-sans-kr, "Noto Sans KR"), var(--font-noto-sans-thai-looped, "Noto Sans Thai Looped");
 	--font-code: var(--font-jetbrains-mono, "JetBrains Mono"), var(--font-body, sans-serif), monospace;
 }
