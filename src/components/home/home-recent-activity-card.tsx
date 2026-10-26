@@ -16,12 +16,14 @@ export default function HomeRecentActivityCard({
 	label,
 	beatmapHref,
 	replayUrl,
+	replayShareHref,
 	style,
 	children,
 }: Readonly<{
 	label: string;
 	beatmapHref: string;
 	replayUrl: string;
+	replayShareHref: string;
 	style: CSSProperties;
 	children: ReactNode;
 }>) {
@@ -76,6 +78,7 @@ export default function HomeRecentActivityCard({
 						<ReplayViewer
 							label={label}
 							replayUrl={replayUrl}
+							shareHref={replayShareHref}
 							buttonLabel="Watch replay"
 						>
 							<FontAwesome prefix="fad" name="circle-play"/>

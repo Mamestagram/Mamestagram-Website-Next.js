@@ -16,6 +16,7 @@ import type {
 import HomeRecentActivityCard from "@/components/home/home-recent-activity-card";
 import PlayerAvatar from "@/components/player-avatar";
 import { ModeNum, OsuMode, type VnMode } from "@/lib/mode";
+import { getReplayShareHref } from "@/lib/replay-share";
 import styles from "@s/home.module.css";
 
 type HomeHeroStyle = CSSProperties & {
@@ -305,11 +306,13 @@ export default function HomeDashboard({
 									"--activity-background-image": `url("https://assets.ppy.sh/beatmaps/${activity.setId}/covers/cover.jpg")`,
 								};
 								const activityLabel = `${activity.artist} — ${activity.title}`;
+								const beatmapHref = `/beatmaps/${activity.setId}/${activity.mapId}`;
 								return (
 									<HomeRecentActivityCard
 										key={activity.id}
 										label={activityLabel}
-										beatmapHref={`/beatmaps/${activity.setId}/${activity.mapId}`}
+										beatmapHref={beatmapHref}
+										replayShareHref={getReplayShareHref(beatmapHref, activity.id)}
 										replayUrl={`https://render.${baseDomain}/embed/${activity.id}`}
 										style={activityStyle}
 									>
