@@ -2281,7 +2281,7 @@
 						
 						&.grade_count_area {
 							& li h3 {
-								font-family: var(--font-space-mono, "Space Mono"), var(--font-body, sans-serif);
+								font-family: var(--font-space-mono, "Space Mono"), var(--font-body, sans-serif), sans-serif;
 								font-size: 0.92rem;
 							}
 							
@@ -2659,7 +2659,7 @@
 								border-radius: 12px;
 								box-shadow: 0 6px 18px hsla(var(--user-hue), 0%, 0%, 0.34),
 								inset 0 1px 0 hsla(var(--user-hue), 0%, 100%, 0.08);
-								font-family: var(--font-space-mono, "Space Mono"), var(--font-body, sans-serif);
+								font-family: var(--font-space-mono, "Space Mono"), var(--font-body, sans-serif), sans-serif;
 								font-size: 1.28rem;
 								font-weight: 700;
 								letter-spacing: -0.035em;
@@ -3239,7 +3239,7 @@
 				background: hsla(var(--user-hue), 52.941%, 3.333%, 0.66);
 				border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.14);
 				border-radius: 12px;
-				font-family: var(--font-code, monospace);
+				font-family: var(--font-code, monospace), monospace;
 				font-size: 0.86rem;
 				line-height: 1.55;
 				outline: none;
@@ -3534,7 +3534,7 @@
 			& code,
 			& pre {
 				background-color: hsla(var(--user-hue), 0%, 0%, 0.3);
-				font-family: var(--font-code, monospace);
+				font-family: var(--font-code, monospace), monospace;
 				border-radius: 6px;
 			}
 			
@@ -4829,6 +4829,14 @@
 }
 
 .profile_ui_slot {
+	--profile-ui-content-span: 100;
+	--profile-ui-height: auto;
+	--profile-ui-min-height: 0px;
+	--profile-ui-edge-radius: 20px;
+	--profile-ui-box-opacity: 0.9;
+	--profile-ui-color-hue: initial;
+	--profile-ui-color-saturation: initial;
+	--profile-ui-color-lightness: initial;
 	display: block !important;
 	min-width: 0;
 	max-width: 100%;
@@ -4837,6 +4845,8 @@
 }
 
 .profile_ui_content {
+	--profile-ui-score-actions-height: 0px;
+	--profile-ui-score-actions-base-height: 0px;
 	display: block !important;
 	box-sizing: border-box;
 	width: 100%;
@@ -5405,6 +5415,10 @@
 
 .rank_gradient_end {
 	stop-color: hsl(var(--user-hue), 70%, 42%);
+}
+
+.profile_ui_customized {
+	--profile-ui-child-opacity: min(1, calc(var(--profile-ui-box-opacity, 0.9) + 0.1));
 }
 
 .profile_ui_customized > .section_box {

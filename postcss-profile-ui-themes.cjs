@@ -4,6 +4,26 @@ const legacyScope = '[data-profile-ui-theme="legacy"]';
 const glassScope = '[data-profile-ui-theme="glass"]';
 const excludeGlass = `:not(:where(${glassScope}, ${glassScope} *))`;
 
+// Scale background colors without fading card text, icons, or images.
+const scaleChildBackground = (value, postcss) => {
+	let result = "", offset = 0;
+	for (const match of value.matchAll(/\bhsla?\(/g)) {
+		if (match.index < offset) continue;
+		const start = match.index + match[0].length;
+		let end = start, depth = 1;
+		for (; end < value.length && depth; end++) {
+			if (value[end] === "(") depth++;
+			else if (value[end] === ")") depth--;
+		}
+		if (depth) break;
+		const parts = postcss.list.comma(value.slice(start, end - 1));
+		if (parts.length !== 3 && parts.length !== 4) continue;
+		result += value.slice(offset, match.index) + `hsla(${parts.slice(0, 3).join(", ")}, calc(${parts[3] ?? "1"} * var(--profile-ui-child-opacity, 1)))`;
+		offset = end;
+	}
+	return result + value.slice(offset);
+};
+
 const hasLegacyParent = (rule) => {
 	for (let parent = rule.parent; parent; parent = parent.parent)
 		if (parent.type === "rule" && parent.selector.includes(legacyRoot)) return true;
@@ -27,6 +47,24 @@ const scopeLegacySelector = (selector) => {
 module.exports = () => ({
 	postcssPlugin: "mamestagram-profile-ui-themes",
 	Once(root, { postcss }) {
+		const file = root.source?.input.file ?? "";
+		if (/[\\/]profile\.module\.css$/.test(file) || /[\\/]settings\.module\.css$/.test(file) || /[\\/]global[\\/]theme\.css$/.test(file)) {
+			root.walkDecls((declaration) => {
+				const childColor = /^--profile-ui-child-(?:hover-|icon-)?background$/.test(declaration.prop);
+				if (!childColor && !/^background(?:-color|-image)?$/.test(declaration.prop)) return;
+				const selector = declaration.parent.selector ?? "";
+				if (/[\\/]global[\\/]theme\.css$/.test(file)) {
+					let parent = declaration.parent;
+					for (; parent; parent = parent.parent)
+						if (parent.type === "rule" && /_profile_page|_player_scores/.test(parent.selector)) break;
+					if (!parent) return;
+				}
+				// Outer content backgrounds already use the parent's opacity directly.
+				if (/profile_ui_customized.*>\s*\.section_box$/.test(selector) || selector === '& [class*="_section_box"]') return;
+				if (file.endsWith("settings.module.css") && !childColor && !/profile_ui_preview_(?:mock|me_|score|achievement)/.test(selector)) return;
+				declaration.value = scaleChildBackground(declaration.value, postcss);
+			});
+		}
 		const originalRules = [];
 		root.walkRules((rule) => originalRules.push(rule));
 		for (const rule of originalRules) {
