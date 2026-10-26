@@ -554,7 +554,7 @@ export default function ProfileUiPreview({
 				<span><FontAwesome prefix="fad" name="desktop"/> Live profile preview</span>
 				<small>Drag content to move, resize from the highlighted edges, or right-click for settings.</small>
 			</div>
-			<div ref={viewportRef} className={styles.profile_ui_preview_viewport} data-profile-ui-preview data-profile-ui-dragging={!!draggedItem}
+			<div ref={viewportRef} className={styles.profile_ui_preview_viewport} data-profile-ui-preview data-profile-ui-guide="drop" data-profile-ui-dragging={!!draggedItem}
 				onDragOverCapture={(event) => {
 					if (disabled || !draggedItem) return;
 					event.preventDefault(); event.stopPropagation();
@@ -577,7 +577,7 @@ export default function ProfileUiPreview({
 				<div className={styles.profile_ui_preview_cover}>{bannerUrl && <Image className={styles.profile_ui_preview_banner} src={bannerUrl} alt="Profile banner" fill sizes="800px" draggable={false}/>}</div>
 				<div ref={gridRef} className={`${styles.profile_ui_preview_grid}${defaultArrangement ? ` ${responsiveStyles.profile_ui_default_layout}` : ""}`} data-profile-ui-grid data-profile-ui-default={defaultArrangement}>
 					{contents.map((content, index) => <Fragment key={index}>
-						<article className={styles.profile_ui_preview_content} data-preview-content={index} data-content={content.content}
+						<article className={styles.profile_ui_preview_content} data-preview-content={index} data-content={content.content} data-profile-ui-guide="content"
 							data-selected={selectedContentIndex === index} data-custom-color={content.color !== null}
 							data-fixed-height={getProfileUiContentHeightLimits(content.content) !== null && content.height !== -1} data-row-height={isProfileUiRowHeight(content.content)} data-match-row={rowMatches.get(index)} data-score-content={["bestpp", "first_place", "most_played", "recent_played"].includes(content.content)}
 							data-auto-height={isProfileUiAutoHeight(content)}
@@ -598,13 +598,13 @@ export default function ProfileUiPreview({
 							<ProfileUiPreviewContentBody content={content} contentIndex={index} customAchievements={customAchievements}
 								activeAchievementSlot={activeAchievementSlot?.contentIndex === index ? activeAchievementSlot.slotIndex : undefined}
 								onAchievementSlotClick={onAchievementSlotClick} onAchievementReorder={onAchievementReorder} disabled={disabled}/>
-							<button type="button" className={styles.profile_ui_preview_touch_content_move} aria-label={`Move ${profileUiContentLabels[content.content]}`} disabled={disabled} draggable={!disabled} onPointerDown={(event) => beginTouchMove(event, index)}><FontAwesome prefix="fas" name="grip-dots"/></button>
-							<button type="button" className={styles.profile_ui_preview_touch_settings} aria-label={`Edit ${profileUiContentLabels[content.content]}`} disabled={disabled} draggable={false} onDragStart={(event) => { event.preventDefault(); event.stopPropagation(); }} onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); onEditContent(index, getSettingsAnchor(event)); }}><FontAwesome prefix="fas" name="sliders"/></button>
-							<button type="button" className={styles.profile_ui_preview_remove_button} aria-label={`Remove ${profileUiContentLabels[content.content]}`} disabled={disabled} draggable={false} onDragStart={(event) => { event.preventDefault(); event.stopPropagation(); }} onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); if (!disabled) { onChange(normalizeProfileUi(contents.filter((_, current) => current !== index))); clearDragState(); } }}><FontAwesome prefix="fas" name="minus"/></button>
-							<button type="button" className={styles.profile_ui_preview_width_handle} data-profile-ui-resize="width" aria-label={`Resize ${profileUiContentLabels[content.content]} width`} title="Double-click to use auto width" disabled={disabled} onPointerDown={(event) => resizeContent(event, index, "width")} onDoubleClick={(event) => resetSize(event, index, "width")}/>
+							<button type="button" className={styles.profile_ui_preview_touch_content_move} data-profile-ui-guide="content" aria-label={`Move ${profileUiContentLabels[content.content]}`} disabled={disabled} draggable={!disabled} onPointerDown={(event) => beginTouchMove(event, index)}><FontAwesome prefix="fas" name="grip-dots"/></button>
+							<button type="button" className={styles.profile_ui_preview_touch_settings} data-profile-ui-guide="settings" aria-label={`Edit ${profileUiContentLabels[content.content]}`} disabled={disabled} draggable={false} onDragStart={(event) => { event.preventDefault(); event.stopPropagation(); }} onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); onEditContent(index, getSettingsAnchor(event)); }}><FontAwesome prefix="fas" name="sliders"/></button>
+							<button type="button" className={styles.profile_ui_preview_remove_button} data-profile-ui-guide="remove" aria-label={`Remove ${profileUiContentLabels[content.content]}`} disabled={disabled} draggable={false} onDragStart={(event) => { event.preventDefault(); event.stopPropagation(); }} onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); if (!disabled) { onChange(normalizeProfileUi(contents.filter((_, current) => current !== index))); clearDragState(); } }}><FontAwesome prefix="fas" name="minus"/></button>
+							<button type="button" className={styles.profile_ui_preview_width_handle} data-profile-ui-resize="width" data-profile-ui-guide="width" aria-label={`Resize ${profileUiContentLabels[content.content]} width`} title="Double-click to use auto width" disabled={disabled} onPointerDown={(event) => resizeContent(event, index, "width")} onDoubleClick={(event) => resetSize(event, index, "width")}/>
 							{getProfileUiContentHeightLimits(content.content) !== null && <>
-							<button type="button" className={styles.profile_ui_preview_height_handle} data-profile-ui-resize="height" aria-label={`Resize ${profileUiContentLabels[content.content]} height`} title="Double-click to use auto height" disabled={disabled} onPointerDown={(event) => resizeContent(event, index, "height")} onDoubleClick={(event) => resetSize(event, index, "height")}/>
-							<button type="button" className={styles.profile_ui_preview_corner_handle} data-profile-ui-resize="both" aria-label={`Resize ${profileUiContentLabels[content.content]} size`} title="Drag to resize. Double-click for auto width and height." disabled={disabled} onPointerDown={(event) => resizeContent(event, index, "both")} onDoubleClick={(event) => resetSize(event, index, "both")}/>
+							<button type="button" className={styles.profile_ui_preview_height_handle} data-profile-ui-resize="height" data-profile-ui-guide="height" aria-label={`Resize ${profileUiContentLabels[content.content]} height`} title="Double-click to use auto height" disabled={disabled} onPointerDown={(event) => resizeContent(event, index, "height")} onDoubleClick={(event) => resetSize(event, index, "height")}/>
+							<button type="button" className={styles.profile_ui_preview_corner_handle} data-profile-ui-resize="both" data-profile-ui-guide="both" aria-label={`Resize ${profileUiContentLabels[content.content]} size`} title="Drag to resize. Double-click for auto width and height." disabled={disabled} onPointerDown={(event) => resizeContent(event, index, "both")} onDoubleClick={(event) => resetSize(event, index, "both")}/>
 							</>}
 						</article>
 					</Fragment>)}

@@ -105,6 +105,7 @@ export default function ProfileUiSettingsDialog({
 			className={`${styles.profile_ui_settings_dialog}${className ? ` ${className}` : ""}`}
 			style={{ left: position.x, top: position.y, ...(keepInViewport ? { position: "fixed" } : {}) }}
 			role="dialog"
+			data-profile-ui-guide-scope
 			aria-labelledby={titleId}
 		>
 			<div className={styles.profile_ui_dialog_heading}>

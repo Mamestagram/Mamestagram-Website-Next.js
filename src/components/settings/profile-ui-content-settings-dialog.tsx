@@ -53,7 +53,7 @@ export default function ProfileUiContentSettingsDialog({
 			position={position}
 			onClose={onClose}
 		>
-			<article className={styles.profile_ui_content_editor} key={`${content.content}:${contentIndex}`}>
+			<article className={styles.profile_ui_content_editor} data-profile-ui-guide="settings" key={`${content.content}:${contentIndex}`}>
 				<div className={styles.profile_ui_content_heading}>
 					<strong>{profileUiContentLabels[content.content]}</strong>
 					<div className={styles.profile_ui_icon_actions}>
@@ -68,7 +68,7 @@ export default function ProfileUiContentSettingsDialog({
 					{heightLimits && <ProfileUiNumberField label="Height (px)" min={minimumHeight} max={heightLimits.max} value={content.height === -1 ? -1 : Math.max(content.height, minimumHeight)} disabled={disabled} auto getAutoValue={() => getProfileUiPreviewHeight(position.scrollContainer, contentIndex)} onChange={(height) => onChange({ ...content, height })}/>}
 					<ProfileUiNumberField label="Radius" min={0} max={80} value={content.edgeRadius} disabled={disabled} onChange={(edgeRadius) => onChange({ ...content, edgeRadius })}/>
 					<ProfileUiNumberField label="Opacity" min={0} max={1} step={0.1} value={content.boxOpacity} disabled={disabled} onChange={(boxOpacity) => onChange({ ...content, boxOpacity })}/>
-					<label>Color
+					<label data-profile-ui-guide="color">Color
 						<span className={styles.profile_ui_color_field}>
 							<input type="color" value={`#${content.color ?? "24242d"}`} disabled={disabled} onChange={(event) => onChange({ ...content, color: event.currentTarget.value.slice(1) })}/>
 							<button type="button" disabled={content.color === null || disabled} onClick={() => onChange({ ...content, color: null })}>Default</button>

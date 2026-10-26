@@ -48,10 +48,10 @@ export default function ProfileUiNumberField({
 	};
 
 	return (
-		<div className={styles.profile_ui_number_field}>
+		<div className={styles.profile_ui_number_field} data-profile-ui-guide={label === "Width" ? "field-width" : label === "Height (px)" ? "field-height" : label === "Radius" ? "radius" : label === "Opacity" ? "opacity" : "settings"}>
 			<div className={styles.profile_ui_number_heading}>
 				<label htmlFor={id}>{label}</label>
-				{auto && <label className={styles.profile_ui_auto_field}>
+				{auto && <label className={styles.profile_ui_auto_field} data-profile-ui-guide="auto">
 					<input type="checkbox" checked={isAuto} disabled={disabled} aria-label={`${label} auto`} onChange={(event) => {
 						setDraft(null);
 						if (event.currentTarget.checked) {

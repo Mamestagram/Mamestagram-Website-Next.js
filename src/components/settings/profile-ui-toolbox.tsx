@@ -10,6 +10,7 @@ import {
 } from "@/lib/profile-ui";
 import type { ProfileUiToolboxDrag } from "@/lib/profile-ui-drag";
 import { startProfileUiTouchDrag } from "@/lib/profile-ui-touch-drag";
+import type { ProfileUiGuideLanguage } from "@/components/settings/profile-ui-guide";
 import styles from "@s/settings.module.css";
 
 const contentIcons: Record<ProfileUiContent, string> = {
@@ -20,9 +21,12 @@ const contentIcons: Record<ProfileUiContent, string> = {
 
 export default function ProfileUiToolbox({
 	open, contentCount, disabled, canUndo, canRedo, canResetContentSettings, snappingEnabled,
+	guideLanguage, onGuideLanguageChange,
 	onClose, onAddContent, onUndo, onRedo, onDragStart, onDragEnd, onSnappingChange, onResetContentSettings,
 }: Readonly<{
 	open: boolean;
+	guideLanguage: ProfileUiGuideLanguage;
+	onGuideLanguageChange: (language: ProfileUiGuideLanguage) => void;
 	contentCount: number;
 	snappingEnabled: boolean;
 	onSnappingChange: (enabled: boolean) => void;
@@ -43,7 +47,7 @@ export default function ProfileUiToolbox({
 	useEffect(() => () => touchCleanupRef.current?.(), []);
 	useEffect(() => { if (disabled || !open) touchCleanupRef.current?.(); }, [disabled, open]);
 	const touchGrip = (item: ProfileUiToolboxDrag, label: string, unavailable = false) => <button
-		type="button" className={styles.profile_ui_toolbox_touch_grip} aria-label={label} title={label}
+		type="button" className={styles.profile_ui_toolbox_touch_grip} data-profile-ui-guide="add" aria-label={label} title={label}
 		disabled={disabled || unavailable} draggable={!disabled && !unavailable}
 		onDragStart={(event) => startDrag(event, item)} onDragEnd={onDragEnd}
 		onPointerDown={(event: PointerEvent<HTMLButtonElement>) => {
@@ -64,7 +68,7 @@ export default function ProfileUiToolbox({
 			<div className={styles.profile_ui_toolbox_title}>
 				<FontAwesome prefix="fas" name="toolbox"/><strong>Toolbox</strong>
 			</div>
-			<button type="button" className={styles.profile_ui_toolbox_icon} aria-label="Reset all content settings" disabled={disabled || !canResetContentSettings} onClick={onResetContentSettings} title="Reset every content's width, height, Auto, radius, opacity and color. Keep the current content list and order."><FontAwesome prefix="fas" name="rotate-left"/></button>
+			<button type="button" className={styles.profile_ui_toolbox_icon} aria-label="Reset all content settings" data-profile-ui-guide="reset" disabled={disabled || !canResetContentSettings} onClick={onResetContentSettings} title="Reset every content's width, height, Auto, radius, opacity and color. Keep the current content list and order."><FontAwesome prefix="fas" name="rotate-left"/></button>
 			<button type="button" className={styles.profile_ui_toolbox_icon} aria-label={collapsed ? "Expand toolbox" : "Collapse toolbox"} aria-expanded={!collapsed} aria-controls="profile-ui-toolbox-body" onClick={() => setCollapsed((value) => !value)}>
 				<FontAwesome prefix="fas" name={collapsed ? "chevron-down" : "chevron-up"}/>
 			</button>
@@ -74,18 +78,25 @@ export default function ProfileUiToolbox({
 			<div className={styles.profile_ui_toolbox_section}>
 				<div className={styles.profile_ui_toolbox_label}><span>Add content</span><small>{contentCount}/{PROFILE_UI_MAX_CONTENTS}</small></div>
 				<div className={styles.profile_ui_toolbox_palette}>
-					{profileUiContentValues.map((content) => <div key={content} className={styles.profile_ui_toolbox_item}><button type="button" disabled={disabled || contentCount >= PROFILE_UI_MAX_CONTENTS} draggable={!disabled && contentCount < PROFILE_UI_MAX_CONTENTS} onDragStart={(event) => startDrag(event, { kind: "content", content })} onDragEnd={onDragEnd} title={contentCount >= PROFILE_UI_MAX_CONTENTS ? "The content limit has been reached." : "Drag into the preview, or click to add."} aria-label={`Add ${profileUiContentLabels[content]}`} onClick={() => onAddContent(content)}>
+					{profileUiContentValues.map((content) => <div key={content} className={styles.profile_ui_toolbox_item}><button type="button" disabled={disabled || contentCount >= PROFILE_UI_MAX_CONTENTS} draggable={!disabled && contentCount < PROFILE_UI_MAX_CONTENTS} onDragStart={(event) => startDrag(event, { kind: "content", content })} onDragEnd={onDragEnd} title={contentCount >= PROFILE_UI_MAX_CONTENTS ? "The content limit has been reached." : "Drag into the preview, or click to add."} aria-label={`Add ${profileUiContentLabels[content]}`} data-profile-ui-guide="add" onClick={() => onAddContent(content)}>
 						<FontAwesome prefix="fas" name={contentIcons[content]}/><span>{profileUiContentLabels[content]}</span>
 					</button>{touchGrip({ kind: "content", content }, `Drag ${profileUiContentLabels[content]} into preview`, contentCount >= PROFILE_UI_MAX_CONTENTS)}</div>)}
 				</div>
 			</div>
-			<label className={styles.profile_ui_toolbox_toggle}>
+			<label className={styles.profile_ui_toolbox_toggle} data-profile-ui-guide="snap">
 				<input type="checkbox" checked={snappingEnabled} disabled={disabled} onChange={(event) => onSnappingChange(event.currentTarget.checked)}/>
 				<span>Snap to nearby content</span>
 			</label>
+			<label className={styles.profile_ui_guide_language} data-profile-ui-guide="language">
+				<span>Guide language</span>
+				<select value={guideLanguage} onChange={(event) => onGuideLanguageChange(event.currentTarget.value === "ja" ? "ja" : "en")}>
+					<option value="en">English</option>
+					<option value="ja">Japanese</option>
+				</select>
+			</label>
 			<div className={styles.profile_ui_toolbox_actions}>
-				<button type="button" disabled={disabled || !canUndo} onClick={onUndo} title="Undo (⌘Z / Ctrl+Z)" aria-keyshortcuts="Meta+z Control+z"><FontAwesome prefix="fas" name="arrow-rotate-left"/> Undo</button>
-				<button type="button" disabled={disabled || !canRedo} onClick={onRedo} title="Redo (⌘⇧Z / Ctrl+Shift+Z / Ctrl+Y)" aria-keyshortcuts="Meta+Shift+z Control+Shift+z Control+y"><FontAwesome prefix="fas" name="arrow-rotate-right"/> Redo</button>
+				<button type="button" disabled={disabled || !canUndo} onClick={onUndo} data-profile-ui-guide="undo" title="Undo (⌘Z / Ctrl+Z)" aria-keyshortcuts="Meta+z Control+z"><FontAwesome prefix="fas" name="arrow-rotate-left"/> Undo</button>
+				<button type="button" disabled={disabled || !canRedo} onClick={onRedo} data-profile-ui-guide="redo" title="Redo (⌘⇧Z / Ctrl+Shift+Z / Ctrl+Y)" aria-keyshortcuts="Meta+Shift+z Control+Shift+z Control+y"><FontAwesome prefix="fas" name="arrow-rotate-right"/> Redo</button>
 			</div>
 		</div>
 	</aside>;

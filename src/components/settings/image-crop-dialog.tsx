@@ -294,7 +294,7 @@ export default function ImageCropDialog({
 			onApply(new File(
 				[blob],
 				getOutputName(sourceName, mediaType, outputFormat.extension),
-				{ type: blob.type, lastModified: Date.now() }
+				{ type: blob.type }
 			));
 		} catch (cropError: unknown) {
 			setError(cropError instanceof Error ? cropError.message : "The cropped image could not be created.");

@@ -32,7 +32,7 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 	children: ReactNode,
 	autoOpen?: boolean,
 	hideTrigger?: boolean,
-	shareHref?: string,
+	shareHref: string,
 	onClose?: () => void
 }>) {
 	const { userInfo } = useUserContext();
@@ -116,7 +116,6 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 	}, [autoOpen, closeReplay, hideTrigger, openReplay]);
 
 	const copyReplayLink = async () => {
-		if (!shareHref) return;
 		const copied = await copyText(new URL(shareHref, window.location.href).href);
 		setCopyState(copied ? "copied" : "failed");
 		if (copyTimeoutRef.current !== null) window.clearTimeout(copyTimeoutRef.current);
@@ -228,10 +227,10 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 					         aria-modal="true"
 					         aria-label={`Mamestagram replay: ${label}`}>
 						<div className={styles.replay_toolbar}>
-							{shareHref && <button type="button" className={styles.copy_link} onClick={copyReplayLink} title="Copy replay link">
+							<button type="button" className={styles.copy_link} onClick={copyReplayLink} title="Copy replay link">
 								<FontAwesome prefix="fas" name={copyState === "copied" ? "check" : "link"}/>
 								<span>{copyState === "copied" ? "Copied!" : "Copy link"}</span>
-							</button>}
+							</button>
 							{copyState !== "idle" && <span className={styles.copy_status} role="status">
 								{copyState === "copied" ? "Replay link copied." : "Could not copy. Copy the link from your address bar."}
 							</span>}

@@ -9,6 +9,7 @@ import CustomAchievementSelectionDialog from "@/components/profile/custom-achiev
 import ProfileUiPreview from "@/components/settings/profile-ui-preview";
 import ProfileUiLivePreview from "@/components/settings/profile-ui-live-preview";
 import ProfileUiToolbox from "@/components/settings/profile-ui-toolbox";
+import ProfileUiGuide, { type ProfileUiGuideLanguage } from "@/components/settings/profile-ui-guide";
 import { parseProfileUiPreviewDraft, type ProfileUiPreviewDraft } from "@/lib/profile-ui-live-preview";
 import { readMutationResponse } from "@/lib/mutation-response";
 import {
@@ -41,6 +42,8 @@ import styles from "@s/settings.module.css";
 const subscribeToClient = () => () => undefined;
 const getClientSnapshot = () => true;
 const getServerSnapshot = () => false;
+const guideStorageKey = "mamestagram:profile-ui:show-guide";
+const guideLanguageStorageKey = "mamestagram:profile-ui:guide-language";
 
 const emptyCustomAchievements: CustomAchievementSettings = { achievements: [], selectedIds: createEmptyCustomAchievementIds() };
 type ProfileUiEditorDraft = { contents: ProfileUiItem[]; achievementIds: CustomAchievementIds };
@@ -97,6 +100,8 @@ export default function ProfileUiSettings({
 	const editingContentIndex = editingTarget?.contentIndex ?? null;
 	const [isEditorOpen, setIsEditorOpen] = useState(false);
 	const [isToolboxOpen, setIsToolboxOpen] = useState(true);
+	const [isGuideOpen, setIsGuideOpen] = useState(false);
+	const [guideLanguage, setGuideLanguage] = useState<ProfileUiGuideLanguage>("en");
 	const [snappingEnabled, setSnappingEnabled] = useState(true);
 	const [toolboxDrag, setToolboxDrag] = useState<ProfileUiToolboxDragSession | null>(null);
 	const endToolboxDrag = useCallback(() => setToolboxDrag(null), []);
@@ -167,6 +172,28 @@ export default function ProfileUiSettings({
 		}
 		discardAndCloseEditor();
 	}, [closeSettings, discardAndCloseEditor, hasChanges, isPending]);
+	const openEditor = () => {
+		let showGuide = false;
+		let language: ProfileUiGuideLanguage = window.navigator.language.toLowerCase().startsWith("ja") ? "ja" : "en";
+		try {
+			showGuide = window.localStorage.getItem(guideStorageKey) === "true";
+			const savedLanguage = window.localStorage.getItem(guideLanguageStorageKey);
+			if (savedLanguage === "en" || savedLanguage === "ja") language = savedLanguage;
+		} catch { /* Keep the defaults when storage is unavailable. */ }
+		setIsGuideOpen(showGuide);
+		setGuideLanguage(language);
+		setIsToolboxOpen(true);
+		setIsEditorOpen(true);
+	};
+	const toggleGuide = () => {
+		const showGuide = !isGuideOpen;
+		setIsGuideOpen(showGuide);
+		try { window.localStorage.setItem(guideStorageKey, String(showGuide)); } catch { /* The guide can still be toggled without storage. */ }
+	};
+	const changeGuideLanguage = (language: ProfileUiGuideLanguage) => {
+		setGuideLanguage(language);
+		try { window.localStorage.setItem(guideLanguageStorageKey, language); } catch { /* The language can still be changed without storage. */ }
+	};
 
 	useEffect(() => {
 		if (!isEditorOpen) return;
@@ -323,7 +350,7 @@ export default function ProfileUiSettings({
 					type="button"
 					className={styles.secondary_button}
 					disabled={!canUseSupporterFeatures}
-					onClick={() => { setIsToolboxOpen(true); setIsEditorOpen(true); }}
+					onClick={openEditor}
 				>
 					<FontAwesome
 						prefix="fas"
@@ -372,10 +399,13 @@ export default function ProfileUiSettings({
 							</span>
 						</div>
 						<div className={styles.profile_ui_fullscreen_actions}>
-							<button type="button" className={styles.secondary_button} aria-expanded={isToolboxOpen} aria-controls="profile-ui-toolbox" onClick={() => setIsToolboxOpen((open) => !open)}>
+							<button type="button" className={styles.secondary_button} aria-pressed={isGuideOpen} title={isGuideOpen ? "Hide operation guide" : "Show operation guide"} onClick={toggleGuide}>
+								<FontAwesome prefix="fas" name="circle-question"/> Guide
+							</button>
+							<button type="button" className={styles.secondary_button} data-profile-ui-guide="tools" aria-expanded={isToolboxOpen} aria-controls="profile-ui-toolbox" onClick={() => setIsToolboxOpen((open) => !open)}>
 								<FontAwesome prefix="fas" name="toolbox"/> Tools
 							</button>
-							<button ref={previewButtonRef} type="button" className={styles.secondary_button} disabled={isPending} onClick={() => {
+							<button ref={previewButtonRef} type="button" className={styles.secondary_button} data-profile-ui-guide="preview" disabled={isPending} onClick={() => {
 								closeSettings();
 								const draft = parseProfileUiPreviewDraft({ contents, customAchievements: selectedAchievements, theme: profileTheme, hue: profileHue, color: profileColor });
 								if (draft) setLivePreviewDraft(draft);
@@ -388,6 +418,7 @@ export default function ProfileUiSettings({
 								className={styles.secondary_button}
 								disabled={isPending}
 								onClick={restoreDefault}
+								data-profile-ui-guide="restore"
 							>
 								<FontAwesome prefix="fas" name="rotate-left"/> Restore default
 							</button>
@@ -396,6 +427,7 @@ export default function ProfileUiSettings({
 								className={styles.primary_button}
 								disabled={!hasChanges || isPending}
 								onClick={save}
+								data-profile-ui-guide="save"
 							>
 								<FontAwesome prefix="fas" name={isPending ? "spinner" : "check"} className={isPending ? styles.spinner : undefined}/>
 								Save changes
@@ -413,9 +445,13 @@ export default function ProfileUiSettings({
 						</div>
 					</div>
 
+					{isGuideOpen && !isDiscardConfirmOpen && livePreviewDraft === null && <ProfileUiGuide editorRef={editorRef} language={guideLanguage}/>}
+
 					<div className={styles.profile_ui_toolbox_dock}>
 						<ProfileUiToolbox
 							open={isToolboxOpen}
+							guideLanguage={guideLanguage}
+							onGuideLanguageChange={changeGuideLanguage}
 							contentCount={contents.length}
 							snappingEnabled={snappingEnabled}
 							onSnappingChange={setSnappingEnabled}
