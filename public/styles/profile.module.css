@@ -2652,8 +2652,8 @@
 								color: hsl(var(--grade-default-hue), 26.829%, 83.922%);
 								background: linear-gradient(
 									145deg,
-									hsl(var(--user-hue), 0%, 11.569%),
-									hsl(var(--user-hue), 0%, 2.745%)
+									hsla(var(--user-hue), 32.203%, 11.569%, 0.94),
+									hsla(var(--user-hue), 57.143%, 2.745%, 0.88)
 								);
 								border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.14);
 								border-radius: 12px;
@@ -2664,7 +2664,7 @@
 								font-weight: 700;
 								letter-spacing: -0.035em;
 								line-height: 1;
-								text-shadow: 0 0 12px currentColor;
+								text-shadow: 0 0 6px color-mix(in srgb, currentColor 35%, transparent);
 								transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
 								
 								&[data-grade="xh"],
@@ -2777,7 +2777,7 @@
 								padding: 4px 7px;
 								overflow: hidden;
 								color: hsl(var(--user-hue), 60%, 78%);
-								background: hsl(var(--user-hue), 0%, 12%);
+								background: hsla(var(--user-hue), 52%, 45%, 0.16);
 								border: 1px solid hsla(var(--user-hue), 62%, 65%, 0.16);
 								border-radius: 999px;
 								font-weight: 700;
@@ -2821,8 +2821,8 @@
 								overflow: hidden;
 								background: linear-gradient(
 									145deg,
-									hsl(var(--user-hue), 0%, 6.667%),
-									hsl(var(--user-hue), 0%, 2.157%)
+									hsla(var(--user-hue), 41.176%, 6.667%, 0.86),
+									hsla(var(--user-hue), 63.636%, 2.157%, 0.9)
 								);
 								border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.1);
 								border-radius: 0 12px 12px 0;
@@ -3674,7 +3674,7 @@
 		&:hover,
 		&:focus-visible {
 			color: hsl(var(--user-hue), 0%, 100%);
-			background-color: hsla(var(--user-hue), 0%, 100%, 0.16);
+			background-color: hsla(var(--user-hue), 56.332%, 55.098%, 0.16);
 			border-color: hsla(var(--user-hue), 100%, 75.49%, 0.28);
 		}
 		
@@ -5443,6 +5443,9 @@
 	.social_strip > li,
 	.last_online,
 	.clan_member_card,
+	.grade,
+	.score_value,
+	.difficulty,
 	.rank_history_stats > li,
 	.rank_chart,
 	.stat_container ul > li,

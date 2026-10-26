@@ -40,7 +40,7 @@ import PrivateProfile from "@/components/profile/private-profile";
 import ProfileAppearance from "@/components/profile/profile-appearance";
 import ProfileUiLayout from "@/components/profile/profile-ui-layout";
 import ProfileUiLiveLayout from "@/components/profile/profile-ui-live-layout";
-import { Priv } from "@/lib/priv";
+import { hasSupporterAccess } from "@/lib/priv";
 import styles from "@s/profile.module.css";
 import responsiveStyles from "@s/profile-ui-responsive.module.css";
 
@@ -158,7 +158,7 @@ export default async function Profile({
 			]);
 			if (!profileRouteInfo) notFound();
 			const isLayoutPreview = uiPreview === "1" && !isClan && currentUser.isLoggedIn &&
-				currentUser.id === id && ((currentUser.priv ?? 0) & Priv.supporter) !== 0;
+				currentUser.id === id && hasSupporterAccess(currentUser.priv);
 			const UiLayout = isLayoutPreview ? ProfileUiLiveLayout : ProfileUiLayout;
 			const currentUserProfileAppearance =
 				!profileRouteInfo.hasProfileAppearance && currentUser.id !== undefined

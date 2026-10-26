@@ -1,4 +1,5 @@
-.replay_trigger:disabled {
+.replay_trigger:disabled,
+.replay_trigger[aria-disabled="true"] {
 	cursor: not-allowed;
 	opacity: 0.45;
 	transform: none;
@@ -102,6 +103,7 @@
 	min-height: 0;
 	padding: 0;
 	align-items: center;
+	gap: 8px;
 	background: none;
 	border: 0;
 	box-shadow: none;
@@ -136,6 +138,42 @@
 			outline: 2px solid hsl(var(--user-hue), 64%, 70%);
 			outline-offset: 2px;
 		}
+	}
+}
+
+.replay_toolbar > .copy_link {
+	display: flex;
+	width: auto;
+	padding-inline: 12px;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+	font-weight: 750;
+}
+
+.copy_status {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: 0;
+	width: max-content;
+	max-width: min(320px, calc(100vw - 24px));
+	padding: 8px 10px;
+	color: hsl(var(--user-hue, 210), 0%, 100%);
+	background: hsl(var(--user-hue, 210), 12%, 12%);
+	border-radius: 8px;
+	font-size: 0.78rem;
+	line-height: 1.4;
+}
+
+.replay_notice {
+	padding: 14px 18px;
+	color: hsl(var(--user-hue, 210), 20%, 88%);
+	background: hsla(var(--user-hue, 210), 30%, 12%, 0.94);
+	border: 1px solid hsla(var(--user-hue, 210), 30%, 65%, 0.2);
+	border-radius: 12px;
+
+	& a {
+		text-decoration: underline;
 	}
 }
 

@@ -7,7 +7,7 @@ export const modEntries: ReadonlyArray<{ mod: Mods, value: ModNum }> = [
 	{ mod: Mods.nm, value: ModNum.nm },
 	{ mod: Mods.nf, value: ModNum.nf },
 	{ mod: Mods.ez, value: ModNum.ez },
-	{ mod: Mods.ts, value: ModNum.ts },
+	{ mod: Mods.td, value: ModNum.td },
 	{ mod: Mods.hd, value: ModNum.hd },
 	{ mod: Mods.hr, value: ModNum.hr },
 	{ mod: Mods.sd, value: ModNum.sd },

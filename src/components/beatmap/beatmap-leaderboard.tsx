@@ -21,6 +21,7 @@ import {
 import { getVanillaMode, ModeNum, OsuMode } from "@/lib/mode";
 import { Mods } from "@/lib/mods";
 import { Priv } from "@/lib/priv";
+import { getReplayShareHref } from "@/lib/replay-share";
 import { getProfileCosmeticsMap } from "@/lib/profile-cosmetics";
 import { getCurrentUser } from "@/lib/session";
 import styles from "@s/beatmap.module.css";
@@ -28,6 +29,7 @@ import styles from "@s/beatmap.module.css";
 export type BeatmapLeaderboardSearchParams = {
 	mode?: string | string[];
 	mods?: string | string[];
+	replay?: string | string[];
 };
 
 type ScoreModeOption = {
@@ -486,8 +488,8 @@ export default async function BeatmapLeaderboard({
 						mode={selectedScoreMode.route}
 						mapMaxCombo={map.maxCombo}
 						achievedTime={formatRelativeTime(topScore.playTime)}
+						replayHref={getReplayShareHref(getScoreHref(selectedScoreMode), topScore.id)}
 						replayLabel={`${topScore.name} — ${map.artist} — ${map.title}`}
-						replayUrl={`https://render.${baseDomain}/embed/${topScore.id}`}
 						baseDomain={baseDomain}
 						hidePrivateDetails={isPrivateScoreHidden(topScore)}
 					/>
@@ -502,8 +504,8 @@ export default async function BeatmapLeaderboard({
 						mode={selectedScoreMode.route}
 						mapMaxCombo={map.maxCombo}
 						achievedTime={formatRelativeTime(personalScore.score.playTime)}
+						replayHref={getReplayShareHref(getScoreHref(selectedScoreMode), personalScore.score.id)}
 						replayLabel={`${personalScore.score.name} — ${map.artist} — ${map.title}`}
-						replayUrl={`https://render.${baseDomain}/embed/${personalScore.score.id}`}
 						baseDomain={baseDomain}
 						personal
 					/>
@@ -615,6 +617,7 @@ export default async function BeatmapLeaderboard({
 													{score.id > 0 ? (
 														<ReplayViewer
 															className={styles.table_replay_button}
+															shareHref={getReplayShareHref(getScoreHref(selectedScoreMode), score.id)}
 															label={`${score.name} — ${map.artist} — ${map.title}`}
 															replayUrl={`https://render.${baseDomain}/embed/${score.id}`}
 															buttonLabel={`Watch ${score.name}'s replay`}

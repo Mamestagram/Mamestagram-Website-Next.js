@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { PlayerMostPlayedMap, PlayerScoreMap } from "@/database/profile";
 import { ScoreScope, getMostPlayedMaps, getPlayerScores } from "@/database/profile";
 import { ModeNum } from "@/lib/mode";
+import { getReplayShareHref } from "@/lib/replay-share";
 import FontAwesome from "@/components/font-awesome";
 import PlayerScoreCard from "@/components/profile/player-score-card";
 import PlayerScoreHeading from "@/components/profile/player-score-heading";
@@ -124,6 +125,7 @@ export default async function PlayerScores({ scope, id, mode, isDans }: {
 					                        className={className}
 					                        label={`${map.artist} — ${map.title}`}
 					                        beatmapHref={`/beatmaps/${map.set_id}/${map.id}`}
+					                        replayShareHref={getReplayShareHref(`/beatmaps/${map.set_id}/${map.id}`, scoreMap.score_id)}
 					                        replayUrl={`https://render.${baseDomain}/embed/${scoreMap.score_id}`}>
 						{content}
 					</PlayerScoreCard>;

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import BeatmapSharedReplay from "@/components/beatmap/beatmap-shared-replay";
 import BeatmapHero from "@/components/beatmap/beatmap-hero";
 import BeatmapLeaderboard, {
 	type BeatmapLeaderboardSearchParams
@@ -43,6 +45,7 @@ export default async function BeatmapPage({ params, searchParams }: Readonly<{
 	
 	return (
 		<div className={styles.page}>
+			<Suspense fallback={null}><BeatmapSharedReplay map={map} replay={query.replay}/></Suspense>
 			<BeatmapHero map={map} difficulties={difficulties}/>
 			<BeatmapLeaderboard map={map} searchParams={query}/>
 		</div>

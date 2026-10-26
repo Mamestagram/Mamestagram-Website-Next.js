@@ -18,8 +18,8 @@ export default function FeaturedScoreCard({
 	mode,
 	mapMaxCombo,
 	achievedTime,
+	replayHref,
 	replayLabel,
-	replayUrl,
 	baseDomain,
 	personal = false,
 	hidePrivateDetails = false
@@ -30,8 +30,8 @@ export default function FeaturedScoreCard({
 	mode: OsuMode,
 	mapMaxCombo: number,
 	achievedTime: string,
+	replayHref: string,
 	replayLabel: string,
-	replayUrl: string,
 	baseDomain: string,
 	personal?: boolean,
 	hidePrivateDetails?: boolean
@@ -87,10 +87,9 @@ export default function FeaturedScoreCard({
 			</span>
 			<ScoreMods mods={score.mods}/>
 			{score.id > 0
-				? <ReplayViewer className={styles.featured_replay_button}
-				                label={replayLabel}
-				                replayUrl={replayUrl}
-				                buttonLabel={`Watch ${score.name}'s replay`}>
+				? <ReplayViewer className={styles.featured_replay_button} shareHref={replayHref}
+					label={replayLabel} replayUrl={`https://render.${baseDomain}/embed/${score.id}`}
+					buttonLabel={`Watch ${score.name}'s replay`}>
 					<FontAwesome prefix="fas" name="circle-play"/>
 				</ReplayViewer>
 				: <span className={styles.replay_unavailable}>—</span>}

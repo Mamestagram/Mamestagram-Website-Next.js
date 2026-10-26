@@ -3,6 +3,7 @@ import { cache } from "react";
 import { executeQuery } from "@/database/connection";
 import {
 	beatmapDifficultiesQuery,
+	beatmapReplayQuery,
 	beatmapScoreIdsQuery,
 	beatmapUserRankQuery,
 	beatmapUserScoreQuery,
@@ -57,6 +58,7 @@ export type BeatmapScore = {
 };
 
 export type RankedBeatmapScore = BeatmapScore & { rank: number };
+export type BeatmapReplay = Pick<BeatmapScore, "id" | "userId" | "name"> & { isPrivate: boolean };
 type BeatmapScoreRow = BeatmapScore;
 
 type BeatmapApiMap = {
@@ -288,4 +290,10 @@ export const getBeatmapUserScore = async (
 		...score,
 		rank: Number(rankRows[0]?.higherScores ?? 0) + 1
 	};
+};
+
+export const getBeatmapReplay = async (mapMd5: string, scoreId: number): Promise<BeatmapReplay | null> => {
+	const rows = await executeQuery<Omit<BeatmapReplay, "isPrivate"> & { isPrivate: 0 | 1 }>(beatmapReplayQuery, [scoreId, mapMd5]);
+	const replay = rows[0];
+	return replay ? { ...replay, isPrivate: replay.isPrivate === 1 } : null;
 };

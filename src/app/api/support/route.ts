@@ -20,7 +20,7 @@ const supportData = {
 			],
 			perksTitle: "Supporter benefits",
 			perksLead: "Compare the standard experience with the additional features available to Mamestagram Supporters.",
-			labels: { free: "Free", supporter: "Supporter", available: "Available", unavailable: "Not available" },
+			labels: { free: "Free", supporter: "Supporter", available: "Available", unavailable: "Not available", comingSoon: "Coming soon" },
 			subscriptionTitle: "Become a Supporter",
 			subscriptionLead: "Join Mamestagram's membership on Ko-fi. Supporter status is automatically assigned to your account after joining.",
 			cancelNote: "Even if you cancel immediately, your Supporter status remains active until the corresponding date in the following month.",
@@ -56,7 +56,7 @@ const supportData = {
 			],
 			perksTitle: "サポーター特典",
 			perksLead: "通常の状態とMamestagram Supporterで利用できる追加機能を比較できます。",
-			labels: { free: "通常", supporter: "サポーター", available: "利用できます", unavailable: "利用できません" },
+			labels: { free: "通常", supporter: "サポーター", available: "利用できます", unavailable: "利用できません", comingSoon: "近日公開" },
 			subscriptionTitle: "サポーターになる",
 			subscriptionLead: "Ko-fiでMamestagramのメンバーシップに参加すると、アカウントへサポーター権限が自動的に付与されます。",
 			cancelNote: "加入後すぐにキャンセルした場合でも、翌月の同日まではサポーターの状態が維持されます。",
@@ -87,11 +87,11 @@ const supportData = {
 				icon: "users",
 				title: "Expanded Friend Leaderboard",
 				free: {
-					body: "Display clan and friend rankings with !lb friend <clan/friend>.",
-					media: { type: "video", src: `${mediaRoot}/ex-friend-lb-3.mp4`, alt: "Standard friend leaderboard" }
+					body: "Bancho, clan, and friend rankings are not available.",
+					available: false
 				},
 				supporter: {
-					body: "Add Bancho and failed-score rankings with !lb friend <bancho/clan/fail/friend>.",
+					body: "Display Bancho, clan, and friend rankings with !lb friend <bancho/clan/friend>.",
 					media: {
 						type: "video",
 						src: `${mediaRoot}/ex-friend-lb-51.mp4`,
@@ -136,47 +136,42 @@ const supportData = {
 				}
 			},
 			{
-				icon: "palette",
-				title: "Colored Username",
+				icon: "table-columns",
+				title: "Profile Layout Editor",
+				free: {
+					body: "Profile layout customization is not available.",
+					available: false
+				},
 				supporter: {
-					body: "Your username appears in color in the in-game chat.",
-					media: {
-						type: "image",
-						src: `${mediaRoot}/colored-username.png`,
-						alt: "Colored username in the in-game chat"
-					}
+					body: "Arrange, resize, and customize the colors of your profile contents with the profile UI editor.",
+					media: { type: "image", src: `${mediaRoot}/profile-ui.png`, alt: "Profile layout editor with toolbox and content preview" }
 				}
 			},
-			/*
 			{
-				icon: "browser",
-				title: "Web Features",
+				icon: "hourglass-half",
+				title: "Coming Soon",
+				free: {
+					body: "More features are on the way. Stay tuned for future updates.",
+					available: false,
+					comingSoon: true
+				},
 				supporter: {
-					body: "More Supporter features for the website are planned.",
-					media: {
-						type: "image",
-						src: `${mediaRoot}/web-function.png`,
-						alt: "Upcoming web features",
-						blurred: true
-					}
+					body: "More features are on the way. Stay tuned for future updates.",
+					available: false,
+					comingSoon: true
 				}
 			}
-			*/
 		],
 		ja: [
 			{
 				icon: "users",
 				title: "フレンドリーダーボードの拡張",
 				free: {
-					body: "!lb friend <clan/friend>でクラン別・フレンドのランキングを表示できます。",
-					media: {
-						type: "video",
-						src: `${mediaRoot}/ex-friend-lb-3.mp4`,
-						alt: "通常のフレンドリーダーボード"
-					}
+					body: "Bancho・クラン・フレンドのランキングは表示できません。",
+					available: false
 				},
 				supporter: {
-					body: "!lb friend <bancho/clan/fail/friend>でBanchoや失敗スコアのランキングも表示できます。",
+					body: "!lb friend <bancho/clan/friend>でBancho・クラン・フレンドのランキングを表示できます。",
 					media: {
 						type: "video",
 						src: `${mediaRoot}/ex-friend-lb-51.mp4`,
@@ -225,32 +220,31 @@ const supportData = {
 				}
 			},
 			{
-				icon: "palette",
-				title: "色付きユーザー名",
+				icon: "table-columns",
+				title: "プロフィールUIエディタ",
+				free: {
+					body: "プロフィールのレイアウトをカスタマイズすることはできません。",
+					available: false
+				},
 				supporter: {
-					body: "ゲーム内チャットのユーザー名に色が付きます。",
-					media: {
-						type: "image",
-						src: `${mediaRoot}/colored-username.png`,
-						alt: "ゲーム内チャットの色付きユーザー名"
-					}
+					body: "プロフィールUIエディタでコンテンツの配置・サイズ・色を自由にカスタマイズできます。",
+					media: { type: "image", src: `${mediaRoot}/profile-ui.png`, alt: "ツールボックスとコンテンツのプレビューを表示したプロフィールUIエディタ" }
 				}
 			},
-			/*
 			{
-				icon: "browser",
-				title: "Web機能",
+				icon: "hourglass-half",
+				title: "近日公開",
+				free: {
+					body: "新しい機能を準備中です。今後のアップデートをお楽しみに。",
+					available: false,
+					comingSoon: true
+				},
 				supporter: {
-					body: "Webサイト向けのSupporter機能を追加予定です。",
-					media: {
-						type: "image",
-						src: `${mediaRoot}/web-function.png`,
-						alt: "追加予定のWeb機能",
-						blurred: true
-					}
+					body: "新しい機能を準備中です。今後のアップデートをお楽しみに。",
+					available: false,
+					comingSoon: true
 				}
 			}
-			*/
 		]
 	}
 } as const;

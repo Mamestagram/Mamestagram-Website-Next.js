@@ -6,11 +6,12 @@ import FontAwesome from "@/components/font-awesome";
 import ReplayViewer from "@/components/replay-viewer";
 import styles from "@s/profile.module.css";
 
-export default function PlayerScoreCard({ className, label, beatmapHref, replayUrl, children }: {
+export default function PlayerScoreCard({ className, label, beatmapHref, replayUrl, replayShareHref, children }: {
 	className: string,
 	label: string,
 	beatmapHref: string,
 	replayUrl: string,
+	replayShareHref: string,
 	children: ReactNode
 }) {
 	const [isExpanded, setIsExpanded] = useState(false);
@@ -52,6 +53,7 @@ export default function PlayerScoreCard({ className, label, beatmapHref, replayU
 							</Link>
 							<ReplayViewer label={label}
 							              replayUrl={replayUrl}
+							              shareHref={replayShareHref}
 							              buttonLabel="Watch replay">
 								<FontAwesome prefix="fad" name="circle-play"/>
 								<span>Watch replay</span>

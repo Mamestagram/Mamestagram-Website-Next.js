@@ -7,7 +7,7 @@ import { isSameOriginMutation } from "@/lib/api-request";
 import { writeError } from "@/lib/log";
 import type { MutationResponse } from "@/lib/mutation-response";
 import { isDefaultProfileUi, parseProfileUiContents } from "@/lib/profile-ui";
-import { Priv } from "@/lib/priv";
+import { hasSupporterAccess } from "@/lib/priv";
 import { getCurrentUser } from "@/lib/session";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -28,12 +28,9 @@ export const PUT = async (
 			{ success: false, message: "You must be signed in." },
 			{ status: 401 },
 		);
-	if (
-		currentUser.priv === undefined ||
-		(currentUser.priv & Priv.supporter) === 0
-	)
+	if (!hasSupporterAccess(currentUser.priv))
 		return NextResponse.json(
-			{ success: false, message: "Supporter only" },
+			{ success: false, message: "Available to Supporters and Nominator or higher roles." },
 			{ status: 403 },
 		);
 

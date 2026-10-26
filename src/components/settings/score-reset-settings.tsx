@@ -12,9 +12,9 @@ import {
 import styles from "@s/settings.module.css";
 
 export default function ScoreResetSettings({
-	isSupporter,
+	canResetScores,
 }: Readonly<{
-	isSupporter: boolean;
+	canResetScores: boolean;
 }>) {
 	const selectId = useId();
 	const [mode, setMode] = useState<ScoreResetMode>("std");
@@ -28,7 +28,7 @@ export default function ScoreResetSettings({
 	const modeLabel = scoreResetModeLabels[mode];
 
 	const resetScores = () => {
-		if (!isSupporter) return;
+		if (!canResetScores) return;
 		setDialogError(null);
 		setStatus(null);
 		startTransition(async () => {
@@ -55,7 +55,7 @@ export default function ScoreResetSettings({
 		<>
 			<section
 				className={styles.score_reset_settings}
-				data-disabled={!isSupporter}
+				data-disabled={!canResetScores}
 			>
 				<div className={styles.score_reset_heading}>
 					<span className={styles.score_reset_icon}>
@@ -77,7 +77,7 @@ export default function ScoreResetSettings({
 							<select
 								id={selectId}
 								value={mode}
-								disabled={isPending || !isSupporter}
+								disabled={isPending || !canResetScores}
 								onChange={(event) => {
 									setMode(event.currentTarget.value as ScoreResetMode);
 									setStatus(null);
@@ -94,7 +94,7 @@ export default function ScoreResetSettings({
 						<button
 							type="button"
 							className={styles.danger_button}
-							disabled={isPending || !isSupporter}
+							disabled={isPending || !canResetScores}
 							onClick={() => {
 								setDialogError(null);
 								setIsConfirmationOpen(true);
@@ -114,9 +114,9 @@ export default function ScoreResetSettings({
 					{status?.message}
 				</span>
 				<small className={styles.score_reset_note}>
-						{isSupporter
+						{canResetScores
 							? "A fresh sign-in is required before the first reset."
-							: "Supporter only"}
+							: "Available to Supporters and Nominator or higher roles."}
 				</small>
 			</section>
 

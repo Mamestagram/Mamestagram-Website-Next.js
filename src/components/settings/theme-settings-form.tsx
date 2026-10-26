@@ -48,7 +48,7 @@ type ProfileUiEditorConfig = {
 	profileId: number;
 	initialContents: ProfileUiItem[];
 	customAchievements?: CustomAchievementSettings;
-	isSupporter: boolean;
+	canUseSupporterFeatures: boolean;
 	bannerUrl: string;
 	backgroundUrl: string;
 };
@@ -243,7 +243,7 @@ export default function ThemeSettingsForm({
 						profileId={profileUiEditor.profileId}
 						initialContents={profileUiEditor.initialContents}
 						customAchievements={profileUiEditor.customAchievements}
-						isSupporter={profileUiEditor.isSupporter}
+						canUseSupporterFeatures={profileUiEditor.canUseSupporterFeatures}
 						bannerUrl={profileUiEditor.bannerUrl}
 						backgroundUrl={profileUiEditor.backgroundUrl}
 						profileTheme={theme}
@@ -425,7 +425,7 @@ export default function ThemeSettingsForm({
 			</div>
 
 			{isPersonalProfile && (
-				<ScoreResetSettings isSupporter={canResetScores}/>
+				<ScoreResetSettings canResetScores={canResetScores}/>
 			)}
 			
 			<div className={styles.form_footer}>

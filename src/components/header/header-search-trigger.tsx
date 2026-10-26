@@ -12,7 +12,6 @@ export default function HeaderSearchTrigger({ location }: { location: "top" | "n
 		        title="Search"
 		        aria-label="Open search"
 		        aria-haspopup="dialog"
-		        data-accent-contrast-icon
 		        onClick={(event) => openSearch(event.currentTarget)}>
 			<FontAwesome prefix="fas" name="magnifying-glass"/>
 		</button>

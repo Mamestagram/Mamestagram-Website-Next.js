@@ -15,6 +15,9 @@ export enum Priv {
 	staff = moderator | administrator | developer
 }
 
+export const hasSupporterAccess = (priv: number | undefined): boolean =>
+	((priv ?? 0) & (Priv.supporter | Priv.nominator | Priv.staff)) !== 0;
+
 export const getPrivs = (privNum: number) => {
 	const publicPrivileges = [
 		Priv.whitelisted,

@@ -20,7 +20,7 @@ import {
 } from "@/lib/profile-banner";
 import { profileMediaExists } from "@/lib/profile-media";
 import { getProfileCosmetics } from "@/lib/profile-cosmetics";
-import { Priv } from "@/lib/priv";
+import { hasSupporterAccess } from "@/lib/priv";
 import { writeLog } from "@/lib/log";
 import { getCurrentUser } from "@/lib/session";
 import styles from "@s/settings.module.css";
@@ -125,15 +125,13 @@ export default async function SettingsPage({
 	if (!currentUser.isLoggedIn || !currentUser.id || !currentUser.username)
 		redirect("/signin");
 	
-	const isSupporter =
-		currentUser.priv !== undefined &&
-		(currentUser.priv & Priv.supporter) !== 0;
+	const canUseSupporterFeatures = hasSupporterAccess(currentUser.priv);
 	const [settings, ownedClan, cosmetics, profileUi, customAchievements] = await Promise.all([
 		getUserSettings(currentUser.id),
 		getOwnedClanSettings(currentUser.id),
 		getProfileCosmetics(currentUser.id),
-		isSupporter ? getProfileUi(currentUser.id) : Promise.resolve([]),
-		isSupporter ? getCustomAchievementSettings(currentUser.id) : Promise.resolve({ achievements: [], selectedIds: [] }),
+		canUseSupporterFeatures ? getProfileUi(currentUser.id) : Promise.resolve([]),
+		canUseSupporterFeatures ? getCustomAchievementSettings(currentUser.id) : Promise.resolve({ achievements: [], selectedIds: [] }),
 	]);
 	if (!settings) redirect("/signin");
 	const legacyClanSection = params.section === "clan";
@@ -193,7 +191,7 @@ export default async function SettingsPage({
 	]);
 	const activeClan = activeScope === "clan" ? ownedClan : null;
 	const isClanScope = activeClan !== null;
-	const canResetScores = isSupporter;
+	const canResetScores = canUseSupporterFeatures;
 	const profileHref = activeClan
 		? `/profile/${activeClan.id}?clan`
 		: `/profile/${currentUser.id}`;
@@ -453,7 +451,7 @@ export default async function SettingsPage({
 												profileId: currentUser.id,
 												initialContents: profileUi,
 												customAchievements,
-												isSupporter,
+												canUseSupporterFeatures,
 												bannerUrl:
 													profileBannerUrl ??
 													`https://banner.${baseDomain}/${currentUser.id}`,

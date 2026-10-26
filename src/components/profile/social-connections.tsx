@@ -32,9 +32,8 @@ const socialMeta: Record<ConnectionType, {
 	}
 };
 
-export default function SocialConnections({ connections, mode, baseDomain }: {
+export default function SocialConnections({ connections, baseDomain }: {
 	connections: Record<ConnectionType, ProfileConnection[]>,
-	mode: string,
 	baseDomain: string
 }) {
 	const [activeType, setActiveType] = useState<ConnectionType | null>(null);
@@ -207,7 +206,7 @@ export default function SocialConnections({ connections, mode, baseDomain }: {
 								<ul className={styles.connection_list}>
 									{filteredConnections.map((connection) =>
 										<li key={connection.user} data-rendering-item="compact">
-											<Link href={`/profile/${connection.user}/${mode}`}
+											<Link href={`/profile/${connection.user}`}
 											      onClick={closeConnections}>
 												<PlayerAvatar userId={connection.user}
 												              name={connection.name}

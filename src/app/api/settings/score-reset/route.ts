@@ -7,7 +7,7 @@ import {
 	resetMamestagramModeScores,
 } from "@/lib/mamestagram-oauth";
 import type { MutationResponse } from "@/lib/mutation-response";
-import { Priv } from "@/lib/priv";
+import { hasSupporterAccess } from "@/lib/priv";
 import { isScoreResetMode } from "@/lib/score-reset";
 import { getCurrentUser } from "@/lib/session";
 
@@ -41,7 +41,7 @@ const getApiErrorResponse = (error: MamestagramApiError) => {
 				success: false,
 				message:
 					error.hint ||
-					"Score resets are available to active or lifetime supporters.",
+					"Score resets are available to Supporters and Nominator or higher roles.",
 			},
 			{ status: 403 },
 		);
@@ -76,15 +76,12 @@ export const DELETE = async (
 			{ success: false, message: "You must be signed in." },
 			{ status: 401 },
 		);
-	if (
-		currentUser.priv === undefined ||
-		(currentUser.priv & Priv.supporter) === 0
-	)
+	if (!hasSupporterAccess(currentUser.priv))
 		return NextResponse.json(
 			{
 				success: false,
 				message:
-					"Supporter only",
+					"Available to Supporters and Nominator or higher roles.",
 			},
 			{ status: 403 },
 		);

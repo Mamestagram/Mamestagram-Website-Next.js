@@ -263,7 +263,7 @@ html[data-theme="legacy"] [class*="_activity_list"] > li {
 
 html[data-theme="legacy"] [class*="_activity_grade"],
 html[data-theme="legacy"] [class*="_activity_value"] {
-	background-color: hsl(var(--user-hue), 0%, 6.078%) !important;
+	background-color: hsl(var(--user-hue), 35.484%, 6.078%) !important;
 	background-image: none !important;
 }
 
@@ -343,7 +343,8 @@ html[data-theme="legacy"] body [class$="_clan_hero_avatar"][class$="_clan_hero_a
 }
 
 html[data-theme="legacy"] body [class^="header-search-module"][class$="_message"] > i,
-html[data-theme="legacy"] body [class^="search-module"][class$="_message"] > i {
+html[data-theme="legacy"] body [class^="search-module"][class$="_message"] > i,
+html[data-theme="legacy"] body [class$="_rank_history_empty"][class$="_rank_history_empty"] > i {
 	width: 2.1em;
 	height: 2.1em;
 	flex: 0 0 auto;
@@ -452,11 +453,11 @@ html[data-theme="legacy"] [class*="_player_scores"] {
 	
 	& [class$="_grade"],
 	& [class$="_score_value"] {
-		background-color: hsl(var(--user-hue), 0%, 6.078%) !important;
+		background-color: var(--profile-ui-child-background, hsl(var(--user-hue), 35.484%, 6.078%)) !important;
 	}
 	
 	& [class$="_difficulty"] {
-		background-color: hsl(var(--user-hue), 0%, 18%) !important;
+		background-color: var(--profile-ui-child-background, hsl(var(--user-hue), 24%, 18%)) !important;
 	}
 }
 
@@ -881,7 +882,7 @@ html[data-theme="legacy"] body [class^="beatmap-module"] {
 			var(--mod-filter-color) 72%,
 			hsla(var(--user-hue), 0%, 100%, 0.1)
 		) !important;
-		text-shadow: 0 0 8px color-mix(in srgb, var(--mod-filter-color) 34%, transparent) !important;
+		text-shadow: 0 0 6px color-mix(in srgb, var(--mod-filter-color) 20%, transparent) !important;
 	}
 	
 	& [class$="_mod_filter_buttons"] > a:hover,

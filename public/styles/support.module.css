@@ -438,14 +438,14 @@
 	}
 	
 	& small {
-		min-height: 23px;
-		padding: 0 8px;
+		min-height: 28px;
+		padding: 0 10px;
 		align-content: center;
 		color: hsl(var(--user-hue), 78%, 76%);
 		background: hsla(var(--user-hue), 68%, 55%, .1);
 		border: 1px solid hsla(var(--user-hue), 75%, 70%, .13);
-		border-radius: 7px;
-		font-size: .56rem;
+		border-radius: 8px;
+		font-size: .72rem;
 		font-weight: 800;
 	}
 }
@@ -696,10 +696,10 @@
 
 .price_bar_limits {
 	display: flex;
-	margin-top: -3px;
+	margin-top: 3px;
 	justify-content: space-between;
 	color: hsl(var(--user-hue), 4.902%, 40%);
-	font-size: .56rem;
+	font-size: .8rem;
 	font-weight: 650;
 }
 
@@ -728,14 +728,14 @@
 		gap: 6px;
 		
 		& input {
-			width: 66px;
-			height: 35px;
+			width: 76px;
+			height: 40px;
 			padding: 0 8px;
 			color: hsl(var(--user-hue), 24.138%, 94.314%);
 			background: hsla(var(--user-hue), 0%, 100%, 0.055);
 			border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.085);
 			border-radius: 8px;
-			font-size: .78rem;
+			font-size: .88rem;
 			font-weight: 650;
 			text-align: center;
 			
@@ -1075,7 +1075,7 @@
 		}
 		
 		& .feature_header small {
-			font-size: .64rem;
+			font-size: .8rem;
 		}
 		
 		& .feature_media[data-empty="true"] > span {
@@ -1107,7 +1107,7 @@
 		}
 		
 		& .price_bar_limits {
-			font-size: .64rem;
+			font-size: .88rem;
 		}
 		
 		& .price_input_row > label {
@@ -1115,7 +1115,7 @@
 		}
 		
 		& .price_input_row > span input {
-			font-size: .86rem;
+			font-size: .96rem;
 		}
 		
 		& .price_input_row > span small {

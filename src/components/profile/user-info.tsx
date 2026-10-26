@@ -444,7 +444,6 @@ export default function UserInfo({
 						following: info.following,
 						followers: info.followers,
 					}}
-					mode={mode}
 					baseDomain={baseDomain}
 				/>
 			)}

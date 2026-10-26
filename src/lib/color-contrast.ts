@@ -2,9 +2,14 @@ export type RgbaColor = readonly [number, number, number, number];
 
 export const parseComputedColor = (value: string): RgbaColor | null => {
 	if (value === "transparent") return [0, 0, 0, 0];
-	const match = value.match(/^rgba?\(([^)]+)\)$/);
+	const srgb = value.startsWith("color(srgb ");
+	const match = value.match(srgb ? /^color\(srgb\s+([^)]+)\)$/ : /^rgba?\(([^)]+)\)$/);
 	if (!match) return null;
-	const channels = match[1].split(/[,\s/]+/).filter(Boolean).map(Number);
+	const channels = match[1].split(/[,\s/]+/).filter(Boolean).map((channel, index) => {
+		const number = Number.parseFloat(channel);
+		if (channel.endsWith("%")) return number * (index < 3 ? 2.55 : 0.01);
+		return number * (srgb && index < 3 ? 255 : 1);
+	});
 	if (channels.length < 3 || channels.some((channel) => !Number.isFinite(channel))) return null;
 	return [channels[0], channels[1], channels[2], channels[3] ?? 1];
 };

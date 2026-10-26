@@ -15,6 +15,7 @@ type FeatureMedia = {
 type FeatureView = {
 	body: string,
 	available?: boolean,
+	comingSoon?: boolean,
 	media?: FeatureMedia
 };
 
@@ -27,7 +28,7 @@ export type SupportFeature = {
 
 export default function SupportFeatures({ features, labels }: {
 	features: readonly SupportFeature[],
-	labels: { free: string, supporter: string, available: string, unavailable: string }
+	labels: { free: string, supporter: string, available: string, unavailable: string, comingSoon: string }
 }) {
 	const [selectedSupporter, setSelectedSupporter] = useState(true);
 	const [displaySupporter, setDisplaySupporter] = useState(true);
@@ -78,6 +79,7 @@ export default function SupportFeatures({ features, labels }: {
 			</div>
 			<div className={styles.feature_grid} data-phase={transitionPhase}>
 				{features.map((feature, index) => {
+					if (!displaySupporter && feature.supporter.comingSoon) return null;
 					const view: FeatureView = displaySupporter
 						? feature.supporter
 						: feature.free ?? { body: labels.unavailable, available: false };
@@ -102,8 +104,8 @@ export default function SupportFeatures({ features, labels }: {
 										<video key={view.media.src} src={view.media.src} aria-label={view.media.alt}
 										       autoPlay loop muted playsInline preload="metadata"/>}
 									{!view.media && <span>
-									<FontAwesome prefix="fad" name={isAvailable ? "circle-check" : "lock-keyhole"}/>
-										{isAvailable ? labels.available : labels.unavailable}
+									<FontAwesome prefix="fad" name={view.comingSoon ? "hourglass-half" : isAvailable ? "circle-check" : "lock-keyhole"}/>
+										{view.comingSoon ? labels.comingSoon : isAvailable ? labels.available : labels.unavailable}
 								</span>}
 								</div>
 								<p>{view.body}</p>

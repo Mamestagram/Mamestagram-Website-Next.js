@@ -54,7 +54,7 @@ export default function ProfileUiSettings({
 	profileId,
 	initialContents,
 	customAchievements = emptyCustomAchievements,
-	isSupporter,
+	canUseSupporterFeatures,
 	bannerUrl,
 	backgroundUrl,
 	profileTheme,
@@ -64,7 +64,7 @@ export default function ProfileUiSettings({
 	profileId: number;
 	initialContents: ProfileUiItem[];
 	customAchievements?: CustomAchievementSettings;
-	isSupporter: boolean;
+	canUseSupporterFeatures: boolean;
 	bannerUrl: string;
 	backgroundUrl: string;
 	profileTheme: WebTheme;
@@ -200,7 +200,7 @@ export default function ProfileUiSettings({
 	}, [endHistoryGroup, isEditorOpen]);
 
 	useEffect(() => {
-		if (!isEditorOpen || !isSupporter || isPending || isDiscardConfirmOpen || livePreviewDraft !== null) return;
+		if (!isEditorOpen || !canUseSupporterFeatures || isPending || isDiscardConfirmOpen || livePreviewDraft !== null) return;
 		const onHistoryShortcut = (event: KeyboardEvent) => {
 			const direction = getProfileUiHistoryShortcut(event);
 			if (!direction) return;
@@ -212,7 +212,7 @@ export default function ProfileUiSettings({
 		};
 		window.addEventListener("keydown", onHistoryShortcut);
 		return () => window.removeEventListener("keydown", onHistoryShortcut);
-	}, [isDiscardConfirmOpen, isEditorOpen, isPending, isSupporter, livePreviewDraft, stepHistory]);
+	}, [isDiscardConfirmOpen, isEditorOpen, isPending, canUseSupporterFeatures, livePreviewDraft, stepHistory]);
 
 	useEffect(() => {
 		if (!isEditorOpen || isDiscardConfirmOpen || livePreviewDraft !== null) return;
@@ -313,27 +313,27 @@ export default function ProfileUiSettings({
 				<span className={styles.profile_ui_launcher_copy}>
 					<strong>Profile layout</strong>
 					<small>
-						{isSupporter
+						{canUseSupporterFeatures
 							? "Open the full-screen editor to arrange and resize your profile contents."
-							: "Profile layout customization is available to supporters."}
+							: "Profile layout customization is available to Supporters and Nominator or higher roles."}
 					</small>
 					<small className={styles.profile_ui_recommendation}>PC or tablet recommended</small>
 				</span>
 				<button
 					type="button"
 					className={styles.secondary_button}
-					disabled={!isSupporter}
+					disabled={!canUseSupporterFeatures}
 					onClick={() => { setIsToolboxOpen(true); setIsEditorOpen(true); }}
 				>
 					<FontAwesome
 						prefix="fas"
-						name={isSupporter ? "expand" : "lock"}
+						name={canUseSupporterFeatures ? "expand" : "lock"}
 					/>
-					{isSupporter ? "Open editor" : "Supporter only"}
+					{canUseSupporterFeatures ? "Open editor" : "Supporter / Nominator+"}
 				</button>
 			</div>
 
-			{isMounted && isEditorOpen && isSupporter && createPortal(
+			{isMounted && isEditorOpen && canUseSupporterFeatures && createPortal(
 				<div
 					ref={editorRef}
 					className={styles.profile_ui_fullscreen}

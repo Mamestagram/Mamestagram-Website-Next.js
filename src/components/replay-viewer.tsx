@@ -1,10 +1,12 @@
 "use client";
 
 import classNames from "classnames";
+import Link from "next/link";
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { useUserContext } from "@/components/context/user-provider";
 import FontAwesome from "@/components/font-awesome";
+import { copyText } from "@/lib/clipboard";
 import {
 	announceMediaPlayback,
 	getMediaPlaybackSource,
@@ -22,12 +24,16 @@ const getReplayOrigin = (replayUrl: string) => {
 	}
 };
 
-export default function ReplayViewer({ label, replayUrl, buttonLabel, className, children }: Readonly<{
+export default function ReplayViewer({ label, replayUrl, buttonLabel, className, children, autoOpen = false, hideTrigger = false, shareHref, onClose }: Readonly<{
 	label: string,
 	replayUrl: string,
 	buttonLabel: string,
 	className?: string,
-	children: ReactNode
+	children: ReactNode,
+	autoOpen?: boolean,
+	hideTrigger?: boolean,
+	shareHref?: string,
+	onClose?: () => void
 }>) {
 	const { userInfo } = useUserContext();
 	const [dialogState, setDialogState] = useState<"closed" | "open" | "closing">("closed");
@@ -38,10 +44,13 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 	} | null>(null);
 	const dialogStateRef = useRef(dialogState);
 	const closeTimeoutRef = useRef<number | null>(null);
+	const copyTimeoutRef = useRef<number | null>(null);
+	const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
 	const iframeRef = useRef<HTMLIFrameElement>(null);
 	const replayId = useId();
 	const loginTooltipId = `${replayId}-login-tooltip`;
 	const openButtonRef = useRef<HTMLButtonElement>(null);
+	const openLinkRef = useRef<HTMLAnchorElement>(null);
 	const closeButtonRef = useRef<HTMLButtonElement>(null);
 	const isOpen = dialogState !== "closed";
 	const canWatchReplay = userInfo.isLoggedIn;
@@ -50,8 +59,9 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 		: "Please sign in to watch replays.";
 	const replayOrigin = getReplayOrigin(replayUrl);
 	const showLoginTooltip = () => {
-		if (canWatchReplay || !openButtonRef.current) return;
-		const bounds = openButtonRef.current.getBoundingClientRect();
+		const trigger = openLinkRef.current ?? openButtonRef.current;
+		if (canWatchReplay || !trigger) return;
+		const bounds = trigger.getBoundingClientRect();
 		const showBelow = bounds.top < 72;
 		setLoginTooltip({
 			left: Math.min(
@@ -65,6 +75,8 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 	const openReplay = useCallback(() => {
 		if (!canWatchReplay) return;
 		if (closeTimeoutRef.current !== null) window.clearTimeout(closeTimeoutRef.current);
+		if (copyTimeoutRef.current !== null) window.clearTimeout(copyTimeoutRef.current);
+		setCopyState("idle");
 		announceMediaPlayback("replay");
 		dialogStateRef.current = "open";
 		setDialogState("open");
@@ -73,12 +85,13 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 		if (dialogStateRef.current !== "open") return;
 		dialogStateRef.current = "closing";
 		setDialogState("closing");
+		onClose?.();
 		closeTimeoutRef.current = window.setTimeout(() => {
 			dialogStateRef.current = "closed";
 			closeTimeoutRef.current = null;
 			setDialogState("closed");
 		}, 200);
-	}, []);
+	}, [onClose]);
 	const pauseReplay = useCallback(() => {
 		if (dialogStateRef.current !== "open") return;
 		if (replayOrigin) {
@@ -92,11 +105,31 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 		if (iframe) iframe.src = "about:blank";
 		closeReplay();
 	}, [closeReplay, replayOrigin]);
+
+	useEffect(() => {
+		if (!autoOpen && !hideTrigger) return;
+		const frame = window.requestAnimationFrame(() => {
+			if (autoOpen) openReplay();
+			else closeReplay();
+		});
+		return () => window.cancelAnimationFrame(frame);
+	}, [autoOpen, closeReplay, hideTrigger, openReplay]);
+
+	const copyReplayLink = async () => {
+		if (!shareHref) return;
+		const copied = await copyText(new URL(shareHref, window.location.href).href);
+		setCopyState(copied ? "copied" : "failed");
+		if (copyTimeoutRef.current !== null) window.clearTimeout(copyTimeoutRef.current);
+		copyTimeoutRef.current = window.setTimeout(() => {
+			setCopyState("idle");
+			copyTimeoutRef.current = null;
+		}, 3000);
+	};
 	
 	useEffect(() => {
 		if (!isOpen) return;
 		const previousOverflow = document.body.style.overflow;
-		const returnFocusTarget = openButtonRef.current;
+		const returnFocusTarget = openLinkRef.current ?? openButtonRef.current ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
 		const closeOnEscape = (event: globalThis.KeyboardEvent) => {
 			if (event.key === "Escape") closeReplay();
 		};
@@ -114,6 +147,7 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 	
 	useEffect(() => () => {
 		if (closeTimeoutRef.current !== null) window.clearTimeout(closeTimeoutRef.current);
+		if (copyTimeoutRef.current !== null) window.clearTimeout(copyTimeoutRef.current);
 	}, []);
 	
 	useEffect(() => {
@@ -143,7 +177,19 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 	
 	return (
 		<>
-			<button ref={openButtonRef}
+			{!hideTrigger && (shareHref ? <Link ref={openLinkRef}
+				href={shareHref} prefetch={false} scroll={false}
+				className={classNames(styles.replay_trigger, className)}
+				aria-haspopup="dialog" aria-expanded={isOpen} aria-controls={replayId}
+				aria-label={resolvedButtonLabel} aria-disabled={!canWatchReplay}
+				aria-describedby={!canWatchReplay ? loginTooltipId : undefined}
+				title={canWatchReplay ? buttonLabel : undefined}
+				onPointerEnter={showLoginTooltip} onPointerLeave={() => setLoginTooltip(null)}
+				onClick={(event) => {
+					if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+					event.preventDefault();
+					openReplay();
+				}}>{children}</Link> : <button ref={openButtonRef}
 			        className={classNames(styles.replay_trigger, className)}
 			        type="button"
 			        disabled={!canWatchReplay}
@@ -157,7 +203,7 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 			        onPointerLeave={() => setLoginTooltip(null)}
 			        onClick={openReplay}>
 				{children}
-			</button>
+			</button>)}
 			{loginTooltip && createPortal(
 				<span id={loginTooltipId}
 				      className={styles.login_tooltip}
@@ -182,6 +228,13 @@ export default function ReplayViewer({ label, replayUrl, buttonLabel, className,
 					         aria-modal="true"
 					         aria-label={`Mamestagram replay: ${label}`}>
 						<div className={styles.replay_toolbar}>
+							{shareHref && <button type="button" className={styles.copy_link} onClick={copyReplayLink} title="Copy replay link">
+								<FontAwesome prefix="fas" name={copyState === "copied" ? "check" : "link"}/>
+								<span>{copyState === "copied" ? "Copied!" : "Copy link"}</span>
+							</button>}
+							{copyState !== "idle" && <span className={styles.copy_status} role="status">
+								{copyState === "copied" ? "Replay link copied." : "Could not copy. Copy the link from your address bar."}
+							</span>}
 							<button ref={closeButtonRef}
 							        type="button"
 							        aria-label="Close replay"

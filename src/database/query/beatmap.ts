@@ -88,3 +88,16 @@ export const beatmapUserRankQuery = `
 			HAVING MAX(s_rank.score) > ?
 		) ranked_scores
 `;
+
+export const beatmapReplayQuery = `
+	SELECT s.id, s.userid AS userId, u.name, COALESCE(u.\`private\`, 0) AS isPrivate
+		FROM scores s
+	JOIN users u ON u.id = s.userid
+	WHERE s.id = ?
+		AND s.map_md5 = ?
+		AND s.deleted = 0
+		AND s.status <> 0
+		AND s.grade NOT IN ('F', 'N')
+		AND (u.priv & ${Priv.unrestricted}) > 0
+	LIMIT 1
+`;
