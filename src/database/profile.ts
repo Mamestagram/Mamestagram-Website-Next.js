@@ -916,11 +916,10 @@ export const getStatistics = async (
 							osudailyApiUrl,
 							"Bancho rank",
 							undefined,
-							{ timeoutMs: 3000, logErrors: false },
+							{ timeoutMs: 10000, logErrors: false },
 						);
 						if (osudailyApi.ok)
-							banchoRank =
-								((await osudailyApi.json()) as { rank?: number }).rank ?? 0;
+							banchoRank = ((await osudailyApi.json()) as { rank?: number }).rank ?? 0;
 					} catch {
 						// Bancho rank is optional; Mamestagram statistics remain available.
 					}
