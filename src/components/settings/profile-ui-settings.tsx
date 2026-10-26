@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore, useTransition, type MouseEvent, type SetStateAction } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore, useTransition, type MouseEvent, type SetStateAction } from "react";
 import { createPortal } from "react-dom";
 import FontAwesome from "@/components/font-awesome";
 import ConfirmationDialog from "@/components/confirmation-dialog";
@@ -195,6 +195,19 @@ export default function ProfileUiSettings({
 		try { window.localStorage.setItem(guideLanguageStorageKey, language); } catch { /* The language can still be changed without storage. */ }
 	};
 
+	useLayoutEffect(() => {
+		if (!isEditorOpen) return;
+		const editor = editorRef.current;
+		const header = document.querySelector<HTMLElement>("[data-site-header]");
+		if (!editor) return;
+		const updateHeaderSpace = () => editor.style.setProperty("--profile-ui-site-header-height", `${Math.max(0, header?.getBoundingClientRect().bottom ?? 0)}px`);
+		updateHeaderSpace();
+		if (!header) return;
+		const observer = new ResizeObserver(updateHeaderSpace);
+		observer.observe(header);
+		return () => observer.disconnect();
+	}, [isEditorOpen]);
+
 	useEffect(() => {
 		if (!isEditorOpen) return;
 		const root = document.documentElement;
@@ -245,6 +258,11 @@ export default function ProfileUiSettings({
 		if (!isEditorOpen || isDiscardConfirmOpen || livePreviewDraft !== null) return;
 		const closeOnEscape = (event: KeyboardEvent) => {
 			if (event.key !== "Escape" || event.defaultPrevented) return;
+			if (event.target instanceof Element) {
+				if (event.target.closest("[data-site-header]")) return;
+				const dialog = event.target.closest("[role='dialog']");
+				if (dialog && dialog !== editorRef.current && !dialog.hasAttribute("data-profile-ui-guide-scope")) return;
+			}
 			if (editingContentIndex !== null) {
 				closeSettings();
 				return;
@@ -367,7 +385,6 @@ export default function ProfileUiSettings({
 					data-toolbox-open={isToolboxOpen}
 					data-theme-independent="true"
 					role="dialog"
-					aria-modal="true"
 					aria-labelledby="profile-ui-editor-title"
 					inert={isDiscardConfirmOpen || livePreviewDraft !== null}
 					onFocusCapture={(event) => {

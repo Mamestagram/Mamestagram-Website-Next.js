@@ -540,7 +540,7 @@ export default function ProfileUiPreview({
 	} : undefined;
 	const renderGhost = () => ghost && <article
 		className={`${styles.profile_ui_preview_content} ${styles.profile_ui_preview_content_move_preview}`}
-		data-content={ghost.content.content} data-custom-color={ghost.content.color !== null}
+		data-content={ghost.content.content} data-custom-color={ghost.content.color !== null} data-profile-ui-theme={getWebThemeName(ghost.content.theme ?? profileTheme)} data-custom-hue={profileHue !== null || profileColor !== null}
 		data-fixed-height={getProfileUiContentHeightLimits(ghost.content.content) !== null && ghost.content.height !== -1}
 		data-row-height={isProfileUiRowHeight(ghost.content.content)} data-match-row={rowMatches.get(-1)}
 		data-auto-height={isProfileUiAutoHeight(ghost.content)}
@@ -577,7 +577,7 @@ export default function ProfileUiPreview({
 				<div className={styles.profile_ui_preview_cover}>{bannerUrl && <Image className={styles.profile_ui_preview_banner} src={bannerUrl} alt="Profile banner" fill sizes="800px" draggable={false}/>}</div>
 				<div ref={gridRef} className={`${styles.profile_ui_preview_grid}${defaultArrangement ? ` ${responsiveStyles.profile_ui_default_layout}` : ""}`} data-profile-ui-grid data-profile-ui-default={defaultArrangement}>
 					{contents.map((content, index) => <Fragment key={index}>
-						<article className={styles.profile_ui_preview_content} data-preview-content={index} data-content={content.content} data-profile-ui-guide="content"
+						<article className={styles.profile_ui_preview_content} data-preview-content={index} data-content={content.content} data-profile-ui-guide="content" data-profile-ui-theme={getWebThemeName(content.theme ?? profileTheme)} data-custom-hue={profileHue !== null || profileColor !== null}
 							data-selected={selectedContentIndex === index} data-custom-color={content.color !== null}
 							data-fixed-height={getProfileUiContentHeightLimits(content.content) !== null && content.height !== -1} data-row-height={isProfileUiRowHeight(content.content)} data-match-row={rowMatches.get(index)} data-score-content={["bestpp", "first_place", "most_played", "recent_played"].includes(content.content)}
 							data-auto-height={isProfileUiAutoHeight(content)}

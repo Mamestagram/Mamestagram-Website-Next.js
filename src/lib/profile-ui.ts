@@ -1,4 +1,5 @@
 import { resolveProfileUiAutoWidths } from "@/lib/profile-ui-width";
+import { isWebTheme, type WebTheme } from "@/lib/theme";
 
 export const profileUiContentValues = [
 	"info",
@@ -59,6 +60,7 @@ export type ProfileUiItem = {
 	edgeRadius: number;
 	boxOpacity: number;
 	color: string | null;
+	theme?: WebTheme;
 	customized?: boolean;
 };
 
@@ -199,7 +201,7 @@ export const resetProfileUiContentSettings = (content: ProfileUiItem): ProfileUi
 export const hasDefaultProfileUiContentSettings = (content: ProfileUiItem): boolean => {
 	const defaults = resetProfileUiContentSettings(content);
 	return Boolean(content.autoWidth) === Boolean(defaults.autoWidth) && (content.autoWidth || content.width === defaults.width) && content.height === defaults.height &&
-		content.edgeRadius === defaults.edgeRadius && content.boxOpacity === defaults.boxOpacity && content.color === defaults.color;
+		content.edgeRadius === defaults.edgeRadius && content.boxOpacity === defaults.boxOpacity && content.color === defaults.color && content.theme === defaults.theme;
 };
 
 // Keep the standard two-column arrangement when only appearance or height is
@@ -217,10 +219,11 @@ export const hasDefaultProfileUiArrangement = (contents: ProfileUiItem[]) => {
 export const normalizeProfileUi = (contents: ProfileUiItem[]): ProfileUiItem[] => {
 	const normalized = contents.map((content, index) => {
 		const limits = getProfileUiContentHeightLimits(content.content);
-		const { autoWidth, ...settings } = content;
+		const { autoWidth, theme, ...settings } = content;
 		return {
 			...settings,
 			...(autoWidth ? { autoWidth: true } : {}),
+			...(isWebTheme(theme) ? { theme } : {}),
 			order: index + 1,
 			height: !limits || content.height === -1 ? -1 : Math.min(limits.max, Math.max(limits.min, content.height)),
 		};
@@ -235,7 +238,7 @@ export const isDefaultProfileUi = (contents: ProfileUiItem[]) => {
 		return content.content === item.content && content.order === item.order &&
 			content.width === item.width && Boolean(content.autoWidth) === Boolean(item.autoWidth) && content.height === item.height &&
 			content.edgeRadius === item.edgeRadius && content.boxOpacity === item.boxOpacity &&
-			content.color === item.color;
+			content.color === item.color && content.theme === item.theme;
 	});
 };
 
@@ -246,7 +249,7 @@ export const areProfileUiContentsEqual = (left: ProfileUiItem[], right: ProfileU
 		return content.content === other.content && content.order === other.order &&
 			content.width === other.width && Boolean(content.autoWidth) === Boolean(other.autoWidth) &&
 			content.height === other.height && content.edgeRadius === other.edgeRadius &&
-			content.boxOpacity === other.boxOpacity && content.color === other.color;
+			content.boxOpacity === other.boxOpacity && content.color === other.color && content.theme === other.theme;
 	});
 
 export const isProfileUiContent = (
@@ -290,6 +293,7 @@ export const parseProfileUiContents = (
 		if (
 			!isValidWidth(rawContent.width) ||
 			(rawContent.autoWidth !== undefined && typeof rawContent.autoWidth !== "boolean") ||
+			(rawContent.theme !== undefined && rawContent.theme !== null && !isWebTheme(rawContent.theme)) ||
 			!isFiniteNumber(rawContent.height) || !Number.isInteger(rawContent.height) ||
 			(heightLimits !== null && !normalizeHeights && !isValidHeight(rawContent.height, heightLimits.min, heightLimits.max)) ||
 			!isFiniteNumber(rawContent.edgeRadius) ||
@@ -310,6 +314,7 @@ export const parseProfileUiContents = (
 			order: index + 1,
 			width: rawContent.width,
 			...(rawContent.autoWidth === true ? { autoWidth: true } : {}),
+			...(isWebTheme(rawContent.theme) ? { theme: rawContent.theme } : {}),
 			height: isProfileUiRowHeight(contentName) ? -1 : rawContent.height,
 			edgeRadius: rawContent.edgeRadius,
 			boxOpacity: Math.round(rawContent.boxOpacity * 10) / 10,

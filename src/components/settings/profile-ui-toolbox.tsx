@@ -68,7 +68,7 @@ export default function ProfileUiToolbox({
 			<div className={styles.profile_ui_toolbox_title}>
 				<FontAwesome prefix="fas" name="toolbox"/><strong>Toolbox</strong>
 			</div>
-			<button type="button" className={styles.profile_ui_toolbox_icon} aria-label="Reset all content settings" data-profile-ui-guide="reset" disabled={disabled || !canResetContentSettings} onClick={onResetContentSettings} title="Reset every content's width, height, Auto, radius, opacity and color. Keep the current content list and order."><FontAwesome prefix="fas" name="rotate-left"/></button>
+			<button type="button" className={styles.profile_ui_toolbox_icon} aria-label="Reset all content settings" data-profile-ui-guide="reset" disabled={disabled || !canResetContentSettings} onClick={onResetContentSettings} title="Reset every content's width, height, Auto, radius, opacity, color and theme. Keep the current content list and order."><FontAwesome prefix="fas" name="rotate-left"/></button>
 			<button type="button" className={styles.profile_ui_toolbox_icon} aria-label={collapsed ? "Expand toolbox" : "Collapse toolbox"} aria-expanded={!collapsed} aria-controls="profile-ui-toolbox-body" onClick={() => setCollapsed((value) => !value)}>
 				<FontAwesome prefix="fas" name={collapsed ? "chevron-down" : "chevron-up"}/>
 			</button>

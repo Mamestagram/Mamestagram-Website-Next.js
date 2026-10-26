@@ -16,6 +16,7 @@ import {
 import styles from "@s/settings.module.css";
 import { getProfileUiMinimumWidths } from "@/lib/profile-ui-width";
 import { useProfileUiGridSize } from "@/lib/use-profile-ui-widths";
+import { isWebTheme, WebTheme, webThemeValues } from "@/lib/theme";
 
 export default function ProfileUiContentSettingsDialog({
 	content,
@@ -57,13 +58,22 @@ export default function ProfileUiContentSettingsDialog({
 				<div className={styles.profile_ui_content_heading}>
 					<strong>{profileUiContentLabels[content.content]}</strong>
 					<div className={styles.profile_ui_icon_actions}>
-						<button type="button" aria-label="Reset content settings" disabled={disabled || hasDefaultProfileUiContentSettings(content)} onClick={onReset} title="Reset width, height, Auto, radius, opacity and color for this content."><FontAwesome prefix="fas" name="rotate-left"/></button>
+						<button type="button" aria-label="Reset content settings" disabled={disabled || hasDefaultProfileUiContentSettings(content)} onClick={onReset} title="Reset width, height, Auto, radius, opacity, color and theme for this content."><FontAwesome prefix="fas" name="rotate-left"/></button>
 						<button type="button" aria-label="Move content up" disabled={contentIndex === 0 || disabled} onClick={() => onMove(-1)}><FontAwesome prefix="fas" name="arrow-up"/></button>
 						<button type="button" aria-label="Move content down" disabled={contentIndex === contentCount - 1 || disabled} onClick={() => onMove(1)}><FontAwesome prefix="fas" name="arrow-down"/></button>
 						<button type="button" className={styles.profile_ui_delete_button} aria-label="Delete content" disabled={disabled} onClick={onDelete}><FontAwesome prefix="fas" name="trash"/></button>
 					</div>
 				</div>
 				<div className={styles.profile_ui_content_fields}>
+					<label data-profile-ui-guide="theme">Theme
+						<select value={content.theme ?? ""} disabled={disabled} onChange={(event) => {
+							const value = event.currentTarget.value === "" ? undefined : Number(event.currentTarget.value);
+							onChange({ ...content, theme: isWebTheme(value) ? value : undefined });
+						}}>
+							<option value="">Use profile theme</option>
+							{webThemeValues.map((theme) => <option key={theme} value={theme}>{theme === WebTheme.glass ? "Glass" : "Legacy"}</option>)}
+						</select>
+					</label>
 					<ProfileUiNumberField label="Width" min={minimumWidth} max={1} step={0.01} value={content.autoWidth ? -1 : Math.max(minimumWidth, content.width)} autoValue={Math.max(minimumWidth, content.width)} disabled={disabled} auto getAutoValue={() => getProfileUiPreviewWidth(position.scrollContainer, contentIndex) ?? content.width} onChange={(width) => onChange({ ...content, autoWidth: width === -1, width: width === -1 ? content.width : width })}/>
 					{heightLimits && <ProfileUiNumberField label="Height (px)" min={minimumHeight} max={heightLimits.max} value={content.height === -1 ? -1 : Math.max(content.height, minimumHeight)} disabled={disabled} auto getAutoValue={() => getProfileUiPreviewHeight(position.scrollContainer, contentIndex)} onChange={(height) => onChange({ ...content, height })}/>}
 					<ProfileUiNumberField label="Radius" min={0} max={80} value={content.edgeRadius} disabled={disabled} onChange={(edgeRadius) => onChange({ ...content, edgeRadius })}/>

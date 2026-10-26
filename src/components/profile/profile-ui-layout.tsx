@@ -17,6 +17,7 @@ import responsiveStyles from "@s/profile-ui-responsive.module.css";
 import { getProfileUiScoreLayoutStyle } from "@/lib/profile-ui-score-layout";
 import { useProfileUiWidths } from "@/lib/use-profile-ui-widths";
 import { useProfileUiCompactLayout } from "@/lib/use-profile-ui-compact-layout";
+import { getWebThemeName, isWebTheme } from "@/lib/theme";
 
 type ProfileUiStyle = CSSProperties & {
 	"--profile-ui-content-span"?: number;
@@ -78,7 +79,7 @@ export default function ProfileUiLayout({
 				<section className={classNames(styles.section_area, styles.profile_ui_slot, {
 					[styles.hero]: content.content === "info" || content.content === "stats",
 					[styles.map_scores]: scoreContents.has(content.content) || content.content === "achievements",
-				})} style={getContentStyle(content)} data-content={content.content} data-row-height={isProfileUiRowHeight(content.content)} data-auto-height={isProfileUiAutoHeight(content)} data-match-row={rowMatches[index]} key={`${content.content}-${index}`}>
+				})} style={getContentStyle(content)} data-content={content.content} data-row-height={isProfileUiRowHeight(content.content)} data-auto-height={isProfileUiAutoHeight(content)} data-match-row={rowMatches[index]} data-profile-ui-theme={isWebTheme(content.theme) ? getWebThemeName(content.theme) : undefined} key={`${content.content}-${index}`}>
 					<div className={classNames(styles.profile_ui_content, {
 						[styles.player_scores]: scoreContents.has(content.content),
 						[styles.profile_ui_customized]: content.customized,

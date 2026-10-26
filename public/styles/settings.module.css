@@ -847,6 +847,14 @@
 }
 
 .profile_ui_preview_shell {
+	--profile-ui-score-default-padding: 16px;
+	--profile-ui-score-heading-height: 15px;
+	--profile-ui-score-heading-gap: 7px;
+	--profile-ui-score-row-height: 29px;
+	--profile-ui-score-row-gap: 3px;
+	--profile-ui-score-footer-height: 22px;
+	--profile-ui-score-footer-gap: 7px;
+	--profile-ui-score-default-visible-count: 5;
 	--profile-ui-score-border-height: 1px;
 	--profile-preview-surface-hue: var(--user-hue);
 	--glass-border-dark: hsla(var(--user-hue), 0%, 100%, 0.15);
@@ -882,7 +890,10 @@
 	background: hsl(var(--user-hue), 8%, 10%);
 }
 
-.profile_ui_preview_shell[data-profile-theme="legacy"] .profile_ui_preview_content {
+.profile_ui_preview_content[data-profile-ui-theme="legacy"] {
+	--profile-ui-score-border-height: 0px;
+	--profile-preview-surface-hue: 240;
+	--glass-shadow: 0 2px 6px hsla(var(--profile-preview-surface-hue), 0%, 0%, 0.32);
 	background: hsla(
 		var(--profile-preview-surface-hue),
 		11.34%,
@@ -892,7 +903,16 @@
 	box-shadow: var(--glass-shadow);
 }
 
-.profile_ui_preview_shell[data-profile-theme="legacy"] .profile_ui_preview_content[data-custom-color="true"] {
+.profile_ui_preview_content[data-profile-ui-theme="legacy"][data-custom-hue="true"] {
+	--profile-preview-surface-hue: var(--user-hue);
+}
+
+.profile_ui_preview_content[data-profile-ui-theme="glass"] {
+	--profile-ui-score-border-height: 1px;
+	--profile-preview-surface-hue: var(--user-hue);
+}
+
+.profile_ui_preview_content[data-profile-ui-theme="legacy"][data-custom-color="true"] {
 	background: hsla(
 		var(--profile-ui-preview-color-hue, var(--profile-preview-surface-hue)),
 		var(--profile-ui-preview-color-saturation, 11%),
@@ -1057,6 +1077,17 @@
 }
 
 .profile_ui_preview_content {
+	--profile-ui-preview-content-span: 100;
+	--profile-ui-preview-height: 112px;
+	--profile-ui-preview-min-height: 0px;
+	--profile-ui-preview-auto-height: initial;
+	--profile-ui-preview-achievements-height: 0px;
+	--profile-ui-preview-radius: 10px;
+	--profile-ui-preview-opacity: 0.9;
+	/* Leave unset colors invalid so each theme keeps its existing fallback. */
+	--profile-ui-preview-color-hue: initial;
+	--profile-ui-preview-color-saturation: initial;
+	--profile-ui-preview-color-lightness: initial;
 	--profile-ui-preview-padding-top: 4.5px;
 	--profile-ui-preview-padding-inline: 9px;
 	--profile-ui-preview-body-gap: 4px;
@@ -1144,6 +1175,8 @@
 }
 
 .profile_ui_preview_resize_guides {
+	--profile-ui-resize-guide-x: -1px;
+	--profile-ui-resize-guide-y: -1px;
 	position: fixed;
 	z-index: 4999;
 	width: 0;
@@ -1812,10 +1845,11 @@
 }
 
 .profile_ui_fullscreen {
+	--profile-ui-site-header-height: 0px;
 	display: grid;
 	position: fixed;
-	inset: 0;
-	z-index: 4000;
+	inset: var(--profile-ui-site-header-height, 0px) 0 0;
+	z-index: 900;
 	min-width: 0;
 	min-height: 0;
 	padding: 12px 0 0;
@@ -1831,10 +1865,11 @@
 }
 
 .profile_ui_fullscreen[data-toolbox-open="false"] {
-	grid-template-columns: 0px minmax(0, 1fr);
+	grid-template-columns: 0 minmax(0, 1fr);
 }
 
 .profile_ui_guide {
+	--profile-ui-guide-arrow: 20px;
 	position: fixed;
 	z-index: 7000;
 	width: max-content;

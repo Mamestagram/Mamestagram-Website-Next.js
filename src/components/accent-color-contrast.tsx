@@ -31,7 +31,7 @@ export default function AccentColorContrast() {
 		};
 		const observe = () => observer.observe(root, {
 			subtree: true, childList: true, attributes: true, attributeOldValue: true,
-			attributeFilter: ["style", "class", "hidden", "data-theme", "data-profile-theme", "data-accent-color", "data-custom-color"],
+			attributeFilter: ["style", "class", "hidden", "data-theme", "data-profile-theme", "data-profile-ui-theme", "data-accent-color", "data-custom-color"],
 		});
 		const update = () => {
 			frame = 0;
