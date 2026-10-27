@@ -1854,19 +1854,14 @@
 	min-width: 0;
 	min-height: 0;
 	padding: 12px 0 0;
-	grid-template-columns: 280px minmax(0, 1fr);
+	grid-template-columns: minmax(0, 1fr);
 	grid-template-rows: max-content minmax(0, 1fr);
-	grid-template-areas: "heading heading" "toolbox preview";
+	grid-template-areas: "heading" "preview";
 	gap: 12px;
 	column-gap: 0;
 	overflow: hidden;
 	color: hsl(var(--user-hue), 26%, 88%);
 	background: hsl(var(--user-hue), 15%, 8%);
-	transition: grid-template-columns 220ms cubic-bezier(0.2, 0, 0, 1);
-}
-
-.profile_ui_fullscreen[data-toolbox-open="false"] {
-	grid-template-columns: 0 minmax(0, 1fr);
 }
 
 .profile_ui_guide {
@@ -1922,7 +1917,8 @@
 	font-weight: 800;
 }
 
-.profile_ui_fullscreen_actions .secondary_button[aria-pressed="true"] {
+.profile_ui_fullscreen_actions .secondary_button[aria-pressed="true"],
+.profile_ui_fullscreen_actions .secondary_button[aria-expanded="true"] {
 	color: var(--settings-accent, hsl(var(--user-hue), 72%, 63%));
 	background: hsla(var(--user-hue), 60%, 60%, 0.12);
 	border-color: hsla(var(--user-hue), 60%, 70%, 0.45);
@@ -2091,24 +2087,29 @@
 .profile_ui_toolbox_dock {
 	display: grid;
 	position: relative;
-	grid-area: toolbox;
+	grid-area: preview;
 	z-index: 10;
+	width: min(240px, 100%);
 	min-width: 0;
 	min-height: 0;
+	justify-self: start;
 	grid-template-rows: minmax(0, 1fr);
 	overflow: clip;
-	background: hsl(var(--user-hue), 15%, 8%);
+	pointer-events: none;
 }
 
 .profile_ui_toolbox {
 	display: grid;
-	align-self: start;
-	width: 280px;
+	align-self: stretch;
+	width: 100%;
+	height: 100%;
 	min-height: 0;
 	max-height: 100%;
 	grid-template-rows: max-content minmax(0, 1fr);
 	overflow: hidden;
 	color: hsl(var(--user-hue), 26%, 88%);
+	pointer-events: auto;
+	background: hsla(var(--user-hue), 15%, 8%, 0.92);
 	opacity: 1;
 	transform: translateX(0);
 	visibility: visible;
@@ -2638,29 +2639,10 @@
 @media (max-width: 980px) {
 	.profile_ui_fullscreen {
 		padding: max(8px, env(safe-area-inset-top)) 0 0;
-		grid-template-columns: minmax(0, 1fr);
-		grid-template-rows: max-content max-content minmax(0, 1fr);
-		grid-template-areas: "heading" "toolbox" "preview";
 		gap: 0;
 	}
 
-	.profile_ui_fullscreen[data-toolbox-open="false"] {
-		grid-template-columns: minmax(0, 1fr);
-	}
-
-	.profile_ui_toolbox_dock {
-		margin-bottom: 8px;
-		transition: grid-template-rows 220ms cubic-bezier(0.2, 0, 0, 1), margin-bottom 220ms cubic-bezier(0.2, 0, 0, 1);
-	}
-
-	.profile_ui_fullscreen[data-toolbox-open="false"] .profile_ui_toolbox_dock {
-		grid-template-rows: minmax(0, 0fr);
-		margin-bottom: 0;
-	}
-
 	.profile_ui_toolbox {
-		width: 100%;
-		max-height: min(32dvh, 240px);
 		transform: translateY(0);
 	}
 

@@ -3,10 +3,12 @@
 import { useEffect, useRef, useState, type DragEvent, type PointerEvent } from "react";
 import FontAwesome from "@/components/font-awesome";
 import {
-	PROFILE_UI_MAX_CONTENTS,
+	PROFILE_UI_MAX_CONTENTS_PER_TYPE,
+	canAddProfileUiContent,
 	profileUiContentLabels,
 	profileUiContentValues,
 	type ProfileUiContent,
+	type ProfileUiItem,
 } from "@/lib/profile-ui";
 import type { ProfileUiToolboxDrag } from "@/lib/profile-ui-drag";
 import { startProfileUiTouchDrag } from "@/lib/profile-ui-touch-drag";
@@ -20,14 +22,14 @@ const contentIcons: Record<ProfileUiContent, string> = {
 };
 
 export default function ProfileUiToolbox({
-	open, contentCount, disabled, canUndo, canRedo, canResetContentSettings, snappingEnabled,
+	open, contents, disabled, canUndo, canRedo, canResetContentSettings, snappingEnabled,
 	guideLanguage, onGuideLanguageChange,
 	onClose, onAddContent, onUndo, onRedo, onDragStart, onDragEnd, onSnappingChange, onResetContentSettings,
 }: Readonly<{
 	open: boolean;
 	guideLanguage: ProfileUiGuideLanguage;
 	onGuideLanguageChange: (language: ProfileUiGuideLanguage) => void;
-	contentCount: number;
+	contents: readonly ProfileUiItem[];
 	snappingEnabled: boolean;
 	onSnappingChange: (enabled: boolean) => void;
 	disabled: boolean;
@@ -57,7 +59,7 @@ export default function ProfileUiToolbox({
 		}}
 	><FontAwesome prefix="fas" name="grip-dots"/></button>;
 	const startDrag = (event: DragEvent<HTMLButtonElement>, item: ProfileUiToolboxDrag) => {
-		if (disabled || contentCount >= PROFILE_UI_MAX_CONTENTS) return event.preventDefault();
+		if (disabled || !canAddProfileUiContent(contents, item.content)) return event.preventDefault();
 		event.dataTransfer.effectAllowed = "copy";
 		event.dataTransfer.setData("text/profile-ui-toolbox", JSON.stringify(item));
 		onDragStart(item);
@@ -76,11 +78,14 @@ export default function ProfileUiToolbox({
 		</div>
 		<div id="profile-ui-toolbox-body" className={styles.profile_ui_toolbox_body} hidden={collapsed}>
 			<div className={styles.profile_ui_toolbox_section}>
-				<div className={styles.profile_ui_toolbox_label}><span>Add content</span><small>{contentCount}/{PROFILE_UI_MAX_CONTENTS}</small></div>
+				<div className={styles.profile_ui_toolbox_label}><span>Add content</span><small>{contents.length}/{profileUiContentValues.length * PROFILE_UI_MAX_CONTENTS_PER_TYPE}</small></div>
 				<div className={styles.profile_ui_toolbox_palette}>
-					{profileUiContentValues.map((content) => <div key={content} className={styles.profile_ui_toolbox_item}><button type="button" disabled={disabled || contentCount >= PROFILE_UI_MAX_CONTENTS} draggable={!disabled && contentCount < PROFILE_UI_MAX_CONTENTS} onDragStart={(event) => startDrag(event, { kind: "content", content })} onDragEnd={onDragEnd} title={contentCount >= PROFILE_UI_MAX_CONTENTS ? "The content limit has been reached." : "Drag into the preview, or click to add."} aria-label={`Add ${profileUiContentLabels[content]}`} data-profile-ui-guide="add" onClick={() => onAddContent(content)}>
+					{profileUiContentValues.map((content) => {
+						const unavailable = !canAddProfileUiContent(contents, content);
+						return <div key={content} className={styles.profile_ui_toolbox_item}><button type="button" disabled={disabled || unavailable} draggable={!disabled && !unavailable} onDragStart={(event) => startDrag(event, { kind: "content", content })} onDragEnd={onDragEnd} title={unavailable ? `Up to ${PROFILE_UI_MAX_CONTENTS_PER_TYPE} of each content can be added.` : "Drag into the preview, or click to add."} aria-label={`Add ${profileUiContentLabels[content]}`} data-profile-ui-guide="add" onClick={() => onAddContent(content)}>
 						<FontAwesome prefix="fas" name={contentIcons[content]}/><span>{profileUiContentLabels[content]}</span>
-					</button>{touchGrip({ kind: "content", content }, `Drag ${profileUiContentLabels[content]} into preview`, contentCount >= PROFILE_UI_MAX_CONTENTS)}</div>)}
+					</button>{touchGrip({ kind: "content", content }, `Drag ${profileUiContentLabels[content]} into preview`, unavailable)}</div>;
+					})}
 				</div>
 			</div>
 			<label className={styles.profile_ui_toolbox_toggle} data-profile-ui-guide="snap">

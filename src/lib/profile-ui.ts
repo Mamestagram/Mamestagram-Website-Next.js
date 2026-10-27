@@ -15,6 +15,7 @@ export const profileUiContentValues = [
 
 export type ProfileUiContent = (typeof profileUiContentValues)[number];
 export const PROFILE_UI_MAX_CONTENTS = 800;
+export const PROFILE_UI_MAX_CONTENTS_PER_TYPE = 2;
 export const PROFILE_UI_MIN_HEIGHT = 80;
 export const PROFILE_UI_SCORE_LAYOUT = {
 	padding: 32,
@@ -62,6 +63,19 @@ export type ProfileUiItem = {
 	color: string | null;
 	theme?: WebTheme;
 	customized?: boolean;
+};
+
+export const canAddProfileUiContent = (contents: readonly ProfileUiItem[], content: ProfileUiContent): boolean =>
+	contents.length < PROFILE_UI_MAX_CONTENTS && contents.filter((item) => item.content === content).length < PROFILE_UI_MAX_CONTENTS_PER_TYPE;
+
+export const hasValidProfileUiContentCounts = (contents: readonly ProfileUiItem[]): boolean => {
+	const counts = new Map<ProfileUiContent, number>();
+	for (const item of contents) {
+		const count = (counts.get(item.content) ?? 0) + 1;
+		if (count > PROFILE_UI_MAX_CONTENTS_PER_TYPE) return false;
+		counts.set(item.content, count);
+	}
+	return true;
 };
 
 export const profileUiContentLabels: Record<ProfileUiContent, string> = {

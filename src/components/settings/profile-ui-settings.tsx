@@ -25,7 +25,7 @@ import {
 	hasDefaultProfileUiContentSettings,
 	resetProfileUiContentSettings,
 	createProfileUiToolboxContent,
-	PROFILE_UI_MAX_CONTENTS,
+	canAddProfileUiContent,
 	normalizeProfileUi,
 	type ProfileUiItem,
 	type ProfileUiContent,
@@ -99,7 +99,7 @@ export default function ProfileUiSettings({
 	const [editingMedal, setEditingMedal] = useState<EditingMedal | null>(null);
 	const editingContentIndex = editingTarget?.contentIndex ?? null;
 	const [isEditorOpen, setIsEditorOpen] = useState(false);
-	const [isToolboxOpen, setIsToolboxOpen] = useState(true);
+	const [isToolboxOpen, setIsToolboxOpen] = useState(false);
 	const [isGuideOpen, setIsGuideOpen] = useState(false);
 	const [guideLanguage, setGuideLanguage] = useState<ProfileUiGuideLanguage>("en");
 	const [snappingEnabled, setSnappingEnabled] = useState(true);
@@ -182,7 +182,7 @@ export default function ProfileUiSettings({
 		} catch { /* Keep the defaults when storage is unavailable. */ }
 		setIsGuideOpen(showGuide);
 		setGuideLanguage(language);
-		setIsToolboxOpen(true);
+		setIsToolboxOpen(false);
 		setIsEditorOpen(true);
 	};
 	const toggleGuide = () => {
@@ -287,9 +287,9 @@ export default function ProfileUiSettings({
 	}, [toolboxDrag]);
 
 	const addContent = (content: ProfileUiContent) => {
-		if (isPending || contents.length >= PROFILE_UI_MAX_CONTENTS) return;
+		if (isPending || !canAddProfileUiContent(contents, content)) return;
 		closeSettings();
-		setContents((current) => current.length >= PROFILE_UI_MAX_CONTENTS ? current :
+		setContents((current) => !canAddProfileUiContent(current, content) ? current :
 			normalizeProfileUi([...current, createProfileUiToolboxContent(content, current.length + 1)]));
 		setStatus(null);
 	};
@@ -469,7 +469,7 @@ export default function ProfileUiSettings({
 							open={isToolboxOpen}
 							guideLanguage={guideLanguage}
 							onGuideLanguageChange={changeGuideLanguage}
-							contentCount={contents.length}
+							contents={contents}
 							snappingEnabled={snappingEnabled}
 							onSnappingChange={setSnappingEnabled}
 							disabled={isPending}
@@ -480,6 +480,7 @@ export default function ProfileUiSettings({
 							onClose={() => setIsToolboxOpen(false)}
 							onAddContent={addContent}
 							onDragStart={(item) => {
+								if (!canAddProfileUiContent(contents, item.content)) return;
 								const viewport = editorRef.current?.querySelector<HTMLElement>("[data-profile-ui-preview]");
 								if (!viewport) return;
 								closeSettings();

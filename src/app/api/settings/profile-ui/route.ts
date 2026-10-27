@@ -6,7 +6,7 @@ import { saveProfileUi } from "@/database/profile-ui";
 import { isSameOriginMutation } from "@/lib/api-request";
 import { writeError } from "@/lib/log";
 import type { MutationResponse } from "@/lib/mutation-response";
-import { isDefaultProfileUi, parseProfileUiContents } from "@/lib/profile-ui";
+import { hasValidProfileUiContentCounts, isDefaultProfileUi, parseProfileUiContents } from "@/lib/profile-ui";
 import { hasSupporterAccess } from "@/lib/priv";
 import { getCurrentUser } from "@/lib/session";
 
@@ -51,6 +51,9 @@ export const PUT = async (
 		);
 
 	const achievementIds = isRecord(body) && body.achievementIds !== undefined ? parseCustomAchievementIds(body.achievementIds) : undefined;
+	if (!hasValidProfileUiContentCounts(contents)) return NextResponse.json(
+		{ success: false, message: "Up to 2 of each content can be added." }, { status: 400 },
+	);
 	if (achievementIds === null) return NextResponse.json(
 		{ success: false, message: "Select up to 8 different earned achievements." }, { status: 400 },
 	);

@@ -1,6 +1,6 @@
 import { getProfileUiDragRows, type ProfileUiContentDrop, type ProfileUiDragLayout } from "@/lib/profile-ui-drag";
 import { fitProfileUiAutoRowWidths, getProfileUiMinimumWidths } from "@/lib/profile-ui-width";
-import { normalizeProfileUi, type ProfileUiItem } from "@/lib/profile-ui";
+import { canAddProfileUiContent, normalizeProfileUi, type ProfileUiItem } from "@/lib/profile-ui";
 
 export type ProfileUiDropEntry = { content: ProfileUiItem; index: number };
 
@@ -13,6 +13,7 @@ export const projectProfileUiDrop = (
 	item: ProfileUiItem,
 	sourceIndex: number | null,
 ): ProfileUiDropEntry[] | null => {
+	if (sourceIndex === null && !canAddProfileUiContent(contents, item.content)) return null;
 	const rows = getProfileUiDragRows(layout.cards).map((row) => row.cards.map((card) => card.index));
 	const targetRow = rows.findIndex((row) => row.some((index) => drop.rowIndices.includes(index)));
 	const entries = rows.map((row) => row.filter((index) => index !== sourceIndex).map((index) => ({ content: contents[index], index })));
