@@ -48,9 +48,6 @@
 	/* text color */
 	--text-main: hsl(var(--user-hue), 0%, 99.216%);
 	--text-sub: hsl(var(--user-hue), 11.268%, 72.157%);
-	/* grid */
-	--grid-minor: hsla(var(--user-hue), 0%, 100%, 0.016);
-	--grid-major: hsla(var(--user-hue), 0%, 100%, 0.035);
 	
 	/* top 1 */
 	--rank-1: hsl(var(--rank-1-hue), 100%, 50%);
@@ -67,14 +64,6 @@
 body {
 	padding-top: 70px;
 	background-color: hsl(var(--user-hue), 29.412%, 3.333%);
-	background-image: linear-gradient(var(--grid-minor) 1px, transparent 1px),
-	linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px),
-	linear-gradient(var(--grid-major) 1px, transparent 1px),
-	linear-gradient(90deg, var(--grid-major) 1px, transparent 1px);
-	background-size: 26px 26px,
-	26px 26px,
-	104px 104px,
-	104px 104px;
 	background-attachment: scroll;
 	
 	&::-webkit-scrollbar-track {
@@ -116,20 +105,11 @@ body {
 		}
 		
 		background-color: hsl(var(--user-hue), 23%, 5%);
-		background-image: linear-gradient(var(--grid-minor) 1px, transparent 1px),
-		linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px),
-		linear-gradient(var(--grid-major) 1px, transparent 1px),
-		linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
-		linear-gradient(
+		background-image: linear-gradient(
 			135deg,
 			hsl(var(--user-hue), 23%, 5%) 0%,
 			hsl(var(--user-hue), 18%, 12%) 100%
 		);
-		background-size: 26px 26px,
-		26px 26px,
-		104px 104px,
-		104px 104px,
-		auto;
 	}
 	
 	@media (max-width: 872px) {

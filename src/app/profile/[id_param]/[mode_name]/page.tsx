@@ -238,9 +238,7 @@ export default async function Profile({
 			
 			return (
 				<div
-					className={classNames(styles.profile_page, responsiveStyles.profile_ui_responsive, {
-						[styles.with_background]: backgroundUrl !== null,
-					})}
+					className={classNames(styles.profile_page, responsiveStyles.profile_ui_responsive)}
 				>
 					{profileAppearance && (
 						<ProfileAppearance

@@ -5,6 +5,7 @@ import FontAwesome from "@/components/font-awesome";
 import FormattedNumber from "@/components/formatted-number";
 import DashboardSectionHeading from "@/components/home/dashboard-section-heading";
 import HomeLiveStats from "@/components/home/home-live-stats";
+import HomeUpdates from "@/components/home/home-updates";
 import HomePlayerCount from "@/components/home/home-player-count";
 import HomePlayerCountsProvider from "@/components/home/home-player-counts-provider";
 import ModeIcon from "@/components/mode-icon";
@@ -40,28 +41,6 @@ const formatRelativeTime = (date: Date) => {
 	return months < 12 ? `${months}mo ago` : `${Math.floor(days / 365)}y ago`;
 };
 
-const quickLinks = [
-	{
-		icon: "trophy",
-		title: "Leaderboard",
-		href: "/leaderboard/std/performance",
-	},
-	{
-		icon: "book-open",
-		title: "Documents",
-		href: "/documents",
-	},
-	{
-		icon: "rocket-launch",
-		title: "Lazer",
-		href: "/lazer",
-	},
-	{
-		icon: "heart",
-		title: "Support",
-		href: "/support",
-	},
-] as const;
 
 const topPlayerModes: Record<
 	ModeNum,
@@ -171,9 +150,7 @@ export default function HomeDashboard({
 							/>
 						</div>
 						<div className={styles.hero_counter}>
-              <span>
-                <i></i>Online
-              </span>
+							<span>Online</span>
 							<strong><HomePlayerCount kind="online"/></strong>
 						</div>
 					</div>
@@ -244,54 +221,7 @@ export default function HomeDashboard({
 						)}
 					</section>
 					
-					<section className={styles.dashboard_panel} data-page-enter="section">
-						<DashboardSectionHeading icon="link" title="Quick Links"/>
-						<div className={styles.quick_links}>
-							{quickLinks.map((quickLink) => (
-								<Link
-									key={quickLink.title}
-									href={quickLink.href}
-									data-page-enter="box"
-								>
-                  <span>
-                    <FontAwesome prefix="fad" name={quickLink.icon}/>
-                  </span>
-									<span>
-                    <strong>{quickLink.title}</strong>
-                  </span>
-									<FontAwesome prefix="fas" name="chevron-right"/>
-								</Link>
-							))}
-							<a
-								href="https://discord.com/invite/xqncGVrHSf"
-								target="_blank"
-								rel="noopener noreferrer"
-								data-page-enter="box"
-							>
-                <span>
-                  <FontAwesome prefix="fab" name="discord"/>
-                </span>
-								<span>
-                  <strong>Community</strong>
-                </span>
-								<FontAwesome prefix="fas" name="arrow-up-right"/>
-							</a>
-							<a
-								href={`https://market.${baseDomain}`}
-								target="_blank"
-								rel="noopener noreferrer"
-								data-page-enter="box"
-							>
-                <span>
-                  <FontAwesome prefix="fad" name="bag-shopping"/>
-                </span>
-								<span>
-                  <strong>Badge Market</strong>
-                </span>
-								<FontAwesome prefix="fas" name="arrow-up-right"/>
-							</a>
-						</div>
-					</section>
+					<HomeUpdates/>
 				</div>
 				
 				<section className={styles.dashboard_panel} data-page-enter="section">

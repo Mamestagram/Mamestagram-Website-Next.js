@@ -238,6 +238,12 @@ export default function UserInfo({
 	const profileQuery = isClan ? "?clan" : isLayoutPreview ? "?uiPreview=1" : "";
 	const countrySort = isDans ? "dans" : "performance";
 	const nameTooltipId = `profile-name-tooltip-${isClan ? "clan" : "user"}-${id}`;
+	const creationDate = info.creationTime.toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+		timeZone: "UTC",
+	});
 	const lastOnlineDate = info.latestActivity.toLocaleDateString("en-US", {
 		year: "numeric",
 		month: "short",
@@ -310,6 +316,7 @@ export default function UserInfo({
 							>
                 {info.tag !== null && `${info.tag} `}
 								{info.name}
+								{" ・ "}<time dateTime={info.creationTime.toISOString()}>Since {creationDate}</time>
               </span>
 						</div>
 						{canFollow && (

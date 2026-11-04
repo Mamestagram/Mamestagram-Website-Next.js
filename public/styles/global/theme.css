@@ -9,8 +9,6 @@ html[data-theme="legacy"] {
 	--glass-shadow: 0 2px 6px hsla(var(--user-hue), 0%, 0%, 0.32);
 	--text-main: hsl(var(--user-hue), 0%, 96.078%);
 	--text-sub: hsl(var(--user-hue), 2.941%, 73.333%);
-	--grid-minor: transparent;
-	--grid-major: transparent;
 }
 
 html[data-theme="legacy"][data-user-hue] {
@@ -29,8 +27,6 @@ html[data-theme="minimal"] {
 	--glass-shadow: none;
 	--text-main: hsl(var(--user-hue), 0%, 96.078%);
 	--text-sub: hsl(var(--user-hue), 0%, 64.314%);
-	--grid-minor: transparent;
-	--grid-major: transparent;
 }
 
 html[data-theme="legacy"] body {
@@ -300,7 +296,7 @@ html[data-theme="legacy"] [class$="_dashboard_panel"] {
 }
 
 html[data-theme="legacy"] [class$="_player_card"],
-html[data-theme="legacy"] [class$="_quick_links"] > a,
+html[data-theme="legacy"] [class$="_updates_list"] > li,
 html[data-theme="legacy"] [class$="_panel_empty"] {
 	background-color: hsl(var(--user-hue), 7%, 18%) !important;
 	background-image: none !important;
@@ -350,10 +346,6 @@ html[data-theme="legacy"] body [class$="_rank_history_empty"][class$="_rank_hist
 	flex: 0 0 auto;
 }
 
-html[data-theme="legacy"] [class$="_quick_links"] > a:hover,
-html[data-theme="legacy"] [class$="_quick_links"] > a:focus-visible {
-	background-color: hsl(var(--user-hue), 20%, 24%) !important;
-}
 
 html[data-theme="legacy"] [class*="_profile_page"] {
 	& [class*="_section_box"] {

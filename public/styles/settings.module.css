@@ -27,29 +27,6 @@
 	isolation: isolate;
 }
 
-.page::before {
-	content: "";
-	position: fixed;
-	inset: 70px 0 0;
-	background-image: linear-gradient(
-		hsla(var(--user-hue), 0%, 100%, 0.012) 1px,
-		transparent 1px
-	),
-	linear-gradient(
-		90deg,
-		hsla(var(--user-hue), 0%, 100%, 0.012) 1px,
-		transparent 1px
-	);
-	background-size: 34px 34px;
-	mask-image: linear-gradient(
-		to bottom,
-		hsl(var(--user-hue), 0%, 0%),
-		transparent 86%
-	);
-	pointer-events: none;
-	z-index: -1;
-}
-
 .hero {
 	display: flex;
 	position: relative;

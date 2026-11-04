@@ -8,22 +8,6 @@
 	position: relative;
 	isolation: isolate;
 	min-height: 100vh;
-	
-	&.with_background::before {
-		content: "";
-		position: absolute;
-		inset: 0;
-		z-index: -1;
-		background-image: linear-gradient(var(--grid-minor) 1px, transparent 1px),
-		linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px),
-		linear-gradient(var(--grid-major) 1px, transparent 1px),
-		linear-gradient(90deg, var(--grid-major) 1px, transparent 1px);
-		background-size: 26px 26px,
-		26px 26px,
-		104px 104px,
-		104px 104px;
-		pointer-events: none;
-	}
 }
 
 .container.private_profile_container {
@@ -155,11 +139,6 @@
 			transparent 42%,
 			hsla(var(--user-hue), 0%, 100%, 0.035) 42% 43%,
 			transparent 43%
-		),
-		repeating-linear-gradient(
-			0deg,
-			transparent 0 31px,
-			hsla(var(--user-hue), 0%, 100%, 0.018) 31px 32px
 		);
 	}
 	
@@ -181,11 +160,6 @@
 		hsla(var(--user-hue), 33.333%, 2.353%, 0.72),
 		hsla(var(--user-hue), 28.571%, 2.745%, 0.24) 52%,
 		hsla(var(--user-hue), 28.571%, 2.745%, 0.5)
-	),
-	repeating-linear-gradient(
-		90deg,
-		transparent 0 69px,
-		hsla(var(--user-hue), 0%, 100%, 0.025) 69px 70px
 	);
 }
 
