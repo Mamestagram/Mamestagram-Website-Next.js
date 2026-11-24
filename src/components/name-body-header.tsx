@@ -21,6 +21,7 @@ export default function NameBodyHeader({
 					document.documentElement.style.setProperty("--user-hue", "18");
 					break;
 				case "home":
+				case "news":
 				case "leaderboard":
 				case "profile":
 					document.documentElement.style.setProperty("--user-hue", "210");

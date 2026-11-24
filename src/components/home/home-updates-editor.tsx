@@ -6,14 +6,16 @@ import ConfirmationDialog from "@/components/confirmation-dialog";
 import FontAwesome from "@/components/font-awesome";
 import HomeUpdateDialog from "@/components/home/home-update-dialog";
 import HomeUpdatesList from "@/components/home/home-updates-list";
+import NewsList from "@/components/news-list";
 import { parseHomeUpdateInput, parseHomeUpdatesPage, type HomeUpdate, type HomeUpdateInput, type HomeUpdatesPage } from "@/lib/home-updates";
 import { readMutationResponse, type MutationResponse } from "@/lib/mutation-response";
 import styles from "@s/home.module.css";
 
-export default function HomeUpdatesEditor({ page, unavailable, heading }: Readonly<{
+export default function HomeUpdatesEditor({ page, unavailable, heading, presentation = "home" }: Readonly<{
 	page: HomeUpdatesPage;
 	unavailable: string | null;
 	heading: ReactNode;
+	presentation?: "home" | "news";
 }>) {
 	const router = useRouter();
 	const [form, setForm] = useState<(HomeUpdateInput & { id: number | null }) | null>(null);
@@ -85,8 +87,8 @@ export default function HomeUpdatesEditor({ page, unavailable, heading }: Readon
 		{unavailable && <p className={styles.updates_notice} role="status">{unavailable}</p>}
 		{message && !form && !deleting && <p className={styles.updates_notice} data-success={message.success} role={message.success ? "status" : "alert"}>{message.message}</p>}
 		{form && <HomeUpdateDialog value={form} isPending={isPending} canSave={canSave} message={message} onChange={setForm} onSave={save} onClose={closeEditor}/>}
-		<HomeUpdatesList items={items} disabled={isPending} onEdit={beginEdit} onDelete={(item) => { setDeleting(item); setMessage(null); }}/>
-		{nextCursor !== null && <button type="button" className={styles.updates_button} disabled={isPending} onClick={loadOlder}>Load older updates</button>}
+		{presentation === "news" ? <NewsList items={items} disabled={isPending} onEdit={beginEdit} onDelete={(item) => { setDeleting(item); setMessage(null); }}/> : <HomeUpdatesList items={items} disabled={isPending} onEdit={beginEdit} onDelete={(item) => { setDeleting(item); setMessage(null); }}/>}
+		{presentation === "home" && nextCursor !== null && <button type="button" className={styles.updates_button} disabled={isPending} onClick={loadOlder}>Load older updates</button>}
 		<ConfirmationDialog isOpen={deleting !== null} title="Delete update?" description={deleting ? `“${deleting.title}” will be permanently deleted.` : ""} icon="trash-can" confirmLabel="Delete" pendingLabel="Deleting…" isPending={isPending} error={message?.success === false ? message.message : undefined} onCancel={() => { setDeleting(null); setMessage(null); }} onConfirm={() => { if (deleting) mutate("DELETE", { id: deleting.id }); }}/>
 	</div>;
 }

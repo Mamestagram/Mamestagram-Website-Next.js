@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import FontAwesome from "@/components/font-awesome";
 import Markdown from "@/components/markdown";
+import MarkdownInput from "@/components/markdown-input";
 import { HOME_UPDATE_CONTENTS_MAX_BYTES, HOME_UPDATE_TITLE_MAX_LENGTH, HOME_UPDATE_VERSION_MAX_LENGTH, type HomeUpdateInput } from "@/lib/home-updates";
 import type { MutationResponse } from "@/lib/mutation-response";
 import styles from "@s/home.module.css";
@@ -57,7 +58,7 @@ export default function HomeUpdateDialog({ value, isPending, canSave, message, o
 			<label>Category<select disabled={isPending} value={value.category} onChange={(event) => onChange({ ...value, category: event.currentTarget.value === "fix" ? "fix" : "updates" })}><option value="updates">Update</option><option value="fix">Fix</option></select></label>
 			<label>Version<input disabled={isPending} value={value.version} maxLength={HOME_UPDATE_VERSION_MAX_LENGTH * 2} required onChange={(event) => onChange({ ...value, version: Array.from(event.currentTarget.value).slice(0, HOME_UPDATE_VERSION_MAX_LENGTH).join("") })}/></label>
 			<label>Title<input ref={titleRef} disabled={isPending} value={value.title} maxLength={HOME_UPDATE_TITLE_MAX_LENGTH * 2} required onChange={(event) => onChange({ ...value, title: Array.from(event.currentTarget.value).slice(0, HOME_UPDATE_TITLE_MAX_LENGTH).join("") })}/></label>
-			<label>Contents<textarea disabled={isPending} value={value.contents} rows={6} maxLength={HOME_UPDATE_CONTENTS_MAX_BYTES} onChange={(event) => onChange({ ...value, contents: event.currentTarget.value })}/></label>
+			<label>Contents<MarkdownInput disabled={isPending} value={value.contents} maxLength={HOME_UPDATE_CONTENTS_MAX_BYTES} onChange={(contents) => onChange({ ...value, contents })}/></label>
 			<div className={styles.updates_preview}>
 				<h3>Markdown preview</h3>
 				<Markdown className={styles.update_contents} source={value.contents || "No additional details."}/>

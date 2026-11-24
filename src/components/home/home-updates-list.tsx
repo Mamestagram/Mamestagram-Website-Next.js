@@ -1,3 +1,4 @@
+import Link from "next/link";
 import FontAwesome from "@/components/font-awesome";
 import Markdown from "@/components/markdown";
 import type { HomeUpdate } from "@/lib/home-updates";
@@ -9,12 +10,12 @@ export default function HomeUpdatesList({ items, onEdit, onDelete, disabled = fa
 	onDelete?: (item: HomeUpdate) => void;
 	disabled?: boolean;
 }>) {
-	if (items.length === 0) return <p className={styles.updates_empty}>No updates or fixes yet.</p>;
+	if (items.length === 0) return <p className={styles.updates_empty}>No news yet.</p>;
 	return <ol className={styles.updates_list}>
 		{items.map((item) => <li key={item.id} data-page-enter="box">
 			<div className={styles.update_meta}>
 				<span className={styles.update_heading}>
-					<strong className={styles.update_title}>{item.title}</strong>
+					<Link className={styles.update_title} href={`/news/${item.id}`}>{item.title}</Link>
 					<span className={styles.update_category} data-category={item.category}>{item.category === "updates" ? "Update" : "Fix"}</span>
 				</span>
 				<span className={styles.update_version} aria-label={`Version ${item.version}`}>{item.version}</span>

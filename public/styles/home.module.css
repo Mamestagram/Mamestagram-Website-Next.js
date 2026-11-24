@@ -971,6 +971,8 @@
 	white-space: nowrap;
 }
 
+.update_title:hover { text-decoration: underline; text-underline-offset: 4px; }
+
 .update_contents {
 	margin: 12px 0 0;
 	padding-top: 12px;
@@ -1042,7 +1044,6 @@
 .updates_button:focus-visible,
 .update_actions button:focus-visible,
 .updates_form input:focus-visible,
-.updates_form textarea:focus-visible,
 .updates_form select:focus-visible {
 	outline: 2px solid var(--home-accent-light, hsl(var(--user-hue), 76%, 78%));
 	outline-offset: 2px;
@@ -1118,7 +1119,6 @@
 }
 
 .updates_form input,
-.updates_form textarea,
 .updates_form select {
 	box-sizing: border-box;
 	width: 100%;
@@ -1130,10 +1130,6 @@
 	border: 1px solid hsla(var(--user-hue), 0%, 100%, 0.16);
 	border-radius: 8px;
 	font: inherit;
-}
-
-.updates_form textarea {
-	resize: vertical;
 }
 
 .updates_empty,

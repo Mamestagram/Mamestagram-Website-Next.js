@@ -52,6 +52,8 @@ const mutate = async (request: NextRequest) => {
 		}
 		revalidatePath("/home");
 		revalidatePath("/");
+		revalidatePath("/news");
+		revalidatePath("/news/[id]", "page");
 		return NextResponse.json({ success: true, message: request.method === "DELETE" ? "Update deleted." : "Update saved." });
 	} catch (error: unknown) {
 		return requestFailure(error);

@@ -1,9 +1,10 @@
 import "server-only";
 
+import { cache } from "react";
 import type { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { executeQuery, withTransaction } from "@/database/connection";
-import { createHomeUpdateQuery, deleteHomeUpdateQuery, editHomeUpdateQuery, homeUpdateByIdQuery, homeUpdatesQuery } from "@/database/query/home-updates";
-import { HOME_UPDATES_PAGE_SIZE, type HomeUpdate, type HomeUpdateInput, type HomeUpdatesPage } from "@/lib/home-updates";
+import { createHomeUpdateQuery, deleteHomeUpdateQuery, editHomeUpdateQuery, homeUpdateByIdQuery, homeUpdatesQuery, newsArticleByIdQuery } from "@/database/query/home-updates";
+import { HOME_UPDATES_PAGE_SIZE, type HomeUpdate, type HomeUpdateCategory, type HomeUpdateInput, type HomeUpdatesPage } from "@/lib/home-updates";
 
 type HomeUpdateRow = RowDataPacket & HomeUpdate;
 
@@ -27,15 +28,24 @@ const toHomeUpdate = (row: HomeUpdateRow): HomeUpdate => ({
 	contents: row.contents,
 });
 
-export const getHomeUpdates = async (beforeId = 2_147_483_648): Promise<HomeUpdatesPage> => {
+export const getHomeUpdates = async (beforeId = 2_147_483_648, category: HomeUpdateCategory | null = null): Promise<HomeUpdatesPage> => {
 	try {
-		const rows = await executeQuery<HomeUpdateRow>(homeUpdatesQuery, [beforeId]);
+		const rows = await executeQuery<HomeUpdateRow>(homeUpdatesQuery, [beforeId, category ?? "", category ?? ""]);
 		const items = rows.slice(0, HOME_UPDATES_PAGE_SIZE).map(toHomeUpdate);
 		return { items, nextCursor: rows.length > HOME_UPDATES_PAGE_SIZE ? items[items.length - 1].id : null };
 	} catch (error: unknown) {
 		return rethrowDatabaseError(error);
 	}
 };
+
+export const getNewsArticle = cache(async (id: number): Promise<HomeUpdate | null> => {
+	try {
+		const rows = await executeQuery<HomeUpdateRow>(newsArticleByIdQuery, [id]);
+		return rows.length ? toHomeUpdate(rows[0]) : null;
+	} catch (error: unknown) {
+		return rethrowDatabaseError(error);
+	}
+});
 
 export const saveHomeUpdate = async (id: number | null, input: HomeUpdateInput): Promise<HomeUpdate | null> => {
 	try {
