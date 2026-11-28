@@ -85,7 +85,10 @@ export default function HomeUpdatesEditor({ page, unavailable, heading, presenta
 			<button type="button" className={styles.updates_button} disabled={isPending || unavailable !== null} onClick={() => beginEdit()}><FontAwesome prefix="fas" name="plus"/> Add update</button>
 		</div>
 		{unavailable && <p className={styles.updates_notice} role="status">{unavailable}</p>}
-		{message && !form && !deleting && <p className={styles.updates_notice} data-success={message.success} role={message.success ? "status" : "alert"}>{message.message}</p>}
+		{message && !form && !deleting && <p
+			className={presentation === "news" && message.success ? styles.updates_status : styles.updates_notice}
+			data-success={message.success} role={message.success ? "status" : "alert"}
+		>{message.message}</p>}
 		{form && <HomeUpdateDialog value={form} isPending={isPending} canSave={canSave} message={message} onChange={setForm} onSave={save} onClose={closeEditor}/>}
 		{presentation === "news" ? <NewsList items={items} disabled={isPending} onEdit={beginEdit} onDelete={(item) => { setDeleting(item); setMessage(null); }}/> : <HomeUpdatesList items={items} disabled={isPending} onEdit={beginEdit} onDelete={(item) => { setDeleting(item); setMessage(null); }}/>}
 		{presentation === "home" && nextCursor !== null && <button type="button" className={styles.updates_button} disabled={isPending} onClick={loadOlder}>Load older updates</button>}

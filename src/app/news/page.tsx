@@ -44,7 +44,7 @@ export default async function NewsPage({ searchParams }: Readonly<{
 				<h1>News</h1>
 				<p className={styles.description}>Updates, improvements and a look at what’s new.</p>
 			</section>
-			<nav className={styles.filters} aria-label="News categories">
+			<nav className={styles.category_nav} aria-label="News categories">
 				<Link href="/news" aria-current={category === null ? "page" : undefined}>All news</Link>
 				<Link href={getNewsHref("updates")} aria-current={category === "updates" ? "page" : undefined}>Update</Link>
 				<Link href={getNewsHref("fix")} aria-current={category === "fix" ? "page" : undefined}>Fix</Link>

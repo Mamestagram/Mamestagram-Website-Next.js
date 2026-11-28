@@ -1133,7 +1133,8 @@
 }
 
 .updates_empty,
-.updates_notice {
+.updates_notice,
+.updates_status {
 	margin: 0;
 	padding: 16px 4px;
 	color: hsl(var(--user-hue), 20%, 72%);
